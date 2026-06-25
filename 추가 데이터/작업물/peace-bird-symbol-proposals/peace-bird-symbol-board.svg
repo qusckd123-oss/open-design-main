@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1200" viewBox="0 0 1800 1200">
+  <defs>
+    <style>
+      .bg{fill:#f5f1e8}
+      .paper{fill:#fffdf7;stroke:#d9cfbd;stroke-width:3}
+      .ink{fill:#111}
+      .blue{fill:#2463ff}
+      .guide{fill:#777;font-family:Arial, Helvetica, sans-serif;font-size:28px;letter-spacing:.12em}
+      .title{fill:#111;font-family:Georgia, 'Times New Roman', serif;font-size:42px;letter-spacing:.24em}
+      .label{fill:#222;font-family:Arial, Helvetica, sans-serif;font-size:22px;font-weight:700;letter-spacing:.08em}
+      .note{fill:#6f6a60;font-family:Arial, Helvetica, sans-serif;font-size:16px;letter-spacing:.02em}
+    </style>
+    <symbol id="bird-a" viewBox="0 0 420 300">
+      <path class="ink" d="M43 163c43-48 97-76 161-83 43-5 79 5 107 30 18 16 40 20 67 12 25-7 48 12 41 38-5 18-21 34-45 49 21 22 31 47 27 72-6 38-45 69-99 92-20 9-32-3-21-22l45-76c14-24 1-40-31-39-35 2-67 17-97 43l-69 60c-18 15-39 8-44-15l-14-64-49-28c-16-9-16-25 0-34l82-45c18-10 15-20-5-18l-41 4c-22 2-29-13-14-26z"/>
+    </symbol>
+    <symbol id="bird-b" viewBox="0 0 420 300">
+      <path class="ink" d="M48 165c63-65 133-90 210-75l81 16c42 8 64 28 65 58 1 28-25 51-67 70l-7 80c-2 25-20 32-38 14l-63-66-101 46c-28 13-43 7-44-18l-3-64-56-25c-17-8-18-21 1-36z"/>
+      <path class="bg" d="M85 181c48-20 98-30 150-31 44-1 84 6 119 20-44 7-87 20-128 39-32 15-63 34-92 57l-5-39-41-18c-14-6-15-17-3-28z"/>
+    </symbol>
+    <symbol id="bird-c" viewBox="0 0 420 300">
+      <path class="ink" d="M47 143 180 78c33-16 65-14 94 6l50 35 61-11c17-3 27 13 17 27l-46 63 32 75c7 17-8 34-25 25l-74-41-92 69c-20 15-43-2-38-26l18-83-133-41c-16-5-17-25 3-33z"/>
+      <circle class="blue" cx="329" cy="207" r="33"/>
+    </symbol>
+    <symbol id="bird-d" viewBox="0 0 420 300">
+      <path class="ink" d="M51 151c54-43 111-64 170-61 38 2 70 15 96 39l39-19c21-10 39 9 28 29l-27 51c31 24 42 54 30 85-16 41-68 66-139 76l62-100c14-23 2-40-30-40-38 1-75 20-113 57l-56 54c-17 16-38 8-42-15l-12-66-39-24c-17-11-15-27 4-35l70-29c16-6 15-13-2-13l-32 1c-18 0-22-15-7-26z"/>
+      <path class="bg" d="M76 171c58-7 116-4 173 8-39 12-75 29-108 50l-65-22c-17-6-17-27 0-36z"/>
+    </symbol>
+    <symbol id="bird-e" viewBox="0 0 420 300">
+      <path class="ink" d="M70 202c34-81 89-121 165-121 35 0 68 12 99 37l49 39c15 12 11 36-8 43l-70 25 24 69c7 21-15 38-34 26l-77-49-97 46c-20 10-38-8-30-29l23-63-48-7c-15-2-20-14-14-26z"/>
+      <path class="bg" d="M120 190c42-31 91-49 148-54-29 28-58 57-85 88l-63-14c-12-3-13-13 0-20z"/>
+    </symbol>
+    <symbol id="bird-f" viewBox="0 0 420 300">
+      <path class="ink" d="M69 150c45-48 95-70 151-66l121 8c24 2 29 21 12 39l-51 55 41 89c8 18-11 35-29 25l-95-54-72 68c-19 18-43 2-38-24l14-74-77-31c-19-8-22-22-8-35z"/>
+      <path class="bg" d="M109 159c65-15 126-17 184-5l-65 33c-43 22-82 48-116 79l5-61-46-18c-14-5-15-19-3-28z"/>
+    </symbol>
+    <filter id="soft-grain">
+      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" seed="17" result="noise"/>
+      <feColorMatrix in="noise" type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 .13"/>
+      </feComponentTransfer>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+  </defs>
+
+  <rect class="bg" width="1800" height="1200"/>
+  <text class="title" x="900" y="94" text-anchor="middle">PEACE BIRD SYMBOL STUDY</text>
+  <text class="guide" x="900" y="135" text-anchor="middle">ORIGINAL VARIATIONS BASED ON DOVE / SWALLOW SILHOUETTES</text>
+
+  <g transform="translate(90 190)">
+    <rect class="paper" width="480" height="430" rx="16"/>
+    <use href="#bird-a" x="70" y="78" width="340" height="240"/>
+    <text class="label" x="42" y="356">A. SOFT DOVE</text>
+    <text class="note" x="42" y="386">가장 부드럽고 평화 상징성이 강한 실루엣</text>
+  </g>
+  <g transform="translate(660 190)">
+    <rect class="paper" width="480" height="430" rx="16"/>
+    <use href="#bird-b" x="70" y="78" width="340" height="240"/>
+    <text class="label" x="42" y="356">B. RIBBON WING</text>
+    <text class="note" x="42" y="386">날개 안쪽 여백을 리본처럼 정리한 안</text>
+  </g>
+  <g transform="translate(1230 190)">
+    <rect class="paper" width="480" height="430" rx="16"/>
+    <use href="#bird-c" x="70" y="78" width="340" height="240"/>
+    <text class="label" x="42" y="356">C. BLUE ORBIT</text>
+    <text class="note" x="42" y="386">평화의 원/행성을 더한 그래픽 심볼형</text>
+  </g>
+
+  <g transform="translate(90 685)">
+    <rect class="paper" width="480" height="430" rx="16"/>
+    <use href="#bird-d" x="70" y="78" width="340" height="240"/>
+    <text class="label" x="42" y="356">D. NEGATIVE CUT</text>
+    <text class="note" x="42" y="386">흰 여백이 날개 방향을 만드는 로고형</text>
+  </g>
+  <g transform="translate(660 685)">
+    <rect class="paper" width="480" height="430" rx="16"/>
+    <use href="#bird-e" x="70" y="78" width="340" height="240"/>
+    <text class="label" x="42" y="356">E. EMBLEM CURVE</text>
+    <text class="note" x="42" y="386">배지/와펜/프린트에 안정적인 둥근 구조</text>
+  </g>
+  <g transform="translate(1230 685)">
+    <rect class="paper" width="480" height="430" rx="16"/>
+    <g filter="url(#soft-grain)">
+      <use href="#bird-f" x="70" y="78" width="340" height="240"/>
+    </g>
+    <text class="label" x="42" y="356">F. POSTER GRAIN</text>
+    <text class="note" x="42" y="386">포스터/프린트용, 종이 질감과 잘 맞는 안</text>
+  </g>
+</svg>

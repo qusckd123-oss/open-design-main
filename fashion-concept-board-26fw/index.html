@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WACKYWILLY 26FW Season Concept Board</title>
+  <style>
+    :root {
+      --bg: #d8d1c7;
+      --paper: #f2eee6;
+      --paper-deep: #c9c0b4;
+      --ink: #151412;
+      --ink-soft: #2e2b27;
+      --muted: #676059;
+      --muted-soft: #8b8379;
+      --line: #bbb1a5;
+      --line-soft: #d9d1c7;
+      --accent: #16273a;
+      --accent-soft: color-mix(in oklch, var(--accent) 18%, transparent);
+      --accent-loud: #9b5837;
+      --night: #202326;
+      --khaki: #65664f;
+      --shadow: rgba(14, 13, 12, 0.14);
+      --shadow-deep: rgba(14, 13, 12, 0.24);
+      --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", system-ui, sans-serif;
+      --font-display-street: "Black Han Sans", "Gmarket Sans", "Pretendard Variable", Pretendard, sans-serif;
+      --font-display: var(--font-display-street);
+      --font-body: var(--font-sans);
+      --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      --container: 1220px;
+      --gutter: clamp(18px, 4vw, 48px);
+      --radius: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        linear-gradient(90deg, rgba(22,39,58,.06) 1px, transparent 1px),
+        linear-gradient(180deg, var(--bg), #bdb4a8 78%, #aaa195);
+      background-size: 72px 72px, auto;
+      color: var(--ink);
+      font-family: var(--font-body);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    img { display: block; width: 100%; max-width: 100%; }
+    p, h1, h2, h3 { margin: 0; text-wrap: pretty; }
+    .page-shell { max-width: var(--container); margin-inline: auto; padding: clamp(28px, 5vw, 72px) var(--gutter); }
+    .topline {
+      display: flex; justify-content: space-between; gap: 16px; padding-bottom: 14px;
+      border-bottom: 1px solid var(--line); font-family: var(--font-mono);
+      font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+    }
+    .topline-status { color: var(--accent-loud); }
+    .section { padding: clamp(48px, 7vw, 96px) 0; border-bottom: 1px solid var(--line); }
+    .section:last-child { border-bottom: 0; }
+    .kicker { font-family: var(--font-mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-loud); margin-bottom: 14px; }
+    .display { font-family: var(--font-display); font-size: clamp(52px, 9vw, 126px); line-height: .92; letter-spacing: 0; font-weight: 400; }
+    .h2 { font-family: var(--font-display); font-size: clamp(31px, 4.5vw, 58px); line-height: 1.02; letter-spacing: 0; font-weight: 400; }
+    .lead { max-width: 700px; color: var(--muted); font-size: clamp(16px, 1.6vw, 20px); line-height: 1.55; }
+    .meta { font-family: var(--font-mono); color: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+    .cover-grid { display: grid; grid-template-columns: minmax(0,.95fr) minmax(320px,1.05fr); gap: clamp(28px,5vw,72px); align-items: end; }
+    .thesis { font-size: clamp(21px,2.2vw,30px); line-height: 1.32; color: var(--ink-soft); max-width: 31ch; margin-top: 26px; font-weight: 750; }
+    .cover-meta { margin-top: 28px; display: inline-flex; gap: 14px; flex-wrap: wrap; }
+    .image-frame { position: relative; overflow: hidden; border-radius: var(--radius); background: linear-gradient(135deg, var(--accent-soft), color-mix(in oklch, var(--paper) 88%, var(--ink))); border: 1px solid var(--line); box-shadow: 0 22px 60px var(--shadow); min-height: 220px; }
+    .image-frame::before { content: attr(data-fallback); position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; color: var(--muted); font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em; text-align: center; line-height: 1.5; }
+    .image-frame img { position: relative; height: 100%; min-height: inherit; object-fit: cover; }
+    .cover-image { aspect-ratio: 4 / 5; }
+    .keyword-cloud { padding-top: clamp(36px,5vw,72px); padding-bottom: clamp(36px,5vw,72px); }
+    .kw-grid { display: flex; flex-wrap: wrap; gap: clamp(14px,2vw,28px) clamp(20px,3vw,40px); align-items: baseline; max-width: 1040px; }
+    .kw { font-family: var(--font-display); letter-spacing: 0; line-height: .96; }
+    .kw-loud { font-size: clamp(48px,7vw,90px); color: var(--ink); }
+    .kw-mid { font-size: clamp(34px,4.5vw,56px); color: var(--ink-soft); }
+    .kw-soft { font-size: clamp(22px,2.6vw,34px); color: var(--muted); font-family: var(--font-sans); font-weight: 760; }
+    .thesis-block, .seed-block, .anti-territory, .open-questions { display: grid; grid-template-columns: .85fr 1.15fr; gap: clamp(28px,6vw,86px); align-items: start; }
+    .thesis-copy { display: grid; gap: 22px; max-width: 64ch; }
+    .thesis-copy p { color: var(--muted); }
+    .thesis-copy p.lead { color: var(--ink-soft); }
+    .scan-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-top: 24px; }
+    .scan-card { padding: 16px; border: 1px solid var(--line); background: color-mix(in oklch, var(--paper) 84%, white); border-radius: var(--radius); min-height: 120px; }
+    .scan-card strong { display: block; margin-bottom: 8px; font-size: 14px; }
+    .scan-card p { color: var(--muted); font-size: 13px; }
+    .mood-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
+    .mood-card { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+    .mood-card .image-frame { aspect-ratio: 1 / 1; min-height: 180px; box-shadow: 0 12px 30px var(--shadow); }
+    .mood-card[data-image-role="scene"] .image-frame { aspect-ratio: 4 / 3; }
+    .mood-card[data-image-role="gesture"] .image-frame { aspect-ratio: 4 / 5; }
+    .mood-card figcaption { display: grid; gap: 4px; padding: 0 4px; }
+    .role-tag { align-self: start; font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); padding: 3px 7px; border: 1px solid var(--accent-soft); border-radius: 3px; }
+    .mood-card figcaption p { font-size: 13px; color: var(--muted); line-height: 1.4; }
+    .reference-shelf { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+    .reference-card { padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); background: color-mix(in oklch, var(--paper) 92%, white); display: grid; gap: 10px; min-height: 168px; }
+    .ref-title { font-size: 22px; line-height: 1.05; font-weight: 850; }
+    .reference-card p { color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .dials .dial-list { display: grid; gap: 30px; max-width: 720px; }
+    .dial { display: grid; gap: 10px; }
+    .dial-axis { display: flex; justify-content: space-between; }
+    .dial-track { position: relative; height: 4px; background: var(--line); border-radius: 999px; }
+    .dial-marker { position: absolute; left: calc(var(--dial-pos,50) * 1%); top: 50%; width: 16px; height: 16px; border-radius: 999px; background: var(--night); transform: translate(-50%,-50%); box-shadow: 0 4px 14px var(--shadow-deep); }
+    .dial-note { color: var(--muted); font-size: 13px; }
+    .seed-chips { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+    .seed-chip { border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); padding: 14px; display: grid; grid-template-rows: auto 1fr; gap: 10px; min-height: 132px; }
+    .swatch { height: 64px; border-radius: 4px; border: 1px solid rgba(0,0,0,.12); }
+    .seed-meta { display: grid; gap: 4px; }
+    .seed-name { font-size: 17px; font-weight: 820; color: var(--ink); }
+    .seed-list { list-style: none; padding: 0; margin: 0; display: grid; }
+    .seed-list li { display: grid; grid-template-columns: 200px 1fr; gap: 22px; padding: 16px 0; border-bottom: 1px solid var(--line-soft); align-items: baseline; }
+    .seed-list li:last-child { border-bottom: 0; }
+    .seed-detail { color: var(--muted); font-size: 14px; line-height: 1.45; }
+    .anti-list, .next-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; max-width: 64ch; }
+    .anti-list li { padding: 14px 18px; border: 1px dashed var(--line); border-radius: var(--radius); color: var(--ink-soft); font-family: var(--font-mono); font-size: 13px; letter-spacing: .04em; background: color-mix(in oklch, var(--paper) 80%, white); }
+    .anti-list li::before { content: "NO / "; color: var(--accent-loud); font-weight: 700; }
+    .next-list { counter-reset: nextstep; gap: 12px; }
+    .next-list li { counter-increment: nextstep; display: grid; grid-template-columns: 120px 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line-soft); }
+    .next-when { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .next-what { color: var(--ink-soft); font-size: 15px; line-height: 1.5; }
+    @media (max-width:1024px) { .mood-grid { grid-template-columns: repeat(3,1fr); } .seed-chips, .reference-shelf { grid-template-columns: repeat(2,1fr); } .scan-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width:800px) { .cover-grid, .thesis-block, .seed-block, .anti-territory, .open-questions { grid-template-columns: 1fr; } .mood-grid, .seed-chips, .reference-shelf, .scan-grid { grid-template-columns: 1fr; } .seed-list li { grid-template-columns: 1fr; gap: 6px; } .topline { flex-direction: column; } }
+    @media print { body { background: var(--paper); } .section { break-inside: avoid; padding: 24px 0; } .mood-grid, .reference-shelf, .seed-chips { break-inside: avoid; } }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topline" data-od-id="topline">
+      <span>WACKYWILLY Studio</span>
+      <span>26FW Concept Board</span>
+      <span class="topline-status">v1 / imagegen draft</span>
+    </header>
+    <main id="concept-board">
+      <section class="section cover-grid" data-od-id="cover">
+        <div>
+          <p class="kicker">26FW · CONCEPT BOARD</p>
+          <h1 class="display">After<br>Denim<br>Hours</h1>
+          <p class="thesis">26FW는 26SS의 데님 에센셜을 밤 9시 이후의 동네 이동복으로 전환, liminal night를 primary로 두고 dry industrial craft로 실루엣과 디테일을 조이는 시즌.</p>
+          <p class="meta cover-meta">WACKYWILLY · Codex · 2026-05-15 · v1 draft</p>
+        </div>
+        <figure class="image-frame cover-image" data-fallback="Imagegen prompt: late-night Seoul laundromat, layered denim/fleece/nylon still life, no logos or readable text">
+          <img src="images/cover-mood.png" alt="밤 골목 조명 속 데님, 플리스, 나일론이 겹친 26FW 커버 mood" />
+        </figure>
+      </section>
+
+      <section class="section keyword-cloud" data-od-id="keywords">
+        <p class="kicker">Season keywords</p>
+        <div class="kw-grid">
+          <span class="kw kw-loud">After Hours</span>
+          <span class="kw kw-loud">Winter Denim</span>
+          <span class="kw kw-mid">Padded Utility</span>
+          <span class="kw kw-mid">Pigment Black</span>
+          <span class="kw kw-soft">방과 후 동네 이동</span>
+          <span class="kw kw-soft">Cream Stitch</span>
+          <span class="kw kw-soft">Low-light Layering</span>
+        </div>
+      </section>
+
+      <section class="section thesis-block" data-od-id="thesis">
+        <div>
+          <p class="kicker">Territory</p>
+          <h2 class="h2">여름의 데님 유니폼을, 밤 공기와 방한 레이어의 거리감으로 재조립.</h2>
+        </div>
+        <div class="thesis-copy">
+          <p class="lead">타깃 moment는 18~25세 고객의 수업/알바/퇴근 이후 이동. 지하철 플랫폼, 동네 아케이드, 편의점 앞 벤치처럼 화려하지 않은 장소에서 denim setup을 후디, 플리스, 패딩 베스트, 카고 백과 섞어 입는 장면.</p>
+          <p>Primary tonality는 liminal night / suburb edge. 26SS의 밝은 데님, 버뮤다, 그래픽 티, 볼캡이 만든 쉬운 착장을 FW에서는 젖은 아스팔트, 형광등, 히터빛, 차가운 콘크리트로 이동. Tension은 dry industrial craft로 설정, 스티치·스냅·립스탑·퀼팅·바택이 시즌을 지탱.</p>
+          <p>26SS 소스 분석 기준: `<your DENIM Essential>` 룩북은 인디고/블랙/라이트블루 데님, 화이트 스티치, 쉬운 셋업, 버뮤다/와이드/벌룬 팬츠, 그래픽 티와 캡/백/스니커즈의 영캐주얼 데님 유니폼 구조. 26FW 전환은 컬러 확장이 아니라 온도와 소재의 치환.</p>
+          <div class="scan-grid" data-od-id="source-scan">
+            <article class="scan-card"><strong>Core product</strong><p>셔츠·팬츠·쇼츠·스커트 중심 denim essential, 셋업 착장 가능성 높음</p></article>
+            <article class="scan-card"><strong>Fit language</strong><p>릴랙스, 와이드, 벌룬, 버뮤다. 과장보다 쉬운 볼륨</p></article>
+            <article class="scan-card"><strong>Styling type</strong><p>티셔츠, 볼캡, 백, 스니커즈로 낮은 진입장벽 확보</p></article>
+            <article class="scan-card"><strong>FW conversion</strong><p>보온 레이어, 패딩/플리스, 피그먼트 블랙, 하드웨어 강조</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" data-od-id="mood-grid">
+        <p class="kicker">Mood territory</p>
+        <h2 class="h2" style="margin-bottom:28px;">12 images mapping the 26FW territory, not outfit previews.</h2>
+        <div class="mood-grid">
+          <figure class="mood-card" data-image-role="scene"><div class="image-frame" data-fallback="Imagegen: bus stop bench, wet pavement, indigo denim sleeve, padded vest, no text"><img src="images/mood-01.png" alt="젖은 버스정류장 벤치 위 데님과 패딩 베스트" /></div><figcaption><span class="role-tag">scene</span><p>젖은 버스정류장, 데님과 패딩 베스트의 이동 전 정지감.</p></figcaption></figure>
+          <figure class="mood-card" data-image-role="scene"><div class="image-frame" data-fallback="Imagegen: closed Seoul arcade, heater glow, black denim stack, no text"><img src="images/mood-02.png" alt="닫힌 아케이드 복도와 블랙 데님 스택" /></div><figcaption><span class="role-tag">scene</span><p>영업 종료 후 아케이드, 블랙 데님과 히터빛의 FW 온도.</p></figcaption></figure>
+          <figure class="mood-card" data-image-role="gesture"><div class="image-frame" data-fallback="Imagegen: hands tightening khaki crossbody strap over denim and fleece, no full outfit"><img src="images/mood-03.png" alt="데님과 플리스 위 크로스백 스트랩을 조이는 손" /></div><figcaption><span class="role-tag">gesture</span><p>크로스백 strap 조임, utility가 styling 장면으로 보이는 순간.</p></figcaption></figure>
+          <figure class="mood-card" data-image-role="gesture"><div class="image-frame" data-fallback="Imagegen: hoodie cuff under dark denim jacket, elevator lobby, no face"><img src="images/mood-04.png" alt="다크 데님 재킷 아래로 보이는 후디 커프" /></div><figcaption><span class="role-tag">gesture</span><p>후디 cuff가 데님 아래로 빠지는 레이어드 제스처.</p></figcaption></figure>
+          <figure class="mood-card" data-image-role="texture"><div class="image-frame" data-fallback="Imagegen: macro raw denim, cream stitching, fleece, ripstop nylon"><img src="images/mood-05.png" alt="데님, 플리스, 립스탑 나일론 소재 클로즈업" /></div><figcaption><span class="role-tag">texture</span><p>데님 twill, cream stitch, 플리스, ripstop의 소재 교차.</p></figcaption></figure>
+          <figure class="mood-card" data-image-role="texture"><div class="image-frame" data-fallback="Imagegen: washed black denim hem, thermal waffle knit, terracotta rib sock"><img src="images/mood-06.png" alt="워시드 블랙 데님과 와플 니트, 테라코타 포인트" /></div><figcaption><span class="role-tag">texture</span><p>피그먼트 블랙과 thermal knit, 작은 terracotta 온도.</p></figcaption></figure>
+          <figure class="mood-card" data-image-role="light"><div class="image-frame" data-fallback="Imagegen: wet asphalt puddle, cold blue and warm heater reflection, no people"><img src="images/mood-07.png" alt="젖은 아스팔트 위 차가운 블루와 따뜻한 오렌지 반사" /></div><figcaption><span class="role-tag">light</span><p>젖은 아스팔트의 blue-black, 히터빛의 작은 orange.</p></figcaption></figure>
+          <figure class="mood-card" data-image-role="light"><div class="image-frame" data-fallback="Imagegen: concrete stairwell, warm rectangle light, dark denim sleeve edge"><img src="images/mood-08.png" alt="콘크리트 계단참의 따뜻한 사각 조명과 데님 소매" /></div><figcaption><span class="role-tag">light</span><p>콘크리트 계단참, 차가운 회색 위 따뜻한 사각 조명.</p></figcaption></figure>
+          <figure class="mood-card" data-image-role="texture"><div class="image-frame" data-fallback="Imagegen: brass snap, zipper pull, cream bar-tack on indigo denim"><img src="images/mood-09.png" alt="인디고 데님 위 브라스 스냅과 바택 스티치" /></div><figcaption><span class="role-tag">texture</span><p>snap, zipper pull, bar-tack으로 잡는 dry industrial detail.</p></figcaption></figure>
+          <figure class="mood-card" data-image-role="garment-fragment"><div class="image-frame" data-fallback="Imagegen: dark denim collar and pocket over quilted liner, no full body"><img src="images/mood-10.png" alt="퀼팅 라이너 위 다크 데님 칼라와 포켓" /></div><figcaption><span class="role-tag">fragment</span><p>데님 shirt를 FW overshirt로 전환하는 collar와 liner edge.</p></figcaption></figure>
+          <figure class="mood-card" data-image-role="garment-fragment"><div class="image-frame" data-fallback="Imagegen: denim pant hem over black sneaker, khaki padded mini bag"><img src="images/mood-11.png" alt="블랙 스니커즈 위 데님 팬츠 헴과 카키 미니백" /></div><figcaption><span class="role-tag">fragment</span><p>팬츠 hem stacking, padded mini bag, 신발까지 이어지는 실루엣.</p></figcaption></figure>
+          <figure class="mood-card" data-image-role="gesture"><div class="image-frame" data-fallback="Imagegen: hand holding beanie and denim sleeve at night crosswalk, no face"><img src="images/mood-12.png" alt="밤 횡단보도에서 비니와 데님 소매를 쥔 손" /></div><figcaption><span class="role-tag">gesture</span><p>비니와 데님 소매를 쥔 손, 귀가 직전의 움직임.</p></figcaption></figure>
+        </div>
+      </section>
+
+      <section class="section" data-od-id="references">
+        <p class="kicker">Reference shelf</p>
+        <h2 class="h2" style="margin-bottom:28px;">Territory anchors for the 26FW conversion.</h2>
+        <div class="reference-shelf">
+          <article class="reference-card"><span class="meta">Source / 26SS</span><h3 class="ref-title">WACKYWILLY Denim Essential</h3><p>데님 셋업, 쇼츠, 볼캡, 백, 스니커즈의 쉬운 유니폼 구조를 FW 레이어로 승계.</p></article>
+          <article class="reference-card"><span class="meta">Korea / Night</span><h3 class="ref-title">동네 아케이드와 지하철 플랫폼</h3><p>화려한 도심보다 실제 고객 동선에 가까운 늦은 밤 이동 장소.</p></article>
+          <article class="reference-card"><span class="meta">Workwear</span><h3 class="ref-title">Dry Industrial Craft</h3><p>복고 워크웨어가 아닌 stitching, snap, pocket, liner로 읽히는 실용 디테일.</p></article>
+          <article class="reference-card"><span class="meta">Material</span><h3 class="ref-title">Pigment Cotton + Denim</h3><p>여름 티셔츠의 그래픽성 대신 워시드 표면과 색 빠진 블랙으로 youth tone 확보.</p></article>
+          <article class="reference-card"><span class="meta">Styling</span><h3 class="ref-title">Layered Uniform</h3><p>셔츠 단품보다 후디, 플리스, 패딩 베스트와 쌓이는 반복 착장.</p></article>
+          <article class="reference-card"><span class="meta">Color</span><h3 class="ref-title">Cold Blue × Heater Orange</h3><p>SS의 라이트블루를 FW에서는 차가운 야간 블루와 작은 온기 포인트로 변환.</p></article>
+        </div>
+      </section>
+
+      <section class="section dials" data-od-id="tone-dials">
+        <p class="kicker">Tone dials</p>
+        <h2 class="h2" style="margin-bottom:28px;">Axes locked for 26FW design discussion.</h2>
+        <div class="dial-list">
+          <div class="dial" style="--dial-pos:30;"><div class="dial-axis"><span class="meta">muted</span><span class="meta">saturated</span></div><div class="dial-track"><div class="dial-marker"></div></div><p class="dial-note">컬러는 낮게, 테라코타와 히터빛만 작게 사용.</p></div>
+          <div class="dial" style="--dial-pos:58;"><div class="dial-axis"><span class="meta">structured</span><span class="meta">fluid</span></div><div class="dial-track"><div class="dial-marker"></div></div><p class="dial-note">셔츠/아우터는 shoulder 유지, 팬츠와 후디는 여유.</p></div>
+          <div class="dial" style="--dial-pos:38;"><div class="dial-axis"><span class="meta">quiet</span><span class="meta">loud</span></div><div class="dial-track"><div class="dial-marker"></div></div><p class="dial-note">그래픽보다 소재 대비, detail은 가까이 봐야 보이는 크기.</p></div>
+          <div class="dial" style="--dial-pos:74;"><div class="dial-axis"><span class="meta">retro</span><span class="meta">contemporary</span></div><div class="dial-track"><div class="dial-marker"></div></div><p class="dial-note">워크웨어 nostalgia 배제, 현재 Seoul DTC 착장 밀도.</p></div>
+          <div class="dial" style="--dial-pos:71;"><div class="dial-axis"><span class="meta">romantic</span><span class="meta">industrial</span></div><div class="dial-track"><div class="dial-marker"></div></div><p class="dial-note">라운드 감성보다 hardware, pocket, liner, stitch 중심.</p></div>
+        </div>
+      </section>
+
+      <section class="section seed-block" data-od-id="color-seeds">
+        <div>
+          <p class="kicker">Color seeds</p>
+          <h2 class="h2">Exploratory colors, not locked palette.</h2>
+          <p class="lead" style="margin-top:14px;">26SS denim blue를 FW 야간 조명과 방한 소재 위로 낮춰보는 후보군.</p>
+        </div>
+        <div class="seed-chips">
+          <div class="seed-chip"><div class="swatch" style="background:#17283b;"></div><div class="seed-meta"><span class="seed-name">Night Indigo</span><span class="meta">rigid denim / overshirt</span></div></div>
+          <div class="seed-chip"><div class="swatch" style="background:#242527;"></div><div class="seed-meta"><span class="seed-name">Pigment Black</span><span class="meta">hoodie / fleece</span></div></div>
+          <div class="seed-chip"><div class="swatch" style="background:#6b6a51;"></div><div class="seed-meta"><span class="seed-name">Transit Khaki</span><span class="meta">bag / cap / nylon</span></div></div>
+          <div class="seed-chip"><div class="swatch" style="background:#d7ccbc;"></div><div class="seed-meta"><span class="seed-name">Cream Stitch</span><span class="meta">topstitch / label ground</span></div></div>
+          <div class="seed-chip"><div class="swatch" style="background:#9b5837;"></div><div class="seed-meta"><span class="seed-name">Heater Terracotta</span><span class="meta">sock / inner tag / tiny accent</span></div></div>
+          <div class="seed-chip"><div class="swatch" style="background:#69717a;"></div><div class="seed-meta"><span class="seed-name">Concrete Blue Grey</span><span class="meta">liner / knit / wall tone</span></div></div>
+        </div>
+      </section>
+
+      <section class="section seed-block" data-od-id="material-seeds">
+        <div><p class="kicker">Material seeds</p><h2 class="h2">Fabric intentions, vendor not yet locked.</h2></div>
+        <ul class="seed-list">
+          <li><span class="seed-name">Rigid denim with body</span><span class="seed-detail">26SS denim base 유지, FW overshirt와 와이드 팬츠에서 형태감 확보.</span></li>
+          <li><span class="seed-name">Pigment fleece</span><span class="seed-detail">그래픽 티 대체용. 색 빠진 표면, 너무 부드럽지 않은 dry hand.</span></li>
+          <li><span class="seed-name">Matte padded nylon</span><span class="seed-detail">베스트, 미니백, detachable liner 후보. 광택 낮고 생활 방수감.</span></li>
+          <li><span class="seed-name">Thermal waffle cotton</span><span class="seed-detail">이너/슬리브 레이어용. 속옷감보다 street layer로 보이는 두께.</span></li>
+          <li><span class="seed-name">Brushed twill</span><span class="seed-detail">셔츠와 팬츠 사이 bridge 소재. 치노보다 데님과 잘 붙는 표면감.</span></li>
+          <li><span class="seed-name">Ripstop accessory shell</span><span class="seed-detail">캡, 백, 포켓 파츠 후보. 카고 감성은 작게 제한.</span></li>
+        </ul>
+      </section>
+
+      <section class="section seed-block" data-od-id="silhouette-seeds">
+        <div><p class="kicker">Silhouette seeds</p><h2 class="h2">Directions pinned to category.</h2></div>
+        <ul class="seed-list">
+          <li><span class="seed-name">Shirts</span><span class="seed-detail">26SS 데님 셔츠를 FW overshirt로 확장, shoulder는 남기고 hem은 박시.</span></li>
+          <li><span class="seed-name">Outer</span><span class="seed-detail">짧은 패딩 베스트 / 퀼티드 liner. full padding jacket 전 과잉 방지.</span></li>
+          <li><span class="seed-name">Pants</span><span class="seed-detail">와이드와 벌룬 유지, hem stacking이 가능한 길이와 밑단 무게.</span></li>
+          <li><span class="seed-name">Skirts</span><span class="seed-detail">데님 미니보다 knee-length utility skirt 후보, leggings/thermal과 bridge.</span></li>
+          <li><span class="seed-name">Knit / Sweat</span><span class="seed-detail">후디는 과대 볼륨보다 jacket 안에 들어가는 compact loose.</span></li>
+          <li><span class="seed-name">Accessories</span><span class="seed-detail">cap, beanie, padded mini bag, crossbody strap을 styling connector로 사용.</span></li>
+        </ul>
+      </section>
+
+      <section class="section seed-block" data-od-id="detail-seeds">
+        <div><p class="kicker">Detail seeds</p><h2 class="h2">Detail moves under review.</h2></div>
+        <ul class="seed-list">
+          <li><span class="seed-name">Stitch</span><span class="seed-detail">cream contrast topstitch 유지, FW에서는 바택과 pocket edge 중심.</span></li>
+          <li><span class="seed-name">Pocket</span><span class="seed-detail">하나의 visible utility pocket. 카고 포켓 다발 금지.</span></li>
+          <li><span class="seed-name">Hardware</span><span class="seed-detail">matte brass snap / dark nickel zipper pull 후보, shiny silver 배제.</span></li>
+          <li><span class="seed-name">Liner</span><span class="seed-detail">퀼팅 edge가 collar/hem에서 살짝 보이는 구조. 과한 reversible gimmick 금지.</span></li>
+          <li><span class="seed-name">Graphic</span><span class="seed-detail">전면 큰 로고보다 작은 woven tab, inner print, one-point embroidery.</span></li>
+          <li><span class="seed-name">Strap</span><span class="seed-detail">백/아우터의 webbing strap으로 손동작과 착장 리듬 생성.</span></li>
+        </ul>
+      </section>
+
+      <section class="section anti-territory" data-od-id="anti-territory">
+        <div><p class="kicker">Anti-territory</p><h2 class="h2">What 26FW is deliberately not.</h2></div>
+        <ul class="anti-list">
+          <li>고프코어 costume, 과도한 버클과 스트랩 장식</li>
+          <li>Y2K nostalgia, 로우라이즈/베다즐/나비 그래픽</li>
+          <li>전면 대형 로고 merch tee 중심 구성</li>
+          <li>베이지 quiet luxury, 캐시미어식 무표정 고급감</li>
+          <li>여름 데님 룩북의 밝은 daylight를 그대로 반복</li>
+          <li>카탈로그식 전신 포즈 12컷으로 구성된 moodboard</li>
+        </ul>
+      </section>
+
+      <section class="section open-questions" data-od-id="next-decisions">
+        <div><p class="kicker">Open / next</p><h2 class="h2">Next decisions for 26FW lock.</h2></div>
+        <ol class="next-list">
+          <li><span class="next-when">2026-05-29</span><span class="next-what">26SS denim best-seller fit별 판매/반품 데이터 확인, carryover silhouette 범위 확정.</span></li>
+          <li><span class="next-when">2026-06-12</span><span class="next-what">Night Indigo, Pigment Black, Transit Khaki 컬러 lab dip 1차 비교.</span></li>
+          <li><span class="next-when">2026-06-26</span><span class="next-what">denim overshirt, padded vest, wide denim pant, mini bag 1차 sample brief 작성.</span></li>
+          <li><span class="next-when">2026-07-10</span><span class="next-what">S1/S2 drop 구분: light outer와 sweat/denim bridge SKU 배치 검토.</span></li>
+        </ol>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

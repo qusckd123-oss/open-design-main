@@ -1,0 +1,15 @@
+sku	status	first_inbound	current_sales	current_inventory	reorder_qty	receipt_date	stockout_note
+WA2602ST24CM	generated	1010	355	655	500	2026-07-14	2026-08-09~2026-08-16
+WA2602ST31WH	generated	1759	458	1301	800	2026-07-19	2026-08-16~2026-08-23
+WA2602ST31CH	generated	1760	623	1137	1000	2026-07-14	2026-08-02~2026-08-09
+WA2602ST31YE	generated	582	228	354	500	2026-07-19	2026-08-09~2026-08-16
+WA2602ST34WH	generated	1433	555	878	1100	2026-07-19	2026-08-02~2026-08-09
+WA2602ST34GN	generated	760	280	480	600	2026-07-19	2026-08-02~2026-08-09
+WA2602ST47BK	missing_source_detail							Not found in converted MD or detailed reorder sheets.
+WA2602ST47WH	missing_source_detail							Not found in converted MD or detailed reorder sheets.
+WA2602ST27EC	generated	659	264	395	500	2026-07-19	2026-08-09~2026-08-16
+WA2602ST32PI	generated	212	135	77	500	2026-07-08	2026-07-19~2026-07-26
+WA2602SO04BK	missing_source_detail							Found in TAG/product list only; no SO04 reorder detail sheet found.
+WA2602SO04GR	missing_source_detail							Found in TAG/product list only; no SO04 reorder detail sheet found.
+WA2602ST13WH	generated	1334	600	734	500	2026-07-12	2026-08-09~2026-08-16
+WA2602SO02BK	generated	2287	821	1466	800	2026-07-15	2026-08-16~2026-08-23

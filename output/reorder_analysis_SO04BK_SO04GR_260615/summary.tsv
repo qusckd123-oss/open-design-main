@@ -1,0 +1,3 @@
+sku	sheet	inbound	current_sales	current_inventory	reorder_qty	workbook_b16	active_review_date	review_note	stockout
+WA2602SO04BK	SO04 BK	969	840	129	1차 1000 (2026-06-30) / 2차 500 (2026-07-30)	2026-04-24	2026-06-09	B16 불일치: I4가 6/7 누적과 근접	7/5~7/12 사이 초도 재고 소진 예상
+WA2602SO04GR	SO04 GR	1129	930	199	1차 1000 (2026-06-30) / 2차 500 (2026-07-30)	2026-06-09	2026-06-09	B16 기준	7/12~7/19 사이 초도 재고 소진 예상

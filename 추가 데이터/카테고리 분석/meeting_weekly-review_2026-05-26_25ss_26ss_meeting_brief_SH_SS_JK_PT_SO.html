@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>25SS vs 26SS 주간회의 보고 브리프 · SH SS JK PT SO</title>
+  <style>
+    :root {
+      --ink:#17212b; --muted:#667381; --line:#dce3ea; --bg:#f5f7fa; --panel:#fff;
+      --old:#64748b; --new:#0f766e; --old2:#94a3b8; --new2:#2563eb; --pos:#0f766e; --neg:#dc2626;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font-family:"Pretendard","Noto Sans KR","Malgun Gothic",Arial,sans-serif; }
+    .page { max-width:1320px; margin:0 auto; padding:30px 22px 52px; }
+    header { display:flex; justify-content:space-between; align-items:flex-end; gap:18px; padding-bottom:18px; border-bottom:2px solid var(--ink); }
+    h1 { margin:0 0 8px; font-size:30px; letter-spacing:0; }
+    h2 { margin:0; font-size:20px; }
+    h3 { margin:0 0 10px; font-size:15px; }
+    p { margin:0; line-height:1.55; }
+    .sub,.note { color:var(--muted); font-size:13px; }
+    .tag { background:#fff; border:1px solid var(--line); border-radius:6px; padding:8px 12px; color:var(--muted); white-space:nowrap; }
+    .metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:20px 0; }
+    .metric,.panel,.cat-section { background:var(--panel); border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+    .metric { padding:16px; }
+    .metric .label { color:var(--muted); font-size:13px; }
+    .metric .value { font-size:25px; font-weight:800; margin:5px 0; }
+    .pos { color:var(--pos); } .neg { color:var(--neg); }
+    .lead-grid { display:grid; grid-template-columns:1.05fr .95fr; gap:14px; margin-bottom:16px; }
+    .panel { padding:16px; }
+    .talk-list { display:grid; gap:10px; }
+    .talk-list div { border-left:4px solid var(--new); padding:9px 10px; background:#f8fafc; border-radius:0 6px 6px 0; }
+    .table-wrap { overflow:auto; }
+    table { width:100%; border-collapse:collapse; background:#fff; font-size:12px; }
+    th,td { padding:9px 10px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap; vertical-align:top; }
+    th { background:#fbfcfe; color:var(--muted); position:sticky; top:0; z-index:1; }
+    td:first-child,th:first-child,td:last-child,th:last-child { text-align:left; }
+    td:first-child span { display:block; color:var(--muted); font-size:11px; margin-top:2px; }
+    .cat-section { margin-top:16px; }
+    .section-head { display:flex; justify-content:space-between; gap:16px; align-items:flex-end; padding:14px 16px; border-bottom:1px solid var(--line); background:#fbfcfe; }
+    .section-head p { color:var(--muted); font-size:13px; margin-top:4px; }
+    .score { font-size:22px; font-weight:900; white-space:nowrap; }
+    .cat-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; padding:14px; }
+    .compact { border-radius:6px; }
+    .bars { display:grid; gap:7px; margin-top:6px; }
+    .bar { height:22px; min-width:42px; color:#fff; border-radius:4px; display:flex; align-items:center; padding-left:8px; font-size:12px; white-space:nowrap; }
+    .old { background:var(--old); } .new { background:var(--new); } .old2 { background:var(--old2); } .new2 { background:var(--new2); }
+    .mini-table { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px; }
+    .mini-table div { border:1px solid var(--line); border-radius:6px; padding:9px; background:#fbfcfe; }
+    .mini-table span { display:block; color:var(--muted); font-size:12px; }
+    .mini-table strong { display:block; font-size:18px; margin-top:3px; }
+    .compare-products { display:grid; grid-template-columns:1fr 1fr; gap:14px; padding:0 14px 14px; }
+    .compare-note { color:var(--muted); font-size:12px; margin:-4px 0 8px; }
+    .products { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    .product-card { border:1px solid var(--line); border-radius:8px; overflow:hidden; background:#fff; }
+    .product-img { background:#eef2f6; }
+    .product-img img,.no-img { width:100%; aspect-ratio:1/1.1; display:block; object-fit:cover; }
+    .no-img { display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:11px; text-align:center; }
+    .product-body { padding:9px; }
+    .pill { display:inline-block; font-size:11px; font-weight:800; color:#fff; background:var(--ink); border-radius:999px; padding:3px 7px; margin-bottom:6px; }
+    .product-body strong { display:block; font-size:13px; }
+    .product-body p { min-height:34px; color:var(--muted); font-size:12px; margin:3px 0 8px; }
+    dl { display:grid; grid-template-columns:auto 1fr; gap:2px 8px; margin:0; font-size:12px; }
+    dt { color:var(--muted); } dd { margin:0; text-align:right; font-weight:800; }
+    @media (max-width:980px) { .metrics,.lead-grid,.cat-grid,.compare-products { grid-template-columns:1fr; } .products { grid-template-columns:1fr 1fr; } header { flex-direction:column; align-items:flex-start; } }
+    @media (max-width:640px) { .page { padding:20px 12px; } .metrics,.products,.mini-table { grid-template-columns:1fr; } h1 { font-size:24px; } }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <h1>25SS 성공 상품 vs 26SS 부진 요인 브리프</h1>
+        <p class="sub">대상: 유니섹스 SH · SS · JK · PT · SO / 내일 주간회의 보고용 요약</p>
+      </div>
+      <div class="tag">이미지: 무신사 품번 검색 결과</div>
+    </header>
+
+    <section class="metrics">
+      <article class="metric"><div class="label">총 공급금액</div><div class="value">157.2억 -> 106.0억</div><p class="neg">-32.6%</p></article>
+      <article class="metric"><div class="label">총 누계매출</div><div class="value">37.1억 -> 21.3억</div><p class="neg">-42.7%</p></article>
+      <article class="metric"><div class="label">판매율 개선 1위</div><div class="value">JK +19.0p</div><p class="note">20.0% -> 39.0%</p></article>
+      <article class="metric"><div class="label">개선 필요 1위</div><div class="value">PT -6.3p</div><p class="note">대상 복종 중 유일한 판율 하락</p></article>
+    </section>
+
+    <section class="lead-grid">
+      <div class="panel">
+        <h2>회의용 한 줄 결론</h2>
+        <div class="talk-list" style="margin-top:12px">
+          <div><strong>25SS는 SO/SS/PT에 히어로 상품이 있었다.</strong><br>대표적으로 WA2502SO02 와키윌리 카고 스웻 숏팬츠이 주간 310pcs, 판율 90.7%를 기록했습니다.</div>
+          <div><strong>26SS는 공급을 줄여 SH/SS/JK/SO 판율은 개선됐지만, 매출 볼륨은 아직 회복 전입니다.</strong><br>특히 JK는 판율이 크게 좋아졌지만 할인율 상승과 공급 축소가 동시에 발생했습니다.</div>
+          <div><strong>PT는 상품 적중도가 가장 약합니다.</strong><br>공급을 줄였는데도 누계매출과 판매율이 같이 하락해, 25SS의 데님 셋업/스웻 팬츠 같은 명확한 히어로가 필요합니다.</div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>보고 포인트</h2>
+        <div class="talk-list" style="margin-top:12px">
+          <div><strong>잘 된 이유:</strong> 25SS는 카고 스웻 쇼츠, 데님 반팔셔츠, 데님/스웻 팬츠처럼 소재와 착용 목적이 분명한 상품이 판매를 견인했습니다.</div>
+          <div><strong>개선된 이유:</strong> 26SS는 공급량을 줄이고 검증된 체크/데님/경량 아우터 속성으로 좁히면서 일부 복종의 판율이 개선됐습니다.</div>
+          <div><strong>부진한 이유:</strong> 26SS는 히어로 상품의 절대 판매량이 25SS보다 낮고, PT/SO는 상위 품번이 분산되어 매출을 끌어올리는 힘이 약합니다.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>복종별 공급금액 · 매출 · 판매율 변화</h2>
+      <div class="table-wrap" style="margin-top:12px">
+        <table>
+          <thead>
+            <tr>
+              <th>복종</th><th>25 공급금액</th><th>26 공급금액</th><th>증감</th>
+              <th>25 누계매출</th><th>26 누계매출</th><th>증감</th>
+              <th>25 판율</th><th>26 판율</th><th>개선</th>
+              <th>25 할인</th><th>26 할인</th><th>변화</th><th>회의 액션</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>SH</strong><span>긴팔셔츠</span></td>
+              <td>7.8억</td>
+              <td>6.1억</td>
+              <td class="neg">-21.5%</td>
+              <td>1.8억</td>
+              <td>1.8억</td>
+              <td class="pos">+2.8%</td>
+              <td>23.7%</td>
+              <td>40.7%</td>
+              <td class="pos">+17.0p</td>
+              <td>21.0%</td>
+              <td>18.7%</td>
+              <td class="pos">-2.3p</td>
+              <td>체크 셔츠는 유지하되 컬러/패턴 수를 검증된 쪽으로 좁히고, 데님 셔츠는 물량을 보수적으로 가져가는 편이 맞습니다.</td>
+            </tr>
+            
+            <tr>
+              <td><strong>SS</strong><span>반팔셔츠</span></td>
+              <td>18.6억</td>
+              <td>13.7억</td>
+              <td class="neg">-26.3%</td>
+              <td>3.1억</td>
+              <td>2.6억</td>
+              <td class="neg">-15.6%</td>
+              <td>14.4%</td>
+              <td>24.9%</td>
+              <td class="pos">+10.5p</td>
+              <td>9.8%</td>
+              <td>10.1%</td>
+              <td class="neg">+0.3p</td>
+              <td>데님 반팔셔츠는 메인으로 키우고, 체크 반팔은 25SS처럼 명확한 색상/패턴 승부 상품만 남기는 것이 좋습니다.</td>
+            </tr>
+            
+            <tr>
+              <td><strong>JK</strong><span>자켓</span></td>
+              <td>46.1억</td>
+              <td>20.7억</td>
+              <td class="neg">-55.1%</td>
+              <td>10.1억</td>
+              <td>5.9억</td>
+              <td class="neg">-41.6%</td>
+              <td>20.0%</td>
+              <td>39.0%</td>
+              <td class="pos">+19.0p</td>
+              <td>19.6%</td>
+              <td>30.7%</td>
+              <td class="neg">+11.0p</td>
+              <td>경량/패커블 바람막이는 유지하고, 할인 의존 품번은 초도 물량과 정상가 경쟁력을 다시 봐야 합니다.</td>
+            </tr>
+            
+            <tr>
+              <td><strong>PT</strong><span>팬츠</span></td>
+              <td>44.4억</td>
+              <td>32.1억</td>
+              <td class="neg">-27.6%</td>
+              <td>14.1억</td>
+              <td>5.2억</td>
+              <td class="neg">-63.5%</td>
+              <td>26.0%</td>
+              <td>19.7%</td>
+              <td class="neg">-6.3p</td>
+              <td>14.1%</td>
+              <td>12.9%</td>
+              <td class="pos">-1.1p</td>
+              <td>팬츠는 25SS의 데님 셋업/스웻 와이드처럼 검증된 핏과 착용 목적을 다시 중심에 놓고, 카고/그래픽 확장은 축소 검증이 필요합니다.</td>
+            </tr>
+            
+            <tr>
+              <td><strong>SO</strong><span>쇼츠</span></td>
+              <td>40.4억</td>
+              <td>33.3억</td>
+              <td class="neg">-17.4%</td>
+              <td>8.1억</td>
+              <td>5.8억</td>
+              <td class="neg">-28.0%</td>
+              <td>17.3%</td>
+              <td>22.1%</td>
+              <td class="pos">+4.7p</td>
+              <td>11.9%</td>
+              <td>11.3%</td>
+              <td class="pos">-0.6p</td>
+              <td>스웻 카고 쇼츠를 핵심으로 다시 세우고, 베이직 스웻 쇼츠는 컬러/물량을 줄여 히어로 품번에 집중해야 합니다.</td>
+            </tr>
+            </tbody>
+        </table>
+      </div>
+    </section>
+
+    
+            <section class="cat-section">
+              <div class="section-head">
+                <div>
+                  <h2>SH · 긴팔셔츠</h2>
+                  <p>공급액 7.8억 -> 6.1억 (-21.5%), 입고수량 8,800 -> 7,400pcs (-15.9%)</p>
+                </div>
+                <div class="score pos">판율 +17.0p</div>
+              </div>
+              <div class="cat-grid">
+                <div class="panel compact">
+                  <h3>숫자로 보는 변화</h3>
+                  
+          <div class="bars">
+            <div class="bar old" style="width:17.0%"><span>25 공급 7.8억</span></div>
+            <div class="bar new" style="width:13.3%"><span>26 공급 6.1억</span></div>
+            <div class="bar old2" style="width:12.5%"><span>25 누계매출 1.8억</span></div>
+            <div class="bar new2" style="width:12.9%"><span>26 누계매출 1.8억</span></div>
+          </div>
+        
+                  <div class="mini-table">
+                    <div><span>누계매출</span><strong class="pos">+2.8%</strong></div>
+                    <div><span>주간매출</span><strong class="neg">-58.6%</strong></div>
+                    <div><span>할인율</span><strong class="pos">-2.3p</strong></div>
+                  </div>
+                </div>
+                <div class="panel compact">
+                  <h3>해석</h3>
+                  <p><strong>25SS 성공:</strong> 25SS는 체크 셔츠가 확실한 히어로였습니다. 체크 셔츠 2개 품번이 주간 상위였고 판율도 87~95%까지 올라왔습니다.</p>
+                  <p><strong>26SS 개선:</strong> 26SS도 체크 계열을 유지하면서 공급을 줄였고, 할인율도 낮아져 판율과 누계매출은 개선됐습니다.</p>
+                  <p><strong>26SS 부진:</strong> 다만 주간 판매량은 25SS보다 낮습니다. 체크 외 데님/옥스포드 확장 품번은 반응이 약해 상위 매출 집중도가 떨어졌습니다.</p>
+                </div>
+              </div>
+              <div class="compare-products">
+                <div>
+                  <h3>25SS 잘 팔린 상품</h3>
+                  <div class="products">
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/4825496" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20250224/4825496/4825496_17413298986078_500.jpg" alt="WA2501SH13"></a></div>
+        <div class="product-body">
+          <div class="pill">25SS</div>
+          <strong>WA2501SH13</strong>
+          <p>와키윌리 체크 셔츠</p>
+          <dl>
+            <dt>입고</dt><dd>1,206pcs</dd>
+            <dt>입고금액</dt><dd>95백만</dd>
+            
+            <dt>주간</dt><dd>77pcs</dd>
+            <dt>누계</dt><dd>1,142pcs</dd>
+            <dt>판율</dt><dd>94.7%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/4758006" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20250204/4758006/4758006_17617883226458_500.jpg" alt="WA2501SH12"></a></div>
+        <div class="product-body">
+          <div class="pill">25SS</div>
+          <strong>WA2501SH12</strong>
+          <p>와키윌리 시어서커 체크 셔츠</p>
+          <dl>
+            <dt>입고</dt><dd>1,050pcs</dd>
+            <dt>입고금액</dt><dd>93백만</dd>
+            
+            <dt>주간</dt><dd>43pcs</dd>
+            <dt>누계</dt><dd>923pcs</dd>
+            <dt>판율</dt><dd>87.9%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/4825499" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20250224/4825499/4825499_17412539207844_500.jpg" alt="WA2501SH01"></a></div>
+        <div class="product-body">
+          <div class="pill">25SS</div>
+          <strong>WA2501SH01</strong>
+          <p>와키윌리 옥스포드 긴팔셔츠(연간)</p>
+          <dl>
+            <dt>입고</dt><dd>2,800pcs</dd>
+            <dt>입고금액</dt><dd>2.2억</dd>
+            
+            <dt>주간</dt><dd>33pcs</dd>
+            <dt>누계</dt><dd>1,111pcs</dd>
+            <dt>판율</dt><dd>39.7%</dd>
+          </dl>
+        </div>
+      </article>
+    </div>
+                </div>
+                <div>
+                  <h3>26SS 현재 상위 / 부진 체크</h3>
+                  <p class="compare-note">입고금액 증감은 같은 복종의 25SS 동일 순위 상품 대비입니다.</p>
+                  <div class="products">
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/6008265" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20260210/6008265/6008265_17709544931946_500.jpg" alt="WA2601SH12"></a></div>
+        <div class="product-body">
+          <div class="pill">26SS</div>
+          <strong>WA2601SH12</strong>
+          <p>베이직 체크 긴팔셔츠</p>
+          <dl>
+            <dt>입고</dt><dd>1,808pcs</dd>
+            <dt>입고금액</dt><dd>1.4억</dd>
+            <dt>입고금액 증감</dt><dd class="pos">+49.9%</dd>
+            <dt>주간</dt><dd>47pcs</dd>
+            <dt>누계</dt><dd>1,136pcs</dd>
+            <dt>판율</dt><dd>62.8%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/6031808" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20260219/6031808/6031808_17715737893536_500.jpg" alt="WA2601SH11"></a></div>
+        <div class="product-body">
+          <div class="pill">26SS</div>
+          <strong>WA2601SH11</strong>
+          <p>시어서커 체크 긴팔셔츠</p>
+          <dl>
+            <dt>입고</dt><dd>1,510pcs</dd>
+            <dt>입고금액</dt><dd>1.2억</dd>
+            <dt>입고금액 증감</dt><dd class="pos">+27.7%</dd>
+            <dt>주간</dt><dd>23pcs</dd>
+            <dt>누계</dt><dd>573pcs</dd>
+            <dt>판율</dt><dd>37.9%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/6031814" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20260219/6031814/6031814_17715751061778_500.jpg" alt="WA2601SH13"></a></div>
+        <div class="product-body">
+          <div class="pill">26SS</div>
+          <strong>WA2601SH13</strong>
+          <p>그래픽 체크 긴팔셔츠</p>
+          <dl>
+            <dt>입고</dt><dd>920pcs</dd>
+            <dt>입고금액</dt><dd>91백만</dd>
+            <dt>입고금액 증감</dt><dd class="neg">-58.8%</dd>
+            <dt>주간</dt><dd>12pcs</dd>
+            <dt>누계</dt><dd>475pcs</dd>
+            <dt>판율</dt><dd>51.6%</dd>
+          </dl>
+        </div>
+      </article>
+    </div>
+                </div>
+              </div>
+            </section>
+            
+            <section class="cat-section">
+              <div class="section-head">
+                <div>
+                  <h2>SS · 반팔셔츠</h2>
+                  <p>공급액 18.6억 -> 13.7억 (-26.3%), 입고수량 29,900 -> 16,600pcs (-44.5%)</p>
+                </div>
+                <div class="score pos">판율 +10.5p</div>
+              </div>
+              <div class="cat-grid">
+                <div class="panel compact">
+                  <h3>숫자로 보는 변화</h3>
+                  
+          <div class="bars">
+            <div class="bar old" style="width:40.4%"><span>25 공급 18.6억</span></div>
+            <div class="bar new" style="width:29.8%"><span>26 공급 13.7억</span></div>
+            <div class="bar old2" style="width:22.0%"><span>25 누계매출 3.1억</span></div>
+            <div class="bar new2" style="width:18.5%"><span>26 누계매출 2.6억</span></div>
+          </div>
+        
+                  <div class="mini-table">
+                    <div><span>누계매출</span><strong class="neg">-15.6%</strong></div>
+                    <div><span>주간매출</span><strong class="neg">-52.0%</strong></div>
+                    <div><span>할인율</span><strong class="neg">+0.3p</strong></div>
+                  </div>
+                </div>
+                <div class="panel compact">
+                  <h3>해석</h3>
+                  <p><strong>25SS 성공:</strong> 25SS는 이지 데님 반팔셔츠와 체크 반팔셔츠가 동시에 팔렸습니다. 특히 체크 반팔셔츠는 판율 85.8%로 효율이 좋았습니다.</p>
+                  <p><strong>26SS 개선:</strong> 26SS 이지 데님 반팔셔츠는 주간 181pcs로 단품 반응은 25SS보다 강합니다. 공급을 크게 줄여 전체 판율도 개선됐습니다.</p>
+                  <p><strong>26SS 부진:</strong> 전체 매출은 줄었습니다. 데님 1개 품번 의존도가 높고, 체크/샴브레이 후속 품번의 판율이 아직 낮습니다.</p>
+                </div>
+              </div>
+              <div class="compare-products">
+                <div>
+                  <h3>25SS 잘 팔린 상품</h3>
+                  <div class="products">
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/4879677" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20250311/4879677/4879677_17617882071856_500.jpg" alt="WA2502SS11"></a></div>
+        <div class="product-body">
+          <div class="pill">25SS</div>
+          <strong>WA2502SS11</strong>
+          <p>와키윌리 이지 데님 반팔셔츠(SET-UP)</p>
+          <dl>
+            <dt>입고</dt><dd>3,966pcs</dd>
+            <dt>입고금액</dt><dd>3.5억</dd>
+            
+            <dt>주간</dt><dd>144pcs</dd>
+            <dt>누계</dt><dd>2,522pcs</dd>
+            <dt>판율</dt><dd>63.6%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/4980348" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20250402/4980348/4980348_17459794184828_500.jpg" alt="WA2502SS14"></a></div>
+        <div class="product-body">
+          <div class="pill">25SS</div>
+          <strong>WA2502SS14</strong>
+          <p>와키윌리 체크 반팔 셔츠</p>
+          <dl>
+            <dt>입고</dt><dd>1,900pcs</dd>
+            <dt>입고금액</dt><dd>1.5억</dd>
+            
+            <dt>주간</dt><dd>131pcs</dd>
+            <dt>누계</dt><dd>1,630pcs</dd>
+            <dt>판율</dt><dd>85.8%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/4937072" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20250324/4937072/4937072_17437337133776_500.jpg" alt="WA2502SS01"></a></div>
+        <div class="product-body">
+          <div class="pill">25SS</div>
+          <strong>WA2502SS01</strong>
+          <p>와키윌리 옥스포드 반팔셔츠</p>
+          <dl>
+            <dt>입고</dt><dd>10,325pcs</dd>
+            <dt>입고금액</dt><dd>7.1억</dd>
+            
+            <dt>주간</dt><dd>90pcs</dd>
+            <dt>누계</dt><dd>3,168pcs</dd>
+            <dt>판율</dt><dd>30.7%</dd>
+          </dl>
+        </div>
+      </article>
+    </div>
+                </div>
+                <div>
+                  <h3>26SS 현재 상위 / 부진 체크</h3>
+                  <p class="compare-note">입고금액 증감은 같은 복종의 25SS 동일 순위 상품 대비입니다.</p>
+                  <div class="products">
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/6008263" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20260210/6008263/6008263_17773403991504_500.jpg" alt="WA2602SS31"></a></div>
+        <div class="product-body">
+          <div class="pill">26SS</div>
+          <strong>WA2602SS31</strong>
+          <p>이지 데님 반팔셔츠</p>
+          <dl>
+            <dt>입고</dt><dd>6,113pcs</dd>
+            <dt>입고금액</dt><dd>5.4억</dd>
+            <dt>입고금액 증감</dt><dd class="pos">+54.1%</dd>
+            <dt>주간</dt><dd>181pcs</dd>
+            <dt>누계</dt><dd>2,104pcs</dd>
+            <dt>판율</dt><dd>34.4%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/6031797" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20260219/6031797/6031797_17715751297024_500.jpg" alt="WA2602SS11"></a></div>
+        <div class="product-body">
+          <div class="pill">26SS</div>
+          <strong>WA2602SS11</strong>
+          <p>샴브레이 반팔셔츠</p>
+          <dl>
+            <dt>입고</dt><dd>1,802pcs</dd>
+            <dt>입고금액</dt><dd>1.2억</dd>
+            <dt>입고금액 증감</dt><dd class="neg">-17.2%</dd>
+            <dt>주간</dt><dd>67pcs</dd>
+            <dt>누계</dt><dd>571pcs</dd>
+            <dt>판율</dt><dd>31.7%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/6140620" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20260316/6140620/6140620_17739750721558_500.jpg" alt="WA2602SS13"></a></div>
+        <div class="product-body">
+          <div class="pill">26SS</div>
+          <strong>WA2602SS13</strong>
+          <p>깅엄체크 반팔셔츠</p>
+          <dl>
+            <dt>입고</dt><dd>2,050pcs</dd>
+            <dt>입고금액</dt><dd>1.6억</dd>
+            <dt>입고금액 증감</dt><dd class="neg">-77.3%</dd>
+            <dt>주간</dt><dd>36pcs</dd>
+            <dt>누계</dt><dd>372pcs</dd>
+            <dt>판율</dt><dd>18.1%</dd>
+          </dl>
+        </div>
+      </article>
+    </div>
+                </div>
+              </div>
+            </section>
+            
+            <section class="cat-section">
+              <div class="section-head">
+                <div>
+                  <h2>JK · 자켓</h2>
+                  <p>공급액 46.1억 -> 20.7억 (-55.1%), 입고수량 40,800 -> 15,300pcs (-62.5%)</p>
+                </div>
+                <div class="score pos">판율 +19.0p</div>
+              </div>
+              <div class="cat-grid">
+                <div class="panel compact">
+                  <h3>숫자로 보는 변화</h3>
+                  
+          <div class="bars">
+            <div class="bar old" style="width:100.0%"><span>25 공급 46.1억</span></div>
+            <div class="bar new" style="width:44.9%"><span>26 공급 20.7억</span></div>
+            <div class="bar old2" style="width:71.3%"><span>25 누계매출 10.1억</span></div>
+            <div class="bar new2" style="width:41.7%"><span>26 누계매출 5.9억</span></div>
+          </div>
+        
+                  <div class="mini-table">
+                    <div><span>누계매출</span><strong class="neg">-41.6%</strong></div>
+                    <div><span>주간매출</span><strong class="neg">-60.1%</strong></div>
+                    <div><span>할인율</span><strong class="neg">+11.0p</strong></div>
+                  </div>
+                </div>
+                <div class="panel compact">
+                  <h3>해석</h3>
+                  <p><strong>25SS 성공:</strong> 25SS는 반팔 아노락, 경량 후드 바람막이, 후드 베스트가 고르게 팔렸습니다. 기능성 여름 아우터 수요가 확인됐습니다.</p>
+                  <p><strong>26SS 개선:</strong> 26SS는 파우치 경량 후드 바람막이가 판율 67.6%로 강했고, 전체 판율 개선폭도 가장 큽니다.</p>
+                  <p><strong>26SS 부진:</strong> 매출은 크게 줄었고 할인율은 11.0p 상승했습니다. 공급을 60% 이상 줄여 효율은 좋아졌지만 매출 볼륨은 회복하지 못했습니다.</p>
+                </div>
+              </div>
+              <div class="compare-products">
+                <div>
+                  <h3>25SS 잘 팔린 상품</h3>
+                  <div class="products">
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/4841283" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20250227/4841283/4841283_17430656759786_500.jpg" alt="WA2502JK14"></a></div>
+        <div class="product-body">
+          <div class="pill">25SS</div>
+          <strong>WA2502JK14</strong>
+          <p>하프 슬리브 아노락(SET)</p>
+          <dl>
+            <dt>입고</dt><dd>5,085pcs</dd>
+            <dt>입고금액</dt><dd>6.1억</dd>
+            
+            <dt>주간</dt><dd>86pcs</dd>
+            <dt>누계</dt><dd>1,019pcs</dd>
+            <dt>판율</dt><dd>20.0%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/4785557" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20250213/4785557/4785557_17400520404914_500.jpg" alt="WA2502JK11"></a></div>
+        <div class="product-body">
+          <div class="pill">25SS</div>
+          <strong>WA2502JK11</strong>
+          <p>경량 후드 바람막이</p>
+          <dl>
+            <dt>입고</dt><dd>4,544pcs</dd>
+            <dt>입고금액</dt><dd>6.8억</dd>
+            
+            <dt>주간</dt><dd>57pcs</dd>
+            <dt>누계</dt><dd>1,575pcs</dd>
+            <dt>판율</dt><dd>34.7%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/4785562" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20250213/4785562/4785562_17400519922304_500.jpg" alt="WA2501JK21"></a></div>
+        <div class="product-body">
+          <div class="pill">25SS</div>
+          <strong>WA2501JK21</strong>
+          <p>화섬 슬리브리스 후드점퍼</p>
+          <dl>
+            <dt>입고</dt><dd>2,012pcs</dd>
+            <dt>입고금액</dt><dd>2.4억</dd>
+            
+            <dt>주간</dt><dd>37pcs</dd>
+            <dt>누계</dt><dd>854pcs</dd>
+            <dt>판율</dt><dd>42.4%</dd>
+          </dl>
+        </div>
+      </article>
+    </div>
+                </div>
+                <div>
+                  <h3>26SS 현재 상위 / 부진 체크</h3>
+                  <p class="compare-note">입고금액 증감은 같은 복종의 25SS 동일 순위 상품 대비입니다.</p>
+                  <div class="products">
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/5915250" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20260120/5915250/5915250_17732805856115_500.jpg" alt="WA2601JK12"></a></div>
+        <div class="product-body">
+          <div class="pill">26SS</div>
+          <strong>WA2601JK12</strong>
+          <p>파우치 경량 후드 바람막이</p>
+          <dl>
+            <dt>입고</dt><dd>3,078pcs</dd>
+            <dt>입고금액</dt><dd>3.7억</dd>
+            <dt>입고금액 증감</dt><dd class="neg">-39.5%</dd>
+            <dt>주간</dt><dd>119pcs</dd>
+            <dt>누계</dt><dd>2,082pcs</dd>
+            <dt>판율</dt><dd>67.6%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/5893618" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20260114/5893618/5893618_17685299009043_500.jpg" alt="WA2601JK01"></a></div>
+        <div class="product-body">
+          <div class="pill">26SS</div>
+          <strong>WA2601JK01</strong>
+          <p>베이직 후드 점퍼(set)</p>
+          <dl>
+            <dt>입고</dt><dd>3,797pcs</dd>
+            <dt>입고금액</dt><dd>5.3억</dd>
+            <dt>입고금액 증감</dt><dd class="neg">-22.0%</dd>
+            <dt>주간</dt><dd>74pcs</dd>
+            <dt>누계</dt><dd>1,455pcs</dd>
+            <dt>판율</dt><dd>38.3%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/6108000" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20260310/6108000/6108000_17733794276012_500.jpg" alt="WA2602JK11"></a></div>
+        <div class="product-body">
+          <div class="pill">26SS</div>
+          <strong>WA2602JK11</strong>
+          <p>반팔 아노락 점퍼</p>
+          <dl>
+            <dt>입고</dt><dd>3,162pcs</dd>
+            <dt>입고금액</dt><dd>3.1억</dd>
+            <dt>입고금액 증감</dt><dd class="pos">+30.7%</dd>
+            <dt>주간</dt><dd>51pcs</dd>
+            <dt>누계</dt><dd>843pcs</dd>
+            <dt>판율</dt><dd>26.7%</dd>
+          </dl>
+        </div>
+      </article>
+    </div>
+                </div>
+              </div>
+            </section>
+            
+            <section class="cat-section">
+              <div class="section-head">
+                <div>
+                  <h2>PT · 팬츠</h2>
+                  <p>공급액 44.4억 -> 32.1억 (-27.6%), 입고수량 70,600 -> 36,700pcs (-48.0%)</p>
+                </div>
+                <div class="score neg">판율 -6.3p</div>
+              </div>
+              <div class="cat-grid">
+                <div class="panel compact">
+                  <h3>숫자로 보는 변화</h3>
+                  
+          <div class="bars">
+            <div class="bar old" style="width:96.4%"><span>25 공급 44.4억</span></div>
+            <div class="bar new" style="width:69.8%"><span>26 공급 32.1억</span></div>
+            <div class="bar old2" style="width:100.0%"><span>25 누계매출 14.1억</span></div>
+            <div class="bar new2" style="width:36.5%"><span>26 누계매출 5.2억</span></div>
+          </div>
+        
+                  <div class="mini-table">
+                    <div><span>누계매출</span><strong class="neg">-63.5%</strong></div>
+                    <div><span>주간매출</span><strong class="neg">-67.8%</strong></div>
+                    <div><span>할인율</span><strong class="pos">-1.1p</strong></div>
+                  </div>
+                </div>
+                <div class="panel compact">
+                  <h3>해석</h3>
+                  <p><strong>25SS 성공:</strong> 25SS는 이지 데님 팬츠와 스웻 세미와이드 팬츠가 모두 판율 65%대였습니다. 셋업성과 편한 실루엣이 먹혔습니다.</p>
+                  <p><strong>26SS 개선:</strong> 26SS에도 데님/카고 축은 남겼지만 주간 판매 상위 품번의 절대 수량이 낮습니다.</p>
+                  <p><strong>26SS 부진:</strong> 대상 복종 중 유일하게 판율이 악화됐습니다. 공급을 절반 가까이 줄였는데도 누계매출과 판율이 같이 하락해 상품 적중도가 낮았습니다.</p>
+                </div>
+              </div>
+              <div class="compare-products">
+                <div>
+                  <h3>25SS 잘 팔린 상품</h3>
+                  <div class="products">
+      <article class="product-card">
+        <div class="product-img"><div class="no-img">NO MUSINSA<br>IMAGE</div></div>
+        <div class="product-body">
+          <div class="pill">25SS</div>
+          <strong>WA2502PT11</strong>
+          <p>와키윌리 이지 데님 팬츠(SET-UP)</p>
+          <dl>
+            <dt>입고</dt><dd>4,049pcs</dd>
+            <dt>입고금액</dt><dd>4.0억</dd>
+            
+            <dt>주간</dt><dd>102pcs</dd>
+            <dt>누계</dt><dd>2,662pcs</dd>
+            <dt>판율</dt><dd>65.7%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/4680438" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20241224/4680438/4680438_17364095846545_500.jpg" alt="WA2501PT01"></a></div>
+        <div class="product-body">
+          <div class="pill">25SS</div>
+          <strong>WA2501PT01</strong>
+          <p>와키윌리 스웻 세미와이드 팬츠</p>
+          <dl>
+            <dt>입고</dt><dd>11,995pcs</dd>
+            <dt>입고금액</dt><dd>8.3억</dd>
+            
+            <dt>주간</dt><dd>63pcs</dd>
+            <dt>누계</dt><dd>7,880pcs</dd>
+            <dt>판율</dt><dd>65.7%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/4825479" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20250224/4825479/4825479_17412540012365_500.jpg" alt="WA2502PT13"></a></div>
+        <div class="product-body">
+          <div class="pill">25SS</div>
+          <strong>WA2502PT13</strong>
+          <p>와키윌리 워크웨어 팬츠(SET-UP)</p>
+          <dl>
+            <dt>입고</dt><dd>3,178pcs</dd>
+            <dt>입고금액</dt><dd>2.8억</dd>
+            
+            <dt>주간</dt><dd>38pcs</dd>
+            <dt>누계</dt><dd>1,057pcs</dd>
+            <dt>판율</dt><dd>33.3%</dd>
+          </dl>
+        </div>
+      </article>
+    </div>
+                </div>
+                <div>
+                  <h3>26SS 현재 상위 / 부진 체크</h3>
+                  <p class="compare-note">입고금액 증감은 같은 복종의 25SS 동일 순위 상품 대비입니다.</p>
+                  <div class="products">
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/6008261" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20260210/6008261/6008261_17715753365656_500.jpg" alt="WA2602PT31"></a></div>
+        <div class="product-body">
+          <div class="pill">26SS</div>
+          <strong>WA2602PT31</strong>
+          <p>스트레이트 이지 데님 팬츠</p>
+          <dl>
+            <dt>입고</dt><dd>3,060pcs</dd>
+            <dt>입고금액</dt><dd>3.0억</dd>
+            <dt>입고금액 증감</dt><dd class="neg">-24.4%</dd>
+            <dt>주간</dt><dd>53pcs</dd>
+            <dt>누계</dt><dd>951pcs</dd>
+            <dt>판율</dt><dd>31.1%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/6107944" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20260310/6107944/6107944_17733795796836_500.jpg" alt="WA2602PT11"></a></div>
+        <div class="product-body">
+          <div class="pill">26SS</div>
+          <strong>WA2602PT11</strong>
+          <p>나일론 스트레이트 카고 팬츠</p>
+          <dl>
+            <dt>입고</dt><dd>1,272pcs</dd>
+            <dt>입고금액</dt><dd>1.3억</dd>
+            <dt>입고금액 증감</dt><dd class="neg">-84.8%</dd>
+            <dt>주간</dt><dd>38pcs</dd>
+            <dt>누계</dt><dd>417pcs</dd>
+            <dt>판율</dt><dd>32.8%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/6008260" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20260210/6008260/6008260_17715753473755_500.jpg" alt="WA2602PT32"></a></div>
+        <div class="product-body">
+          <div class="pill">26SS</div>
+          <strong>WA2602PT32</strong>
+          <p>스트레이트 이지 데님 카고 팬츠</p>
+          <dl>
+            <dt>입고</dt><dd>1,195pcs</dd>
+            <dt>입고금액</dt><dd>1.2억</dd>
+            <dt>입고금액 증감</dt><dd class="neg">-58.2%</dd>
+            <dt>주간</dt><dd>16pcs</dd>
+            <dt>누계</dt><dd>438pcs</dd>
+            <dt>판율</dt><dd>36.7%</dd>
+          </dl>
+        </div>
+      </article>
+    </div>
+                </div>
+              </div>
+            </section>
+            
+            <section class="cat-section">
+              <div class="section-head">
+                <div>
+                  <h2>SO · 쇼츠</h2>
+                  <p>공급액 40.4억 -> 33.3억 (-17.4%), 입고수량 75,580 -> 50,530pcs (-33.1%)</p>
+                </div>
+                <div class="score pos">판율 +4.7p</div>
+              </div>
+              <div class="cat-grid">
+                <div class="panel compact">
+                  <h3>숫자로 보는 변화</h3>
+                  
+          <div class="bars">
+            <div class="bar old" style="width:87.6%"><span>25 공급 40.4억</span></div>
+            <div class="bar new" style="width:72.4%"><span>26 공급 33.3억</span></div>
+            <div class="bar old2" style="width:57.1%"><span>25 누계매출 8.1억</span></div>
+            <div class="bar new2" style="width:41.1%"><span>26 누계매출 5.8억</span></div>
+          </div>
+        
+                  <div class="mini-table">
+                    <div><span>누계매출</span><strong class="neg">-28.0%</strong></div>
+                    <div><span>주간매출</span><strong class="neg">-59.7%</strong></div>
+                    <div><span>할인율</span><strong class="pos">-0.6p</strong></div>
+                  </div>
+                </div>
+                <div class="panel compact">
+                  <h3>해석</h3>
+                  <p><strong>25SS 성공:</strong> 25SS는 카고 스웻 숏팬츠와 로고 스웻 숏팬츠가 압도적이었습니다. 카고 스웻 숏팬츠는 주간 310pcs, 판율 90.7%였습니다.</p>
+                  <p><strong>26SS 개선:</strong> 26SS도 스웻/데님 쇼츠 중심으로 판율은 소폭 개선됐습니다. 공급을 줄인 효과는 있었습니다.</p>
+                  <p><strong>26SS 부진:</strong> 하지만 25SS급 히어로 상품이 없습니다. 1위 품번 주간 판매가 310pcs에서 115pcs로 낮아져 매출을 끌어올릴 힘이 부족했습니다.</p>
+                </div>
+              </div>
+              <div class="compare-products">
+                <div>
+                  <h3>25SS 잘 팔린 상품</h3>
+                  <div class="products">
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/4811120" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20250220/4811120/4811120_17406497115796_500.jpg" alt="WA2502SO02"></a></div>
+        <div class="product-body">
+          <div class="pill">25SS</div>
+          <strong>WA2502SO02</strong>
+          <p>와키윌리 카고 스웻 숏팬츠</p>
+          <dl>
+            <dt>입고</dt><dd>6,998pcs</dd>
+            <dt>입고금액</dt><dd>4.8억</dd>
+            
+            <dt>주간</dt><dd>310pcs</dd>
+            <dt>누계</dt><dd>6,347pcs</dd>
+            <dt>판율</dt><dd>90.7%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/4785595" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20250213/4785595/4785595_17400517355115_500.jpg" alt="WA2502SO01"></a></div>
+        <div class="product-body">
+          <div class="pill">25SS</div>
+          <strong>WA2502SO01</strong>
+          <p>와키윌리 로고 스웻 숏팬츠</p>
+          <dl>
+            <dt>입고</dt><dd>14,189pcs</dd>
+            <dt>입고금액</dt><dd>8.4억</dd>
+            
+            <dt>주간</dt><dd>226pcs</dd>
+            <dt>누계</dt><dd>9,914pcs</dd>
+            <dt>판율</dt><dd>69.9%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><div class="no-img">NO MUSINSA<br>IMAGE</div></div>
+        <div class="product-body">
+          <div class="pill">25SS</div>
+          <strong>WA2502SO14</strong>
+          <p>와키윌리 버뮤다 데님 숏팬츠</p>
+          <dl>
+            <dt>입고</dt><dd>1,605pcs</dd>
+            <dt>입고금액</dt><dd>1.6억</dd>
+            
+            <dt>주간</dt><dd>140pcs</dd>
+            <dt>누계</dt><dd>1,518pcs</dd>
+            <dt>판율</dt><dd>94.6%</dd>
+          </dl>
+        </div>
+      </article>
+    </div>
+                </div>
+                <div>
+                  <h3>26SS 현재 상위 / 부진 체크</h3>
+                  <p class="compare-note">입고금액 증감은 같은 복종의 25SS 동일 순위 상품 대비입니다.</p>
+                  <div class="products">
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/6068514" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20260302/6068514/6068514_17727630804245_500.jpg" alt="WA2602SO02"></a></div>
+        <div class="product-body">
+          <div class="pill">26SS</div>
+          <strong>WA2602SO02</strong>
+          <p>카고 스웻 숏팬츠</p>
+          <dl>
+            <dt>입고</dt><dd>7,455pcs</dd>
+            <dt>입고금액</dt><dd>5.1억</dd>
+            <dt>입고금액 증감</dt><dd class="pos">+6.5%</dd>
+            <dt>주간</dt><dd>115pcs</dd>
+            <dt>누계</dt><dd>2,059pcs</dd>
+            <dt>판율</dt><dd>27.6%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/6107935" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20260310/6107935/6107935_17733795879765_500.jpg" alt="WA2602SO01"></a></div>
+        <div class="product-body">
+          <div class="pill">26SS</div>
+          <strong>WA2602SO01</strong>
+          <p>베이직 스웻 숏팬츠</p>
+          <dl>
+            <dt>입고</dt><dd>10,548pcs</dd>
+            <dt>입고금액</dt><dd>6.2억</dd>
+            <dt>입고금액 증감</dt><dd class="neg">-25.7%</dd>
+            <dt>주간</dt><dd>111pcs</dd>
+            <dt>누계</dt><dd>1,539pcs</dd>
+            <dt>판율</dt><dd>14.6%</dd>
+          </dl>
+        </div>
+      </article>
+    
+      <article class="product-card">
+        <div class="product-img"><a href="https://www.musinsa.com/products/6107980" target="_blank" rel="noreferrer"><img src="https://image.msscdn.net/images/goods_img/20260310/6107980/6107980_17773404230917_500.jpg" alt="WA2602SO32"></a></div>
+        <div class="product-body">
+          <div class="pill">26SS</div>
+          <strong>WA2602SO32</strong>
+          <p>이지 데님 숏팬츠</p>
+          <dl>
+            <dt>입고</dt><dd>3,864pcs</dd>
+            <dt>입고금액</dt><dd>3.1억</dd>
+            <dt>입고금액 증감</dt><dd class="pos">+92.1%</dd>
+            <dt>주간</dt><dd>107pcs</dd>
+            <dt>누계</dt><dd>1,166pcs</dd>
+            <dt>판율</dt><dd>30.2%</dd>
+          </dl>
+        </div>
+      </article>
+    </div>
+                </div>
+              </div>
+            </section>
+            
+
+    <p class="note" style="margin-top:16px">데이터 출처: 25SS/26SS 주간 판매리뷰 및 상품MAP 매칭 데이터. 공급금액은 품번별 입고금액(in_amt) 합산, 이미지는 무신사 품번 검색 결과 중 brand=wackywilly인 상품만 사용했습니다.</p>
+  </main>
+</body>
+</html>

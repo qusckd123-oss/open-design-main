@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <defs>
+    <filter id="soft-grain">
+      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" seed="17" result="noise"/>
+      <feColorMatrix in="noise" type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 .13"/>
+      </feComponentTransfer>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+  </defs>
+  <rect fill="#f5f1e8" width="1200" height="900"/>
+  <g transform="translate(165 135) scale(2.1)" filter="url(#soft-grain)">
+    <path fill="#111" d="M69 150c45-48 95-70 151-66l121 8c24 2 29 21 12 39l-51 55 41 89c8 18-11 35-29 25l-95-54-72 68c-19 18-43 2-38-24l14-74-77-31c-19-8-22-22-8-35z"/>
+    <path fill="#f5f1e8" d="M109 159c65-15 126-17 184-5l-65 33c-43 22-82 48-116 79l5-61-46-18c-14-5-15-19-3-28z"/>
+  </g>
+</svg>

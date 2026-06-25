@@ -1,0 +1,23 @@
+{
+  "skill_name": "imagegen",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "$imagegen 이 프롬프트 점검해줘: make a cool image for a fashion landing page, black jacket",
+      "expected_output": "Returns a concise prompt review with status, main issues, and an improved structured prompt. Does not generate an image because the user only asked for review.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "imagegen으로 웹사이트 히어로에 쓸 이미지를 만들어줘. 여름 신상 가방, 밝고 고급스럽게. 나중에 HTML에서 쓸 거야.",
+      "expected_output": "Uses the built-in image_gen path, strengthens the prompt with web hero composition, product constraints, no fake logos/readable text, and plans to copy the selected result into a project-local asset path.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "이 제품 사진 배경을 투명하게 쓸 수 있게 만들고 싶어. API 말고 여기서 가능한 방식으로 해줘.",
+      "expected_output": "Chooses the built-in-first chroma-key workflow for transparent output, avoids API/CLI fallback, and asks for the source image only if no image is provided.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+requested_sku/generated_sku	status	note
+WA2602ST24CM	generated	Included as requested.
+WA2602ST31WH	generated	Included as requested.
+WA2602ST31CH	generated	Included as requested.
+WA2602ST31YE	generated	Included as requested.
+WA2602ST34WH	generated	Included as requested.
+WA2602ST34GN	generated	Included as requested.
+WA2602ST47BK/generated_as_WA2602ST16BK	generated	Mapped per user correction: ST47BK uses WA2602ST16BK source sheet.
+WA2602ST47WH/generated_as_WA2602ST16WH	generated	Mapped per user correction: ST47WH uses WA2602ST16WH source sheet.
+WA2602ST27EC	generated	Included as requested.
+WA2602ST32PI	generated	Included as requested.
+WA2602SO04BK	missing_source_detail	Found in product/TAG list only; no SO04 reorder detail sheet found.
+WA2602SO04GR	missing_source_detail	Found in product/TAG list only; no SO04 reorder detail sheet found.
+WA2602ST13WH	generated	Included as requested.
+WA2602SO02BK	generated	Included as requested.
