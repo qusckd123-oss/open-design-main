@@ -39,9 +39,13 @@
 - 26FW planning was revised from a 60B KRW kickoff basis to about 58B KRW. For selection meetings, womens should preserve roughly 70% of current counted styles/SKUs rather than forcing a fixed category-by-category style count.
 - 26SS SPOT styles from category-unit discussions must be added to `26SS SPOT 구성.xlsx`, including womens and woven items, using the added innerwear example as reference.
 - 26SS monthly review uses the SPOT composition file and monthly closing slides as source material.
-- 26FW care-label preparation needs global-market checks, including English, Simplified Chinese, Japanese, and Traditional Chinese applicability. Covernat had all four, but WACKY WILLY final application still needed confirmation in the chat.
+- 26FW care labels should be applied globally like Covernat, using English, Simplified Chinese, Japanese, and Traditional Chinese. Planning should communicate this with sourcing.
 - Byeon Changhyun is the planning-side owner for the Disney+ Style Wars content collaboration.
 - Welcome dinner for Byeon Changhyun moved from March 26 to March 24.
+- Once the 26FW style order list is finalized, share it with the global team.
+- 4월 VM 착장 리스트 request for unisex/womens was completed and shared by Byeon Changhyun on 2026-03-17.
+- Womens ruffle item shown on 2026-04-14 received positive feedback from Kim Minhyuk.
+- Womens team had a strong-performing item by 2026-05-28, with Kim Minhyuk specifically praising Kim Yeonhee and Yang Yoonsun.
 
 ## Teams Chat Context: February-March 2026
 
@@ -57,6 +61,12 @@
 - 2026-03-23: unisex basic short-sleeve and stripe short-sleeve YoY underperformance needed distribution-level diagnosis. Unisex 2-pack and 3-pack T-shirt size inventory needed checking, including whether 25FW inventory could support 26SS reorder. Weekly Q.R target styles for unisex and womens needed sharing.
 - 2026-03-24: company-wide guidance emphasized sharper brand/product direction, stronger trend sensitivity, faster AI-standardized work processes, differentiated staff styling, and a possible direct sensitivity-check organization under the CEO. WACKY WILLY specifically lacked trend-forward items that current idols such as NCT DREAM would wear; velour sets and bolder design attempts were cited.
 - 2026-03-26: global team shared Japan care-label reference material and asked for 26FW product care-label pre-checks. Kim Minhyuk assigned the planning side of the Disney+ Style Wars collaboration to Byeon Changhyun.
+- 2026-03-27: Kim Minhyuk confirmed that 26FW WACKY WILLY care labels should be applied globally like Covernat, covering English, Simplified Chinese, Japanese, and Traditional Chinese. Byeon Changhyun said he would communicate with sourcing. `와키윌리 26년 사업계획 요약_최종.xlsx` was shared.
+- 2026-03-31: Kim Minhyuk requested that the finalized 26FW style order list be shared with the global team.
+- 2026-04-01: Kim Minhyuk, now addressed as director by Han Byeonghyun, asked the team to check an image-based item/request.
+- 2026-04-14: Kim Minhyuk gave positive feedback on a ruffle item.
+- 2026-04-16 to 2026-04-30: Kim Minhyuk arranged a Team Wacky lunch, eventually set for Thursday lunch at The Giwa at 11:50.
+- 2026-05-28: Kim Minhyuk noted that a womens-team item was performing strongly and praised Kim Yeonhee and Yang Yoonsun.
 
 ## Not Decided
 
@@ -67,7 +77,6 @@
 - Musinsa Edition open date is targeted for 2026-07-13, with 2026-07-20 as the delayed fallback.
 - Taiwan direct-shipment missing registration and vendor cancellation agreement status are not recorded as completed.
 - Whether planned SPOT styles without sample work or CADs should be added to `26SS SPOT 구성.xlsx` is not recorded as resolved.
-- Final 26FW care-label language set for WACKY WILLY is not recorded.
 - Final drop/keep decisions for several 26FW items from the March 17 action list are not all recorded.
 - VM team's March 23 proposal to add a thin windbreaker outer to the main mannequin styling is not recorded as resolved.
 
@@ -88,5 +97,6 @@
 - Diagnose YoY weakness for unisex basic and stripe short-sleeve T-shirts by channel/distribution.
 - Check unisex 2-pack and 3-pack T-shirt size inventory and determine whether 25FW inventory can support 26SS reorder.
 - Share weekly Q.R target styles for unisex and womens.
-- Confirm 26FW care-label language requirements with the global team.
+- Apply 26FW global care-label language requirements through sourcing: English, Simplified Chinese, Japanese, and Traditional Chinese.
+- Share the finalized 26FW style order list with the global team.
 - Follow the March 17 26FW action list: redesign 119,000 KRW lightweight padding/basic padding direction, decide 0.1 new-basic discount vs renewal, simplify/drop mid-length down, set fleece hoodie IMC volume target, split denim jacket blue/gray style numbers, align wool coat details with womens, and review cost rates in specification meetings.
