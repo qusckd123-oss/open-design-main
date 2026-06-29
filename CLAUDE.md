@@ -46,6 +46,12 @@
 - 4월 VM 착장 리스트 request for unisex/womens was completed and shared by Byeon Changhyun on 2026-03-17.
 - Womens ruffle item shown on 2026-04-14 received positive feedback from Kim Minhyuk.
 - Womens team had a strong-performing item by 2026-05-28, with Kim Minhyuk specifically praising Kim Yeonhee and Yang Yoonsun.
+- 2026-06-29 archive rule: meeting minutes and meeting-derived outputs are stored under `output/meeting-minutes` by date and topic, and reusable business context is separately stored under `workspace/memory`.
+- 2026-06-29 memory scope: use `workspace/memory/bcave-organization-context.md` as the current organization reference and treat Byeon Changhyun as belonging to B:CAVE headquarters > Brand Business Division > Wacky Willy Business Department > Product Team > Apparel Planning Part.
+- 2026-06-29 Wacky Willy monthly-review direction: the main 2026 business mission is profit turnaround, with FW execution, QR operation, GTM information structure, KPI simplification, and brand/product direction cleanup treated as priority work.
+- 2026-06-29 Wacky Willy brand direction: shift from target/persona-led messaging toward product-led brand expression centered on characters, graphics, and styling, with global, duty-free, and directly operated channels treated as important opportunity channels.
+- 2026-06-29 Art Grocery popup: popup name is `Art Grocery`; Seongsu operation runs 2026-07-09 through 2026-07-12; ending-display handling should prioritize continuing the Seongsu flea-market operation over moving all fixtures to stores.
+- 2026-06-29 Art Grocery popup: fixture/display budget is about 15M KRW including electricity; The Hyundai and Myeongdong use simple POP only without separate fixture buildout; viral scope includes global channels, not only domestic channels.
 
 ## Teams Chat Context: February-March 2026
 
