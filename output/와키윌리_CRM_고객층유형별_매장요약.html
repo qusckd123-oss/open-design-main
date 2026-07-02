@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>와키윌리 CRM 고객층 유형별 매장 요약</title>
+<style>
+:root {
+  --paper:#faf8f1; --ink:#1c211c; --muted:#687069; --line:#d8ddd5;
+  --green:#4f6241; --brick:#b5543e; --gold:#d9a441; --panel:#fffefa;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--paper); color:var(--ink); font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif; }
+.page { max-width:1240px; margin:0 auto; padding:28px 30px 36px; }
+header { display:grid; grid-template-columns:1fr 310px; gap:24px; align-items:end; border-bottom:3px solid var(--ink); padding-bottom:14px; margin-bottom:14px; }
+.eyebrow { color:var(--brick); font-weight:900; font-size:13px; letter-spacing:.08em; }
+h1 { margin:8px 0 8px; font-size:34px; line-height:1.08; letter-spacing:0; }
+.lead { margin:0; color:var(--muted); font-size:13px; line-height:1.55; max-width:760px; }
+.summary { border:1px solid var(--ink); background:#fff; padding:14px 16px; display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.summary span { color:var(--muted); font-size:12px; display:block; }
+.summary b { font-size:28px; display:block; margin-top:4px; }
+.grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; }
+.trait { background:var(--panel); border:1px solid var(--line); min-height:220px; padding:12px; display:flex; flex-direction:column; gap:7px; }
+.trait-head { display:flex; justify-content:space-between; gap:10px; border-bottom:1px solid var(--line); padding-bottom:8px; }
+.trait h2 { font-size:17px; margin:0 0 4px; }
+.trait p { margin:0; color:var(--muted); font-size:10.5px; line-height:1.35; }
+.trait-head strong { font-size:30px; color:var(--brick); }
+.metrics { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.metrics span { background:#f3f4ed; border:1px solid #e3e6dc; padding:6px; font-size:10.5px; color:var(--muted); }
+.metrics b { display:block; color:var(--ink); font-size:15px; margin-top:2px; }
+.action, .product { font-size:11px; line-height:1.35; color:#30372f; }
+.action b, .product b { color:var(--green); margin-right:6px; }
+.stores { margin-top:auto; display:grid; gap:4px; }
+.chip { border-left:3px solid var(--gold); background:#fbfbf6; padding:5px 7px; display:block; }
+.chip b { display:block; font-size:11px; }
+.chip em { display:block; font-style:normal; color:var(--muted); font-size:9.5px; margin-top:2px; }
+.empty { color:var(--muted); font-size:11px; }
+.footer { margin-top:10px; border-top:1px solid var(--line); padding-top:8px; color:var(--muted); font-size:10px; line-height:1.4; }
+@media print {
+  @page { size:A4 landscape; margin:7mm; }
+  .page { max-width:none; padding:0; }
+  header { margin-bottom:9px; padding-bottom:10px; }
+  h1 { font-size:28px; }
+  .lead { font-size:11px; }
+  .summary { padding:10px; }
+  .summary b { font-size:23px; }
+  .grid { gap:7px; }
+  .trait { min-height:190px; padding:8px; gap:5px; }
+  .trait h2 { font-size:14px; }
+  .trait p, .metrics span, .action, .product { font-size:9px; }
+  .chip b { font-size:9.5px; }
+  .chip em { font-size:8px; }
+  .trait-head strong { font-size:23px; }
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <div>
+      <div class="eyebrow">WACKY WILLY · CRM CUSTOMER SEGMENTS</div>
+      <h1>고객층 유형별<br>매장 특성 요약</h1>
+      <p class="lead">목적은 매장 순위가 아니라 고객층을 읽는 것입니다. 학생 직접 구매, 부모 동반/결제, 유니 선호, 대형 혼합 고객층으로 나눠 각 유형의 근거와 상품 연결 방향만 압축했습니다.</p>
+    </div>
+    <div class="summary">
+      <div><span>분석 매장</span><b>54개</b></div>
+      <div><span>고객층 유형</span><b>8개</b></div>
+      <div><span>학생/부모 추정 총액</span><b>7.7억</b></div>
+      <div><span>학생·부모 핵심층</span><b>2개</b></div>
+    </div>
+  </header>
+  <div class="grid">
+        <section class="trait">
+          <div class="trait-head">
+            <div><h2>학생·부모 핵심층</h2><p>학생/부모 70%+ · 유니 60%+ · 추정액 300만+</p></div>
+            <strong>2</strong>
+          </div>
+          <div class="metrics"><span>평균 학생/부모 <b>73.3%</b></span><span>평균 유니 <b>65.8%</b></span></div>
+          <div class="action"><b>고객층 해석</b>학생 본인 수요와 부모 결제/동반 구매가 동시에 강한 고객층. 유니 수용도도 이미 확인됨.</div>
+          <div class="product"><b>상품 연결</b>유니 핵심 SKU 우선. S/M 중심, XS 테스트.</div>
+          <div class="stores"><span class='chip'><b>롯_울산_WI</b><em>학생/부모 73.4% · 유니 63.2% · 40~50초 부모 71.9%</em></span><span class='chip'><b>현_중동_WI</b><em>학생/부모 73.1% · 유니 68.5% · 40~50초 부모 54.6%</em></span></div>
+        </section>
+        
+
+        <section class="trait">
+          <div class="trait-head">
+            <div><h2>학생·부모 잠재층</h2><p>학생/부모 60%+ · 추정액 500만+</p></div>
+            <strong>13</strong>
+          </div>
+          <div class="metrics"><span>평균 학생/부모 <b>67.8%</b></span><span>평균 유니 <b>61.4%</b></span></div>
+          <div class="action"><b>고객층 해석</b>학생·부모 추정 고객은 충분하지만 유니 전환력은 매장별 차이가 있는 고객층.</div>
+          <div class="product"><b>상품 연결</b>베이직/로고 절제형 유니를 여성 상품과 균형 연출.</div>
+          <div class="stores"><span class='chip'><b>롯_강남_WI</b><em>학생/부모 68.5% · 유니 51.9% · 40~50초 부모 65.6%</em></span><span class='chip'><b>AK_원주_WI</b><em>학생/부모 62.9% · 유니 52.2% · 40~50초 부모 56.7%</em></span></div>
+        </section>
+        
+
+        <section class="trait">
+          <div class="trait-head">
+            <div><h2>소액 학생 신호층</h2><p>학생/부모 비중은 높지만 금액 모수 작음</p></div>
+            <strong>6</strong>
+          </div>
+          <div class="metrics"><span>평균 학생/부모 <b>86.7%</b></span><span>평균 유니 <b>45.9%</b></span></div>
+          <div class="action"><b>고객층 해석</b>비중상 학생·부모 성향은 강하지만 표본이 작아 과대해석 위험이 있는 고객층.</div>
+          <div class="product"><b>상품 연결</b>대표 SKU 소량 테스트. 확대보다 반응 확인 우선.</div>
+          <div class="stores"><span class='chip'><b>현_김포아울렛_WI</b><em>학생/부모 81.5% · 유니 56.7% · 40~50초 부모 72.4%</em></span><span class='chip'><b>신_파주아울렛_WI</b><em>학생/부모 82.1% · 유니 68.8% · 40~50초 부모 82.1%</em></span></div>
+        </section>
+        
+
+        <section class="trait">
+          <div class="trait-head">
+            <div><h2>대형 혼합 고객층</h2><p>학생/부모 추정액 3천만+</p></div>
+            <strong>3</strong>
+          </div>
+          <div class="metrics"><span>평균 학생/부모 <b>35.7%</b></span><span>평균 유니 <b>65.7%</b></span></div>
+          <div class="action"><b>고객층 해석</b>학생 비중은 낮거나 중간이어도 전체 고객 모수가 커 학생·부모 금액이 크게 잡히는 혼합 고객층.</div>
+          <div class="product"><b>상품 연결</b>대표 SKU 별도 운영 후보. 과도한 학생 전용화는 주의.</div>
+          <div class="stores"><span class='chip'><b>신_천안아산_WI</b><em>학생/부모 28.3% · 유니 68.9% · 20대 54.4%</em></span><span class='chip'><b>신_김해_WI</b><em>학생/부모 58.6% · 유니 67.3% · 40~50초 부모 52.8%</em></span></div>
+        </section>
+        
+
+        <section class="trait">
+          <div class="trait-head">
+            <div><h2>유니 선호 고객층</h2><p>유니 비중 65%+ · 학생 지표는 중간</p></div>
+            <strong>11</strong>
+          </div>
+          <div class="metrics"><span>평균 학생/부모 <b>43.0%</b></span><span>평균 유니 <b>70.3%</b></span></div>
+          <div class="action"><b>고객층 해석</b>학생성보다 유니 상품 반응이 먼저 확인되는 고객층. 연령 타깃은 더 넓게 봐야 함.</div>
+          <div class="product"><b>상품 연결</b>기존 유니 반응군 확대, 학생용 SKU는 제한 테스트.</div>
+          <div class="stores"><span class='chip'><b>현_커넥트부산_WI</b><em>학생/부모 42.9% · 유니 75.0% · 30대 44.4%</em></span><span class='chip'><b>롯_김해아울렛_WI</b><em>학생/부모 53.8% · 유니 77.4% · 40~50초 부모 48.0%</em></span></div>
+        </section>
+        
+
+        <section class="trait">
+          <div class="trait-head">
+            <div><h2>10대 직접구매층</h2><p>10대 비중 10%+</p></div>
+            <strong>0</strong>
+          </div>
+          <div class="metrics"><span>평균 학생/부모 <b>0.0%</b></span><span>평균 유니 <b>0.0%</b></span></div>
+          <div class="action"><b>고객층 해석</b>부모 결제 추정보다 10대 본인 구매 신호가 상대적으로 보이는 고객층.</div>
+          <div class="product"><b>상품 연결</b>진입가/로고/반팔 등 즉시 구매형 SKU.</div>
+          <div class="stores"><span class='empty'>해당 없음</span></div>
+        </section>
+        
+
+        <section class="trait">
+          <div class="trait-head">
+            <div><h2>부모 동반구매층</h2><p>40~50초 부모 추정 비중 50%+</p></div>
+            <strong>3</strong>
+          </div>
+          <div class="metrics"><span>평균 학생/부모 <b>60.9%</b></span><span>평균 유니 <b>54.5%</b></span></div>
+          <div class="action"><b>고객층 해석</b>10대 직접 구매보다 부모 결제·동반 구매 가능성이 더 큰 고객층.</div>
+          <div class="product"><b>상품 연결</b>베이직, 셋업, 과하지 않은 컬러/그래픽.</div>
+          <div class="stores"><span class='chip'><b>갤_광교_WI</b><em>학생/부모 59.0% · 유니 53.4% · 40~50초 부모 54.6%</em></span><span class='chip'><b>롯_동탄_WI</b><em>학생/부모 62.6% · 유니 53.3% · 40~50초 부모 53.5%</em></span></div>
+        </section>
+        
+
+        <section class="trait">
+          <div class="trait-head">
+            <div><h2>일반 관찰층</h2><p>우선 기준 미충족</p></div>
+            <strong>16</strong>
+          </div>
+          <div class="metrics"><span>평균 학생/부모 <b>36.8%</b></span><span>평균 유니 <b>51.9%</b></span></div>
+          <div class="action"><b>고객층 해석</b>현재 CRM 기준으로 뚜렷한 학생/부모/유니 고객층 신호가 약한 매장.</div>
+          <div class="product"><b>상품 연결</b>전개 확대보다 현상 유지·관찰.</div>
+          <div class="stores"><span class='chip'><b>롯_구리_WI</b><em>학생/부모 31.9% · 유니 54.0% · 20대 35.7%</em></span><span class='chip'><b>롯_광명_WI</b><em>학생/부모 57.1% · 유니 62.6% · 40~50초 부모 49.7%</em></span></div>
+        </section>
+        </div>
+  <div class="footer">
+    Source: 와키윌리 유니 포커스 매장 선정(학생 고객 상권).xlsx · 전체 매장 상세는 엑셀 정리본 참조 · 주의: CRM 반영 적극성 편차가 있어 최종 투입은 현장 의견과 함께 판단
+  </div>
+</main>
+</body>
+</html>

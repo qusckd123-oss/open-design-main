@@ -28,8 +28,8 @@
 - 27SS price direction: expand toward the upper end of the range and differentiate from low-price online products.
 - 27SS order scenarios: Plan A +10% as default, Plan B +30% as alternative.
 - 27SS price matrix target completion date: 2026-06-30, connected to late-July inbound ordering.
-- Chiikawa collaboration schedule: ST/LT inbound 2026-06-30, CR inbound 2026-07-14, short-sleeve T-shirt online launch 2026-07-27, full style launch 2026-08-14.
-- Chiikawa collaboration channels: owned mall, Musinsa, 29CM, plus 2-3 Musinsa offline stores for the short-sleeve launch.
+- Chiikawa collaboration recorded product-flow dates: ST/LT inbound 2026-06-30 and CR inbound 2026-07-14. Launch dates need reconfirmation from 2026-07-01 current data.
+- Chiikawa collaboration base channels: owned mall, Musinsa, and 29CM. Musinsa offline store count/location and launch timing need reconfirmation from 2026-07-01 current data.
 - Chiikawa collaboration VMD applies only to Hongdae, Seongsu, and Myeongdong FSS.
 - Chiikawa collaboration owners: Park Heehyun for sourcing, Byeon Changhyun for planning, Kim Heeyoung for design, Park Dasom for marketing.
 - Hologram stickers are received and managed by headquarters, with legal responsibility clauses included in the contract.
@@ -52,6 +52,15 @@
 - 2026-06-29 Wacky Willy brand direction: shift from target/persona-led messaging toward product-led brand expression centered on characters, graphics, and styling, with global, duty-free, and directly operated channels treated as important opportunity channels.
 - 2026-06-29 Art Grocery popup: popup name is `Art Grocery`; Seongsu operation runs 2026-07-09 through 2026-07-12; ending-display handling should prioritize continuing the Seongsu flea-market operation over moving all fixtures to stores.
 - 2026-06-29 Art Grocery popup: fixture/display budget is about 15M KRW including electricity; The Hyundai and Myeongdong use simple POP only without separate fixture buildout; viral scope includes global channels, not only domestic channels.
+- 2026-07-01 Teams data rule: use `teams 채팅 데이터` as the current operating backup and `Clippings/Teams` as historical context. Treat 3-6월 chat requests as past flow unless a current unresolved follow-up remains.
+- 2026-07-01 current Teams decision: 26SS sales item list update is recorded as completed.
+- 2026-07-01 current Teams decision: 26FW product list was updated into the 26FW order list using the `Y` marker.
+- 2026-07-01 current Teams decision: 26FW additional-order work should keep the `26FW 발주리스트` and `26FW 추가발주 요청서` updated together, then communicate through the product-planning file.
+- 2026-07-01 current Teams decision: 26FW overseas communication materials are organized under `26FW GTM 운영체계 - [501] 해외 커뮤니케이션`, covering 26FW product images, Taiwan/Japan sale prices, and 26FW PP sample image updates.
+- 2026-07-01 current Teams decision: Taiwan/Japan price review currently includes CRT1 89,000 KRW, STT1 49,000 KRW, and STT2 59,000 KRW.
+- 2026-07-01 current Teams decision: WA2603STW5 is not included in the current line, additional products, or SPOT flow, so Japan/Taiwan sales are not planned unless a later update changes this.
+- 2026-07-01 current Teams decision: WA2603ST17 was identified as the style number for the current inquiry.
+- 2026-07-01 current Teams decision: 27SS jersey/character/competitor reference files are strategy reference material, not immediate execution items.
 
 ## Teams Chat Context: February-March 2026
 
@@ -80,6 +89,11 @@
 - Updated consumer, market, and competitor analysis after April is still pending.
 - Final quantities and delivery dates for WA2604JK23, WA2604PT23, and WA2604JK14 are not recorded.
 - Musinsa offline stores for the Chiikawa collaboration are still being finalized, with Hongdae and Daegu expected.
+- Chiikawa collaboration launch timing must be reconfirmed from current data. Historical plan was 2026-07-27 online short-sleeve launch and 2026-08-14 full launch, but 2026-07-01 chats also mention 2026-07-20 online, 2026-08-07 online, and 2026-08-14 offline/full-launch options.
+- The final 26FW IMC shoot/list source is not clear from current data; compare the 7-8월 IMC product list, photo-shoot target list, and VMD/POP target list.
+- WA2602ST08 26FW style-number/name issue is not resolved in current data.
+- WA2602STA7 was expected to inbound around 2026-07-07, but actual inbound and operating decision are not recorded as completed.
+- 26FW additional-order files are not yet verified against each other: `26FW 발주리스트`, `26FW 추가발주 요청서`, and `26FW 발주리스트_260617_목표판매율_v2`.
 - Musinsa Edition open date is targeted for 2026-07-13, with 2026-07-20 as the delayed fallback.
 - Taiwan direct-shipment missing registration and vendor cancellation agreement status are not recorded as completed.
 - Whether planned SPOT styles without sample work or CADs should be added to `26SS SPOT 구성.xlsx` is not recorded as resolved.
@@ -89,6 +103,11 @@
 ## Next Actions
 
 - By 2026-06-30: complete the 27SS price matrix.
+- Reconfirm Chiikawa launch timing by channel: 2026-07-20, 2026-07-27, 2026-08-07, and 2026-08-14 are all present in the current data and need final owner confirmation.
+- Build a Taiwan/Japan price table for CRT1, STT1, STT2, and WA2603STW5, including sale target status, price, and `NA` handling.
+- Check the 26FW IMC source of truth: 7-8월 IMC product list vs photo-shoot list vs VMD/POP list.
+- Clarify WA2603ST17, WA2602ST08, and WA2602STA7 by style number, inbound date, channel, and next owner.
+- Cross-check `26FW 발주리스트`, `26FW 추가발주 요청서`, and `26FW 발주리스트_260617_목표판매율_v2` for style, quantity, and amount mismatches.
 - Update consumer, market, and competitor analysis after April.
 - Confirm quantities and delivery dates for WA2604JK23, WA2604PT23, and WA2604JK14, then update the order list.
 - Issue tech packs for HZ01, CR01, HD01, HZ04, and fleece sweatshirts.

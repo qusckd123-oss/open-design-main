@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>와키윌리 CRM 매장 상품투입 핵심요약</title>
+<style>
+:root {
+  --ink:#18201c; --muted:#67706b; --line:#d8ded8; --paper:#fbfaf5;
+  --panel:#ffffff; --olive:#596b45; --brick:#b4573f; --gold:#d9a441; --blue:#365f7c;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--paper); color:var(--ink); font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif; }
+.page { max-width:1180px; margin:0 auto; padding:26px 30px 34px; }
+.hero { border-bottom:3px solid var(--ink); padding-bottom:14px; display:grid; grid-template-columns:1.35fr .65fr; gap:24px; align-items:end; }
+.eyebrow { color:var(--brick); font-weight:800; font-size:13px; letter-spacing:.08em; }
+h1 { margin:7px 0 8px; font-size:34px; line-height:1.1; letter-spacing:0; }
+.subtitle { color:var(--muted); font-size:13px; line-height:1.5; max-width:760px; }
+.stamp { border:1px solid var(--ink); padding:13px; background:#fff; }
+.stamp b { display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
+.stamp strong { font-size:26px; margin-right:8px; }
+.kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:14px 0; }
+.kpi { background:var(--panel); border:1px solid var(--line); padding:12px; min-height:82px; }
+.kpi span { display:block; color:var(--muted); font-size:12px; margin-bottom:8px; }
+.kpi strong { font-size:26px; }
+.kpi em { display:block; color:var(--olive); font-style:normal; font-weight:700; margin-top:5px; font-size:11px; }
+.grid { display:grid; grid-template-columns:1.45fr .55fr; gap:12px; align-items:start; }
+section { background:var(--panel); border:1px solid var(--line); padding:14px; margin-bottom:12px; }
+h2 { margin:0 0 8px; font-size:18px; }
+.note { color:var(--muted); font-size:11px; line-height:1.42; margin:-2px 0 8px; }
+table { width:100%; border-collapse:collapse; font-size:10.5px; }
+th { text-align:left; color:#fff; background:var(--olive); padding:6px 6px; font-weight:800; }
+td { border-bottom:1px solid #e6e9e4; padding:6px 6px; vertical-align:top; }
+td span { display:block; color:var(--muted); margin-top:3px; font-size:11px; }
+.rank { width:34px; color:var(--brick); font-weight:800; text-align:center; }
+.focus th { background:var(--brick); }
+.amount th { background:var(--blue); }
+.dist { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.dist-card { border:1px solid var(--line); padding:9px; background:#fcfcf8; min-height:58px; }
+.dist-card b { display:block; font-size:12px; color:var(--muted); }
+.dist-card strong { font-size:22px; display:inline-block; margin:3px 8px 0 0; }
+.dist-card span { color:var(--olive); font-weight:800; }
+.rules { display:grid; gap:8px; }
+.rule { display:grid; grid-template-columns:80px 1fr; gap:8px; align-items:start; border-top:1px solid var(--line); padding-top:7px; font-size:10.5px; line-height:1.35; }
+.rule b { color:var(--brick); }
+.footer { color:var(--muted); font-size:11px; margin-top:8px; border-top:1px solid var(--line); padding-top:8px; }
+@media print {
+  @page { size:A4 landscape; margin:7mm; }
+  body { background:#fff; }
+  main.page { zoom:.86; }
+  .page { max-width:none; padding:0; }
+  section, .kpi, .stamp { break-inside:avoid; }
+  h1 { font-size:28px; }
+  .page { padding:0; }
+  .hero { padding-bottom:10px; }
+  .kpis { gap:7px; margin:9px 0; }
+  .grid { grid-template-columns:1.45fr .55fr; gap:8px; }
+  section { padding:10px; margin-bottom:8px; }
+  table { font-size:8.5px; }
+  th, td { padding:3px 4px; }
+  td span { font-size:8px; }
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">WACKY WILLY · CRM STORE FOCUS</div>
+      <h1>학생 고객 상권 기반<br>유니 상품 투입 핵심요약</h1>
+      <p class="subtitle">CRM 연령대별 구매금액, 학생/부모 추정 구매금액, 5월 유니 매출 비중, 원천 판매행의 상품군·사이즈 반응을 결합해 매장별 상품 투입 우선순위를 압축했습니다.</p>
+    </div>
+    <div class="stamp">
+      <b>1차 실행 후보</b><strong>2</strong>개 매장
+      <b style="margin-top:12px;">분석 대상</b><strong>54</strong>개 매장
+    </div>
+  </header>
+
+  <div class="kpis">
+    <div class="kpi"><span>학생/부모 추정 총액</span><strong>7.7억</strong><em>10대 + 40~50초 부모 추정</em></div>
+    <div class="kpi"><span>매장당 평균 추정액</span><strong>1427만</strong><em>절대 규모 후보 식별용</em></div>
+    <div class="kpi"><span>실행 후보 기준</span><strong>70%+</strong><em>학생/부모 비중 + 유니 60%+</em></div>
+    <div class="kpi"><span>핵심 운영 방향</span><strong>S/M</strong><em>XS 테스트, 베이직 중심</em></div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <section class="focus">
+        <h2>1차 실행 후보</h2>
+        <p class="note">학생/부모 70%+, 유니 60%+, 추정액 300만 원 이상. 바로 투입 검토 가능한 매장입니다.</p>
+        <table>
+          <thead><tr><th>#</th><th>매장</th><th>핵심 연령층</th><th>학생/부모</th><th>유니</th><th>상품군</th><th>사이즈</th><th>방향</th></tr></thead>
+          <tbody>
+    <tr>
+      <td class='rank'>1</td>
+      <td><strong>롯_울산_WI</strong><span>M2053 · 백화점</span></td>
+      <td>40~50초 부모 71.9%</td>
+      <td><b>73.4%</b><span>1339만</span></td>
+      <td>63.2%</td>
+      <td>ST, SO, JK</td>
+      <td>S, M, F</td>
+      <td>유니 핵심 SKU 우선 투입, S/M 중심 + XS 테스트</td>
+    </tr>
+    
+    <tr>
+      <td class='rank'>2</td>
+      <td><strong>현_중동_WI</strong><span>M2014 · 백화점</span></td>
+      <td>40~50초 부모 54.6%</td>
+      <td><b>73.1%</b><span>421만</span></td>
+      <td>68.5%</td>
+      <td>DP, PT, CR</td>
+      <td>S, L, M</td>
+      <td>유니 핵심 SKU 우선 투입, S/M 중심 + XS 테스트</td>
+    </tr>
+    </tbody>
+        </table>
+      </section>
+      <section>
+        <h2>추가 검토 후보</h2>
+        <p class="note">학생 수요·절대 규모·유니 반응 중 하나가 강한 매장. 현장 의견과 물량 여력을 붙여 판단합니다.</p>
+        <table>
+          <thead><tr><th>#</th><th>매장</th><th>학생/부모</th><th>유니</th><th>핵심 연령층</th><th>상품군</th></tr></thead>
+          <tbody>
+    <tr>
+      <td class='rank'>1</td>
+      <td><strong>롯_강남_WI</strong><span>M2052 · 백화점</span></td>
+      <td>68.5%<span>1.8억</span></td>
+      <td>51.9%</td>
+      <td>40~50초 부모 65.6%</td>
+      <td>PT, ST, HZ</td>
+    </tr>
+    
+    <tr>
+      <td class='rank'>2</td>
+      <td><strong>AK_원주_WI</strong><span>M2035 · 백화점</span></td>
+      <td>62.9%<span>3361만</span></td>
+      <td>52.2%</td>
+      <td>40~50초 부모 56.7%</td>
+      <td>DP, PT, JK</td>
+    </tr>
+    
+    <tr>
+      <td class='rank'>3</td>
+      <td><strong>롯_서울역아울렛_WI</strong><span>M2026 · 아울렛</span></td>
+      <td>63.7%<span>2569만</span></td>
+      <td>68.0%</td>
+      <td>40~50초 부모 57.6%</td>
+      <td>DP, JK, PT</td>
+    </tr>
+    
+    <tr>
+      <td class='rank'>4</td>
+      <td><strong>스타_고양_WI</strong><span>M2008 · 쇼핑몰</span></td>
+      <td>69.4%<span>2330만</span></td>
+      <td>76.0%</td>
+      <td>40~50초 부모 63.4%</td>
+      <td>DP, HZ, PT</td>
+    </tr>
+    
+    <tr>
+      <td class='rank'>5</td>
+      <td><strong>갤_타임월드_WI</strong><span>M2022 · 백화점</span></td>
+      <td>60.3%<span>2107만</span></td>
+      <td>61.2%</td>
+      <td>40~50초 부모 55.8%</td>
+      <td>PT, ST, HZ</td>
+    </tr>
+    
+    <tr>
+      <td class='rank'>6</td>
+      <td><strong>현_울산_WI</strong><span>M2021 · 백화점</span></td>
+      <td>76.2%<span>1635만</span></td>
+      <td>51.9%</td>
+      <td>40~50초 부모 70.3%</td>
+      <td>DP, PT, JK</td>
+    </tr>
+    </tbody>
+        </table>
+      </section>
+    </div>
+    <aside>
+      <section>
+        <h2>매장 특성 분포</h2>
+        <div class="dist"><div class='dist-card'><b>실행 우선</b><strong>2</strong><span>4%</span></div><div class='dist-card'><b>학생 수요</b><strong>13</strong><span>24%</span></div><div class='dist-card'><b>소액 검증</b><strong>6</strong><span>11%</span></div><div class='dist-card'><b>절대 규모</b><strong>3</strong><span>6%</span></div><div class='dist-card'><b>유니 반응</b><strong>11</strong><span>20%</span></div><div class='dist-card'><b>부모 관찰</b><strong>3</strong><span>6%</span></div><div class='dist-card'><b>보조 관찰</b><strong>16</strong><span>30%</span></div></div>
+      </section>
+      <section>
+        <h2>판단 기준</h2>
+        <p class="note">실행 우선: 학생/부모 70%+ · 유니 60%+ · 추정액 300만 원+.</p>
+        <p class="note">CRM 반영 적극성 편차가 있어, 최종 투입은 현장 의견과 함께 판단합니다.</p>
+      </section>
+    </aside>
+  </div>
+
+  <div class="footer">Source: 와키윌리 유니 포커스 매장 선정(학생 고객 상권).xlsx · 전체 상세는 엑셀 정리본 참조</div>
+</main>
+</body>
+</html>
