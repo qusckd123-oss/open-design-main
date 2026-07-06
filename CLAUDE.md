@@ -61,6 +61,19 @@
 - 2026-07-01 current Teams decision: WA2603STW5 is not included in the current line, additional products, or SPOT flow, so Japan/Taiwan sales are not planned unless a later update changes this.
 - 2026-07-01 current Teams decision: WA2603ST17 was identified as the style number for the current inquiry.
 - 2026-07-01 current Teams decision: 27SS jersey/character/competitor reference files are strategy reference material, not immediate execution items.
+- 2026-07-06 current data rule: use `workspace/memory/current-data-summary-2026-07-06.md` as the current report and popup summary source for 2026-06 monthly review, 2026-07 VMD, and Art Grocery / T-shirt Festival popup decisions.
+- 2026-07-06 report archive: WACKY WILLY monthly reviews from 2025-08 through 2026-06 are converted to Markdown under `보고 자료/월 리뷰/md/`.
+- 2026-07-06 current monthly-review decision: the 2026-06 monthly review agenda centers on the 26FW marketing strategy, WACKY WILLY unisex design-direction reset, product efficiency review, VMD, and marketing review.
+- 2026-07-06 current VMD decision: 2026-06 execution included Myeongdong FSS layout work, Hongdae FSS Family Club setup, pop-ups at Shinsegae Gangnam and Hyundai Outlet Songdo, June graphic T-shirt VM guide, VP/event work, hot-summer graphic T-shirt main IMC display completion, and Pintergirl collection display completion in six stores.
+- 2026-07-06 current VMD decision: 2026-07 plan is to move ACC forward and change layouts at Myeongdong, Hongdae, and Seongsu FSS; display Grocery Market products at Seongsu on 2026-07-09 and Hongdae/Myeongdong on 2026-07-13; open Lotte Outlet Jinju on 2026-07-24; prepare July hot-summer graphic T-shirt VM guide, Chiikawa visual display for 2026-08-04, and events at The Hyundai Daegu, Shinsegae Outlet Gimhae, and Starfield Suwon.
+- 2026-07-06 current marketing decision: the 2026-06 hot-summer campaign top-five product review recorded 14,800 pcs and 577,330,042 KRW, ROAS 67x, and should be considered a repeatable/scalable seasonal campaign model.
+- 2026-07-06 Art Grocery / T-shirt Festival decision: Seongsu FSS exclusive pop-up runs 2026-07-09 through 2026-07-12, followed by simple POP-only FSS rollout at Seongsu, Hongdae, and Myeongdong from 2026-07-13 through the end of August.
+- 2026-07-06 Art Grocery / T-shirt Festival decision: operating target is 32 SKUs, 25,200 pcs, and 1.23B KRW in operating stock; Target scenario is 330M KRW sales and 7,656 pcs sold.
+- 2026-07-06 Art Grocery / T-shirt Festival decision: Target scenario assumes popup-exclusive sell-through 70%, 3,080 pcs, 151M KRW, plus 26SS main residual-stock absorption 22%, 4,576 pcs, 179M KRW at 39,200 KRW after 20% discount.
+- 2026-07-06 Art Grocery / T-shirt Festival decision: scenario goals are Base 241M KRW / 5,540 pcs, Target 330M KRW / 7,656 pcs, and Stretch 417M KRW / 9,760 pcs.
+- 2026-07-06 Art Grocery / T-shirt Festival decision: stock allocation guide is Seongsu FSS 50%, Hongdae FSS 30%, and Myeongdong FSS 20%.
+- 2026-07-06 T-shirt Festival promotion styles: WA2602STS1, WA2602STS2, WA2602STS3, WA2602STS4, WA2602STS5, WA2602ST31, WA2602ST32, WA2602ST33, WA2602ST34, WA2602ST42, WA2602ST43, and WA2602ST46.
+- 2026-07-06 Art Grocery styles: WA2602STA1, WA2602STA2, WA2602STA3, WA2602STA4, WA2602STA5, WA2602STA6, and WA2602STA7.
 
 ## Teams Chat Context: February-March 2026
 
@@ -99,6 +112,11 @@
 - Whether planned SPOT styles without sample work or CADs should be added to `26SS SPOT 구성.xlsx` is not recorded as resolved.
 - Final drop/keep decisions for several 26FW items from the March 17 action list are not all recorded.
 - VM team's March 23 proposal to add a thin windbreaker outer to the main mannequin styling is not recorded as resolved.
+- 2026-06 monthly review core metrics are not reliably recorded in the converted Markdown; sales, target, achievement rate, YoY, channel split, and normal/carryover split require source verification.
+- 2026-06 weekly review PDFs need source-table verification before using detailed weekly sales, category, or SKU figures because direct text extraction is partial.
+- Actual Art Grocery / T-shirt Festival sales and residual stock are not recorded yet; Seongsu popup begins on 2026-07-09.
+- Final post-popup residual-stock volume is scenario-dependent; Target scenario currently estimates about 15,800 pcs remaining before season-off.
+- July VMD and event execution status is not complete yet for planned actions from 2026-07-09 through 2026-08-04.
 
 ## Next Actions
 
@@ -125,3 +143,8 @@
 - Apply 26FW global care-label language requirements through sourcing: English, Simplified Chinese, Japanese, and Traditional Chinese.
 - Share the finalized 26FW style order list with the global team.
 - Follow the March 17 26FW action list: redesign 119,000 KRW lightweight padding/basic padding direction, decide 0.1 new-basic discount vs renewal, simplify/drop mid-length down, set fleece hoodie IMC volume target, split denim jacket blue/gray style numbers, align wool coat details with womens, and review cost rates in specification meetings.
+- Verify the 2026-06 weekly review PDFs against source tables before using detailed weekly sales, category, or SKU figures in decision reports.
+- Finalize Art Grocery / T-shirt Festival inventory movement using the Seongsu 50%, Hongdae 30%, and Myeongdong 20% allocation guide.
+- Track the 2026-07-09 to 2026-07-12 Seongsu popup daily sales against Base, Target, and Stretch scenarios.
+- After the Seongsu popup, update the 2026-07-13 through end-August FSS POP rollout plan and residual stock transfer plan.
+- Use the hot-summer campaign result as evidence for repeating or scaling seasonal graphic T-shirt campaigns.
