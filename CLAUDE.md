@@ -74,6 +74,24 @@
 - 2026-07-06 Art Grocery / T-shirt Festival decision: stock allocation guide is Seongsu FSS 50%, Hongdae FSS 30%, and Myeongdong FSS 20%.
 - 2026-07-06 T-shirt Festival promotion styles: WA2602STS1, WA2602STS2, WA2602STS3, WA2602STS4, WA2602STS5, WA2602ST31, WA2602ST32, WA2602ST33, WA2602ST34, WA2602ST42, WA2602ST43, and WA2602ST46.
 - 2026-07-06 Art Grocery styles: WA2602STA1, WA2602STA2, WA2602STA3, WA2602STA4, WA2602STA5, WA2602STA6, and WA2602STA7.
+- 2026-07-07 current Teams rule: use `workspace/memory/current-teams-update-summary-2026-07-07.md` as the current Teams update source for 2026-07-06 clipped chats updated on 2026-07-07.
+- 2026-07-07 Chiikawa / 먼작귀 decision: final launch schedule is 2026-08-07 for all styles across online and offline channels, with VM applied offline; earlier 2026-07-27 online and 2026-08-14 full-launch flows are superseded.
+- 2026-07-07 Musinsa Edition decision: WA2602STM1, WA2602STM2, WA2602STM5, WA2602STM6, and WA2602STM7 launch shifted from 2026-07-13 to 2026-07-20 due to influencer image and product-cut delays; Musinsa Edition slot and MFS use remain planned.
+- 2026-07-07 Musinsa Edition decision: STM5, STM6, and STM7 proceed with influencer content; STM1 and STM2 do not proceed with separate influencer content because sample receipt was too late. STM1 and STM2 were expected at headquarters on 2026-07-07 around 16:00-17:00.
+- 2026-07-07 online owner update: WACKY WILLY external malls, including Musinsa and 29CM, move to Kim Minjo; owned mall communication remains with Kim Soli.
+- 2026-07-07 26FW change-control decision: 76 QC-or-later changes were identified, including 20 cost-increase drivers, 7 delivery-delay drivers, and 49 duplicate-change style numbers; future QC-or-later changes must be shared immediately in `[110] 메인 스타일 변경 알람` with style number, stage, detail, and cost/delivery impact.
+- 2026-07-07 high-risk 26FW delivery-delay styles: WA2604JK15, WA2604JK71, WA2603JK65, WA2603HZ14, WA2603KT65, WA2603CD51, and WA2603CD61; WA2604JK15 has zipper-order delay and needs immediate delivery-date checking.
+- 2026-07-07 26SS week 1 July sales: period 2026-06-29 through 2026-07-05, ERP basis 2026-07-06; APP sales 594M KRW, YoY -26.0%, WoW -14.9%, discount 12.9%, 10,823 pcs.
+- 2026-07-07 26SS week 1 July category result: unisex APP 340M KRW, YoY -41.9%, WoW -8.9%, cumulative sell-through 34.1%; womens 254M KRW, YoY +7.3%, WoW -21.6%, cumulative sell-through 57.4%.
+- 2026-07-07 Teams decision: 26SS sales-best and sales-trend updates were completed.
+- 2026-07-07 Art Grocery decision: Hongdae and Myeongdong FSS display plans and reused/added fixture lists were shared; fixtures move after 2026-07-12 closing for 2026-07-13 opening, and Seongsu exterior wall returns to the existing graphic after 2026-07-12 closing.
+- 2026-07-07 Art Grocery decision: dedicated shopping bags 1,000 pcs were completed and planned for direct shipment to Seongsu FSS; product cutouts were delivered to the web team.
+- 2026-07-07 Art Grocery inbound schedule: WA2602STA1-WA2602STA6 on 2026-07-02 and WA2602STA7 on 2026-07-07.
+- 2026-07-07 online upload decision: WA2602ST46 and WA2601LT18 images are to be received Wednesday morning and registered within that Wednesday.
+- 2026-07-07 reorder-content decision: material-change reorder descriptions need correction and re-upload for WA2602ST38, WA2602ST39, WA2602ST47, WA2602ST48, and WA2602ST49.
+- 2026-07-07 26FW outlet direction: planning opinion is to show only large-volume 26FW new-basic products up to premium outlets, not to expand all new basics to general outlets.
+- 2026-07-07 global order decision: China Tmall requested WA2602KT64 M size 100 pcs for 2026-08-04 inbound; 150 pcs will be ordered first and the remaining 50 pcs absorbed domestically, with warehouse transfer requested through sales planning at inbound.
+- 2026-07-07 27SS womens decision: W-ST33 is a camo mesh short-sleeve T-shirt using the same camo pattern as W-ST01; if the same pattern is used, proceed with the same vendor as W-ST01.
 
 ## Teams Chat Context: February-March 2026
 
@@ -101,13 +119,12 @@
 - Final 27SS price matrix and SKU-level ordering quantities are not recorded as completed.
 - Updated consumer, market, and competitor analysis after April is still pending.
 - Final quantities and delivery dates for WA2604JK23, WA2604PT23, and WA2604JK14 are not recorded.
-- Musinsa offline stores for the Chiikawa collaboration are still being finalized, with Hongdae and Daegu expected.
-- Chiikawa collaboration launch timing must be reconfirmed from current data. Historical plan was 2026-07-27 online short-sleeve launch and 2026-08-14 full launch, but 2026-07-01 chats also mention 2026-07-20 online, 2026-08-07 online, and 2026-08-14 offline/full-launch options.
+- Chiikawa / 먼작귀 offline store list is not finalized; sales team was asked to respond by Wednesday so VM can work by store interior type.
 - The final 26FW IMC shoot/list source is not clear from current data; compare the 7-8월 IMC product list, photo-shoot target list, and VMD/POP target list.
 - WA2602ST08 26FW style-number/name issue is not resolved in current data.
 - WA2602STA7 was expected to inbound around 2026-07-07, but actual inbound and operating decision are not recorded as completed.
 - 26FW additional-order files are not yet verified against each other: `26FW 발주리스트`, `26FW 추가발주 요청서`, and `26FW 발주리스트_260617_목표판매율_v2`.
-- Musinsa Edition open date is targeted for 2026-07-13, with 2026-07-20 as the delayed fallback.
+- For Musinsa Edition, whether there is meaningful exclusivity or whether some products should move to store sales remains operationally sensitive; latest record keeps Musinsa Edition and MFS, but channel restrictions must be checked before cross-channel sale.
 - Taiwan direct-shipment missing registration and vendor cancellation agreement status are not recorded as completed.
 - Whether planned SPOT styles without sample work or CADs should be added to `26SS SPOT 구성.xlsx` is not recorded as resolved.
 - Final drop/keep decisions for several 26FW items from the March 17 action list are not all recorded.
@@ -117,11 +134,16 @@
 - Actual Art Grocery / T-shirt Festival sales and residual stock are not recorded yet; Seongsu popup begins on 2026-07-09.
 - Final post-popup residual-stock volume is scenario-dependent; Target scenario currently estimates about 15,800 pcs remaining before season-off.
 - July VMD and event execution status is not complete yet for planned actions from 2026-07-09 through 2026-08-04.
+- Actual receipt of STM1, STM2, and STM7 samples on 2026-07-07 is not recorded as completed.
+- 26FW QC-stage change cost impact has not yet been fully reflected in renegotiated costs; 20 cost-increase items require follow-up.
+- Delivery resolution is not recorded for WA2604JK15, WA2604JK71, WA2603JK65, WA2603HZ14, WA2603KT65, WA2603CD51, and WA2603CD61.
+- Art Grocery Seongsu setup time is still operationally pending in the latest backup; 2026-07-09 06:00 setup was proposed and needs final site confirmation.
+- Taiwan order-list dates need clarification on whether they are ETD or ETA basis.
 
 ## Next Actions
 
 - By 2026-06-30: complete the 27SS price matrix.
-- Reconfirm Chiikawa launch timing by channel: 2026-07-20, 2026-07-27, 2026-08-07, and 2026-08-14 are all present in the current data and need final owner confirmation.
+- Confirm Chiikawa / 먼작귀 offline store list by Wednesday and hand it to VM so store-type-specific display work can start.
 - Build a Taiwan/Japan price table for CRT1, STT1, STT2, and WA2603STW5, including sale target status, price, and `NA` handling.
 - Check the 26FW IMC source of truth: 7-8월 IMC product list vs photo-shoot list vs VMD/POP list.
 - Clarify WA2603ST17, WA2602ST08, and WA2602STA7 by style number, inbound date, channel, and next owner.
@@ -148,3 +170,15 @@
 - Track the 2026-07-09 to 2026-07-12 Seongsu popup daily sales against Base, Target, and Stretch scenarios.
 - After the Seongsu popup, update the 2026-07-13 through end-August FSS POP rollout plan and residual stock transfer plan.
 - Use the hot-summer campaign result as evidence for repeating or scaling seasonal graphic T-shirt campaigns.
+- Communicate the 2026-08-07 Chiikawa / 먼작귀 all-channel launch date consistently across marketing, online, sales, and VM.
+- For Musinsa Edition, confirm channel exclusivity, discount rate, final product list, and whether any non-MFS/offline sale is allowed before 2026-07-20 launch.
+- Check actual receipt of STM1, STM2, and STM7 samples on 2026-07-07 and update content/fit-guide feasibility.
+- Share any future 26FW QC-or-later changes in `[110] 메인 스타일 변경 알람` using the required fields.
+- Immediately confirm delivery impact and recovery plan for WA2604JK15, WA2604JK71, WA2603JK65, WA2603HZ14, WA2603KT65, WA2603CD51, and WA2603CD61.
+- Track 26SS July week 1 emergency inventory: SO01, SO31, SO11, HZ01, STE3, and PT01; watch ST38/ST48/ST49/ST47 after new inbound rebound.
+- Check WOMENS SH stock because cumulative sell-through reached 85.7% and sellout is near.
+- Confirm Art Grocery Seongsu 2026-07-09 06:00 setup, closing/security handling, and direct delivery of the 1,000 shopping bags.
+- Correct and re-upload online product descriptions for material-change reorder styles WA2602ST38, WA2602ST39, WA2602ST47, WA2602ST48, and WA2602ST49.
+- Register WA2602ST46 and WA2601LT18 online after Wednesday image receipt.
+- Confirm Taiwan order-list date basis as ETD or ETA, then update the list.
+- Proceed with WA2602KT64 M 150 pcs and coordinate warehouse-to-sales-planning transfer at 2026-08-04 inbound.
