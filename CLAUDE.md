@@ -9,6 +9,13 @@
 - Keep answers concise and practical. If information is not recorded, say so.
 - Kim Minhyuk was the WACKY WILLY apparel planning team lead during the Teams chat history below, but has since moved departments. If the current org chart differs, treat the chat as historical context.
 
+## Current Korean Summary - 2026-07-07
+
+- Use `workspace/memory/current-decisions-actions-2026-07-07.md` as the current Korean execution summary for decided items, unresolved items, and next actions.
+- Key decided items: Chiikawa / 먼작귀 all-channel launch is 2026-08-07; Musinsa Edition launches 2026-07-20 with WA2602STM1/2/5/6/7; 26FW QC-or-later changes total 76 cases and must be shared immediately through `[110] 메인 스타일 변경 알림`; Art Grocery / T-shirt Festival runs Seongsu FSS 2026-07-09 through 2026-07-12, then simple POP rollout at Seongsu, Hongdae, and Myeongdong from 2026-07-13 through end-August.
+- Current unresolved items: Chiikawa offline store list, Musinsa Edition exclusivity/channel restrictions, STM sample receipt, 26FW delivery-delay recovery plans, QC-stage cost renegotiation, Art Grocery setup confirmation, and Taiwan order-list ETD/ETA basis.
+- Current priority actions: align the 2026-08-07 Chiikawa launch across teams, lock Musinsa Edition conditions before 2026-07-20, confirm seven high-risk 26FW delivery-delay styles, track Art Grocery popup sales against scenarios, and correct/re-upload material-change reorder descriptions.
+
 ## Decided
 
 - Company and brand context: B:CAVE / WACKY WILLY.
