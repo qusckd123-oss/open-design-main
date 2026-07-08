@@ -9,12 +9,12 @@
 - Keep answers concise and practical. If information is not recorded, say so.
 - Kim Minhyuk was the WACKY WILLY apparel planning team lead during the Teams chat history below, but has since moved departments. If the current org chart differs, treat the chat as historical context.
 
-## Current Korean Summary - 2026-07-07
+## Current Korean Summary - 2026-07-08
 
-- Use `workspace/memory/current-decisions-actions-2026-07-07.md` as the current Korean execution summary for decided items, unresolved items, and next actions.
-- Key decided items: Chiikawa / 먼작귀 all-channel launch is 2026-08-07; Musinsa Edition launches 2026-07-20 with WA2602STM1/2/5/6/7; 26FW QC-or-later changes total 76 cases and must be shared immediately through `[110] 메인 스타일 변경 알림`; Art Grocery / T-shirt Festival runs Seongsu FSS 2026-07-09 through 2026-07-12, then simple POP rollout at Seongsu, Hongdae, and Myeongdong from 2026-07-13 through end-August.
-- Current unresolved items: Chiikawa offline store list, Musinsa Edition exclusivity/channel restrictions, STM sample receipt, 26FW delivery-delay recovery plans, QC-stage cost renegotiation, Art Grocery setup confirmation, and Taiwan order-list ETD/ETA basis.
-- Current priority actions: align the 2026-08-07 Chiikawa launch across teams, lock Musinsa Edition conditions before 2026-07-20, confirm seven high-risk 26FW delivery-delay styles, track Art Grocery popup sales against scenarios, and correct/re-upload material-change reorder descriptions.
+- Use `workspace/memory/current-teams-update-summary-2026-07-08.md` as the current Teams update source for decided items, unresolved items, and next actions from the Teams files updated on 2026-07-08.
+- Key decided items: Chiikawa / 먼작귀 all-channel launch remains 2026-08-07; Musinsa Edition remains WA2602STM1/2/5/6/7 with 2026-07-20 launch and MFS use; WA2602ST46 and WA2601LT18 are to be registered online after Wednesday image receipt; Art Grocery fixture movement remains 2026-07-12 closing to 2026-07-13 Hongdae/Myeongdong rollout; 26FW global price entry uses domestic confirmed-price `Y` or `AC` markers, with urgent cases requested separately; WA2602KT64 M proceeds as 150 pcs for the 2026-08-04 inbound flow.
+- Current unresolved items: STM1/2/7 actual sample receipt, Musinsa Edition exclusivity/channel restrictions, Chiikawa offline store list, Art Grocery final setup/security/shopping-bag receipt, WA2602STA7 actual inbound/use, Taiwan order-list ETD/ETA basis, 26FW QC-stage cost renegotiation, 26FW high-risk delivery recovery, WA2602ST51/ST52 final early-inbound details, and 27SS sourcing bidding/vendor cost responsibility.
+- Current priority actions: confirm Musinsa Edition operating conditions before 2026-07-20, align the 2026-08-07 Chiikawa launch and offline store list, execute Art Grocery 2026-07-09 through 2026-07-13 setup/move checks, correct/re-upload material-change reorder descriptions, update 26FW global price fields, confirm WA2602KT64 reorder/inbound handling, and lock 26FW/27SS sourcing delivery-risk follow-ups.
 
 ## Decided
 
@@ -99,6 +99,24 @@
 - 2026-07-07 26FW outlet direction: planning opinion is to show only large-volume 26FW new-basic products up to premium outlets, not to expand all new basics to general outlets.
 - 2026-07-07 global order decision: China Tmall requested WA2602KT64 M size 100 pcs for 2026-08-04 inbound; 150 pcs will be ordered first and the remaining 50 pcs absorbed domestically, with warehouse transfer requested through sales planning at inbound.
 - 2026-07-07 27SS womens decision: W-ST33 is a camo mesh short-sleeve T-shirt using the same camo pattern as W-ST01; if the same pattern is used, proceed with the same vendor as W-ST01.
+- 2026-07-08 current Teams rule: use `workspace/memory/current-teams-update-summary-2026-07-08.md` as the current Teams update source for Teams backup files updated on 2026-07-08 and clipped as 2026-07-07.
+- 2026-07-08 Musinsa Edition decision: WA2602STM1, WA2602STM2, WA2602STM5, WA2602STM6, and WA2602STM7 remain the target styles for the 2026-07-20 launch with MFS use; STM1 and STM2 sample delivery required direct next-morning receipt/address handling due to hand-carry delay.
+- 2026-07-08 online upload decision: WA2602ST46 and WA2601LT18 should be registered online after Wednesday morning image receipt.
+- 2026-07-08 reorder-content decision: material-change reorder descriptions still need correction and re-upload for WA2602ST38, WA2602ST39, WA2602ST47, WA2602ST48, and WA2602ST49.
+- 2026-07-08 Art Grocery decision: after Seongsu FSS popup operation, fixtures move after 2026-07-12 closing for 2026-07-13 Hongdae and Myeongdong FSS opening; Seongsu exterior wall returns to the existing graphic after 2026-07-12 closing.
+- 2026-07-08 Art Grocery decision: dedicated shopping bags 1,000 pcs are complete and planned for direct shipment to Seongsu FSS; WA2602STA1-WA2602STA6 inbound was shared as 2026-07-02 and WA2602STA7 as 2026-07-07.
+- 2026-07-08 global price decision: in `와키윌리_26FW 원가,판매가 확정.xlsx`, domestic confirmed-price items marked `Y` or `AC` can be used by the global team to enter Taiwan/Japan temporary prices; urgent items should be requested separately.
+- 2026-07-08 global price decision: if final confirmed price and expected sale price are identical, the file's price-calculation logic can be used; Japan sale prices are entered on a +VAT basis unless an extra -VAT/previous-price table is needed.
+- 2026-07-08 global price reference: domestic 49,000 KRW was discussed as 1,490 NTD for Taiwan pricing logic.
+- 2026-07-08 global order decision: WA2602KT64 M remains 150 pcs for the 2026-08-04 inbound flow, with 50 pcs absorbed domestically and warehouse-to-sales-planning transfer coordinated at inbound.
+- 2026-07-08 26FW inbound decision: 26FW outbound/inbound execution is expected to start from the second week of August by product-planning schedule.
+- 2026-07-08 early-inbound review: WA2602ST51 and WA2602ST52 were shared as 7월 3주차 inbound items and reviewed as BEST-product early-inbound candidates.
+- 2026-07-08 reorder review: WA2602KT64 DN 600 pcs and LG 300 pcs, total 900 pcs, were shared for reorder quantity review.
+- 2026-07-08 remake-cost reference: remake products are expected to add about 20% cost per piece on average.
+- 2026-07-08 26FW inner-basic decision: because 1st lot is being shared and color-addition delays are accumulating, immediate fabric confirmation is the main way to defend the August schedule.
+- 2026-07-08 27SS sourcing decision: 27SS sourcing materials should be requested ahead of weekly sample meetings, with at least two vendors used for bidding where possible.
+- 2026-07-08 sourcing decision: WA2602DP63 L size proceeds as 300/300 additional quantity.
+- 2026-07-08 delivery-shortening candidates: WA2602CD52 and WA2602ST72 were shared as styles to ask sourcing about shortening delivery by one week.
 
 ## Teams Chat Context: February-March 2026
 
@@ -146,6 +164,12 @@
 - Delivery resolution is not recorded for WA2604JK15, WA2604JK71, WA2603JK65, WA2603HZ14, WA2603KT65, WA2603CD51, and WA2603CD61.
 - Art Grocery Seongsu setup time is still operationally pending in the latest backup; 2026-07-09 06:00 setup was proposed and needs final site confirmation.
 - Taiwan order-list dates need clarification on whether they are ETD or ETA basis.
+- Actual receipt of STM1, STM2, and STM7 samples remains unconfirmed in the 2026-07-08-updated Teams backup.
+- Art Grocery final setup/security handling and direct receipt of the 1,000 shopping bags are not recorded as completed.
+- WA2602STA7 actual inbound and operating use are not recorded as completed.
+- WA2602ST51/ST52 full early-inbound candidate list and final confirmed inbound date are not fully readable from the text backup because key details are in attachments.
+- 26FW global price urgent-request criteria and owner flow are not fully closed.
+- 27SS sourcing sample-fee/marker-fee responsibility and actual participating vendors are not finalized.
 
 ## Next Actions
 
@@ -189,3 +213,13 @@
 - Register WA2602ST46 and WA2601LT18 online after Wednesday image receipt.
 - Confirm Taiwan order-list date basis as ETD or ETA, then update the list.
 - Proceed with WA2602KT64 M 150 pcs and coordinate warehouse-to-sales-planning transfer at 2026-08-04 inbound.
+- Confirm STM1, STM2, and STM7 actual receipt and update Musinsa Edition content/fit-guide feasibility before the 2026-07-20 launch.
+- Execute Art Grocery 2026-07-09 setup, 2026-07-12 fixture move, 2026-07-13 Hongdae/Myeongdong opening, Seongsu exterior-wall restoration, and shopping-bag receipt checks.
+- Confirm WA2602STA7 actual inbound and operating use.
+- Mark 26FW domestic confirmed-price items with `Y` or `AC` in `와키윌리_26FW 원가,판매가 확정.xlsx`, and separately request urgent Taiwan/Japan price entries.
+- Confirm whether Taiwan order-list dates are ETD or ETA, then update the list.
+- Confirm WA2602KT64 DN/LG total 900 pcs reorder opinion.
+- Confirm final early-inbound dates and required quantities for WA2602ST51, WA2602ST52, and related BEST products.
+- Ask sourcing whether WA2602CD52 and WA2602ST72 delivery can be shortened by one week.
+- Immediately confirm 26FW inner-basic fabric to reduce accumulated color-addition delay.
+- Request 27SS sourcing samples before the weekly sample meeting and run bidding with at least two vendors where possible.
