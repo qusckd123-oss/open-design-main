@@ -11,10 +11,10 @@
 
 ## Current Korean Summary - 2026-07-08
 
-- Use `workspace/memory/current-teams-update-summary-2026-07-08.md` as the current Teams update source for decided items, unresolved items, and next actions from the Teams files updated on 2026-07-08.
-- Key decided items: Chiikawa / 먼작귀 all-channel launch remains 2026-08-07; Musinsa Edition remains WA2602STM1/2/5/6/7 with 2026-07-20 launch and MFS use; WA2602ST46 and WA2601LT18 are to be registered online after Wednesday image receipt; Art Grocery fixture movement remains 2026-07-12 closing to 2026-07-13 Hongdae/Myeongdong rollout; 26FW global price entry uses domestic confirmed-price `Y` or `AC` markers, with urgent cases requested separately; WA2602KT64 M proceeds as 150 pcs for the 2026-08-04 inbound flow.
-- Current unresolved items: STM1/2/7 actual sample receipt, Musinsa Edition exclusivity/channel restrictions, Chiikawa offline store list, Art Grocery final setup/security/shopping-bag receipt, WA2602STA7 actual inbound/use, Taiwan order-list ETD/ETA basis, 26FW QC-stage cost renegotiation, 26FW high-risk delivery recovery, WA2602ST51/ST52 final early-inbound details, and 27SS sourcing bidding/vendor cost responsibility.
-- Current priority actions: confirm Musinsa Edition operating conditions before 2026-07-20, align the 2026-08-07 Chiikawa launch and offline store list, execute Art Grocery 2026-07-09 through 2026-07-13 setup/move checks, correct/re-upload material-change reorder descriptions, update 26FW global price fields, confirm WA2602KT64 reorder/inbound handling, and lock 26FW/27SS sourcing delivery-risk follow-ups.
+- Use `workspace/memory/current-teams-update-summary-2026-07-08.md` as the current Teams update source for decided items, unresolved items, and next actions from Teams backup files updated on 2026-07-08.
+- 오늘 확정된 핵심 내용: Chiikawa / 먼작귀는 2026-08-07 온·오프라인 동시 런칭 유지, Musinsa Edition은 WA2602STM1/2/5/6/7 기준 2026-07-20 런칭 및 MFS 사용 유지, WA2602ST46·WA2601LT18은 수요일 오전 이미지 수령 후 온라인 등록, Art Grocery는 2026-07-12 성수 종료 후 2026-07-13 홍대/명동 FSS 전개, 26FW 글로벌 가격 입력은 국내 확정가 `Y` 또는 `AC` 표기 기준으로 진행, WA2602KT64 M은 2026-08-04 입고 흐름에 맞춰 150 pcs 선발주로 진행.
+- 오늘 미결 핵심 내용: STM1/2/7 실제 샘플 수령, Musinsa Edition 독점/할인/타 채널 판매 가능 여부, Chiikawa 오프라인 매장 리스트, Art Grocery 최종 설치·보안·쇼핑백 수령, WA2602STA7 실제 입고/운영 투입, 대만 오더리스트 ETD/ETA 기준, 26FW QC 이후 원가 상승분 재협의, 고위험 납기 지연 스타일 복구 계획, WA2602ST51/ST52 조기 입고 세부, 27SS 소싱 비딩 참여 업체와 샘플비/마커비 책임.
+- 오늘 우선 액션: 2026-07-20 전 Musinsa Edition 운영 조건 확정, 2026-08-07 Chiikawa 런칭 및 오프라인 매장 리스트 정렬, 2026-07-09~2026-07-13 Art Grocery 설치/이동 체크, 소재 변경 리오더 설명 수정 및 재업로드, 26FW 글로벌 가격 필드 업데이트, WA2602KT64 리오더/입고 처리 확인, 26FW/27SS 소싱 납기 리스크 후속 확정.
 
 ## Decided
 
@@ -204,7 +204,7 @@
 - Communicate the 2026-08-07 Chiikawa / 먼작귀 all-channel launch date consistently across marketing, online, sales, and VM.
 - For Musinsa Edition, confirm channel exclusivity, discount rate, final product list, and whether any non-MFS/offline sale is allowed before 2026-07-20 launch.
 - Check actual receipt of STM1, STM2, and STM7 samples on 2026-07-07 and update content/fit-guide feasibility.
-- Share any future 26FW QC-or-later changes in `[110] 메인 스타일 변경 알람` using the required fields.
+- Share any future 26FW QC-or-later changes in `[110] 메인 스펙 변경 알림` using the required fields.
 - Immediately confirm delivery impact and recovery plan for WA2604JK15, WA2604JK71, WA2603JK65, WA2603HZ14, WA2603KT65, WA2603CD51, and WA2603CD61.
 - Track 26SS July week 1 emergency inventory: SO01, SO31, SO11, HZ01, STE3, and PT01; watch ST38/ST48/ST49/ST47 after new inbound rebound.
 - Check WOMENS SH stock because cumulative sell-through reached 85.7% and sellout is near.
