@@ -11,10 +11,10 @@
 
 ## Current Korean Summary - 2026-07-09
 
-- Use `workspace/memory/current-teams-update-summary-2026-07-09.md` as the current Teams update source for decided items, unresolved items, and next actions from Teams backup files updated on 2026-07-09 and clipped as 2026-07-08.
-- 오늘 확정된 핵심 내용: 26FW QR 업데이트 및 국내 확정 상품의 대만·일본 판매가 입력 완료, 상시 운영용 WA0000STE1/2/3 2PACK·3PACK 패키지 개발 착수, 27SS 전용 2PACK 별도 개발, WA2602STA7 2026-07-09 차량 출고, Art Grocery 수량은 성수 사이즈별 25 pcs·홍대/명동 사이즈별 15 pcs, 현장 VM 오전 9시 집결, 8월 VM은 1·2주차 기존 운영 후 3·4주차 FW 운영 의견으로 정리.
-- 오늘 미결 핵심 내용: 2PACK·3PACK 최종 수량과 리드타임, 27SS 2PACK 최종 사양, WA2603LT16 컬러명 변경 가능 시점, 케어라벨 재작업 일정·견적·추가 비용, Art Grocery 차량 도착/하역 시각과 후속 FSS 수량, 8월 VM 최종 전환일, 일본 가격 불일치 항목 보정 범위.
-- 오늘 우선 액션: 패키지 발주 수량 및 리드타임 확인, WA2603LT16 ERP·작업지시서 수정 여부 확정, 케어라벨 재작업 조건 확정, WA2602STA7 실제 입고 추적, Art Grocery 오전 8시 50분 이후 하역 및 9시 VM 집결 확인, 2026-07-15까지 8월 VM 세부안 전달, 글로벌 가격 파일 불일치 항목 보정.
+- Use `workspace/memory/current-teams-update-summary-2026-07-09.md` as the current Teams update source for decided items, unresolved items, and next actions from both `teams 채팅 데이터` and `teams 채널 데이터` files updated on 2026-07-09.
+- 오늘 확정된 핵심 내용: 26FW QR·대만/일본 판매가 업데이트 완료, WA0000STE1/2/3 2PACK·3PACK 개발, WA2602STA7 차량 출고, Art Grocery 수량 및 VM 집결 기준 확정, 26FW SPOT은 QR 파일의 투입 대기 항목과 9월 내 입고 목표로 관리, WA2604JK17 유니/우먼스 컬러 분리, 우먼스 차콜 체크는 WA2604JK72 S/M으로 운영, HNC 기모·뉴베이직 워싱·CP360 소재·핏 기준 확정.
+- 오늘 미결 핵심 내용: 패키지 수량/리드타임, WA2603LT16 컬러명 변경, 케어라벨 재작업 조건, Art Grocery 후속 운영, 26FW SPOT 최종 수량·발주 데드라인·협력사·PO 일자, 재경팀 9월 입고 금액 조정 대상, WA2604JK72 글로벌 L/XL 오더의 S/M 전환 수량, 9월 말 납기 달성 여부.
+- 오늘 우선 액션: 2026-07-14 미팅에서 SPOT 투입 시기와 9월 입고 우선순위 확정, QR 파일 기준 발주 데드라인 산출, WA2604JK72 글로벌 변경 오더 업데이트, 협력사 지정 및 워싱 원가 비딩, 작업지시서에 확정 사양 반영, 9월 필수 입고와 10월 이월 스타일 구분.
 
 ## Decided
 
@@ -126,6 +126,13 @@
 - 2026-07-09 Art Grocery allocation decision: allocate 25 pcs per size to Seongsu FSS and a base 15 pcs per size to Hongdae/Myeongdong FSS; VM staff meet at 09:00.
 - 2026-07-09 VM direction: retain the existing display in August weeks 1-2 and move to FW in weeks 3-4, with final feedback aligned to the 2026-07-15 work schedule.
 - 2026-07-09 development decision: use the existing SO13 chart and TC CAD for WA2604JK17 development.
+- 2026-07-09 Teams channel data rule: include `teams 채널 데이터` as a current operating source alongside `teams 채팅 데이터`; the current channel source is `와키윌리 QR 대응 체계 > 26FW QR`.
+- 2026-07-09 26FW SPOT decision: manage active SPOT candidates in the `투입 대기` section of `26FW 와키윌리 QR구성(SPOT,Reorder).xlsx`, targeting September inbound.
+- 2026-07-09 fleece-color decision: WA2604JK17 unisex uses beige check plus solid charcoal and a winter pattern; womens uses charcoal check plus solid brown.
+- 2026-07-09 SKU decision: womens charcoal check is split into WA2604JK72 and domestic sizing is S/M; existing global L/XL orders require buyer conversion updates, with no separate additional-order collection planned.
+- 2026-07-09 material/spec decision: WA2604HZ01 HNC uses the WA2604PT65 CP360 lightly brushed fleece quality; WA2504PT01 follows WA2603PT02 specs.
+- 2026-07-09 washing/material decision: WA2603HZ17-WA2603PT17 use acid-wash color bleaching on C100 400G lightweight french terry; WA2603HZ15-WA2603HZ06 use CP360 french terry.
+- 2026-07-09 SPOT execution direction: if design capacity is constrained, reduce work by changing only the 25FW logo or fabric color; confirm launch timing and September inbound priorities at the 2026-07-14 meeting.
 
 ## Teams Chat Context: February-March 2026
 
