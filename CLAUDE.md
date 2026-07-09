@@ -9,12 +9,12 @@
 - Keep answers concise and practical. If information is not recorded, say so.
 - Kim Minhyuk was the WACKY WILLY apparel planning team lead during the Teams chat history below, but has since moved departments. If the current org chart differs, treat the chat as historical context.
 
-## Current Korean Summary - 2026-07-08
+## Current Korean Summary - 2026-07-09
 
-- Use `workspace/memory/current-teams-update-summary-2026-07-08.md` as the current Teams update source for decided items, unresolved items, and next actions from Teams backup files updated on 2026-07-08.
-- 오늘 확정된 핵심 내용: Chiikawa / 먼작귀는 2026-08-07 온·오프라인 동시 런칭 유지, Musinsa Edition은 WA2602STM1/2/5/6/7 기준 2026-07-20 런칭 및 MFS 사용 유지, WA2602ST46·WA2601LT18은 수요일 오전 이미지 수령 후 온라인 등록, Art Grocery는 2026-07-12 성수 종료 후 2026-07-13 홍대/명동 FSS 전개, 26FW 글로벌 가격 입력은 국내 확정가 `Y` 또는 `AC` 표기 기준으로 진행, WA2602KT64 M은 2026-08-04 입고 흐름에 맞춰 150 pcs 선발주로 진행.
-- 오늘 미결 핵심 내용: STM1/2/7 실제 샘플 수령, Musinsa Edition 독점/할인/타 채널 판매 가능 여부, Chiikawa 오프라인 매장 리스트, Art Grocery 최종 설치·보안·쇼핑백 수령, WA2602STA7 실제 입고/운영 투입, 대만 오더리스트 ETD/ETA 기준, 26FW QC 이후 원가 상승분 재협의, 고위험 납기 지연 스타일 복구 계획, WA2602ST51/ST52 조기 입고 세부, 27SS 소싱 비딩 참여 업체와 샘플비/마커비 책임.
-- 오늘 우선 액션: 2026-07-20 전 Musinsa Edition 운영 조건 확정, 2026-08-07 Chiikawa 런칭 및 오프라인 매장 리스트 정렬, 2026-07-09~2026-07-13 Art Grocery 설치/이동 체크, 소재 변경 리오더 설명 수정 및 재업로드, 26FW 글로벌 가격 필드 업데이트, WA2602KT64 리오더/입고 처리 확인, 26FW/27SS 소싱 납기 리스크 후속 확정.
+- Use `workspace/memory/current-teams-update-summary-2026-07-09.md` as the current Teams update source for decided items, unresolved items, and next actions from Teams backup files updated on 2026-07-09 and clipped as 2026-07-08.
+- 오늘 확정된 핵심 내용: 26FW QR 업데이트 및 국내 확정 상품의 대만·일본 판매가 입력 완료, 상시 운영용 WA0000STE1/2/3 2PACK·3PACK 패키지 개발 착수, 27SS 전용 2PACK 별도 개발, WA2602STA7 2026-07-09 차량 출고, Art Grocery 수량은 성수 사이즈별 25 pcs·홍대/명동 사이즈별 15 pcs, 현장 VM 오전 9시 집결, 8월 VM은 1·2주차 기존 운영 후 3·4주차 FW 운영 의견으로 정리.
+- 오늘 미결 핵심 내용: 2PACK·3PACK 최종 수량과 리드타임, 27SS 2PACK 최종 사양, WA2603LT16 컬러명 변경 가능 시점, 케어라벨 재작업 일정·견적·추가 비용, Art Grocery 차량 도착/하역 시각과 후속 FSS 수량, 8월 VM 최종 전환일, 일본 가격 불일치 항목 보정 범위.
+- 오늘 우선 액션: 패키지 발주 수량 및 리드타임 확인, WA2603LT16 ERP·작업지시서 수정 여부 확정, 케어라벨 재작업 조건 확정, WA2602STA7 실제 입고 추적, Art Grocery 오전 8시 50분 이후 하역 및 9시 VM 집결 확인, 2026-07-15까지 8월 VM 세부안 전달, 글로벌 가격 파일 불일치 항목 보정.
 
 ## Decided
 
@@ -117,6 +117,15 @@
 - 2026-07-08 27SS sourcing decision: 27SS sourcing materials should be requested ahead of weekly sample meetings, with at least two vendors used for bidding where possible.
 - 2026-07-08 sourcing decision: WA2602DP63 L size proceeds as 300/300 additional quantity.
 - 2026-07-08 delivery-shortening candidates: WA2602CD52 and WA2602ST72 were shared as styles to ask sourcing about shortening delivery by one week.
+- 2026-07-09 current Teams rule: use `workspace/memory/current-teams-update-summary-2026-07-09.md` as the current Teams update source for Teams backup files updated on 2026-07-09 and clipped as 2026-07-08.
+- 2026-07-09 26FW data decision: the 26FW QR update and Taiwan/Japan sale-price entry for domestically confirmed products were completed; Japan prices use the Japan-side conversion table, with mismatches checked separately.
+- 2026-07-09 package decision: develop always-on 2PACK/3PACK packaging under WA0000STE1, WA0000STE2, and WA0000STE3; confirm order and package-development lead times from expected quantities.
+- 2026-07-09 27SS package decision: proceed with a separate 27SS 2PACK and develop the graphic/color specification after the design brief.
+- 2026-07-09 product-name decision: 26FW styles without a SPEC sheet are treated as undecided and excluded from the updated product-name list.
+- 2026-07-09 outbound decision: WA2602STA7 was assigned to next-day vehicle dispatch after the 2026-07-08 urgent-release request.
+- 2026-07-09 Art Grocery allocation decision: allocate 25 pcs per size to Seongsu FSS and a base 15 pcs per size to Hongdae/Myeongdong FSS; VM staff meet at 09:00.
+- 2026-07-09 VM direction: retain the existing display in August weeks 1-2 and move to FW in weeks 3-4, with final feedback aligned to the 2026-07-15 work schedule.
+- 2026-07-09 development decision: use the existing SO13 chart and TC CAD for WA2604JK17 development.
 
 ## Teams Chat Context: February-March 2026
 
