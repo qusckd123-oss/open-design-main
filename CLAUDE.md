@@ -11,6 +11,14 @@
 
 ## Current Korean Summary - 2026-07-10
 
+- Use `workspace/memory/current-data-summary-2026-07-10.md` as the current integrated source for decided items, unresolved items, and next actions across Teams updates, To Do updates, and Chiikawa / 먼작귀 contract-royalty data.
+- 현재 확정된 핵심 내용: 먼작귀 계약 기준 MG는 30,000,000원 VAT 별도, 러닝 로열티는 TAG가/소비자가격의 5% VAT 별도, 홀로그램 스티커 대금은 장당 3원 VAT 별도이며 사용료와 별도 정산한다. 먼작귀 판매가 변경 후 총 TAG 금액은 610,000,000원에서 710,000,000원으로 증가했고 총 로열티는 30,500,000원에서 35,500,000원으로 증가했으며, MG 30,000,000원을 초과하는 추가 로열티 결재 필요액은 5,500,000원이다.
+- 현재 확정된 업무 내용: 먼작귀 판매가 변경 사유는 높은 원가율 방어와 영업의 낮은 판매 저항 판단이며, 원가 상승 원인은 아트웍 컨펌 기준과 도수 컬러별 지정 컬러 때문에 DTP가 아닌 라바 프린트로 작업된 점이다. 26FW SPOT은 QR 파일의 `투입 대기` 항목과 9월 내 입고 목표로 관리하고, WA2604JK17/WA2604JK72 컬러/사이즈 운영 기준과 26FW 주요 소재/스펙 기준은 정리되었다.
+- 현재 미결 핵심 내용: 먼작귀 추가 로열티 5,500,000원 결재 승인, VAT 별도 청구 및 세금계산서 기준, 홀로그램 스티커 실물 대금과 로열티/MG 차감 정산 구분, 26FW SPOT 투입 시기·발주 데드라인·최종 수량·협력사·PO 시점, WA2604JK72 글로벌 L/XL 오더의 S/M 전환 수량, 27SS 컨벤션 루킹/진열 묶음, 7-8월 IMC 셀링포인트 공유 여부가 남아 있다.
+- 현재 우선 액션: 먼작귀 추가 로열티 5,500,000원 결재 요청 및 VAT/세금계산서 기준 확인, 향후 IP 협업 상품의 아트웍 구현 방식별 원가 리스크를 초기 판매가 검토에 반영, 2026-07-14 화요일 미팅에서 26FW SPOT 투입 일정과 9월 입고 우선순위 확정, WA2604JK72 변경 오더 수량 시트 반영, 27SS 라인시트/VM 진열 기준 정리.
+
+## Current Teams Summary - 2026-07-10
+
 - Use `workspace/memory/current-teams-update-summary-2026-07-10.md` as the current Teams update source for decided items, unresolved items, and next actions from both `teams 채팅 데이터` and `teams 채널 데이터` files updated on 2026-07-10 and clipped as 2026-07-09.
 - 오늘 확정된 핵심 내용: 26FW SPOT은 QR 파일의 `투입 대기` 항목과 9월 내 입고 목표로 관리, 상품설명서 소싱파트 기재 요청 및 7월 납기물 업데이트 완료, WA2604JK17 유니/우먼스 컬러 분리, WA2604JK72는 우먼스 S/M 기준으로 운영, HNC 기모·WA2504PT01 스펙·뉴베이직 워싱·CP360 소재 기준 확정, 다이마루 TF 잠정 중단 및 27SS 품평 샘플 작업 담당 변경, 26SS SDPK 리오더 일부 입고 지연, 27SS 컨벤션 라인시트 작성 기준 요청, Art Grocery 성수 팝업 1일차 판매 6PCS 기록.
 - 오늘 미결 핵심 내용: 26FW SPOT 투입 시기·발주 데드라인·최종 수량·협력사·PO 시점, 재경팀 9월 입고 금액 조정에 따른 물량 조정 여부, 9월 내 입고 달성 가능성, 디자인실 케파 부족 시 최소 변경 방식 적용 여부, WA2604JK72 글로벌 L/XL 오더의 S/M 전환 수량, 27SS 컨벤션 루킹/진열 묶음, 26FW 패딩류 네이밍, 7-8월 IMC 셀링포인트 공유 여부, Art Grocery 선물 수요 셀링포인트 보완안.
@@ -147,6 +155,12 @@
 - 2026-07-10 26SS SDPK reorder delay decision: WA2602SO31-2, WA2602SO75-3, and WA2602SO13-2 moved from 2026-07-14 to 2026-07-21; WA2602SS31-2 and WA2602SO32-3 moved to 50% partial inbound on 2026-07-21 and remaining inbound on 2026-07-28.
 - 2026-07-10 27SS convention linesheet direction: separate men's and women's sheet tabs, use the same category order for both, and place intended adjacent display looks in adjacent/below rows so VM can align floor display to the linesheet.
 - 2026-07-10 Art Grocery result: Seongsu popup opened and was set without issue; day-one sales on 2026-07-09 closed at 6 pcs, with rain limiting traffic and gift-package demand noted as a selling-point opportunity.
+- 2026-07-10 current integrated data rule: use `workspace/memory/current-data-summary-2026-07-10.md` as the current integrated source across Teams, To Do, and Chiikawa / 먼작귀 contract-royalty updates.
+- 2026-07-10 Chiikawa / 먼작귀 contract decision: MG is 30,000,000 KRW VAT excluded; running royalty is 5% of TAG/consumer price VAT excluded; hologram sticker physical cost is 3 KRW per sticker VAT excluded and is settled separately from royalty.
+- 2026-07-10 Chiikawa / 먼작귀 royalty decision: after price changes, total TAG amount increases from 610,000,000 KRW to 710,000,000 KRW and total royalty increases from 30,500,000 KRW to 35,500,000 KRW; the required amount above the paid MG is 5,500,000 KRW.
+- 2026-07-10 Chiikawa / 먼작귀 pricing rationale: price increase is justified by high cost-rate pressure and sales team's view that customer resistance will be low; high cost comes from strict artwork approval and required per-color screen rubber printing instead of DTP.
+- 2026-07-10 reporting output: the Chiikawa / 먼작귀 price-change additional-royalty report was prepared as `보고 자료/먼작귀_판매가변경_추가로열티_보고_2026-07-10.md` and `.html`.
+- 2026-07-10 To Do decision: `27SS 샘플 작업지시서 투입` is marked fully complete; `멜란지 블루 컬러 코드 요청` deadline moved to 2026-07-10 with ERP code-registration request check added.
 
 ## Teams Chat Context: February-March 2026
 
