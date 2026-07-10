@@ -9,7 +9,14 @@
 - Keep answers concise and practical. If information is not recorded, say so.
 - Kim Minhyuk was the WACKY WILLY apparel planning team lead during the Teams chat history below, but has since moved departments. If the current org chart differs, treat the chat as historical context.
 
-## Current Korean Summary - 2026-07-09
+## Current Korean Summary - 2026-07-10
+
+- Use `workspace/memory/current-teams-update-summary-2026-07-10.md` as the current Teams update source for decided items, unresolved items, and next actions from both `teams 채팅 데이터` and `teams 채널 데이터` files updated on 2026-07-10 and clipped as 2026-07-09.
+- 오늘 확정된 핵심 내용: 26FW SPOT은 QR 파일의 `투입 대기` 항목과 9월 내 입고 목표로 관리, 상품설명서 소싱파트 기재 요청 및 7월 납기물 업데이트 완료, WA2604JK17 유니/우먼스 컬러 분리, WA2604JK72는 우먼스 S/M 기준으로 운영, HNC 기모·WA2504PT01 스펙·뉴베이직 워싱·CP360 소재 기준 확정, 다이마루 TF 잠정 중단 및 27SS 품평 샘플 작업 담당 변경, 26SS SDPK 리오더 일부 입고 지연, 27SS 컨벤션 라인시트 작성 기준 요청, Art Grocery 성수 팝업 1일차 판매 6PCS 기록.
+- 오늘 미결 핵심 내용: 26FW SPOT 투입 시기·발주 데드라인·최종 수량·협력사·PO 시점, 재경팀 9월 입고 금액 조정에 따른 물량 조정 여부, 9월 내 입고 달성 가능성, 디자인실 케파 부족 시 최소 변경 방식 적용 여부, WA2604JK72 글로벌 L/XL 오더의 S/M 전환 수량, 27SS 컨벤션 루킹/진열 묶음, 26FW 패딩류 네이밍, 7-8월 IMC 셀링포인트 공유 여부, Art Grocery 선물 수요 셀링포인트 보완안.
+- 오늘 우선 액션: 2026-07-14 화요일 미팅에서 SPOT 투입 시기와 디자인/소싱 일정 확정, 발주 데드라인 및 생산 리드타임 산출, WA2604JK72 변경 오더 수량 시트 반영, 26FW SPOT 상품설명서 소싱파트 점검, 26SS SDPK 지연 품번 입고 추적, 27SS 라인시트와 VM 진열 순서 정리, IMC 셀링포인트 공유 확인, Art Grocery 선물용 패키지 셀링포인트 보완.
+
+## Previous Korean Summary - 2026-07-09
 
 - Use `workspace/memory/current-teams-update-summary-2026-07-09.md` as the current Teams update source for decided items, unresolved items, and next actions from both `teams 채팅 데이터` and `teams 채널 데이터` files updated on 2026-07-09.
 - 오늘 확정된 핵심 내용: 26FW QR·대만/일본 판매가 업데이트 완료, WA0000STE1/2/3 2PACK·3PACK 개발, WA2602STA7 차량 출고, Art Grocery 수량 및 VM 집결 기준 확정, 26FW SPOT은 QR 파일의 투입 대기 항목과 9월 내 입고 목표로 관리, WA2604JK17 유니/우먼스 컬러 분리, 우먼스 차콜 체크는 WA2604JK72 S/M으로 운영, HNC 기모·뉴베이직 워싱·CP360 소재·핏 기준 확정.
@@ -133,6 +140,13 @@
 - 2026-07-09 material/spec decision: WA2604HZ01 HNC uses the WA2604PT65 CP360 lightly brushed fleece quality; WA2504PT01 follows WA2603PT02 specs.
 - 2026-07-09 washing/material decision: WA2603HZ17-WA2603PT17 use acid-wash color bleaching on C100 400G lightweight french terry; WA2603HZ15-WA2603HZ06 use CP360 french terry.
 - 2026-07-09 SPOT execution direction: if design capacity is constrained, reduce work by changing only the 25FW logo or fabric color; confirm launch timing and September inbound priorities at the 2026-07-14 meeting.
+- 2026-07-10 current Teams rule: use `workspace/memory/current-teams-update-summary-2026-07-10.md` as the current Teams update source for Teams chat and channel backup files updated on 2026-07-10 and clipped as 2026-07-09.
+- 2026-07-10 SPOT decision: 26FW SPOT active styles remain managed in the QR file's `투입 대기` section with a September inbound target; the sourcing part of the product-description sheet was requested and July delivery items were updated.
+- 2026-07-10 26FW spec decision: WA2604HZ01(HNC) uses WA2604PT65 CP360 lightly brushed fleece, WA2504PT01 follows WA2603PT02 specs, WA2603HZ17-WA2603PT17 use acid-wash color bleaching on C100 400G lightweight french terry, and WA2603HZ15-WA2603HZ06 use CP360 french terry.
+- 2026-07-10 development ownership decision: the Daimaeru TF was temporarily suspended and work changed; Daimaeru weekly/Jisan ownership changed, and 27SS sample-review sample work should be handed to Yoo Jiwon.
+- 2026-07-10 26SS SDPK reorder delay decision: WA2602SO31-2, WA2602SO75-3, and WA2602SO13-2 moved from 2026-07-14 to 2026-07-21; WA2602SS31-2 and WA2602SO32-3 moved to 50% partial inbound on 2026-07-21 and remaining inbound on 2026-07-28.
+- 2026-07-10 27SS convention linesheet direction: separate men's and women's sheet tabs, use the same category order for both, and place intended adjacent display looks in adjacent/below rows so VM can align floor display to the linesheet.
+- 2026-07-10 Art Grocery result: Seongsu popup opened and was set without issue; day-one sales on 2026-07-09 closed at 6 pcs, with rain limiting traffic and gift-package demand noted as a selling-point opportunity.
 
 ## Teams Chat Context: February-March 2026
 
