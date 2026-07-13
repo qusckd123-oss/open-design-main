@@ -17,7 +17,14 @@
 - 현재 미결 핵심 내용: 먼작귀 추가 로열티 5,500,000원 결재 승인, VAT 별도 청구 및 세금계산서 기준, 홀로그램 스티커 실물 대금과 로열티/MG 차감 정산 구분, 26FW SPOT 투입 시기·발주 데드라인·최종 수량·협력사·PO 시점, WA2604JK72 글로벌 L/XL 오더의 S/M 전환 수량, 27SS 컨벤션 루킹/진열 묶음, 7-8월 IMC 셀링포인트 공유 여부가 남아 있다.
 - 현재 우선 액션: 먼작귀 추가 로열티 5,500,000원 결재 요청 및 VAT/세금계산서 기준 확인, 향후 IP 협업 상품의 아트웍 구현 방식별 원가 리스크를 초기 판매가 검토에 반영, 2026-07-14 화요일 미팅에서 26FW SPOT 투입 일정과 9월 입고 우선순위 확정, WA2604JK72 변경 오더 수량 시트 반영, 27SS 라인시트/VM 진열 기준 정리.
 
-## Current Teams Summary - 2026-07-10
+## Current Teams Summary - 2026-07-13
+
+- Use `workspace/memory/current-teams-update-summary-2026-07-13.md` as the current Teams update source for decided items, unresolved items, and next actions from both `teams 채팅 데이터` and `teams 채널 데이터` files updated on 2026-07-13 and clipped as 2026-07-12.
+- 오늘 결정된 핵심 내용: 26FW QR/SPOT/REORDER는 `26FW 와키윌리 QR구성(SPOT,Reorder).xlsx` 기준으로 운영하고, 26FW SPOT 추가 진행 건은 9월 내 입고를 목표로 관리한다. WA2604JK17 체크 플리스는 유니 베이지 체크, 우먼스 차콜 체크로 분리 운영하며, 우먼스 차콜 체크는 WA2604JK72로 분리하고 국내 S/M 기준으로 운영한다. WA2504PT01은 WA2603PT02 동일 스펙으로 진행한다. 다이마루 TF는 잠정 중단되었고 27SS 품평 샘플 작업은 유지원 대리에게 전달한다. 먼작귀는 2026-08-07 전 스타일 온/오프라인 동시 출시로 정리하고 VM은 FSS 하이라이트, FSS 외 한 헹거 POP 기준으로 적용한다. Art Grocery는 Seongsu FSS 사이즈별 25pcs, Hongdae/Myeongdong FSS 사이즈별 15pcs 기준으로 운영하며, 2026-07-13 Hongdae/Myeongdong 오픈과 성수 외부 벽 원복 방향이 공유되었다.
+- 오늘 미결 핵심 내용: 26FW SPOT 최종 발주 데드라인, PO 발행 시점, 9월 내 입고 가능성, 기존 9월 입고 물량 조정 여부, 26FW 원가율 네고 결과, WA2604JK72 글로벌 L/XL 오더의 S/M 전환 수량, Art Grocery 할인 프로모션 적용 여부, 8월 VM 착장 작업 일정, TF FW 품번 반팔 티셔츠 최종 매장 리스트는 추가 확인이 필요하다.
+- 오늘 우선 액션: 2026-07-14 미팅에서 SPOT 일정/수량/발주/입고 우선순위를 확정하고, 26FW 뉴베이직 BT/컬러 컨펌 우선순위를 처리하며, 먼작귀 2026-08-07 동시 출시 일정을 온라인/영업/VM/마케팅에 동일하게 공유한다. Art Grocery Hongdae/Myeongdong 판매 속도를 확인해 할인 여부를 결정하고, WA2602ST46/WA2601LT18 온라인 등록 및 소재 변경 리오더 설명 수정도 추적한다.
+
+## Previous Teams Summary - 2026-07-10
 
 - Use `workspace/memory/current-teams-update-summary-2026-07-10.md` as the current Teams update source for decided items, unresolved items, and next actions from both `teams 채팅 데이터` and `teams 채널 데이터` files updated on 2026-07-10 and clipped as 2026-07-09.
 - 오늘 확정된 핵심 내용: 26FW SPOT은 QR 파일의 `투입 대기` 항목과 9월 내 입고 목표로 관리, 상품설명서 소싱파트 기재 요청 및 7월 납기물 업데이트 완료, WA2604JK17 유니/우먼스 컬러 분리, WA2604JK72는 우먼스 S/M 기준으로 운영, HNC 기모·WA2504PT01 스펙·뉴베이직 워싱·CP360 소재 기준 확정, 다이마루 TF 잠정 중단 및 27SS 품평 샘플 작업 담당 변경, 26SS SDPK 리오더 일부 입고 지연, 27SS 컨벤션 라인시트 작성 기준 요청, Art Grocery 성수 팝업 1일차 판매 6PCS 기록.
@@ -161,6 +168,23 @@
 - 2026-07-10 Chiikawa / 먼작귀 pricing rationale: price increase is justified by high cost-rate pressure and sales team's view that customer resistance will be low; high cost comes from strict artwork approval and required per-color screen rubber printing instead of DTP.
 - 2026-07-10 reporting output: the Chiikawa / 먼작귀 price-change additional-royalty report was prepared as `보고 자료/먼작귀_판매가변경_추가로열티_보고_2026-07-10.md` and `.html`.
 - 2026-07-10 To Do decision: `27SS 샘플 작업지시서 투입` is marked fully complete; `멜란지 블루 컬러 코드 요청` deadline moved to 2026-07-10 with ERP code-registration request check added.
+
+## Current Decisions From Teams - 2026-07-13
+
+- 2026-07-13 current Teams rule: use `workspace/memory/current-teams-update-summary-2026-07-13.md` as the current Teams update source for Teams chat and channel backup files updated on 2026-07-13 and clipped as 2026-07-12.
+- 2026-07-13 QR/SPOT decision: 26FW QR/SPOT/REORDER work remains managed through `26FW 와키윌리 QR구성(SPOT,Reorder).xlsx`, and active 26FW SPOT additions target September inbound.
+- 2026-07-13 26FW SPOT execution decision: washing sweatshirts and back-graphic hood zip-ups are shared as SPOT items tied to 26FW order-amount increase and room needs; the back graphic uses a dropped 26FW hood zip-up asset, and washing items should go through vendor cost bidding including SDPK and daimaeru vendors.
+- 2026-07-13 26FW fleece decision: WA2604JK17 check fleece is split by line, with unisex using beige check and womens using charcoal check; womens charcoal check is separated as WA2604JK72 and operated domestically in S/M.
+- 2026-07-13 global-order decision: WA2604JK72 existing global L/XL orders from Japan branch and Thailand distributor should be checked by buyer and converted into updated S/M change quantities; no separate additional-order collection is needed.
+- 2026-07-13 spec decision: WA2504PT01 follows the same spec as WA2603PT02.
+- 2026-07-13 development ownership decision: the Daimaeru TF is temporarily suspended, Daimaeru weekly/Jisan ownership changed, and 27SS sample-review sample work should be handed to Yoo Jiwon.
+- 2026-07-13 global-price decision: when confirmed domestic prices are marked in `Y열/AC열`, the global team enters Taiwan/Japan prices continuously; urgent items require separate requests. WA2603LT15 GR is treated as 89,000 KRW domestic price pending Taiwan branch confirmation.
+- 2026-07-13 Chiikawa / 먼작귀 launch decision: all styles launch online and offline on 2026-08-07; VM applies as FSS highlight and non-FSS one-hanger POP.
+- 2026-07-13 offline sales decision: TF FW short-sleeve styles are planned for offline-focused shipment, excluding Musinsa shipment because Musinsa has separate exclusive products; target store scope is about the top 15 stores.
+- 2026-07-13 Art Grocery allocation decision: Seongsu FSS receives 25 pcs per size and Hongdae/Myeongdong FSS receive a base 15 pcs per size; Hongdae/Myeongdong open on 2026-07-13 after fixture movement from Seongsu on 2026-07-12 close.
+- 2026-07-13 Art Grocery operation decision: 1,000 dedicated shopping bags were completed for direct store inbound, residual fixtures are managed by sales, non-retained fixtures/props are discarded after Seongsu FSS close, and Seongsu exterior wall returns to the existing graphic.
+- 2026-07-13 online upload decision: WA2602ST46 and WA2601LT18 are to be registered online on Wednesday after Wednesday morning image receipt.
+- 2026-07-13 reorder-content decision: material-change reorder descriptions need correction and re-upload for WA2602ST38, WA2602ST39, WA2602ST47, WA2602ST48, and WA2602ST49.
 
 ## Teams Chat Context: February-March 2026
 
