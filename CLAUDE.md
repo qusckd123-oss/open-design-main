@@ -9,12 +9,33 @@
 - Keep answers concise and practical. If information is not recorded, say so.
 - Kim Minhyuk was the WACKY WILLY apparel planning team lead during the Teams chat history below, but has since moved departments. If the current org chart differs, treat the chat as historical context.
 
+## Output Rule
+
+- Create user-facing deliverables under `output/` by default. Source/reference folders such as `추가 데이터/`, `ST01, 02 개발/`, and `보고 자료/` should be treated as inputs unless the user explicitly asks to edit the original source file.
+- For HTML/report deliverables, create a dedicated folder under `output/` and put the main file at `index.html` when practical. Copy required images/assets into that output folder so the deliverable opens independently with relative paths.
+
 ## Current Teams Summary - 2026-07-14
 
 - Use `workspace/memory/current-teams-update-summary-2026-07-14.md` as the current Teams update source for decided items, unresolved items, and next actions from both `teams 채팅 데이터` and `teams 채널 데이터` files updated on 2026-07-14 and clipped as 2026-07-13.
 - 오늘 결정된 핵심 내용: 26FW QR/SPOT/REORDER는 `26FW 와키윌리 QR구성(SPOT,Reorder).xlsx` 기준으로 계속 관리한다. 26FW SPOT/워싱물 스웻/뒤판 그래픽 후드집업은 9월 내 입고 목표로 진행하고, 26FW 기모 스웻은 9월 말 입고 기준으로 작업지시서/PO 데드라인을 역산한다. WA2604JK17은 유니 베이지 체크 중심, 우먼스 차콜 체크는 WA2604JK72로 분리하며 WA2604JK72는 국내 S/M 기준으로 운영한다. 확정 국내 판매가는 `Y열/AC열` 입력 후 글로벌팀이 대만/일본 택가를 수시 반영하고, WA2603LT15 GR은 국내 판매가 89,000원 기준으로 본다. 무신사 단독 5개 스타일은 2026-07-27 오픈 예정이고, TF FW 반팔 티셔츠는 무신사 출고 없이 오프라인 상위 약 15개 매장 위주로 진행한다. Art Grocery는 4일간 27PCS 판매 후 2026-07-13부터 성수/홍대/명동 플래그십 전 매장 50% 할인 운영으로 변경되었다.
 - 오늘 미결 핵심 내용: 26FW SPOT 최종 투입 시점, 발주 데드라인, PO 발행 시점, 9월 내 입고 가능성, 재경팀 9월 입고 금액 조정에 따른 물량 조정 여부, WA2604JK72 글로벌 L/XL 오더의 S/M 전환 수량, WA2604JK17/WA2604JK72/WA2604PT72 원단 샘플 및 AIR 선적 가능성, 27SS 컨벤션 라인시트 최종안, 8월 VM 착장 재조율, Art Grocery 온라인/해외/추가 채널 확대 여부가 남아 있다.
 - 오늘 우선 액션: 2026-07-14 미팅에서 26FW SPOT 일정/수량/발주/입고 우선순위와 기존 9월 입고 물량 조정 여부를 확정한다. WA2604JK17/WA2604JK72/WA2604PT72 원단·BT·CFM·AIR 선적 일정을 소재/소싱과 업데이트하고, WA2604JK72 글로벌 변경 오더 수량을 시트에 반영한다. WA2603HZ14 변경 컬러 CAD를 오전 수령 후 전달하고, WA2602STR3 #PI FSS 단독 SNS 홍보 이미지는 2026-07-16까지 수령한다. Art Grocery 50% 할인 POP/판매가 반영 완료 여부와 온라인 오픈 확대를 영업 미팅에서 확인한다.
+
+## Wacky Willy Business + Sales Meeting - 2026-07-07
+
+- Use `workspace/memory/wacky-willy-business-sales-decisions-2026-07-07.md` as the source for decided items, unresolved items, and next actions from the 2026-07-07 Wacky Willy business + sales meeting.
+- Meeting terminology: use `BTA 분석`, `품평`, and `SKU 플랜`. Treat `베이직`, `트렌드`, `KT64번`, `010`, `S75`, `511번`, and `52번` as style codes unless a later source confirms full product names.
+- Key decisions: 베이직 01/02번 is a high-inventory burden style-code group and should be managed for focused 7-8월 sell-through; the replacement basic T-shirt should not be a simple logo-only update and should test material, fit, word logo, slub yarn, and color/material-mix changes through samples.
+- Key decisions: 7월 selling should focus on new/reorder products, while 8월 selling should defend sales through back-to-school ACC, February inventory, and early FW products. KT64번 should be treated as a Tmall/China opportunity style with 2026-08-04 reorder delivery management.
+- Key decisions: 2026FW outbound starts from the existing 2026년 8월 2-3주차 plan, Musinsa-exclusive five styles remain planned for 2026-07-27, and the next 26FW meeting focus should shift to sales plan, channel efficiency, VM/IMC execution, and SKU plan.
+
+## Current WA2702 ST T-Shirt Summary - 2026-07-14
+
+- Use `workspace/memory/wa2702-st01-st03-current-summary-2026-07-14.md` as the current source for WA2702 ST01, ST02, and ST03 decided items, unresolved items, and next actions.
+- 결정된 것: WA2702 ST line은 ST01 basic volume, ST02 Kiki/function, ST03 carryover front-logo 3스타일로 분리한다. 총 운영 수량은 72,000 pcs이며 ST01 32,000 pcs, ST02 30,000 pcs, ST03 10,000 pcs 기준이다. ST01은 39,000 KRW 소좌가슴 워드로고 기본물, ST02는 49,000 KRW 기능성 소재/Kiki IP 소로고 스타일, ST03은 49,000 KRW 전판 대형 로고 캐리오버 스타일로 본다. 1차 목업은 세 스타일 모두 WH/off-white 컬러로 검토 가능하며, 목업 파일은 `output/WA2702_ST01_ST03_execution_basis/mockups/WA2702_ST01_ST02_ST03_WH_mockup_contact_sheet.png`에 있다.
+- 안 정해진 것: 최종 컬러 구성과 컬러별 수량, ST01/ST02/ST03 최종 아트웍 원본, ST02 최종 소재, 스타일별 프린트/자수/패치/전사/라벨 기법, ST01 메인 라벨 디테일, ST03 로고 크기와 컬러, 사이즈 스펙, 협력사, 원가, 샘플/BT/CFM/PO/납기, 채널 배분은 현재 데이터에서 확정으로 기록되지 않았다.
+- 다음 할 일: WH 목업을 리뷰해 1차 샘플 컬러 유지 여부를 정하고, ST01/ST02/ST03 아트웍과 프린트 위치/크기를 확정한다. ST02 소재와 기법은 원가·샘플 가능성 확인 후 결정하고, ST01 라벨/전사 디테일과 ST03 전판 로고 스케일을 확정한 뒤 스타일별 샘플 지시서를 만든다.
+
 ## Current Korean Summary - 2026-07-10
 
 - Use `workspace/memory/current-data-summary-2026-07-10.md` as the current integrated source for decided items, unresolved items, and next actions across Teams updates, To Do updates, and Chiikawa / 먼작귀 contract-royalty data.
@@ -63,12 +84,15 @@
 - 27SS price direction: expand toward the upper end of the range and differentiate from low-price online products.
 - 27SS order scenarios: Plan A +10% as default, Plan B +30% as alternative.
 - 27SS price matrix target completion date: 2026-06-30, connected to late-July inbound ordering.
+- 2026-07-14 WA2702 ST T-shirt decision: ST01 is a 39,000 KRW basic volume style with 32,000 pcs, ST02 is a 49,000 KRW Kiki/function style with 30,000 pcs, and ST03 is a 49,000 KRW carryover front-logo style with 10,000 pcs; first WH/off-white mockup review is acceptable for all three.
 - Chiikawa collaboration recorded product-flow dates: ST/LT inbound 2026-06-30 and CR inbound 2026-07-14. Launch dates need reconfirmation from 2026-07-01 current data.
 - Chiikawa collaboration base channels: owned mall, Musinsa, and 29CM. Musinsa offline store count/location and launch timing need reconfirmation from 2026-07-01 current data.
 - Chiikawa collaboration VMD applies only to Hongdae, Seongsu, and Myeongdong FSS.
 - Chiikawa collaboration owners: Park Heehyun for sourcing, Byeon Changhyun for planning, Kim Heeyoung for design, Park Dasom for marketing.
 - Hologram stickers are received and managed by headquarters, with legal responsibility clauses included in the contract.
 - IMC performance standard: target monthly sales equals supply amount of IMC target products times 15%; 15% or more is success, 10-15% is baseline, under 10% is failure; review monthly in one-page format.
+- Marketing content request rule: use `workspace/memory/marketing-content-request-guideline-2026-07-13.md` when asking marketing for content creation or upload support. Coordinate upload timing with Park Dasom, give about two weeks of lead time when possible, avoid same-day or one-day-before requests, and include inbound date, style numbers, quantity, channel/store scope, and business context.
+- Marketing team roles for content requests: Kwon Soonbeom owns photo shoots, Park Dasom owns SNS management and collaborations, Ahn Minhyeok owns all marketing design, and Park Sungmin owns seeding and viral.
 - In ERP, category-unit Q.R products must be marked consistently as `Q.R` in the remarks field.
 - 2026-07-14 Teams decision: 26FW QR/SPOT/REORDER continues through `26FW 와키윌리 QR구성(SPOT,Reorder).xlsx`; 26FW SPOT/워싱물 스웻/뒤판 그래픽 후드집업 targets September inbound, and 26FW 기모 스웻 requires PO/work-order deadline calculation from a late-September inbound target.
 - 2026-07-14 Teams decision: WA2604JK17 runs as unisex beige check, womens charcoal check is separated as WA2604JK72, and WA2604JK72 domestic sizing is reduced to S/M.
