@@ -9,6 +9,12 @@
 - Keep answers concise and practical. If information is not recorded, say so.
 - Kim Minhyuk was the WACKY WILLY apparel planning team lead during the Teams chat history below, but has since moved departments. If the current org chart differs, treat the chat as historical context.
 
+## Current Teams Summary - 2026-07-14
+
+- Use `workspace/memory/current-teams-update-summary-2026-07-14.md` as the current Teams update source for decided items, unresolved items, and next actions from both `teams 채팅 데이터` and `teams 채널 데이터` files updated on 2026-07-14 and clipped as 2026-07-13.
+- 오늘 결정된 핵심 내용: 26FW QR/SPOT/REORDER는 `26FW 와키윌리 QR구성(SPOT,Reorder).xlsx` 기준으로 계속 관리한다. 26FW SPOT/워싱물 스웻/뒤판 그래픽 후드집업은 9월 내 입고 목표로 진행하고, 26FW 기모 스웻은 9월 말 입고 기준으로 작업지시서/PO 데드라인을 역산한다. WA2604JK17은 유니 베이지 체크 중심, 우먼스 차콜 체크는 WA2604JK72로 분리하며 WA2604JK72는 국내 S/M 기준으로 운영한다. 확정 국내 판매가는 `Y열/AC열` 입력 후 글로벌팀이 대만/일본 택가를 수시 반영하고, WA2603LT15 GR은 국내 판매가 89,000원 기준으로 본다. 무신사 단독 5개 스타일은 2026-07-27 오픈 예정이고, TF FW 반팔 티셔츠는 무신사 출고 없이 오프라인 상위 약 15개 매장 위주로 진행한다. Art Grocery는 4일간 27PCS 판매 후 2026-07-13부터 성수/홍대/명동 플래그십 전 매장 50% 할인 운영으로 변경되었다.
+- 오늘 미결 핵심 내용: 26FW SPOT 최종 투입 시점, 발주 데드라인, PO 발행 시점, 9월 내 입고 가능성, 재경팀 9월 입고 금액 조정에 따른 물량 조정 여부, WA2604JK72 글로벌 L/XL 오더의 S/M 전환 수량, WA2604JK17/WA2604JK72/WA2604PT72 원단 샘플 및 AIR 선적 가능성, 27SS 컨벤션 라인시트 최종안, 8월 VM 착장 재조율, Art Grocery 온라인/해외/추가 채널 확대 여부가 남아 있다.
+- 오늘 우선 액션: 2026-07-14 미팅에서 26FW SPOT 일정/수량/발주/입고 우선순위와 기존 9월 입고 물량 조정 여부를 확정한다. WA2604JK17/WA2604JK72/WA2604PT72 원단·BT·CFM·AIR 선적 일정을 소재/소싱과 업데이트하고, WA2604JK72 글로벌 변경 오더 수량을 시트에 반영한다. WA2603HZ14 변경 컬러 CAD를 오전 수령 후 전달하고, WA2602STR3 #PI FSS 단독 SNS 홍보 이미지는 2026-07-16까지 수령한다. Art Grocery 50% 할인 POP/판매가 반영 완료 여부와 온라인 오픈 확대를 영업 미팅에서 확인한다.
 ## Current Korean Summary - 2026-07-10
 
 - Use `workspace/memory/current-data-summary-2026-07-10.md` as the current integrated source for decided items, unresolved items, and next actions across Teams updates, To Do updates, and Chiikawa / 먼작귀 contract-royalty data.
@@ -64,6 +70,11 @@
 - Hologram stickers are received and managed by headquarters, with legal responsibility clauses included in the contract.
 - IMC performance standard: target monthly sales equals supply amount of IMC target products times 15%; 15% or more is success, 10-15% is baseline, under 10% is failure; review monthly in one-page format.
 - In ERP, category-unit Q.R products must be marked consistently as `Q.R` in the remarks field.
+- 2026-07-14 Teams decision: 26FW QR/SPOT/REORDER continues through `26FW 와키윌리 QR구성(SPOT,Reorder).xlsx`; 26FW SPOT/워싱물 스웻/뒤판 그래픽 후드집업 targets September inbound, and 26FW 기모 스웻 requires PO/work-order deadline calculation from a late-September inbound target.
+- 2026-07-14 Teams decision: WA2604JK17 runs as unisex beige check, womens charcoal check is separated as WA2604JK72, and WA2604JK72 domestic sizing is reduced to S/M.
+- 2026-07-14 Teams decision: confirmed domestic prices entered in `Y열/AC열` are the trigger for the global team to enter Taiwan/Japan local tag prices; WA2603LT15 GR should be treated as 89,000 KRW domestic price.
+- 2026-07-14 Teams decision: five Musinsa-exclusive styles are planned for 2026-07-27 opening, while TF FW short-sleeve T-shirts should avoid Musinsa shipment and run mainly through about 15 top offline stores.
+- 2026-07-14 Teams decision: Art Grocery sold 27 pcs over 2026-07-09 to 2026-07-12 at Seongsu, then moved to 50% discount operation across Seongsu, Hongdae, and Myeongdong flagship stores from 2026-07-13.
 - For future merchandising review reports, the product MAP/order sheet must be included. Update the 2026FW order list with final CAD-based style numbers, quantities, costs, and related product-map data.
 - 26FW planning was revised from a 60B KRW kickoff basis to about 58B KRW. For selection meetings, womens should preserve roughly 70% of current counted styles/SKUs rather than forcing a fixed category-by-category style count.
 - 26SS SPOT styles from category-unit discussions must be added to `26SS SPOT 구성.xlsx`, including womens and woven items, using the added innerwear example as reference.
