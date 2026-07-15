@@ -14,6 +14,15 @@
 - Create user-facing deliverables under `output/` by default. Source/reference folders such as `추가 데이터/`, `ST01, 02 개발/`, and `보고 자료/` should be treated as inputs unless the user explicitly asks to edit the original source file.
 - For HTML/report deliverables, create a dedicated folder under `output/` and put the main file at `index.html` when practical. Copy required images/assets into that output folder so the deliverable opens independently with relative paths.
 
+## Current Teams Summary - 2026-07-15
+
+- Use `workspace/memory/current-teams-update-summary-2026-07-15.md` as the current Teams update source for decided items, unresolved items, and next actions from Teams chat/channel backup files updated on 2026-07-15 and clipped as 2026-07-14.
+- Key decisions: 26FW QR/SPOT/REORDER continues through `26FW 와키윌리 QR구성(SPOT,Reorder).xlsx`; 26FW additional styles were updated in the sheet; unisex/womens entries were completed; 2PACK/3PACK was hidden as reorder work; 26FW unisex hood zip-up cost ratio target is 25%.
+- Key decisions: WA2604JK17, WA2604JK72, and WA2604PT72 need early-August fabric AIR shipment and second-week-of-August factory receipt to hit the 2026-09-15 target delivery; AIR was not the original plan but is now the delivery recovery path.
+- Key decisions: Musinsa Edition launch/planning schedule is 2026-07-27 for online Musinsa shipment only; FW TF products ship to 16 stores on 2026-07-16, with July sales used to decide whether to expand stores; global PO quantities are handled as domestic available inventory without separate retagging.
+- Key decisions: 26SS Art Grocery products proceed to online upload, and Art Grocery moves to 50% discount operation after low FSS sales velocity; WA2603ST12 and WA2603ST14 are current 26FW ST samples requiring online shooting checks.
+- Open items: PT31/SH16/SH31 price confirmation, cost estimate approval originals, blank fit fields in Taiwan order-sheet product descriptions, final WA2603HZ01NA vs BK status, exact Art Grocery 50% discount start timing, and AIR feasibility for WA2604JK17/JK72/PT72 remain unresolved.
+
 ## Current Teams Summary - 2026-07-14
 
 - Use `workspace/memory/current-teams-update-summary-2026-07-14.md` as the current Teams update source for decided items, unresolved items, and next actions from both `teams 채팅 데이터` and `teams 채널 데이터` files updated on 2026-07-14 and clipped as 2026-07-13.
@@ -99,6 +108,10 @@
 - 2026-07-14 Teams decision: confirmed domestic prices entered in `Y열/AC열` are the trigger for the global team to enter Taiwan/Japan local tag prices; WA2603LT15 GR should be treated as 89,000 KRW domestic price.
 - 2026-07-14 Teams decision: five Musinsa-exclusive styles are planned for 2026-07-27 opening, while TF FW short-sleeve T-shirts should avoid Musinsa shipment and run mainly through about 15 top offline stores.
 - 2026-07-14 Teams decision: Art Grocery sold 27 pcs over 2026-07-09 to 2026-07-12 at Seongsu, then moved to 50% discount operation across Seongsu, Hongdae, and Myeongdong flagship stores from 2026-07-13.
+- 2026-07-15 Teams decision: 26FW additional styles were updated in the sheet, unisex/womens entries were completed, and 2PACK/3PACK was hidden as reorder work.
+- 2026-07-15 Teams decision: WA2604JK17, WA2604JK72, and WA2604PT72 require early-August fabric AIR shipment and second-week-of-August factory receipt to hit the 2026-09-15 target delivery; if AIR is not possible, sourcing must confirm the real fabric outbound date and coordinate a delivery plan with planning.
+- 2026-07-15 Teams decision: Musinsa Edition is scheduled for 2026-07-27 as online Musinsa shipment only, FW TF products ship to 16 stores on 2026-07-16 for July sales testing, and global PO quantities are made available as domestic inventory without separate retagging.
+- 2026-07-15 Teams decision: 26SS Art Grocery products proceed to online upload and the low-sales FSS operation moves to 50% discount handling.
 - For future merchandising review reports, the product MAP/order sheet must be included. Update the 2026FW order list with final CAD-based style numbers, quantities, costs, and related product-map data.
 - 26FW planning was revised from a 60B KRW kickoff basis to about 58B KRW. For selection meetings, womens should preserve roughly 70% of current counted styles/SKUs rather than forcing a fixed category-by-category style count.
 - 26SS SPOT styles from category-unit discussions must be added to `26SS SPOT 구성.xlsx`, including womens and woven items, using the added innerwear example as reference.
