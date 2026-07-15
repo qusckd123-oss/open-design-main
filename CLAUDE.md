@@ -16,6 +16,10 @@
 
 ## Current Teams Summary - 2026-07-15
 
+- Use `workspace/memory/current-decisions-actions-2026-07-15.md` as the latest clean Korean source for 2026-07-15 decided items, unresolved items, and next actions.
+- 2026-07-15 결정된 것: 26FW QR/SPOT/REORDER는 기존 QR 구성 파일 기준으로 계속 관리하고, 26FW 추가 스타일 시트 업데이트/유니·우먼스 기입/2PACK·3PACK 숨김 처리를 완료했다. WA2604JK17/JK72/PT72는 2026-09-15 납기 대응을 위해 8월 초 원단 AIR 선적과 8월 둘째 주 공장 입고가 필요하다. 무신사 에디션은 2026-07-27 온라인 무신사 출고 기준, FW TF 상품은 2026-07-16 16개점 출고 후 7월 판매 결과로 매장 확대 여부를 판단한다. 26SS Art Grocery는 온라인 업로드를 진행하고, 낮은 판매 속도에 따라 50% 할인 운영으로 협의 완료했다.
+- 2026-07-15 안 정해진 것: Art Grocery 50% 할인 적용 시작 시점, 온라인/해외/추가 채널 확대 및 프로모션 방식, 선물 패키지·SNS 인증 이벤트·키비주얼 보완 실행안, PT31/SH16/SH31 판매가, 원가 견적서 원본 전달, 대만 오더시트 fit 공란, WA2603HZ01NA 상태, WA2604JK17/JK72/PT72 AIR 가능 여부는 추가 확인이 필요하다.
+- 2026-07-15 다음 할 일: PT31/SH16/SH31 판매가와 원가 견적서 전달 일정을 확정하고, 상품설명서 fit 공란 및 우먼스 누락 내용을 정리한다. WA2604JK17/JK72/PT72 AIR 가능 여부와 불가 시 대체 납기안을 확인한다. Art Grocery 온라인 업로드, 50% 할인 POP/판매가 반영, 잔여 상품 소진, 팝업 회고 자료 정리를 진행한다. WA2603ST12/ST14 온라인 촬영 일정과 FW TF 16개점 판매 결과를 추적한다.
 - Use `workspace/memory/current-teams-update-summary-2026-07-15.md` as the current Teams update source for decided items, unresolved items, and next actions from Teams chat/channel backup files updated on 2026-07-15 and clipped as 2026-07-14.
 - Key decisions: 26FW QR/SPOT/REORDER continues through `26FW 와키윌리 QR구성(SPOT,Reorder).xlsx`; 26FW additional styles were updated in the sheet; unisex/womens entries were completed; 2PACK/3PACK was hidden as reorder work; 26FW unisex hood zip-up cost ratio target is 25%.
 - Key decisions: WA2604JK17, WA2604JK72, and WA2604PT72 need early-August fabric AIR shipment and second-week-of-August factory receipt to hit the 2026-09-15 target delivery; AIR was not the original plan but is now the delivery recovery path.
