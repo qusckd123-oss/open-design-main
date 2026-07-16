@@ -14,6 +14,12 @@
 - Create user-facing deliverables under `output/` by default. Source/reference folders such as `추가 데이터/`, `ST01, 02 개발/`, and `보고 자료/` should be treated as inputs unless the user explicitly asks to edit the original source file.
 - For HTML/report deliverables, create a dedicated folder under `output/` and put the main file at `index.html` when practical. Copy required images/assets into that output folder so the deliverable opens independently with relative paths.
 
+## Current Teams Summary - 2026-07-16
+
+- Use `workspace/memory/current-teams-update-summary-2026-07-16.md` as the latest Teams update source for decided items, unresolved items, and next actions from Teams chat/channel backup files updated on 2026-07-16 and mostly clipped as 2026-07-15.
+- 2026-07-16 결정된 것: 무신사 에디션 5개 스타일은 2026-07-27 온라인 무신사 출고 기준이다. FW TF 반팔 티셔츠는 2026-07-16 16개점 출고 후 7월 판매를 보고 매장 확대 여부를 검토한다. 2PACK은 패키지만 변경해 내년 1월 초 입고 목표의 연간운영 품번으로 진행한다. 글로벌 PO 수량은 별도 택갈이 없이 국내 재고와 동일하게 입고 후 가용화한다. Art Grocery는 플래그십 전 매장 50% 할인 운영으로 전환하고 POP/판매가 반영을 진행한다.
+- 2026-07-16 안 정해진 것: PT31/SH16/SH31 판매가, 원가견적서 원본 전달, 대만 오더시트 fit 공란, WA2604JK17/JK72/PT72 AIR 가능 여부, JJ560/HNC 원단 출고일과 재컨펌 사유, Art Grocery 온라인 외 추가 채널 확대 및 콘텐츠 보완안은 추가 확인이 필요하다.
+- 2026-07-16 다음 할 일: 판매가/원가견적서/fit 공란을 정리하고, WA2604JK17/JK72/PT72 AIR 가능 여부와 대체 납기안을 확인한다. 2026-07-16 오전 JJ560/HNC 미팅에서 원단 출고 기준 데드라인과 납기를 정리한다. 글로벌 리스트 누락 수량/정보를 재확인하고, Art Grocery 온라인 업로드·50% 할인 POP·판매가 반영·팝업 회고를 추적한다.
 ## Current Teams Summary - 2026-07-15
 
 - Use `workspace/memory/current-decisions-actions-2026-07-15.md` as the latest clean Korean source for 2026-07-15 decided items, unresolved items, and next actions.
