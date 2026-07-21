@@ -14,6 +14,13 @@
 - Create user-facing deliverables under `output/` by default. Source/reference folders such as `추가 데이터/`, `ST01, 02 개발/`, and `보고 자료/` should be treated as inputs unless the user explicitly asks to edit the original source file.
 - For HTML/report deliverables, create a dedicated folder under `output/` and put the main file at `index.html` when practical. Copy required images/assets into that output folder so the deliverable opens independently with relative paths.
 
+## Current Teams Summary - 2026-07-21
+
+- Use `workspace/memory/current-teams-update-summary-2026-07-21.md` as the latest Teams update source for decided items, unresolved items, and next actions from Teams chat/channel backup files updated on 2026-07-21 and mostly clipped as 2026-07-20.
+- 2026-07-21 결정된 것: 무신사 에디션 5개 스타일은 2026-07-27 온라인 무신사 출고 기준이다. 26FW QR/SPOT/REORDER는 `26FW 와키윌리 QR구성(SPOT,Reorder).xlsx` 기준으로 실시간 업데이트하며, 26FW SPOT/워싱물 스웻/뒤판 그래픽 후드집업은 9월 내 입고 목표, 26FW 기모 스웻류는 늦어도 9월 말 입고 기준으로 작업지시서/PO 데드라인을 역산한다. WA2604JK17은 유니 베이지 체크 중심, WA2604JK72는 우먼스 차콜 체크 S/M 기준으로 운영한다. 글로벌 PO 수량은 별도 택갈이 없이 국내 재고와 동일하게 가용화하고, LINE SHEET 최초 오더 스타일은 MAIN, 그 외 추가 건은 SPOT으로 본다. WA2603ST11은 SPOT 건이라 별도 PO 분리 없이 국내 입고 후 출고하며, 생산 지연으로 2026-07-28 60%, 2026-07-31 잔량 파샬 입고 예정이다. Art Grocery는 2026-07-13부터 플래그십 전 매장 50% 할인 운영으로 전환했고, 먼작귀는 2026-08-07 전 스타일 온/오프라인 동시 출시 기준이다.
+- 2026-07-21 안 정해진 것: 26FW SPOT/워싱물/기모 스웻류 최종 발주 데드라인, PO 발행 시점, 9월 내 입고 가능성, 기존 9월 입고 물량 조정 여부, 추가 제품 원가율 네고 결과, WA2604JK17/JK72/PT72 AIR 가능 여부와 대체 납기안, JJ560/HNC 가먼트 가능 납기, WA2603LT52 대만지사 내부 관리 시트 기준 최종 수량, WA2603CRT1 및 `#506~533` 누락 정보, Art Grocery 온라인 등록 완료일과 추가 채널/콘텐츠 보완안, 먼작귀 최종 오프라인 매장 리스트와 VM 세부 실행안, FW TF 반팔 16개점 판매 후 매장 확대 여부는 추가 확인이 필요하다.
+- 2026-07-21 다음 할 일: 26FW QR 구성 파일의 SPOT/REORDER 최신 상태를 유지하고 발주 수량/타겟 납기/PO 데드라인을 확정한다. WA2604JK17/JK72/PT72 AIR 가능 여부와 불가 시 실제 원단 출고일/대체 납기안을 확인한다. JJ560/HNC는 지케미 변경 EX-MILL 기준으로 HNC 가능 가먼트 납기를 최종 회신받는다. WA2603LT52, WA2603STT1/STT2, WA2603CRT1, WA2603ST11, `#506~533`의 대만/O.C/직송/국내입고 구분과 누락 정보를 최신 파일에 반영한다. Art Grocery 온라인 상세페이지/등록, 50% 할인 POP/판매가 반영, 잔여 상품 소진, 팝업 회고를 추적한다. 먼작귀 2026-08-07 출시의 최종 매장 리스트와 VM 적용 범위를 확정하고, WA2603ST12/ST14 온라인 촬영 및 FW TF 16개점 판매 결과를 확인한다.
+
 ## Current Teams Summary - 2026-07-16
 
 - Use `workspace/memory/current-teams-update-summary-2026-07-16.md` as the latest Teams update source for decided items, unresolved items, and next actions from Teams chat/channel backup files updated on 2026-07-16 and mostly clipped as 2026-07-15.
