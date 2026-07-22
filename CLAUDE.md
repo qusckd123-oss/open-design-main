@@ -14,6 +14,13 @@
 - Create user-facing deliverables under `output/` by default. Source/reference folders such as `추가 데이터/`, `ST01, 02 개발/`, and `보고 자료/` should be treated as inputs unless the user explicitly asks to edit the original source file.
 - For HTML/report deliverables, create a dedicated folder under `output/` and put the main file at `index.html` when practical. Copy required images/assets into that output folder so the deliverable opens independently with relative paths.
 
+## Current Teams Summary - 2026-07-22
+
+- Use `workspace/memory/current-teams-update-summary-2026-07-22.md` as the latest Teams update source for decided items, unresolved items, and next actions from Teams chat/channel backup files updated on 2026-07-22 and mostly clipped as 2026-07-21.
+- 2026-07-22 결정된 것: 26FW QR/SPOT/REORDER 운영 기준은 계속 `26FW 와키윌리 QR구성(SPOT,Reorder).xlsx` 파일로 유지한다. 26FW SPOT 추가 구성 건은 확정 소재 열을 품번별로 업데이트하기로 했고, 기모 원단은 오픈에이 진행 예정 건으로 퀄리티 컨펌 완료가 공유됐다. 뉴베이직 및 지케미 원단 메인 품번은 최종 GMT 가능 납기와 지케미/HNC 스케줄 시트가 업데이트됐다. WA2602SO01은 WA2502SO01 이월 아울렛 운영에서 아울렛 상시전개 품번으로 전환 예정이다. SDPK QR/RE-ORDER 5품번은 2026-07-23 입고 예정으로 변경됐고, WA2603LT52는 대만 PO 수량 NAS/NAM/OTS/OTM 각 25개 직송 기준으로 확인됐다. WA2603STT1/STT2/CRT1은 아직 FIX 전이며 대만택 선적 여부를 업체 확인 후 2026-07-22 회신받기로 했다. Art Grocery 온라인 등록은 2026-07-22 상세 공유 후 금주 중 등록 목표다.
+- 2026-07-22 안 정해진 것: 26FW SPOT BT 장 준비 가능일, 품번별 확정 소재 업데이트 완료 여부, 지케미 원단 1차 전량 컨펌 여부, 뉴베이직/HNC 품번별 최종 납기일, WA2603STT1/STT2/CRT1 대만택 선적 가능 여부와 직송 수량/대만 희망 납기/택 처리 방식, WA2603LT52 대만 내부 관리 시트 반영 여부, 2026-08-04 품평의 최종 시간 배분과 매장 매니저 의견 수렴 방식, WA2602SO01 아울렛 상시전개 세부 운영, 3PACK 7월 마지막 주 PO 및 추석 전 입고 가능성, Art Grocery 실제 온라인 등록 완료일은 추가 확인이 필요하다.
+- 2026-07-22 다음 할 일: 26FW SPOT 확정 소재와 BT 장 준비일을 업데이트하고, 지케미/HNC 최종 GMT 납기와 원단 1차 컨펌 리스크를 정리한다. WA2603STT1/STT2/CRT1 대만택 선적 가능 여부를 업체 확인 후 최신 글로벌/O.C/PO 파일에 반영한다. WA2603LT52 대만 직송 수량을 O.C/PO/대만 내부 관리 시트와 대조한다. 2026-08-04 품평 일정을 확정하고 약 200 SKU 리뷰 방식과 매장 매니저 의견 수렴 방식을 조정한다. WA2602SO01 아울렛 상시전개 운영 세부안을 영업기획과 확정하고, SDPK QR/RE-ORDER 5품번 2026-07-23 입고와 3PACK PO/납기, Art Grocery 상세페이지 공유 및 금주 등록 완료 여부를 추적한다.
+
 ## Current Teams Summary - 2026-07-21
 
 - Use `workspace/memory/current-teams-update-summary-2026-07-21.md` as the latest Teams update source for decided items, unresolved items, and next actions from Teams chat/channel backup files updated on 2026-07-21 and mostly clipped as 2026-07-20.
