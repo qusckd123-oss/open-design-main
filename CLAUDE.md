@@ -14,6 +14,13 @@
 - Create user-facing deliverables under `output/` by default. Source/reference folders such as `추가 데이터/`, `ST01, 02 개발/`, and `보고 자료/` should be treated as inputs unless the user explicitly asks to edit the original source file.
 - For HTML/report deliverables, create a dedicated folder under `output/` and put the main file at `index.html` when practical. Copy required images/assets into that output folder so the deliverable opens independently with relative paths.
 
+## Current Teams Summary - 2026-07-23
+
+- Use `workspace/memory/current-teams-update-summary-2026-07-23.md` as the latest Teams update source for decided items, unresolved items, and next actions from Teams chat/channel backup files updated on 2026-07-23 and mostly clipped as 2026-07-22.
+- 2026-07-23 결정된 것: 26FW QR/SPOT/REORDER 운영 기준은 계속 `26FW 와키윌리 QR구성(SPOT,Reorder).xlsx` 파일로 유지한다. Art Grocery는 2026-07-22 자사몰 업로드 완료, 2026-07-23 무신사/29CM 업로드 요청, SNS는 차주 업로드와 `반응이 좋아서 온라인도 추가 전개` 메시지로 조정한다. Art Grocery는 오프라인 추가 확대보다 FSS+면세+온라인 소진 우선 의견이며, 면세 약 800PCS 출고, 200PCS 예약, 사이즈별 창고재고 약 50PCS 이하가 공유됐다. 글로벌 PO 기준은 메인 정규 오더는 국가/글로벌별 PO 분리, 일반 SPOT은 국내 입고 후 별도 출고, 특정 국가 전용 SPOT은 특정 국가 PO로 진행하되 글로벌 PO 포함 시 특정 국가분/국내 입고분을 분리한다. JJ560 플리스 품번은 최종 GMT 가능 납기/JJ560 현황 시트가 업데이트됐고 2026-07-23까지 GMT 납기 FIX 검토 요청됐다. 소로나택 벡터화는 디자인실 제작 완료, 문구는 `소프트한 터치감`을 `기분 좋은 착용감`으로 바꿔 TEST 진행한다.
+- 2026-07-23 안 정해진 것: Art Grocery 무신사/29CM 실제 업로드 완료일, 인플루언서 촬영 사진의 온라인 썸네일/상세페이지 사용 가능 여부, SNS 정확한 게시일, 오프라인 추가 매장 확대 여부, 대만/국내 입고분 PO 재작성 및 ERP 분리 완료 여부, WA2603STT1/STT2/CRT1 택 교체 비용 부담 주체와 국내 통관 입고 가능일, WA2603SH14 2컬러 정확한 생산 스케줄, JJ560 플리스 품번 최종 GMT 납기일과 AIR 비용/캐파 부족 회복안, 소로나택 샘플 컨펌 여부와 실제 부착 품번/수량 검증, 26FW 발주리스트 예상원가 입력 완료 여부는 추가 확인이 필요하다.
+- 2026-07-23 다음 할 일: Art Grocery 무신사/29CM 업로드와 SNS 차주 업로드 일정을 확정하고 인플루언서 사진 사용 가능 여부를 회신받는다. Art Grocery는 FSS+면세+온라인 소진을 우선 추적하고 1~2주 반응 후 오프라인 확대를 재검토한다. 대만 직송분/국내 입고분 아소트 기준 PO 재작성과 ERP 분리를 완료하고, WA2603STT1/STT2/CRT1 택 교체 비용 및 입고 가능일을 확정한다. WA2603LT16 OL 수정과 WA2603SH14 지연 일정을 재확인한다. JJ560 플리스는 2026-07-23 GMT 납기 FIX 여부와 추가 딜레이 방지안을 정리한다. 소로나택 TEST 샘플 수취 후 컨펌하고, 겉감 소로나 쭈리 사용 품번 약 34,400EA를 검증한다. 26FW 발주리스트 원가 공란 품번에 예상원가를 입력한다.
+
 ## Current Teams Summary - 2026-07-22
 
 - Use `workspace/memory/current-teams-update-summary-2026-07-22.md` as the latest Teams update source for decided items, unresolved items, and next actions from Teams chat/channel backup files updated on 2026-07-22 and mostly clipped as 2026-07-21.
