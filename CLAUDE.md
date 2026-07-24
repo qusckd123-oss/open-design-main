@@ -11,8 +11,18 @@
 
 ## Output Rule
 
-- Create user-facing deliverables under `output/` by default. Source/reference folders such as `추가 데이터/`, `ST01, 02 개발/`, and `보고 자료/` should be treated as inputs unless the user explicitly asks to edit the original source file.
-- For HTML/report deliverables, create a dedicated folder under `output/` and put the main file at `index.html` when practical. Copy required images/assets into that output folder so the deliverable opens independently with relative paths.
+- This rule applies to all generated deliverables, not only briefing HTML.
+- Save every newly generated user-facing file under `output/` by default: HTML, PDF, PNG, PPTX, DOCX, XLSX, MD, CSV, scripts made as deliverables, and any supporting assets.
+- Treat source/reference folders such as `?? ??/`, `?? ???/`, `???? ?????/`, `ST01, 02 ??/`, Teams data folders, and template folders as inputs only unless the user explicitly asks to overwrite or update a source file.
+- Even when the user references a source folder or template path, create the generated result in `output/` unless they explicitly say to save there or modify the original.
+- For HTML/report deliverables, create a dedicated folder under `output/` and put the main file at `index.html` when practical. Copy required images/assets into that output folder and use relative paths so the deliverable opens independently.
+
+## Current Teams Summary - 2026-07-24
+
+- Use `workspace/memory/current-teams-update-summary-2026-07-24.md` as the latest Teams update source for decided items, unresolved items, and next actions from Teams chat/channel backup files updated on 2026-07-24 and mostly clipped as 2026-07-23.
+- 2026-07-24 결정된 것: 26FW QR/SPOT/REORDER 운영 기준은 계속 `26FW 와키윌리 QR구성(SPOT,Reorder).xlsx` 파일로 유지한다. 26FW 발주 품의는 `와키윌리 26FW 시즌 발주 품의 260723.xlsx` 기준으로 진행하고, 현 기준 사입가/원가 공란은 소싱 측이 점검해 2026-07-24 14:00 전후 회신하기로 했다. 26FW 추가 지연 예상 스타일은 WA2603LT15 2026-08-03~04, WA2603HZ62 2026-08-11, WA2603CR62/WA2603PT62 2026-08-13, WA2601SH62-3 2026-07-31로 공유됐다. JJ560 미팅은 2026-07-23 17:00로 변경됐고, 원단 2차 이상 리젝 건은 기획/소싱에 공유해 납기 영향을 사전 판단한다. WA2603CR16은 납기가 2026-10 말까지 지연 예정이고 CHARCOAL 계열 TC에서 BLUE 계열 TC로 컬러 변경 예정이며 라인시트에 우선 반영한다. 27SS 품평·사양회의는 2026-07-24 라인시트 1차 전달, 2026-08-04 품평, 2026-08-11~12 글로벌 컨벤션, 2026-08-14 사양·수량 최종 확정 기준으로 공유됐다.
+- 2026-07-24 안 정해진 것: WA2603CR16 협력사 이관 후 퀄리티 미흡 시 캔슬 여부, 대만지사/일본지사/몽골BTF 오더 유지 여부, WA2604JK17 체크 선진행과 베이지/TC 리오더 취급 가능 여부, JJ560/HNC 최종 GMT 납기와 AIR 비용/캐파 회복안, 26FW 발주 품의 리스트 원가 입력 완료 여부, 27SS 품평 참석 리스트와 소싱 스케줄 이슈 목록, Art Grocery 무신사/29CM 업로드 완료 여부와 인플루언서 이미지 사용 가능 여부는 추가 확인이 필요하다.
+- 2026-07-24 다음 할 일: 소싱팀은 26FW 발주 품의 사입가/원가 공란을 2026-07-24 14:00 전후 회신하고, 기획/소싱은 추가 지연 스타일의 변경 납기를 관리표에 반영한다. WA2603CR16은 라인시트 업데이트 후 각 해외 오더처에 유지 여부를 확인하고 캔슬 리스크를 결정한다. JJ560/HNC 미팅 결과로 최종 GMT 납기, AIR 비용, 라인 캐파 회복안, WA2604JK17 체크 선진행 가능 여부를 업데이트한다. 27SS 품평 일정에 맞춰 라인시트, 참석 리스트, 스케줄 이슈 스타일 목록, 글로벌 컨벤션 자료를 준비하고, 26 FALL 우먼스 화보 KPI는 2026-07-27 12:00까지 취합한다. Art Grocery 무신사/29CM 업로드, 인플루언서 이미지 사용, SNS 차주 업로드 일정을 계속 추적한다.
 
 ## Current Teams Summary - 2026-07-23
 
@@ -41,6 +51,7 @@
 - 2026-07-16 결정된 것: 무신사 에디션 5개 스타일은 2026-07-27 온라인 무신사 출고 기준이다. FW TF 반팔 티셔츠는 2026-07-16 16개점 출고 후 7월 판매를 보고 매장 확대 여부를 검토한다. 2PACK은 패키지만 변경해 내년 1월 초 입고 목표의 연간운영 품번으로 진행한다. 글로벌 PO 수량은 별도 택갈이 없이 국내 재고와 동일하게 입고 후 가용화한다. Art Grocery는 플래그십 전 매장 50% 할인 운영으로 전환하고 POP/판매가 반영을 진행한다.
 - 2026-07-16 안 정해진 것: PT31/SH16/SH31 판매가, 원가견적서 원본 전달, 대만 오더시트 fit 공란, WA2604JK17/JK72/PT72 AIR 가능 여부, JJ560/HNC 원단 출고일과 재컨펌 사유, Art Grocery 온라인 외 추가 채널 확대 및 콘텐츠 보완안은 추가 확인이 필요하다.
 - 2026-07-16 다음 할 일: 판매가/원가견적서/fit 공란을 정리하고, WA2604JK17/JK72/PT72 AIR 가능 여부와 대체 납기안을 확인한다. 2026-07-16 오전 JJ560/HNC 미팅에서 원단 출고 기준 데드라인과 납기를 정리한다. 글로벌 리스트 누락 수량/정보를 재확인하고, Art Grocery 온라인 업로드·50% 할인 POP·판매가 반영·팝업 회고를 추적한다.
+
 ## Current Teams Summary - 2026-07-15
 
 - Use `workspace/memory/current-decisions-actions-2026-07-15.md` as the latest clean Korean source for 2026-07-15 decided items, unresolved items, and next actions.
