@@ -17,6 +17,13 @@
 - Even when the user references a source folder or template path, create the generated result in `output/` unless they explicitly say to save there or modify the original.
 - For HTML/report deliverables, create a dedicated folder under `output/` and put the main file at `index.html` when practical. Copy required images/assets into that output folder and use relative paths so the deliverable opens independently.
 
+## Current Teams Summary - 2026-07-26
+
+- Use `workspace/memory/current-teams-update-summary-2026-07-26.md` as the latest Teams update source for decided items, unresolved items, and next actions from Teams chat/channel backup files clipped or updated through 2026-07-26. The latest local backups found in this repo do not include 2026-07-27 messages; the newest decision-relevant extracted messages are dated 2026-07-24.
+- 2026-07-26 결정된 것: 26FW QR/SPOT/REORDER 운영 기준은 계속 `26FW 와키윌리 QR구성(SPOT,Reorder).xlsx`로 유지한다. 26FW 발주 품의 원가/사입가 공란은 소싱팀이 일부 예상원가로 입력 완료했다. WA2604JK17/WA2604JK72 해외 판매가 업데이트는 일부 완료됐고, 확정 시트의 WA2604JK17 GR은 우먼스 WA2604JK72로 변경된 것으로 보며 WA2604JK17은 CH 컬러 추가 기준으로 기입했다. WA2604JK17 TC 컬러 행은 추가되면 오더 없음 기준 `NA`로 업데이트한다. 26 FALL 우먼스 화보 촬영 with 리센느 레이 KPI는 2026-07-27 12:00까지 취합한다. 면세 반팔 티셔츠 수량은 기존 계산 로직에 포함되어 있었고, 면세팀 별도 요청 수량이 오면 적정 수량을 추가 검토한다. 2026-07-28 11:00 신규 팀장 응대는 3번 회의실로 안내하고, 품의 파일은 신규 팀장에게 넘기며 예산은 부장과 직접 협의하도록 안내한다.
+- 2026-07-26 안 정해진 것: 2026-07-24 이후 2026-07-27 당일까지의 실제 Teams 신규 대화는 로컬 백업에 포함되어 있지 않아 확인되지 않았다. 26FW 발주 품의 원가/사입가 공란 전체 입력 완료 여부, WA2604JK17 TC 컬러 행 추가와 해외 판매가 최종 반영 여부, WA2604JK72 판매가, 면세 반팔 티셔츠 하반기 수요예측과 최종 적정 수량은 미확정이다. 기존 2026-07-24 미결 항목인 WA2603CR16 오더 유지/캔슬 판단, JJ560/HNC 최종 GMT 납기와 AIR 비용/캐파 회복안, Art Grocery 무신사/29CM 업로드 완료 여부와 인플루언서 이미지 사용 가능 여부도 완료로 확인되지 않았다.
+- 2026-07-26 다음 할 일: 2026-07-27 Teams 백업이 추가되면 재추출해 이 메모와 `CLAUDE.md`를 다시 갱신한다. 26FW 발주 품의 원가/사입가 공란의 남은 항목을 확인하고 예상원가와 확정원가를 구분해 관리한다. WA2604JK17 TC 컬러 행을 추가해 오더 없음/`NA` 기준 반영을 확인하고, WA2604JK72 판매가 확정 후 해외 판매가 시트까지 업데이트한다. 면세팀에서 하반기 수요예측을 다시 받아 별도 요청 수량이 있으면 적정 수량을 검토한다. 2026-07-28 신규 팀장에게 품의 파일을 인계하고 예산 협의는 부장과 직접 진행하도록 연결한다.
+
 ## Current Teams Summary - 2026-07-24
 
 - Use `workspace/memory/current-teams-update-summary-2026-07-24.md` as the latest Teams update source for decided items, unresolved items, and next actions from Teams chat/channel backup files updated on 2026-07-24 and mostly clipped as 2026-07-23.
