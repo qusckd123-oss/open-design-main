@@ -17,6 +17,11 @@
 - Even when the user references a source folder or template path, create the generated result in `output/` unless they explicitly say to save there or modify the original.
 - For HTML/report deliverables, create a dedicated folder under `output/` and put the main file at `index.html` when practical. Copy required images/assets into that output folder and use relative paths so the deliverable opens independently.
 
+## Teams Update Response Rule
+
+- When the user asks to summarize Teams chat/channel updates through today and save decided items to memory, update `CLAUDE.md`, and push to GitHub, always also answer directly in chat with the three requested sections: `결정된 것`, `안 정해진 것`, and `다음 할 일`.
+- The final chat answer should include the substantive summary first, then briefly mention saved files, commit, and push status.
+
 ## Current Teams Summary - 2026-07-30
 
 - Use `workspace/memory/current-teams-update-summary-2026-07-30.md` as the latest Teams update source for decided items, unresolved items, and next actions from Teams chat/channel backup files available on 2026-07-30. The newest local backup files are clipped on 2026-07-29 and were updated locally on 2026-07-30 morning; no Teams backup clipped as 2026-07-30 was found locally.
