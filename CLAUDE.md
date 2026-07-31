@@ -22,6 +22,24 @@
 - When the user asks to summarize Teams chat/channel updates through today and save decided items to memory, update `CLAUDE.md`, and push to GitHub, always also answer directly in chat with the three requested sections: `결정된 것`, `안 정해진 것`, and `다음 할 일`.
 - The final chat answer should include the substantive summary first, then briefly mention saved files, commit, and push status.
 
+## Current Teams Summary - 2026-07-31
+
+- Use `workspace/memory/current-teams-update-summary-2026-07-31.md` as the latest Teams update source for decided items, unresolved items, and next actions from Teams chat/channel backup files available on 2026-07-31. No local Teams backup clipped as 2026-07-31 was found; the newest local source files are clipped as 2026-07-30 and were updated locally on 2026-07-31 morning.
+- 2026-07-31 결정된 것: 26FW QR/SPOT/REORDER 운영 기준은 계속 `26FW 와키윌리 QR구성(SPOT,Reorder).xlsx`로 유지한다. 26FW 추가 SPOT 진행 예정 수량은 기모 캐리오버 4건, 레터링 후드집업 1건, 신규 SPOT 3건으로 공유되었고, 기모 후드는 베이직 로고 방향으로 진행한다. 26FW 추가 SPOT CAD가 업데이트되어 공유되었으며, 리오더 가능 스타일 확인 기준은 Teams QR 채널의 `FW26 다이마루 스웻셔츠 리드타임` 링크로 안내되었다. 2603STW 면세 오더 200장은 현재 재고로 출고 진행하고 리오더는 진행하지 않는다. WA2604JK24 컬러는 BLACK이 아니라 CHARCOAL/차콜로 확인되었고 ERP 수정 대상이다. 우븐 데이터는 SDPK 업체 출고건/배정건 제외 후 취합 및 업데이트 완료되었다. 사입가 업데이트가 완료되었고, WA2603PT56 대만 판매가 관련 내용은 시트에 기입 완료되었다. Art Grocery 온라인 할인은 FSS와 동일하게 전 상품 50%로 적용한다. 먼작귀 최종 출시 일정은 기존 VM 공유 기준인 2026-08-07 전 스타일 온/오프라인 출시, FSS 하이라이트 및 기타 매장 1행거 POP 적용 방향을 유지한다.
+- 2026-07-31 안 정해진 것: 2026-07-31 당일 Teams 클립 백업이 없어 당일 신규 대화는 확인되지 않았다. 26FW 추가 SPOT 최종 수량표/CAD별 세부 값, 실제 발주일, 작업지시일, 입고 가능일은 텍스트 백업만으로 확정되지 않았다. WA2604JK24 ERP 컬러 수정 완료 여부, Art Grocery 전 상품 50% 할인 실제 채널 반영 여부, 온라인 전용 상품 뒷판 그래픽 썸네일 노출 방식, 2603STW 면세 출고 이후 향후 보충 판단 기준은 미확정이다. 뉴베이직 부분입고/50% 분할생산/SML 옵션, JK65/JK72 AIR, JJ560/HNC 등 기존 미확정 이슈도 계속 확인이 필요하다.
+- 2026-07-31 다음 할 일: 26FW 추가 SPOT 수량과 CAD 최종본을 발주 리스트 및 관련 공유 시트에 동기화한다. QR 채널 링크 기준으로 26FW 리오더 가능 스타일을 재확인한다. 2603STW 면세 200장 출고 및 리오더 불필요 결정을 관리표에 반영한다. WA2604JK24 ERP 컬러를 CHARCOAL/차콜로 수정하고 완료 여부를 확인한다. SDPK 제외 우븐 취합 업데이트, WA2603PT56 대만 판매가 입력값, Art Grocery 전 상품 50% 온라인 가격 노출을 각각 검증한다. 온라인 전용 상품 뒷판 그래픽 썸네일 노출 방식을 결정하고, 2026-08-03 Art Grocery SNS 업로드와 2026-08-04 27SS 품평 준비를 추적한다.
+
+## Current 27SS Key Schedule - 2026-07-30
+
+- Use `workspace/memory/27ss-key-schedule-2026-07-30.md` as the current source for the user's 27SS major schedule.
+- 2026-07-24 금요일: 27SS 라인시트 1차 전달.
+- 2026-08-04 화요일: 대표님 품평 / 매니저·내부 품평.
+- 2026-08-05 수요일~2026-08-07 금요일: 유닛별 사양 검토 및 인드랍/GTM 협의.
+- 2026-08-10 월요일: 글로벌 컨벤션 자료 최종 정리.
+- 2026-08-11 화요일~2026-08-12 수요일: 글로벌 컨벤션 진행.
+- 2026-08-13 목요일: 샘플 판매 / 수량 최종 취합 및 발주 준비.
+- 2026-08-14 금요일: 사양·수량 최종 확정 및 제출 (D-DAY).
+
 ## Current Teams Summary - 2026-07-30
 
 - Use `workspace/memory/current-teams-update-summary-2026-07-30.md` as the latest Teams update source for decided items, unresolved items, and next actions from Teams chat/channel backup files available on 2026-07-30. The newest local backup files are clipped on 2026-07-29 and were updated locally on 2026-07-30 morning; no Teams backup clipped as 2026-07-30 was found locally.
