@@ -1,27 +1,51 @@
-import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 mkdirSync("dist/server", { recursive: true });
 mkdirSync("dist/.openai", { recursive: true });
 
 copyFileSync(".openai/hosting.json", "dist/.openai/hosting.json");
 
+const embeddedFiles = [
+  ["index.html", "text/html; charset=utf-8", "utf8"],
+  ["dashboard.html", "text/html; charset=utf-8", "utf8"],
+  ["data/latest.json", "application/json; charset=utf-8", "utf8"],
+  ["data/archive/260810-260816.sample.json", "application/json; charset=utf-8", "utf8"],
+  ["assets/bcave_logo.png", "image/png", "base64"],
+].map(([path, contentType, encoding]) => {
+  const body = readFileSync(`dist/${path}`, encoding);
+  return { path: `/${path}`, contentType, encoding, body };
+});
+
 writeFileSync(
   "dist/server/index.js",
-  `export default {
+  `const files = new Map(${JSON.stringify(embeddedFiles).replace(/</g, "\\u003c")}.map((file) => [file.path, file]));
+
+function serve(pathname) {
+  const file = files.get(pathname);
+  if (!file) {
+    return null;
+  }
+
+  const body = file.encoding === "base64"
+    ? Uint8Array.from(atob(file.body), (char) => char.charCodeAt(0))
+    : file.body;
+
+  return new Response(body, {
+    headers: {
+      "cache-control": pathname.includes("/data/") ? "no-store" : "public, max-age=300",
+      "content-type": file.contentType
+    }
+  });
+}
+
+export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    let pathname = url.pathname;
+    const pathname = url.pathname === "/" ? "/index.html" : url.pathname;
 
-    if (pathname === "/") {
-      pathname = "/index.html";
-    }
-
-    if (env.ASSETS && typeof env.ASSETS.fetch === "function") {
-      const assetUrl = new URL(pathname, url.origin);
-      const response = await env.ASSETS.fetch(new Request(assetUrl, request));
-      if (response.status !== 404) {
-        return response;
-      }
+    const embeddedResponse = serve(pathname);
+    if (embeddedResponse) {
+      return embeddedResponse;
     }
 
     return new Response("Not found", {
