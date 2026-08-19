@@ -29,10 +29,12 @@
 - The skill is saved locally at `C:\Users\bcave\.codex\skills\wacky-apparel-meeting-html`.
 - Keep the report APP-first. ACC/SHOES should be shown only as reference KPI/context unless the user explicitly asks for total-company sales.
 - Split KPI labels as `APP 전체 (과시즌 포함)`, `26SS APP`, `26FW APP`, `ERP 전체 (ACC/과시즌 포함)`, and separate ACC reference rows. Do not collapse the main KPI into `26SS+26FW APP` when the user needs season visibility.
+- In the six sales KPI cards, the delta line under every amount must show both `전년비` and `전주대비`. Do not replace KPI delta lines with source notes, season-code notes, or generic `참고 KPI` text.
 - For APP figures, use apparel product-code categories only. Treat `WA2601/WA2602` as 26SS APP, `WA2603` as 26FW APP, and older season codes as 과시즌 APP unless the user gives a different season map.
 - Product images should not be solved as internal-only. When the user allows external lookup, search Wacky Willy official pages first and Musinsa second by base style code, then attach the color code after confirming product name, option text, image alt text, or visible color label.
 - Do not leave visible `IMAGE CHECK` text in final HTML. If an image cannot be confirmed, use an empty fixed `.no-img` container or a clearly labeled source limitation note outside the image box.
 - For the 2026-08-03 to 2026-08-09 generated report, the corrected KPI basis is: APP 전체 8.35억, 26SS APP 6.32억, 26FW APP 3,157만, 과시즌 APP 1.71억, ERP 전체 10.05억.
+- For the 2026-08-10 to 2026-08-16 generated report, the corrected KPI basis is: APP 전체 7.71억, 26SS APP 4.99억, 26FW APP 3,801만, 과시즌 APP 2.34억, ERP 전체 9.09억. KPI delta lines are: APP 전체 전년비 -15.1% / 전주대비 -24.0%, 26SS APP 전년비 -3.3% / 전주대비 -25.2%, 26FW APP 전년비 -67.2% / 전주대비 -5.2%, ERP 전체 전년비 -24.3% / 전주대비 -23.7%, 26SS ACC 참고 전년비 -50.4% / 전주대비 -17.8%, 26FW ACC 참고 전년비 -67.8% / 전주대비 -42.4%.
 
 ## Current Teams Summary - 2026-08-19
 
