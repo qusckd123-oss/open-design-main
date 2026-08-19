@@ -517,3 +517,22 @@
 - Ask sourcing whether WA2602CD52 and WA2602ST72 delivery can be shortened by one week.
 - Immediately confirm 26FW inner-basic fabric to reduce accumulated color-addition delay.
 - Request 27SS sourcing samples before the weekly sample meeting and run bidding with at least two vendors where possible.
+
+## Wacky Willy Product Planning Dashboard - 2026-08-19
+
+- Built and deployed a public test version of the Wacky Willy product planning dashboard for merchandising use.
+- Fixed URL: `https://wacky-product-planning-dashboard.qusckd123.chatgpt.site`
+- Sites project ID: `appgprj_6a8571527d488191b555ada2eca3605b`
+- Current access mode: `public` for testing. Later, switch back to restricted/custom access before broader internal sharing if actual confidential sales data remains exposed.
+- Local dashboard source: `추가 데이터/wacky-product-planning-dashboard/`
+- The dashboard uses `data/latest.json` as the current data source and keeps period snapshots under `data/archive/`.
+- Current deployed data period: `260810~260816`, compared with `260803~260809`.
+- Current source files used: `판매집계현황 260810~260816.xlsx`, `판매집계현황 260803~260809.xlsx`, and `와키윌리_26SS 전상품 판매추이_260816.xlsx`.
+- Current dashboard basis: WA26 product-code sales only. Amount unit is VAT excluded / KRW million.
+- Current metrics: current week sales `6.36억`, prior week sales `7.74억`, week-over-week `-17.9%`.
+- Top categories in the current dashboard: `ST 2.93억`, `SO 0.62억`, `CD 0.25억`.
+- Current dashboard includes 8 categories and 18 style rows.
+- Reorder candidates surfaced from the current data include `WA2602CD52`, `WA2602ST51`, `WA2602ST55`, and `WA2602ST72`.
+- Reusable update script: `추가 데이터/wacky-product-planning-dashboard/scripts/update_latest_from_sales.py`.
+- Latest Sites/source commit in the dashboard sub-repository: `d815263 Update dashboard with 260810 sales data`.
+- Verification completed: local build passed, deployed root URL returned 200, and deployed `/data/latest.json` returned period `260810~260816`, `ST 293.3`, and 18 styles.
