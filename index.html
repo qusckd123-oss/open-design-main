@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>와키윌리 상품기획 대시보드</title>
+  <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bcave: {
+              dark: '#264148',
+              medium: '#718790',
+              light: '#DEE2E3',
+              bg: '#F8F9FA',
+              red: '#B94735',
+              amber: '#D4A64F',
+              green: '#3D7465'
+            }
+          },
+          fontFamily: { sans: ['Pretendard', 'Malgun Gothic', 'Apple SD Gothic Neo', 'sans-serif'] }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --bcave-dark: #264148;
+      --bcave-medium: #718790;
+      --bcave-light: #DEE2E3;
+      --bcave-bg: #F8F9FA;
+      --bcave-red: #B94735;
+      --bcave-amber: #D4A64F;
+      --bcave-green: #3D7465;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bcave-bg);
+      color: #1f2933;
+      font-family: Pretendard, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+    }
+    .panel {
+      background: #fff;
+      border: 1px solid rgba(113, 135, 144, .24);
+      border-radius: 8px;
+      box-shadow: 0 8px 26px rgba(38, 65, 72, .06);
+    }
+    .metric-card { min-height: 132px; border-radius: 8px; }
+    .chart-box { position: relative; height: 286px; }
+    .mini-chart-box { position: relative; height: 222px; }
+    .risk-high { color: var(--bcave-red); background: rgba(185, 71, 53, .08); }
+    .risk-mid { color: #9a6a18; background: rgba(212, 166, 79, .16); }
+    .risk-low { color: var(--bcave-green); background: rgba(61, 116, 101, .10); }
+    .placeholder-product {
+      height: 172px;
+      border-radius: 8px;
+      border: 1px dashed rgba(113, 135, 144, .55);
+      background:
+        linear-gradient(135deg, rgba(222, 226, 227, .65), rgba(248, 249, 250, .9)),
+        repeating-linear-gradient(45deg, rgba(113,135,144,.12) 0 8px, transparent 8px 16px);
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      color: var(--bcave-medium);
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
+    }
+    @media print {
+      body { background: #fff; }
+      .panel, .metric-card { box-shadow: none !important; break-inside: avoid; }
+      .no-print { display: none !important; }
+      .print-break { break-before: page; }
+    }
+  </style>
+</head>
+<body>
+  <main class="mx-auto max-w-[1440px] px-4 py-5 sm:px-6 lg:px-8">
+    <header class="mb-5 flex flex-col gap-4 border-b border-bcave-light pb-5 lg:flex-row lg:items-end lg:justify-between">
+      <div class="flex items-start gap-4">
+        <div class="flex h-14 w-28 items-center justify-center rounded-md border border-bcave-light bg-white px-3">
+          <img src="assets/bcave_logo.png" alt="B.CAVE" class="max-h-8 max-w-full object-contain" />
+        </div>
+        <div>
+          <div class="mb-2 flex flex-wrap items-center gap-2">
+            <span class="rounded-full bg-bcave-dark px-3 py-1 text-xs font-bold text-white">와키윌리 상품기획</span>
+            <span class="rounded-full border border-bcave-light bg-white px-3 py-1 text-xs font-bold text-bcave-medium">고정 URL 운영형</span>
+            <span id="dataStatus" class="rounded-full bg-bcave-bg px-3 py-1 text-xs font-bold text-bcave-medium">데이터 로딩 중</span>
+          </div>
+          <h1 class="text-2xl font-extrabold tracking-normal text-bcave-dark sm:text-3xl">와키윌리 상품기획 대시보드</h1>
+          <p class="mt-1 text-sm text-bcave-medium">리오더 의사결정, 주간 상품 성과, 신상품 런칭 반응을 같은 링크에서 주차별로 갱신합니다.</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-2 text-xs text-bcave-medium sm:grid-cols-4 lg:text-right">
+        <div><b class="block text-bcave-dark">기준</b><span id="metaPeriod">-</span></div>
+        <div><b class="block text-bcave-dark">시즌</b><span id="metaSeason">-</span></div>
+        <div><b class="block text-bcave-dark">금액</b><span id="metaUnit">VAT- / 백만원</span></div>
+        <div><b class="block text-bcave-dark">갱신</b><span id="metaUpdated">-</span></div>
+      </div>
+    </header>
+
+    <section class="no-print mb-5 grid gap-3 rounded-lg border border-bcave-light bg-white p-3 lg:grid-cols-[1.2fr_1fr_1fr_auto]">
+      <label class="text-xs font-bold text-bcave-medium">
+        시즌
+        <select id="seasonFilter" class="mt-1 w-full rounded-md border border-bcave-light bg-bcave-bg px-3 py-2 text-sm font-semibold text-bcave-dark">
+          <option value="all">전체</option>
+        </select>
+      </label>
+      <label class="text-xs font-bold text-bcave-medium">
+        조회 관점
+        <select id="viewFilter" class="mt-1 w-full rounded-md border border-bcave-light bg-bcave-bg px-3 py-2 text-sm font-semibold text-bcave-dark">
+          <option value="weekly">주간</option>
+          <option value="month">월마감</option>
+        </select>
+      </label>
+      <label class="text-xs font-bold text-bcave-medium">
+        액션 우선순위
+        <select id="actionFilter" class="mt-1 w-full rounded-md border border-bcave-light bg-bcave-bg px-3 py-2 text-sm font-semibold text-bcave-dark">
+          <option value="all">전체</option>
+          <option value="리오더">리오더</option>
+          <option value="배분">배분</option>
+          <option value="프로모션">프로모션</option>
+        </select>
+      </label>
+      <button id="printButton" class="mt-5 rounded-md bg-bcave-dark px-4 py-2 text-sm font-bold text-white lg:mt-4">PDF 저장</button>
+    </section>
+
+    <section id="kpiGrid" class="mb-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-5"></section>
+
+    <section class="mb-5 grid gap-5 xl:grid-cols-[1.45fr_.9fr]">
+      <div class="panel p-5">
+        <div class="mb-4">
+          <h2 class="text-lg font-extrabold text-bcave-dark">복종별 성과와 목표 진척</h2>
+          <p class="text-sm text-bcave-medium">매출, 목표, 판매율을 함께 보며 금주 주력 복종과 재고 부담 복종을 구분합니다.</p>
+        </div>
+        <div class="chart-box"><canvas id="salesChart"></canvas></div>
+      </div>
+      <div class="panel p-5">
+        <div class="mb-4">
+          <h2 class="text-lg font-extrabold text-bcave-dark">리오더 판단 분포</h2>
+          <p class="text-sm text-bcave-medium">품번별 다음 액션을 리오더, 배분, 프로모션으로 분류합니다.</p>
+        </div>
+        <div class="mini-chart-box"><canvas id="categoryChart"></canvas></div>
+      </div>
+    </section>
+
+    <section class="mb-5 grid gap-5 xl:grid-cols-[1fr_1fr]">
+      <div class="panel p-5">
+        <div class="mb-4">
+          <h2 class="text-lg font-extrabold text-bcave-dark">상품별 판매율 TOP</h2>
+          <p class="text-sm text-bcave-medium">입고 후 판매 속도가 빠른 품번을 리오더 후보로 우선 확인합니다.</p>
+        </div>
+        <div class="mini-chart-box"><canvas id="styleChart"></canvas></div>
+      </div>
+      <div class="panel p-5">
+        <div class="mb-4">
+          <h2 class="text-lg font-extrabold text-bcave-dark">신상품 런칭 반응</h2>
+          <p class="text-sm text-bcave-medium">D+7, D+14, D+30 기준 초기 판매율 흐름입니다.</p>
+        </div>
+        <div class="mini-chart-box"><canvas id="launchChart"></canvas></div>
+      </div>
+    </section>
+
+    <section class="mb-5 grid gap-5 xl:grid-cols-[1.2fr_.8fr]">
+      <div class="panel overflow-hidden">
+        <div class="border-b border-bcave-light p-5">
+          <h2 class="text-lg font-extrabold text-bcave-dark">리오더 및 재고 액션 보드</h2>
+          <p class="text-sm text-bcave-medium">사업부 회의에서 바로 결정해야 하는 품번을 우선순위, 근거, 다음 액션으로 정리합니다.</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-bcave-bg text-xs uppercase text-bcave-medium">
+              <tr>
+                <th class="px-4 py-3">우선</th>
+                <th class="px-4 py-3">품번</th>
+                <th class="px-4 py-3">상품명</th>
+                <th class="px-4 py-3">복종</th>
+                <th class="px-4 py-3 text-right">판매율</th>
+                <th class="px-4 py-3 text-right">재고</th>
+                <th class="px-4 py-3">판단</th>
+                <th class="px-4 py-3">다음 액션</th>
+              </tr>
+            </thead>
+            <tbody id="actionRows" class="divide-y divide-bcave-light"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <aside class="panel p-5">
+        <h2 class="text-lg font-extrabold text-bcave-dark">Executive Summary</h2>
+        <div id="summaryList" class="mt-4 space-y-3"></div>
+      </aside>
+    </section>
+
+    <section class="mb-5 grid gap-5 lg:grid-cols-3 print-break">
+      <article class="panel p-5">
+        <h3 class="text-base font-extrabold text-bcave-dark">즉시 조치</h3>
+        <ul class="mt-3 space-y-3 text-sm text-slate-700">
+          <li><b class="text-bcave-dark">리오더:</b> 판매율 70% 이상, 잔여 재고 3주 미만 품번은 소싱 납기 가능 여부 확인.</li>
+          <li><b class="text-bcave-dark">배분:</b> 온라인 판매 속도 대비 오프라인 재고가 높은 품번은 채널 이동 검토.</li>
+          <li><b class="text-bcave-dark">프로모션:</b> 판매율 35% 미만, 재고 1,000장 이상 품번은 가격/노출 조건 분리 검토.</li>
+        </ul>
+      </article>
+      <article class="panel p-5">
+        <h3 class="text-base font-extrabold text-bcave-dark">다음 회의 의사결정</h3>
+        <ul class="mt-3 space-y-3 text-sm text-slate-700">
+          <li>리오더 발주 여부와 발주 수량 상한</li>
+          <li>컬러별 추가 생산 제외 조건</li>
+          <li>채널별 재고 재배분 기준</li>
+          <li>부진 품번의 할인 투입 가능 시점</li>
+        </ul>
+      </article>
+      <article class="panel p-5">
+        <h3 class="text-base font-extrabold text-bcave-dark">사업부 공유 문구</h3>
+        <p id="shareMessage" class="mt-3 text-sm leading-7 text-slate-700"></p>
+      </article>
+    </section>
+
+    <section class="mb-5">
+      <div class="mb-3 flex items-center justify-between">
+        <h2 class="text-lg font-extrabold text-bcave-dark">상품 이미지 확인 영역</h2>
+        <span class="text-xs font-bold text-bcave-medium">실제 품번 이미지 연동 전 placeholder</span>
+      </div>
+      <div id="productCards" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"></div>
+    </section>
+
+    <section class="panel mb-8 p-5">
+      <h2 class="text-lg font-extrabold text-bcave-dark">운영 방식</h2>
+      <div class="mt-3 grid gap-4 text-sm leading-7 text-slate-700 lg:grid-cols-3">
+        <p><b class="text-bcave-dark">공유:</b> 사업부에는 이 `index.html`이 배포된 고정 URL만 공유합니다.</p>
+        <p><b class="text-bcave-dark">갱신:</b> 매주 Excel 판매 데이터를 `data/latest.json`으로 변환해 교체하면 화면은 자동으로 최신화됩니다.</p>
+        <p><b class="text-bcave-dark">확장:</b> 사용성이 검증되면 회사 이메일 인증, 업로드 화면, Snowflake/ERP 자동 연동을 붙입니다.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const fallbackData = {
+      meta: { brand: 'Wacky Willy', season: '26SS', weekLabel: '8월 2주차', period: '260810~260816', amountUnit: 'VAT- / 백만원', updatedAt: 'fallback', source: 'HTML 내장 샘플' },
+      categories: [
+        { category: 'ST', sales: 486, target: 560, sellThrough: 74, stock: 2380, yoy: 18 },
+        { category: 'CR', sales: 312, target: 360, sellThrough: 68, stock: 1640, yoy: 12 },
+        { category: 'PT', sales: 176, target: 245, sellThrough: 51, stock: 2210, yoy: -7 },
+        { category: 'SH', sales: 104, target: 160, sellThrough: 39, stock: 1870, yoy: -14 }
+      ],
+      styles: [
+        { sku: 'WA2602ST33', name: '그래픽 반팔 티셔츠', category: 'ST', sales: 92, stock: 280, sellThrough: 82, action: '리오더', priority: 'P1', note: '온라인 판매 속도 우수' },
+        { sku: 'WA2602CR11', name: '로고 크루넥', category: 'CR', sales: 74, stock: 430, sellThrough: 73, action: '리오더', priority: 'P1', note: '판매율 기준 충족' },
+        { sku: 'WA2602PT04', name: '와이드 팬츠', category: 'PT', sales: 38, stock: 1120, sellThrough: 43, action: '배분', priority: 'P2', note: '채널 이동 검토' },
+        { sku: 'WA2602SH03', name: '체크 셔츠', category: 'SH', sales: 21, stock: 1320, sellThrough: 29, action: '프로모션', priority: 'P3', note: '노출 강화 필요' }
+      ],
+      launch: [{ label: 'D+7', value: 18 }, { label: 'D+14', value: 34 }, { label: 'D+30', value: 57 }],
+      summary: { headline: '샘플 데이터 기준입니다.', message: '실제 운영 시 data/latest.json을 갱신하면 이 문구가 함께 갱신됩니다.' }
+    };
+    const state = { raw: fallbackData, charts: {} };
+    const colors = ['#264148', '#3D7465', '#D4A64F', '#B94735', '#718790', '#9BA8AD', '#4B6F79'];
+
+    async function loadDashboardData() {
+      try {
+        const response = await fetch('data/latest.json', { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        state.raw = await response.json();
+        document.getElementById('dataStatus').textContent = 'latest.json 연결';
+      } catch (error) {
+        document.getElementById('dataStatus').textContent = '내장 샘플 표시';
+      }
+      initializeFilters();
+      renderAll();
+    }
+
+    function initializeFilters() {
+      const seasonFilter = document.getElementById('seasonFilter');
+      const seasons = Array.from(new Set([state.raw.meta.season, ...state.raw.categories.map(row => row.season).filter(Boolean)]));
+      seasonFilter.innerHTML = seasons.map(season => `<option value="${season}">${season}</option>`).join('');
+    }
+
+    function getFilters() {
+      return {
+        season: document.getElementById('seasonFilter').value,
+        action: document.getElementById('actionFilter').value
+      };
+    }
+
+    function categories() {
+      const f = getFilters();
+      return state.raw.categories.filter(row => !row.season || row.season === f.season);
+    }
+
+    function styles() {
+      const f = getFilters();
+      return state.raw.styles.filter(row => (!row.season || row.season === f.season) && (f.action === 'all' || row.action === f.action));
+    }
+
+    function formatMoney(value) {
+      return `${Math.round(value || 0).toLocaleString('ko-KR')}백만`;
+    }
+
+    function renderMeta() {
+      const meta = state.raw.meta;
+      document.getElementById('metaPeriod').textContent = `${meta.weekLabel || ''} ${meta.period || ''}`.trim();
+      document.getElementById('metaSeason').textContent = meta.season || '-';
+      document.getElementById('metaUnit').textContent = meta.amountUnit || 'VAT- / 백만원';
+      document.getElementById('metaUpdated').textContent = meta.updatedAt || '-';
+    }
+
+    function renderKpis() {
+      const cat = categories();
+      const st = styles();
+      const totalSales = cat.reduce((sum, row) => sum + Number(row.sales || 0), 0);
+      const totalTarget = cat.reduce((sum, row) => sum + Number(row.target || 0), 0);
+      const avgSellThrough = cat.length ? Math.round(cat.reduce((sum, row) => sum + Number(row.sellThrough || 0), 0) / cat.length) : 0;
+      const stock = cat.reduce((sum, row) => sum + Number(row.stock || 0), 0);
+      const reorderCount = st.filter(row => row.action === '리오더').length;
+      const actionCount = st.filter(row => row.action !== '리오더').length;
+      const achievement = totalTarget ? Math.round(totalSales / totalTarget * 100) : 0;
+      const kpis = [
+        { label: '누계 매출', value: formatMoney(totalSales), sub: `목표 대비 ${achievement}%`, tone: achievement >= 85 ? 'green' : 'amber' },
+        { label: '평균 판매율', value: `${avgSellThrough}%`, sub: avgSellThrough >= 65 ? '리오더 검토권' : '판매 속도 점검', tone: avgSellThrough >= 65 ? 'green' : 'amber' },
+        { label: '잔여 재고', value: stock.toLocaleString('ko-KR'), sub: '입고 대비 미판매 수량', tone: stock > 8000 ? 'red' : 'medium' },
+        { label: '리오더 후보', value: `${reorderCount} style`, sub: '판매율/재고 주수 기준', tone: 'green' },
+        { label: '조치 필요', value: `${actionCount} style`, sub: '배분 또는 프로모션', tone: actionCount >= 4 ? 'red' : 'amber' }
+      ];
+      const toneClass = {
+        green: 'border-bcave-green bg-[rgba(61,116,101,.08)]',
+        amber: 'border-bcave-amber bg-[rgba(212,166,79,.12)]',
+        red: 'border-bcave-red bg-[rgba(185,71,53,.08)]',
+        medium: 'border-bcave-light bg-white'
+      };
+      document.getElementById('kpiGrid').innerHTML = kpis.map(item => `
+        <article class="metric-card border-l-4 ${toneClass[item.tone]} p-5">
+          <p class="text-xs font-extrabold uppercase text-bcave-medium">${item.label}</p>
+          <p class="mt-4 text-3xl font-extrabold tracking-normal text-bcave-dark">${item.value}</p>
+          <p class="mt-3 text-sm font-semibold text-slate-600">${item.sub}</p>
+        </article>
+      `).join('');
+    }
+
+    function upsertChart(key, id, config) {
+      if (state.charts[key]) state.charts[key].destroy();
+      state.charts[key] = new Chart(document.getElementById(id), config);
+    }
+
+    function renderCharts() {
+      const cat = categories();
+      const topStyles = styles().slice().sort((a, b) => Number(b.sellThrough || 0) - Number(a.sellThrough || 0)).slice(0, 6);
+      upsertChart('sales', 'salesChart', {
+        type: 'bar',
+        data: {
+          labels: cat.map(row => row.category),
+          datasets: [
+            { label: '매출', data: cat.map(row => row.sales), backgroundColor: '#264148', borderRadius: 4 },
+            { label: '목표', data: cat.map(row => row.target), backgroundColor: '#DEE2E3', borderRadius: 4 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } }
+      });
+      upsertChart('category', 'categoryChart', {
+        type: 'doughnut',
+        data: {
+          labels: ['리오더', '배분', '프로모션'],
+          datasets: [{ data: ['리오더', '배분', '프로모션'].map(action => styles().filter(row => row.action === action).length), backgroundColor: ['#3D7465', '#D4A64F', '#B94735'], borderWidth: 0 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '62%', plugins: { legend: { position: 'bottom' } } }
+      });
+      upsertChart('style', 'styleChart', {
+        type: 'bar',
+        data: { labels: topStyles.map(row => row.sku), datasets: [{ label: '판매율', data: topStyles.map(row => row.sellThrough), backgroundColor: colors, borderRadius: 4 }] },
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { max: 100, ticks: { callback: value => `${value}%` } }, y: { grid: { display: false } } } }
+      });
+      upsertChart('launch', 'launchChart', {
+        type: 'line',
+        data: {
+          labels: state.raw.launch.map(row => row.label),
+          datasets: [{ label: '초기 판매율', data: state.raw.launch.map(row => row.value), borderColor: '#264148', backgroundColor: 'rgba(38,65,72,.12)', fill: true, tension: .35, pointRadius: 5, pointBackgroundColor: '#264148' }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 80, ticks: { callback: value => `${value}%` } }, x: { grid: { display: false } } } }
+      });
+    }
+
+    function renderTable() {
+      const priorityClass = { P1: 'risk-high', P2: 'risk-mid', P3: 'risk-low' };
+      document.getElementById('actionRows').innerHTML = styles().sort((a, b) => String(a.priority).localeCompare(String(b.priority))).map(row => `
+        <tr class="hover:bg-bcave-bg">
+          <td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs font-extrabold ${priorityClass[row.priority] || 'risk-low'}">${row.priority || '-'}</span></td>
+          <td class="px-4 py-3 font-mono text-xs font-bold text-slate-700">${row.sku}</td>
+          <td class="px-4 py-3">${row.name}</td>
+          <td class="px-4 py-3 font-semibold text-bcave-dark">${row.category}</td>
+          <td class="px-4 py-3 text-right font-bold">${row.sellThrough}%</td>
+          <td class="px-4 py-3 text-right">${Number(row.stock || 0).toLocaleString('ko-KR')}</td>
+          <td class="px-4 py-3"><span class="rounded-full border border-bcave-light px-2 py-1 text-xs font-bold text-bcave-dark">${row.action}</span></td>
+          <td class="min-w-[260px] px-4 py-3 text-slate-600">${row.note || ''}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderSummary() {
+      const cat = categories();
+      const st = styles();
+      const bestCategory = cat.slice().sort((a, b) => Number(b.sellThrough || 0) - Number(a.sellThrough || 0))[0];
+      const weakCategory = cat.slice().sort((a, b) => Number(a.sellThrough || 0) - Number(b.sellThrough || 0))[0];
+      const bestStyle = st.slice().sort((a, b) => Number(b.sellThrough || 0) - Number(a.sellThrough || 0))[0];
+      const items = [
+        { title: '핵심 결론', body: state.raw.summary?.headline || '요약 문구가 없습니다.' },
+        { title: '판매 견인', body: bestCategory ? `${bestCategory.category} 복종이 평균 판매율 ${bestCategory.sellThrough}%로 가장 빠르게 움직입니다.` : '조회 조건에 해당하는 데이터가 없습니다.' },
+        { title: '우선 액션', body: bestStyle ? `${bestStyle.sku}는 ${bestStyle.action} 후보입니다. ${bestStyle.note}` : '조회 조건에 해당하는 품번이 없습니다.' },
+        { title: '주의 영역', body: weakCategory ? `${weakCategory.category} 복종은 판매율 ${weakCategory.sellThrough}%로 재고 배분 또는 노출 조정이 필요합니다.` : '조회 조건에 해당하는 데이터가 없습니다.' }
+      ];
+      document.getElementById('summaryList').innerHTML = items.map((item, index) => `
+        <div class="rounded-md border border-bcave-light bg-bcave-bg p-4">
+          <div class="mb-2 flex items-center gap-2">
+            <span class="grid h-6 w-6 place-items-center rounded bg-bcave-dark text-xs font-bold text-white">${index + 1}</span>
+            <b class="text-sm text-bcave-dark">${item.title}</b>
+          </div>
+          <p class="text-sm leading-6 text-slate-700">${item.body}</p>
+        </div>
+      `).join('');
+      document.getElementById('shareMessage').textContent = state.raw.summary?.message || '';
+    }
+
+    function renderProducts() {
+      const products = styles().slice().sort((a, b) => Number(b.sellThrough || 0) - Number(a.sellThrough || 0)).slice(0, 4);
+      document.getElementById('productCards').innerHTML = products.map(row => `
+        <article class="panel overflow-hidden">
+          <div class="placeholder-product">상품 이미지 확인 필요<br>${row.sku}</div>
+          <div class="p-4">
+            <p class="text-xs font-bold text-bcave-medium">Wacky Willy · ${row.category}</p>
+            <h3 class="mt-1 text-sm font-extrabold text-bcave-dark">${row.name}</h3>
+            <div class="mt-3 flex items-center justify-between text-sm">
+              <span class="font-bold text-slate-700">판매율 ${row.sellThrough}%</span>
+              <span class="rounded-full bg-bcave-bg px-2 py-1 text-xs font-bold text-bcave-medium">${row.action}</span>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function renderAll() {
+      renderMeta();
+      renderKpis();
+      renderCharts();
+      renderTable();
+      renderSummary();
+      renderProducts();
+    }
+
+    ['seasonFilter', 'viewFilter', 'actionFilter'].forEach(id => {
+      document.getElementById(id).addEventListener('change', renderAll);
+    });
+    document.getElementById('printButton').addEventListener('click', () => window.print());
+    loadDashboardData();
+  </script>
+</body>
+</html>

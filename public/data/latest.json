@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "brand": "Wacky Willy",
+    "season": "26SS",
+    "weekLabel": "8월 2주차",
+    "period": "260810~260816",
+    "amountUnit": "VAT- / 백만원",
+    "updatedAt": "2026-08-19 12:00",
+    "source": "샘플 데이터 - 실제 와키윌리 판매 파일 연결 전"
+  },
+  "categories": [
+    { "category": "ST", "sales": 486, "target": 560, "sellThrough": 74, "stock": 2380, "yoy": 18 },
+    { "category": "CR", "sales": 312, "target": 360, "sellThrough": 68, "stock": 1640, "yoy": 12 },
+    { "category": "PT", "sales": 176, "target": 245, "sellThrough": 51, "stock": 2210, "yoy": -7 },
+    { "category": "SH", "sales": 104, "target": 160, "sellThrough": 39, "stock": 1870, "yoy": -14 },
+    { "category": "SO", "sales": 88, "target": 126, "sellThrough": 44, "stock": 1220, "yoy": -9 },
+    { "category": "ACC", "sales": 54, "target": 72, "sellThrough": 58, "stock": 680, "yoy": 6 }
+  ],
+  "styles": [
+    { "sku": "WA2602ST33", "name": "그래픽 반팔 티셔츠", "category": "ST", "sales": 92, "stock": 280, "sellThrough": 82, "action": "리오더", "priority": "P1", "note": "온라인 판매 속도 우수, WH/BK 컬러 중심 추가 검토" },
+    { "sku": "WA2602ST32", "name": "로고 반팔 티셔츠", "category": "ST", "sales": 86, "stock": 360, "sellThrough": 78, "action": "리오더", "priority": "P1", "note": "기본 컬러 재고 주수 3주 미만" },
+    { "sku": "WA2602CR11", "name": "로고 크루넥", "category": "CR", "sales": 74, "stock": 430, "sellThrough": 73, "action": "리오더", "priority": "P1", "note": "1차 입고 후 3주 내 판매율 기준 충족" },
+    { "sku": "WA2602PT04", "name": "와이드 팬츠", "category": "PT", "sales": 38, "stock": 1120, "sellThrough": 43, "action": "배분", "priority": "P2", "note": "공식몰 반응 대비 오프라인 재고 과다" },
+    { "sku": "WA2602SO13", "name": "그래픽 숏츠", "category": "SO", "sales": 34, "stock": 840, "sellThrough": 38, "action": "배분", "priority": "P2", "note": "온라인 상세 유입 대비 전환 낮음" },
+    { "sku": "WA2602SH03", "name": "체크 셔츠", "category": "SH", "sales": 21, "stock": 1320, "sellThrough": 29, "action": "프로모션", "priority": "P3", "note": "컬러별 재고 편차 확인 후 노출 강화" }
+  ],
+  "launch": [
+    { "label": "D+7", "value": 18 },
+    { "label": "D+14", "value": 34 },
+    { "label": "D+30", "value": 57 }
+  ],
+  "summary": {
+    "headline": "ST와 CR이 금주 판매를 견인하고 있으며, SH와 SO는 재고 배분 및 노출 조정이 필요합니다.",
+    "message": "금주 와키윌리 상품기획 관점에서는 ST와 CR의 판매 속도가 가장 우수합니다. 리오더 후보는 판매율과 잔여 재고 주수를 기준으로 우선 검토하고, 판매율이 낮은 스타일은 프로모션 전환 전 컬러/사이즈별 재고 편차를 먼저 확인하겠습니다."
+  }
+}
