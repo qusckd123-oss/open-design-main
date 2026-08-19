@@ -4,13 +4,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build",
-    "dev": "vite --host 127.0.0.1"
+    "build": "vinext build && node scripts/sites-postbuild.mjs",
+    "dev": "vinext dev --hostname 127.0.0.1"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "^5.0.0",
-    "vite": "^7.1.3",
-    "typescript": "^5.9.2"
+    "@vitejs/plugin-rsc": "^0.5.26",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-server-dom-webpack": "^19.2.6",
+    "typescript": "^5.9.2",
+    "vite": "^8.2.1",
+    "vinext": "^0.1.0"
   },
   "devDependencies": {}
 }
