@@ -135,8 +135,8 @@
     <section class="mb-5 grid gap-5 xl:grid-cols-[1.45fr_.9fr]">
       <div class="panel p-5">
         <div class="mb-4">
-          <h2 class="text-lg font-extrabold text-bcave-dark">복종별 성과와 목표 진척</h2>
-          <p class="text-sm text-bcave-medium">매출, 목표, 판매율을 함께 보며 금주 주력 복종과 재고 부담 복종을 구분합니다.</p>
+          <h2 class="text-lg font-extrabold text-bcave-dark">복종별 성과와 전주 비교</h2>
+          <p class="text-sm text-bcave-medium">금주 매출, 전주 매출, 누계 판매율을 함께 보며 주력 복종과 재고 부담 복종을 구분합니다.</p>
         </div>
         <div class="chart-box"><canvas id="salesChart"></canvas></div>
       </div>
@@ -160,7 +160,7 @@
       <div class="panel p-5">
         <div class="mb-4">
           <h2 class="text-lg font-extrabold text-bcave-dark">신상품 런칭 반응</h2>
-          <p class="text-sm text-bcave-medium">D+7, D+14, D+30 기준 초기 판매율 흐름입니다.</p>
+          <p class="text-sm text-bcave-medium">전주, 금주, 증감률을 한 번에 확인합니다.</p>
         </div>
         <div class="mini-chart-box"><canvas id="launchChart"></canvas></div>
       </div>
@@ -319,7 +319,7 @@
       const actionCount = st.filter(row => row.action !== '리오더').length;
       const achievement = totalTarget ? Math.round(totalSales / totalTarget * 100) : 0;
       const kpis = [
-        { label: '누계 매출', value: formatMoney(totalSales), sub: `목표 대비 ${achievement}%`, tone: achievement >= 85 ? 'green' : 'amber' },
+        { label: '금주 매출', value: formatMoney(totalSales), sub: `전주 대비 ${achievement}%`, tone: achievement >= 85 ? 'green' : 'amber' },
         { label: '평균 판매율', value: `${avgSellThrough}%`, sub: avgSellThrough >= 65 ? '리오더 검토권' : '판매 속도 점검', tone: avgSellThrough >= 65 ? 'green' : 'amber' },
         { label: '잔여 재고', value: stock.toLocaleString('ko-KR'), sub: '입고 대비 미판매 수량', tone: stock > 8000 ? 'red' : 'medium' },
         { label: '리오더 후보', value: `${reorderCount} style`, sub: '판매율/재고 주수 기준', tone: 'green' },
@@ -354,7 +354,7 @@
           labels: cat.map(row => row.category),
           datasets: [
             { label: '매출', data: cat.map(row => row.sales), backgroundColor: '#264148', borderRadius: 4 },
-            { label: '목표', data: cat.map(row => row.target), backgroundColor: '#DEE2E3', borderRadius: 4 }
+            { label: state.raw.meta.targetLabel || '전주 매출', data: cat.map(row => row.target), backgroundColor: '#DEE2E3', borderRadius: 4 }
           ]
         },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } }
@@ -376,7 +376,7 @@
         type: 'line',
         data: {
           labels: state.raw.launch.map(row => row.label),
-          datasets: [{ label: '초기 판매율', data: state.raw.launch.map(row => row.value), borderColor: '#264148', backgroundColor: 'rgba(38,65,72,.12)', fill: true, tension: .35, pointRadius: 5, pointBackgroundColor: '#264148' }]
+          datasets: [{ label: '주간 비교', data: state.raw.launch.map(row => row.value), borderColor: '#264148', backgroundColor: 'rgba(38,65,72,.12)', fill: true, tension: .35, pointRadius: 5, pointBackgroundColor: '#264148' }]
         },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 80, ticks: { callback: value => `${value}%` } }, x: { grid: { display: false } } } }
       });

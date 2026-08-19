@@ -1,36 +1,319 @@
 {
   "meta": {
     "brand": "Wacky Willy",
-    "season": "26SS",
+    "season": "26SS/26FW",
     "weekLabel": "8월 2주차",
     "period": "260810~260816",
+    "comparePeriod": "260803~260809",
     "amountUnit": "VAT- / 백만원",
-    "updatedAt": "2026-08-19 12:00",
-    "source": "샘플 데이터 - 실제 와키윌리 판매 파일 연결 전"
+    "updatedAt": "2026-08-19 18:30",
+    "source": "판매집계현황 260810~260816.xlsx, 판매집계현황 260803~260809.xlsx, 와키윌리_26SS 전상품 판매추이_260816.xlsx",
+    "targetLabel": "전주 매출"
   },
   "categories": [
-    { "category": "ST", "sales": 486, "target": 560, "sellThrough": 74, "stock": 2380, "yoy": 18 },
-    { "category": "CR", "sales": 312, "target": 360, "sellThrough": 68, "stock": 1640, "yoy": 12 },
-    { "category": "PT", "sales": 176, "target": 245, "sellThrough": 51, "stock": 2210, "yoy": -7 },
-    { "category": "SH", "sales": 104, "target": 160, "sellThrough": 39, "stock": 1870, "yoy": -14 },
-    { "category": "SO", "sales": 88, "target": 126, "sellThrough": 44, "stock": 1220, "yoy": -9 },
-    { "category": "ACC", "sales": 54, "target": 72, "sellThrough": 58, "stock": 680, "yoy": 6 }
+    {
+      "category": "ST",
+      "season": "26SS/26FW",
+      "sales": 293.3,
+      "target": 389.9,
+      "sellThrough": 56.8,
+      "stock": 75052,
+      "yoy": -24.8
+    },
+    {
+      "category": "SO",
+      "season": "26SS/26FW",
+      "sales": 61.9,
+      "target": 99.3,
+      "sellThrough": 48.9,
+      "stock": 15525,
+      "yoy": -37.6
+    },
+    {
+      "category": "CD",
+      "season": "26SS/26FW",
+      "sales": 24.9,
+      "target": 17.8,
+      "sellThrough": 72.4,
+      "stock": 1264,
+      "yoy": 39.7
+    },
+    {
+      "category": "CA",
+      "season": "26SS/26FW",
+      "sales": 24.8,
+      "target": 25.9,
+      "sellThrough": 58.5,
+      "stock": 4318,
+      "yoy": -4.1
+    },
+    {
+      "category": "BP",
+      "season": "26SS/26FW",
+      "sales": 23.5,
+      "target": 37.1,
+      "sellThrough": 43.2,
+      "stock": 11571,
+      "yoy": -36.6
+    },
+    {
+      "category": "SS",
+      "season": "26SS/26FW",
+      "sales": 23.4,
+      "target": 33.5,
+      "sellThrough": 46.6,
+      "stock": 7001,
+      "yoy": -30.2
+    },
+    {
+      "category": "PT",
+      "season": "26SS/26FW",
+      "sales": 23.2,
+      "target": 30.8,
+      "sellThrough": 33.9,
+      "stock": 14787,
+      "yoy": -24.7
+    },
+    {
+      "category": "HZ",
+      "season": "26SS/26FW",
+      "sales": 21.7,
+      "target": 17.3,
+      "sellThrough": 49.1,
+      "stock": 5574,
+      "yoy": 25.1
+    }
   ],
   "styles": [
-    { "sku": "WA2602ST33", "name": "그래픽 반팔 티셔츠", "category": "ST", "sales": 92, "stock": 280, "sellThrough": 82, "action": "리오더", "priority": "P1", "note": "온라인 판매 속도 우수, WH/BK 컬러 중심 추가 검토" },
-    { "sku": "WA2602ST32", "name": "로고 반팔 티셔츠", "category": "ST", "sales": 86, "stock": 360, "sellThrough": 78, "action": "리오더", "priority": "P1", "note": "기본 컬러 재고 주수 3주 미만" },
-    { "sku": "WA2602CR11", "name": "로고 크루넥", "category": "CR", "sales": 74, "stock": 430, "sellThrough": 73, "action": "리오더", "priority": "P1", "note": "1차 입고 후 3주 내 판매율 기준 충족" },
-    { "sku": "WA2602PT04", "name": "와이드 팬츠", "category": "PT", "sales": 38, "stock": 1120, "sellThrough": 43, "action": "배분", "priority": "P2", "note": "공식몰 반응 대비 오프라인 재고 과다" },
-    { "sku": "WA2602SO13", "name": "그래픽 숏츠", "category": "SO", "sales": 34, "stock": 840, "sellThrough": 38, "action": "배분", "priority": "P2", "note": "온라인 상세 유입 대비 전환 낮음" },
-    { "sku": "WA2602SH03", "name": "체크 셔츠", "category": "SH", "sales": 21, "stock": 1320, "sellThrough": 29, "action": "프로모션", "priority": "P3", "note": "컬러별 재고 편차 확인 후 노출 강화" }
+    {
+      "sku": "WA2602ST02",
+      "name": "더블 키키와펜 반팔티셔츠",
+      "category": "ST",
+      "season": "26SS/26FW",
+      "sales": 17.6,
+      "stock": 7133,
+      "sellThrough": 41.7,
+      "action": "배분",
+      "priority": "P2",
+      "note": "누계 판매율 대비 잔여 재고가 많아 채널 재배분 검토 (전주 대비 -21.3%)"
+    },
+    {
+      "sku": "WA2602ST01",
+      "name": "키키 와펜 반팔티셔츠",
+      "category": "ST",
+      "season": "26SS/26FW",
+      "sales": 15.6,
+      "stock": 5679,
+      "sellThrough": 53.2,
+      "action": "배분",
+      "priority": "P2",
+      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -13.2%)"
+    },
+    {
+      "sku": "WA2602STC3",
+      "name": "먼작귀 친구들 그래픽 반팔티셔츠",
+      "category": "ST",
+      "season": "26SS/26FW",
+      "sales": 11.6,
+      "stock": 1670,
+      "sellThrough": 16.5,
+      "action": "배분",
+      "priority": "P2",
+      "note": "누계 판매율 대비 잔여 재고가 많아 채널 재배분 검토 (전주 대비 +94.8%)"
+    },
+    {
+      "sku": "WA2602CD52",
+      "name": "우먼스 릴리와펜 라운드넥 반팔 가디건",
+      "category": "CD",
+      "season": "26SS/26FW",
+      "sales": 11.2,
+      "stock": 375,
+      "sellThrough": 79.4,
+      "action": "리오더",
+      "priority": "P1",
+      "note": "누계 판매율과 금주 매출이 모두 높아 추가 생산 검토 우선 (전주 대비 -12.8%)"
+    },
+    {
+      "sku": "WA2602ST78",
+      "name": "우먼스 릴리 아플리케 세미크롭 반팔티셔츠",
+      "category": "ST",
+      "season": "26SS/26FW",
+      "sales": 9.6,
+      "stock": 628,
+      "sellThrough": 64.1,
+      "action": "배분",
+      "priority": "P2",
+      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -25.5%)"
+    },
+    {
+      "sku": "WA2602ST51",
+      "name": "우먼스 릴리와펜 레귤러핏 반팔티셔츠",
+      "category": "ST",
+      "season": "26SS/26FW",
+      "sales": 9.5,
+      "stock": 578,
+      "sellThrough": 82.4,
+      "action": "리오더",
+      "priority": "P1",
+      "note": "누계 판매율과 금주 매출이 모두 높아 추가 생산 검토 우선 (전주 대비 -24.5%)"
+    },
+    {
+      "sku": "WA2602ST55",
+      "name": "우먼스 빅릴리 그래픽 반팔티셔츠",
+      "category": "ST",
+      "season": "26SS/26FW",
+      "sales": 9.4,
+      "stock": 809,
+      "sellThrough": 78.7,
+      "action": "리오더",
+      "priority": "P1",
+      "note": "누계 판매율과 금주 매출이 모두 높아 추가 생산 검토 우선 (전주 대비 -26.4%)"
+    },
+    {
+      "sku": "WA2602ST72",
+      "name": "우먼스 스트라이프 반팔티셔츠",
+      "category": "ST",
+      "season": "26SS/26FW",
+      "sales": 9.3,
+      "stock": 821,
+      "sellThrough": 80.0,
+      "action": "리오더",
+      "priority": "P1",
+      "note": "누계 판매율과 금주 매출이 모두 높아 추가 생산 검토 우선 (전주 대비 -24.0%)"
+    },
+    {
+      "sku": "WA2602STE3",
+      "name": "3PACK 반팔 티셔츠",
+      "category": "ST",
+      "season": "26SS/26FW",
+      "sales": 9.1,
+      "stock": 4864,
+      "sellThrough": 51.4,
+      "action": "프로모션",
+      "priority": "P3",
+      "note": "전주 대비 둔화와 재고 부담이 동시에 발생 (전주 대비 -63.0%)"
+    },
+    {
+      "sku": "WA2602SO04",
+      "name": "리얼 와이드 스웻 숏팬츠",
+      "category": "SO",
+      "season": "26SS/26FW",
+      "sales": 8.6,
+      "stock": 1416,
+      "sellThrough": 52.0,
+      "action": "프로모션",
+      "priority": "P3",
+      "note": "전주 대비 둔화와 재고 부담이 동시에 발생 (전주 대비 -35.5%)"
+    },
+    {
+      "sku": "WA2601CA01",
+      "name": "키캡",
+      "category": "CA",
+      "season": "26SS/26FW",
+      "sales": 8.6,
+      "stock": 804,
+      "sellThrough": 55.3,
+      "action": "배분",
+      "priority": "P2",
+      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -0.5%)"
+    },
+    {
+      "sku": "WA2602SS31",
+      "name": "이지 데님 반팔셔츠",
+      "category": "SS",
+      "season": "26SS/26FW",
+      "sales": 8.6,
+      "stock": 1777,
+      "sellThrough": 41.5,
+      "action": "배분",
+      "priority": "P2",
+      "note": "누계 판매율 대비 잔여 재고가 많아 채널 재배분 검토 (전주 대비 -18.2%)"
+    },
+    {
+      "sku": "WA2602STE1",
+      "name": "2PACK 반팔 티셔츠",
+      "category": "ST",
+      "season": "26SS/26FW",
+      "sales": 8.0,
+      "stock": 6805,
+      "sellThrough": 32.4,
+      "action": "배분",
+      "priority": "P2",
+      "note": "누계 판매율 대비 잔여 재고가 많아 채널 재배분 검토 (전주 대비 -20.5%)"
+    },
+    {
+      "sku": "WA2602ST47",
+      "name": "키키 타이포 그래픽 반팔티셔츠",
+      "category": "ST",
+      "season": "26SS/26FW",
+      "sales": 7.9,
+      "stock": 855,
+      "sellThrough": 49.9,
+      "action": "배분",
+      "priority": "P2",
+      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -5.8%)"
+    },
+    {
+      "sku": "WA2602KT64",
+      "name": "우먼스 리본 카라 반팔 니트",
+      "category": "KT",
+      "season": "26SS/26FW",
+      "sales": 7.8,
+      "stock": 786,
+      "sellThrough": 67.9,
+      "action": "배분",
+      "priority": "P2",
+      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 +33.4%)"
+    },
+    {
+      "sku": "WA2602ST27",
+      "name": "키키 라이딩 반팔티셔츠",
+      "category": "ST",
+      "season": "26SS/26FW",
+      "sales": 7.2,
+      "stock": 633,
+      "sellThrough": 78.7,
+      "action": "배분",
+      "priority": "P2",
+      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -30.3%)"
+    },
+    {
+      "sku": "WA2602SO75",
+      "name": "우먼스 아플리케 데님 버뮤다팬츠",
+      "category": "SO",
+      "season": "26SS/26FW",
+      "sales": 6.9,
+      "stock": 588,
+      "sellThrough": 66.0,
+      "action": "배분",
+      "priority": "P2",
+      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -33.2%)"
+    },
+    {
+      "sku": "WA2602ST33",
+      "name": "키키 하와이안 반팔티셔츠",
+      "category": "ST",
+      "season": "26SS/26FW",
+      "sales": 6.5,
+      "stock": 862,
+      "sellThrough": 67.2,
+      "action": "배분",
+      "priority": "P2",
+      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -15.6%)"
+    }
   ],
   "launch": [
-    { "label": "D+7", "value": 18 },
-    { "label": "D+14", "value": 34 },
-    { "label": "D+30", "value": 57 }
+    {
+      "label": "전주",
+      "value": 774.5
+    },
+    {
+      "label": "금주",
+      "value": 636.0
+    }
   ],
   "summary": {
-    "headline": "ST와 CR이 금주 판매를 견인하고 있으며, SH와 SO는 재고 배분 및 노출 조정이 필요합니다.",
-    "message": "금주 와키윌리 상품기획 관점에서는 ST와 CR의 판매 속도가 가장 우수합니다. 리오더 후보는 판매율과 잔여 재고 주수를 기준으로 우선 검토하고, 판매율이 낮은 스타일은 프로모션 전환 전 컬러/사이즈별 재고 편차를 먼저 확인하겠습니다."
+    "headline": "8월 2주차 WA26 주간 매출은 6.36억으로 전주 대비 -17.9%입니다.",
+    "message": "ST가 금주 매출을 가장 크게 견인했습니다. 상위 스타일 중 WA2602CD52는 판매율/재고 기준으로 우선 점검하고, 전주 대비 하락한 고재고 스타일은 채널 배분과 노출 조정을 병행해 확인하는 구조로 보겠습니다."
   }
 }
