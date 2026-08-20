@@ -1,4 +1,5 @@
 node_modules/
 dist/
+.vinext/
 .env
 .DS_Store
