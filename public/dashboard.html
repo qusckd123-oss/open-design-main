@@ -38,7 +38,9 @@
     .badge-red { color: var(--red); background: rgba(185,71,53,.1); }
     .badge-amber { color: #8A5D15; background: rgba(199,145,50,.16); }
     .badge-green { color: var(--green); background: rgba(46,107,90,.11); }
-    .product-tile { height: 156px; display: grid; place-items: center; border-bottom: 1px solid var(--line); background: linear-gradient(135deg, rgba(30,42,46,.08), rgba(255,255,255,.86)), repeating-linear-gradient(45deg, rgba(46,107,90,.12) 0 7px, transparent 7px 14px); }
+    .product-tile { height: 220px; display: grid; place-items: center; overflow: hidden; border-bottom: 1px solid var(--line); background: #F8F9FA; }
+    .product-tile img { height: 100%; width: 100%; object-fit: cover; transition: transform .2s ease; }
+    .panel:hover .product-tile img { transform: scale(1.03); }
     @media print {
       body { background: #fff; }
       .no-print { display: none !important; }
@@ -280,7 +282,18 @@
 
     function renderProducts() {
       const products = styles().slice(0, 4);
-      document.getElementById("productCards").innerHTML = products.map(row => `<article class="panel overflow-hidden"><div class="product-tile"><div class="text-center"><p class="font-mono text-lg font-black text-ink">${row.sku}</p><p class="mt-1 text-xs font-bold text-slate">${row.categoryName || row.category}</p></div></div><div class="p-4"><p class="text-xs font-bold text-slate">Wacky Willy · ${row.category}</p><h3 class="mt-1 min-h-[42px] text-sm font-black leading-5 text-ink">${row.name}</h3><div class="mt-3 flex items-center justify-between text-sm"><span class="font-black text-slate">판매율 ${Number(row.sellThrough || 0).toFixed(1)}%</span><span class="rounded-full bg-paper px-2 py-1 text-xs font-black text-slate">${row.action}</span></div></div></article>`).join("");
+      document.getElementById("productCards").innerHTML = products.map(row => {
+        const productHref = row.productUrl || row.imageUrl || "#";
+        const imageMarkup = row.imageUrl
+          ? `<a href="${productHref}" target="_blank" rel="noopener noreferrer" class="block h-full w-full"><img src="${row.imageUrl}" alt="${row.imageSourceName || row.name}" loading="lazy" referrerpolicy="no-referrer" /></a>`
+          : `<div class="text-center"><p class="font-mono text-lg font-black text-ink">${row.sku}</p><p class="mt-1 text-xs font-bold text-slate">${row.categoryName || row.category}</p></div>`;
+        const sourceLabel = row.imageSource === "musinsa" ? "무신사" : "공식몰";
+        const sourceMarkup = row.imageSourceName
+          ? `<a href="${productHref}" target="_blank" rel="noopener noreferrer" class="mt-3 block truncate text-xs font-bold text-blue">${sourceLabel} · ${row.imageSourceName}</a>`
+          : `<p class="mt-3 text-xs font-bold text-red">이미지 확인 필요</p>`;
+
+        return `<article class="panel overflow-hidden"><div class="product-tile">${imageMarkup}</div><div class="p-4"><p class="text-xs font-bold text-slate">Wacky Willy · ${row.category}</p><h3 class="mt-1 min-h-[42px] text-sm font-black leading-5 text-ink">${row.name}</h3>${sourceMarkup}<div class="mt-3 flex items-center justify-between text-sm"><span class="font-black text-slate">판매율 ${Number(row.sellThrough || 0).toFixed(1)}%</span><span class="rounded-full bg-paper px-2 py-1 text-xs font-black text-slate">${row.action}</span></div></div></article>`;
+      }).join("");
     }
 
     function setActiveTab(tab) {

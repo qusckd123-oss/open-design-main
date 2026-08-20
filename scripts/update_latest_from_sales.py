@@ -32,6 +32,13 @@ CATEGORY_LABELS = {
 }
 
 
+def load_product_images() -> dict[str, dict[str, str]]:
+    image_file = ROOT / "data" / "product_images.json"
+    if not image_file.exists():
+        return {}
+    return json.loads(image_file.read_text(encoding="utf-8"))
+
+
 def style_category(style: str) -> str:
     match = re.match(r"^WA\d{4}([A-Z]{2})", style)
     return match.group(1) if match else "ETC"
@@ -127,6 +134,7 @@ def main() -> None:
     current_sales, names, current_qty = read_week_sales(xlsx_in(CURRENT_DIR, f"판매집계현황 {CURRENT_PERIOD}"))
     prior_sales, _, _ = read_week_sales(xlsx_in(PRIOR_DIR, f"판매집계현황 {PRIOR_PERIOD}"))
     inventory = read_inventory_for(set(current_sales.keys()))
+    product_images = load_product_images()
 
     current_by_category: Counter[str] = Counter()
     prior_by_category: Counter[str] = Counter()
@@ -176,6 +184,8 @@ def main() -> None:
         if wow is not None:
             note = f"{note} (전주 대비 {wow:+.1f}%)"
 
+        image_info = product_images.get(style, {})
+
         styles.append(
             {
                 "sku": style,
@@ -191,6 +201,10 @@ def main() -> None:
                 "action": action,
                 "priority": priority,
                 "note": note,
+                "imageUrl": image_info.get("imageUrl"),
+                "productUrl": image_info.get("productUrl"),
+                "imageSource": image_info.get("source"),
+                "imageSourceName": image_info.get("sourceName"),
             }
         )
 

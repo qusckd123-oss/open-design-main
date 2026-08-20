@@ -6,7 +6,7 @@
     "period": "260810~260816",
     "comparePeriod": "260803~260809",
     "amountUnit": "VAT- / 백만원",
-    "updatedAt": "2026-08-20 09:28",
+    "updatedAt": "2026-08-20 11:12",
     "source": "판매집계현황, 전상품 판매추이",
     "targetLabel": "전주 매출"
   },
@@ -106,7 +106,11 @@
       "wow": -21.3,
       "action": "배분",
       "priority": "P2",
-      "note": "누계 판매율 대비 잔여 재고가 많아 채널 재배분 검토 (전주 대비 -21.3%)"
+      "note": "누계 판매율 대비 잔여 재고가 많아 채널 재배분 검토 (전주 대비 -21.3%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20260302/6068532/6068532_17727625565588_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/6068532",
+      "imageSource": "musinsa",
+      "imageSourceName": "더블 키키와펜 반팔티셔츠 화이트"
     },
     {
       "sku": "WA2602ST01",
@@ -121,7 +125,11 @@
       "wow": -13.2,
       "action": "배분",
       "priority": "P2",
-      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -13.2%)"
+      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -13.2%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20260127/5944938/5944938_17697425383715_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/5944938",
+      "imageSource": "musinsa",
+      "imageSourceName": "키키 와펜 반팔티셔츠 (5 colors)"
     },
     {
       "sku": "WA2602STC3",
@@ -136,7 +144,11 @@
       "wow": 94.8,
       "action": "배분",
       "priority": "P2",
-      "note": "누계 판매율 대비 잔여 재고가 많아 채널 재배분 검토 (전주 대비 +94.8%)"
+      "note": "누계 판매율 대비 잔여 재고가 많아 채널 재배분 검토 (전주 대비 +94.8%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20260720/6880006/6880006_17858324854150_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/6880006",
+      "imageSource": "musinsa",
+      "imageSourceName": "먼작귀 친구들 그래픽 반팔티셔츠 화이트"
     },
     {
       "sku": "WA2602CD52",
@@ -151,7 +163,11 @@
       "wow": -12.8,
       "action": "리오더",
       "priority": "P1",
-      "note": "누계 판매율과 금주 매출이 모두 높아 추가 생산 검토 우선 (전주 대비 -12.8%)"
+      "note": "누계 판매율과 금주 매출이 모두 높아 추가 생산 검토 우선 (전주 대비 -12.8%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20260514/6483778/6483778_17787622718022_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/6483778",
+      "imageSource": "musinsa",
+      "imageSourceName": "우먼스 릴리와펜 라운드넥 반팔 가디건 레드"
     },
     {
       "sku": "WA2602ST78",
@@ -166,7 +182,11 @@
       "wow": -25.5,
       "action": "배분",
       "priority": "P2",
-      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -25.5%)"
+      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -25.5%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20260324/6183556/6183556_17787606614859_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/6183556",
+      "imageSource": "musinsa",
+      "imageSourceName": "우먼스 릴리 아플리케 세미크롭 반팔티셔츠 네이비"
     },
     {
       "sku": "WA2602ST51",
@@ -181,7 +201,11 @@
       "wow": -24.5,
       "action": "리오더",
       "priority": "P1",
-      "note": "누계 판매율과 금주 매출이 모두 높아 추가 생산 검토 우선 (전주 대비 -24.5%)"
+      "note": "누계 판매율과 금주 매출이 모두 높아 추가 생산 검토 우선 (전주 대비 -24.5%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20250220/4811090/4811090_17406497746268_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/4811090",
+      "imageSource": "musinsa",
+      "imageSourceName": "우먼스 릴리와펜 반팔 티셔츠 화이트"
     },
     {
       "sku": "WA2602ST55",
@@ -196,7 +220,11 @@
       "wow": -26.4,
       "action": "리오더",
       "priority": "P1",
-      "note": "누계 판매율과 금주 매출이 모두 높아 추가 생산 검토 우선 (전주 대비 -26.4%)"
+      "note": "누계 판매율과 금주 매출이 모두 높아 추가 생산 검토 우선 (전주 대비 -26.4%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20260305/6089191/6089191_17727623986606_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/6089191",
+      "imageSource": "musinsa",
+      "imageSourceName": "[26SS] 우먼스 빅릴리 그래픽 반팔 티셔츠 라이트 그레이"
     },
     {
       "sku": "WA2602ST72",
@@ -211,7 +239,11 @@
       "wow": -24.0,
       "action": "리오더",
       "priority": "P1",
-      "note": "누계 판매율과 금주 매출이 모두 높아 추가 생산 검토 우선 (전주 대비 -24.0%)"
+      "note": "누계 판매율과 금주 매출이 모두 높아 추가 생산 검토 우선 (전주 대비 -24.0%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20260402/6243370/6243370_17751801944501_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/6243370",
+      "imageSource": "musinsa",
+      "imageSourceName": "[26SS] 우먼스 스트라이프 반팔티셔츠 크림"
     },
     {
       "sku": "WA2602STE3",
@@ -226,7 +258,11 @@
       "wow": -63.0,
       "action": "프로모션",
       "priority": "P3",
-      "note": "전주 대비 둔화와 재고 부담이 동시에 발생 (전주 대비 -63.0%)"
+      "note": "전주 대비 둔화와 재고 부담이 동시에 발생 (전주 대비 -63.0%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20250827/5366982/5366982_17585256293976_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/5366982",
+      "imageSource": "musinsa",
+      "imageSourceName": "[26SS] 3PACK 시그니처 반팔 티셔츠 블랙/화이트/그레이"
     },
     {
       "sku": "WA2602SO04",
@@ -241,7 +277,11 @@
       "wow": -35.5,
       "action": "프로모션",
       "priority": "P3",
-      "note": "전주 대비 둔화와 재고 부담이 동시에 발생 (전주 대비 -35.5%)"
+      "note": "전주 대비 둔화와 재고 부담이 동시에 발생 (전주 대비 -35.5%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20260224/6049150/6049150_17721590217437_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/6049150",
+      "imageSource": "musinsa",
+      "imageSourceName": "와이드 스웻 버뮤다 숏팬츠 블랙"
     },
     {
       "sku": "WA2601CA01",
@@ -256,7 +296,11 @@
       "wow": -0.5,
       "action": "배분",
       "priority": "P2",
-      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -0.5%)"
+      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -0.5%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20260106/5872729/5872729_17679228200397_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/5872729",
+      "imageSource": "musinsa",
+      "imageSourceName": "[26SS] 키캡 (8 colors)"
     },
     {
       "sku": "WA2602SS31",
@@ -271,7 +315,11 @@
       "wow": -18.2,
       "action": "배분",
       "priority": "P2",
-      "note": "누계 판매율 대비 잔여 재고가 많아 채널 재배분 검토 (전주 대비 -18.2%)"
+      "note": "누계 판매율 대비 잔여 재고가 많아 채널 재배분 검토 (전주 대비 -18.2%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20260210/6008264/6008264_17773403828735_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/6008264",
+      "imageSource": "musinsa",
+      "imageSourceName": "[26SS] 이지 데님 반팔셔츠 블랙"
     },
     {
       "sku": "WA2602STE1",
@@ -286,7 +334,11 @@
       "wow": -20.5,
       "action": "배분",
       "priority": "P2",
-      "note": "누계 판매율 대비 잔여 재고가 많아 채널 재배분 검토 (전주 대비 -20.5%)"
+      "note": "누계 판매율 대비 잔여 재고가 많아 채널 재배분 검토 (전주 대비 -20.5%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20250725/5273106/5273106_17540145072106_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/5273106",
+      "imageSource": "musinsa",
+      "imageSourceName": "[26SS] 2PACK 시그니처 반팔 티셔츠 블랙/화이트"
     },
     {
       "sku": "WA2602ST47",
@@ -301,7 +353,11 @@
       "wow": -5.8,
       "action": "배분",
       "priority": "P2",
-      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -5.8%)"
+      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -5.8%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20260402/6243397/6243397_17828671827609_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/6243397",
+      "imageSource": "musinsa",
+      "imageSourceName": "키키 타이포 그래픽 반팔티셔츠 화이트"
     },
     {
       "sku": "WA2602KT64",
@@ -316,7 +372,11 @@
       "wow": 33.4,
       "action": "배분",
       "priority": "P2",
-      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 +33.4%)"
+      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 +33.4%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20260202/5969873/5969873_17707764548735_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/5969873",
+      "imageSource": "musinsa",
+      "imageSourceName": "우먼스 리본 카라 반팔 니트 라이트 그레이"
     },
     {
       "sku": "WA2602ST27",
@@ -331,7 +391,11 @@
       "wow": -30.3,
       "action": "배분",
       "priority": "P2",
-      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -30.3%)"
+      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -30.3%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20260406/6263585/6263585_17757984886550_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/6263585",
+      "imageSource": "musinsa",
+      "imageSourceName": "키키 라이딩 반팔티셔츠 차콜"
     },
     {
       "sku": "WA2602SO75",
@@ -346,7 +410,11 @@
       "wow": -33.2,
       "action": "배분",
       "priority": "P2",
-      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -33.2%)"
+      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -33.2%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20260402/6243351/6243351_17773403057403_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/6243351",
+      "imageSource": "musinsa",
+      "imageSourceName": "우먼스 아플리케 데님 버뮤다팬츠 블루"
     },
     {
       "sku": "WA2602ST33",
@@ -361,7 +429,11 @@
       "wow": -15.6,
       "action": "배분",
       "priority": "P2",
-      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -15.6%)"
+      "note": "금주 판매 흐름과 잔여 재고 기준으로 배분 유지 (전주 대비 -15.6%)",
+      "imageUrl": "https://image.msscdn.net/images/goods_img/20260413/6297942/6297942_17763933313310_500.jpg",
+      "productUrl": "https://www.musinsa.com/products/6297942",
+      "imageSource": "musinsa",
+      "imageSourceName": "키키 하와이안 반팔티셔츠 블랙"
     }
   ],
   "launch": [
