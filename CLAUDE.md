@@ -37,6 +37,13 @@
 - For the 2026-08-03 to 2026-08-09 generated report, the corrected KPI basis is: APP 전체 8.35억, 26SS APP 6.32억, 26FW APP 3,157만, 과시즌 APP 1.71억, ERP 전체 10.05억.
 - For the 2026-08-10 to 2026-08-16 generated report, the corrected KPI basis is: APP 전체 7.71억, 26SS APP 4.99억, 26FW APP 3,801만, 과시즌 APP 2.34억, ERP 전체 9.09억. KPI delta lines are: APP 전체 전년비 -15.1% / 전주대비 -24.0%, 26SS APP 전년비 -3.3% / 전주대비 -25.2%, 26FW APP 전년비 -67.2% / 전주대비 -5.2%, ERP 전체 전년비 -24.3% / 전주대비 -23.7%, 26SS ACC 참고 전년비 -50.4% / 전주대비 -17.8%, 26FW ACC 참고 전년비 -67.8% / 전주대비 -42.4%.
 
+## Current Teams Summary - 2026-08-21
+
+- Use `workspace/memory/current-teams-update-summary-2026-08-21.md` as the latest Teams update source for decided items, unresolved items, and next actions from local Teams chat/channel backup files clipped as 2026-08-20 and written locally on 2026-08-21 morning. No local Teams backup clipped as 2026-08-21 was found.
+- 2026-08-21 결정된 것: 27SS 2PACK/3PACK 원단은 원사 발주를 먼저 진행했다. 27SS 기본 물량은 2PACK 20,000SET, 3PACK 10,000SET 기준이며 2PACK에는 WH 컬러가 포함된다. 27SS 3PACK은 우선 FSS와 면세 채널 중심으로 운영하고 판매 부진 시 아울렛으로 확대한다. 27SS 추가 진행 스타일은 `★27SS 발주리스트.xlsx`의 발주구분 `스팟`과 `★27SS 아이템별 상품 MAP.xlsx`의 품번 파란색 음영으로 구분한다. 광복점 EXCLUSIVE는 부산 광복 플래그십 오픈 건으로 진행되며 우선 3개 스타일 Open A 작업지시서와 아트워크 개발이 전달됐다. WA2601LT15는 지민 콘서트 노출로 판매가 급증했으나 물류 잔여 재고를 온라인 전용 및 일부 무신사 풀필먼트/오늘출발로 운용하는 쪽으로 공유됐고, 즉시 판매 급증이 지속 리오더 근거로 확정되지는 않았다. 26FW SPOT 해외 오더 1,885PCS는 PO 분리 없이 국내 택 부착, 국내 입고 후 글로벌 이관 방식으로 진행한다. 대만/일본 택 가격 등록과 WA2603HD62 직송일 O.C 반영은 완료됐다.
+- 2026-08-21 안 정해진 것: 플래그십/면세 전용 2PACK 패키지의 최종 컬러, 수량, 연간 2PACK 물량 차감 방식은 영업기획팀과 추가 협의가 필요하다. 광복점 EXCLUSIVE는 총 4개 스타일 기준이나 1개 스타일 아트워크가 아직 최종 확정되지 않은 것으로 남아 있다. 27SS 추가 스타일의 납기 기준, 협력사 CAPA 배분, 업체별 배분표 확정은 완료 확인이 없다. WA2601LT15 최종 리오더 진행 여부와 수량은 미정이다. 26FW WA2604JK72의 실제 납기일이 IMC 파일 10/14와 상품설명서 10/27로 다르게 표기되어 최종 기준 확인이 필요하다. 온라인 전용 상품 TF의 `26FW 의류` 시트와 `온라인 수정` 시트 중 업데이트 기준 시트가 미정이다. 대만/일본 직송 일부 SKU의 ETD/ETA와 출고 요청 반영 상태는 추가 확인이 필요하다.
+- 2026-08-21 다음 할 일: 27SS 2PACK/3PACK 원사 발주가 실제 PO와 발주 파일에 반영됐는지 확인하고 3PACK 10,000SET의 FSS/면세 우선 물량 배분 및 부진 시 아울렛 전환 기준을 정리한다. 플래그십/면세 전용 2PACK은 영업기획팀과 컬러, 수량, 연간 물량 차감 방식을 확정한다. 27SS 추가 스타일은 발주리스트 `스팟` 필터와 상품 MAP 파란색 음영 일치 여부를 검수하고 업체 배분표를 화요일까지 확정한다. 광복점 EXCLUSIVE는 미확정 1개 스타일 아트워크, 4STYLE/4SKU 작업지시서, B/T 불출, 9/18 IN DC 가능성을 재확인한다. WA2601LT15는 온라인/무신사 재고 소진 추이를 본 뒤 리오더 진행 여부와 수량을 결정한다. 26FW WA2604JK72 납기 기준 파일과 글로벌 직송 O.C/택가/ETD/ETA 반영 상태를 SKU별로 맞춘다.
+
 ## Current Teams Summary - 2026-08-20
 
 - Use `workspace/memory/current-teams-update-summary-2026-08-20.md` as the latest Teams update source for decided items, unresolved items, and next actions from local Teams chat/channel backup files written on 2026-08-20 morning and clipped as 2026-08-19. No local Teams backup clipped as 2026-08-20 was found.
