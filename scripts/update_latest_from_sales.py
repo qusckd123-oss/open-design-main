@@ -43,6 +43,19 @@ def style_category(style: str) -> str:
     return match.group(1) if match else "ETC"
 
 
+def style_season(style: str) -> str:
+    match = re.match(r"^WA(\d{2})(\d{2})", style)
+    if not match:
+        return "미분류"
+    year, drop = match.groups()
+    season = "FW" if int(drop) >= 3 else "SS"
+    return f"{year}{season}"
+
+
+def style_gender(name: str) -> str:
+    return "WOMEN" if "우먼" in name or "우먼스" in name else "UNISEX"
+
+
 def xlsx_in(folder: Path, starts_with: str) -> Path:
     matches = sorted(folder.glob(f"{starts_with}*.xlsx"))
     if not matches:
@@ -117,16 +130,28 @@ def pct_change(current: float, prior: float) -> float:
     return (current - prior) / prior * 100
 
 
+def reorder_timing(sell_through: float) -> tuple[str, int]:
+    if sell_through >= 60:
+        return "30% 초과·긴급", 0
+    if sell_through >= 30:
+        return "30% 도달", 0
+    if sell_through >= 25:
+        return "30% 임박", round(30 - sell_through)
+    return "30% 전 관찰", round(30 - sell_through)
+
+
 def make_action(sales_m: float, wow: float | None, sell_through: float, stock: int) -> tuple[str, str, str]:
-    if sell_through >= 65 and sales_m >= 8:
-        return "리오더", "P1", "누계 판매율과 금주 매출이 모두 높아 추가 생산 검토 우선"
-    if sell_through >= 55 and stock <= 350:
-        return "리오더", "P1", "잔여 재고가 낮아 사이즈/컬러별 추가 물량 확인 필요"
-    if wow is not None and wow <= -35 and stock >= 500:
-        return "프로모션", "P3", "전주 대비 둔화와 재고 부담이 동시에 발생"
-    if stock >= 800 and sell_through < 45:
-        return "배분", "P2", "누계 판매율 대비 잔여 재고가 많아 채널 재배분 검토"
-    return "배분", "P2", "금주 판매 흐름과 잔여 재고 기준으로 배분 유지"
+    stock_rate = max(0.0, 100 - sell_through)
+    timing, gap = reorder_timing(sell_through)
+    if sell_through >= 30 and sales_m >= 5:
+        return "리오더 검토", "P1", f"{timing} 구간입니다. 리오더 투입 여부와 예상 입고 시점을 우선 확인"
+    if sell_through >= 25 and sales_m >= 8:
+        return "리오더 검토", "P2", f"{timing} 구간으로 30%까지 약 {gap}%p 남았습니다. 선제 리오더 검토"
+    if wow is not None and wow <= -35 and stock_rate >= 65:
+        return "프로모션 검토", "P3", "전주 대비 둔화와 높은 잔여재고율이 동시에 발생해 가격 할인/행사 검토"
+    if stock >= 800 and stock_rate >= 55:
+        return "배분/RT 검토", "P2", "잔여재고율과 절대 재고가 높아 매장 이동(RT) 또는 채널 추가 배분 검토"
+    return "배분/RT 검토", "P3", "금주 판매 흐름과 매장별 재고 편차 기준으로 배분 유지"
 
 
 def parse_args() -> argparse.Namespace:
@@ -198,6 +223,9 @@ def main() -> None:
         wow = pct_change(amount, prior) if prior else None
         sell_through = float(inv.get("sellThrough", 0))
         stock = int(inv.get("stock", 0))
+        stock_rate = round(max(0.0, 100 - sell_through), 1)
+        timing_label, timing_gap = reorder_timing(sell_through)
+        display_name = str(inv.get("name") or names.get(style) or style)
         action, priority, note = make_action(sales_m, wow, sell_through, stock)
         if wow is not None:
             note = f"{note} (전주 대비 {wow:+.1f}%)"
@@ -207,14 +235,21 @@ def main() -> None:
         styles.append(
             {
                 "sku": style,
-                "name": str(inv.get("name") or names.get(style) or style),
+                "name": display_name,
                 "category": style_category(style),
                 "categoryName": CATEGORY_LABELS.get(style_category(style), style_category(style)),
-                "season": "26SS/26FW",
+                "season": style_season(style),
+                "gender": style_gender(display_name),
                 "sales": sales_m,
+                "priorSales": round(prior / 1_000_000, 1),
                 "quantity": int(current_qty[style]),
+                "inQty": int(round(float(inv.get("inQty", 0)))),
+                "cumQty": int(round(float(inv.get("cumQty", 0)))),
                 "stock": stock,
                 "sellThrough": sell_through,
+                "stockRate": stock_rate,
+                "reorderTiming": timing_label,
+                "reorderGapTo30": timing_gap,
                 "wow": round(wow, 1) if wow is not None else None,
                 "action": action,
                 "priority": priority,
@@ -255,8 +290,8 @@ def main() -> None:
             "headline": f"{args.week_label} WA26 주간 매출은 {current_total / 100_000_000:.2f}억으로 전주 대비 {total_wow:+.1f}%입니다.",
             "message": (
                 f"{best_category['category']}({best_category['categoryName']})가 금주 매출을 가장 크게 견인했습니다. "
-                f"상위 스타일 중 {best_reorder['sku']}는 판매율과 재고 기준으로 우선 점검하고, "
-                "전주 대비 하락한 고재고 스타일은 채널 배분과 노출 조정을 병행하는 구조로 보겠습니다."
+                f"상위 스타일 중 {best_reorder['sku']}는 판매율 30% 리오더 시점과 잔여재고율 기준으로 우선 점검하고, "
+                "전주 대비 하락한 고재고율 스타일은 배분/RT 또는 프로모션 검토를 분리해서 보겠습니다."
             )
             if best_category and best_reorder
             else "금주 판매 데이터가 충분하지 않습니다.",
