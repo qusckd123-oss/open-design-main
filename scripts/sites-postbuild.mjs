@@ -1,15 +1,21 @@
-import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 
 mkdirSync("dist/server", { recursive: true });
 mkdirSync("dist/.openai", { recursive: true });
 
 copyFileSync(".openai/hosting.json", "dist/.openai/hosting.json");
 
+const jsonFiles = [
+  "data/latest.json",
+  ...readdirSync("dist/data/archive")
+    .filter((file) => file.endsWith(".json"))
+    .map((file) => `data/archive/${file}`),
+];
+
 const embeddedFiles = [
   ["index.html", "text/html; charset=utf-8", "utf8"],
   ["dashboard.html", "text/html; charset=utf-8", "utf8"],
-  ["data/latest.json", "application/json; charset=utf-8", "utf8"],
-  ["data/archive/260810-260816.sample.json", "application/json; charset=utf-8", "utf8"],
+  ...jsonFiles.map((path) => [path, "application/json; charset=utf-8", "utf8"]),
   ["assets/bcave_logo.png", "image/png", "base64"],
 ].map(([path, contentType, encoding]) => {
   const body = readFileSync(`dist/${path}`, encoding);

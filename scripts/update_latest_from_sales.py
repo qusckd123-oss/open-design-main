@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+import argparse
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
@@ -13,10 +14,8 @@ import openpyxl
 ROOT = Path(__file__).resolve().parents[1]
 WORKSPACE = ROOT.parents[1]
 SALES_ROOT = WORKSPACE / "추가 데이터" / "판매 데이터"
-CURRENT_PERIOD = "260810~260816"
-PRIOR_PERIOD = "260803~260809"
-CURRENT_DIR = SALES_ROOT / CURRENT_PERIOD
-PRIOR_DIR = SALES_ROOT / PRIOR_PERIOD
+DEFAULT_CURRENT_PERIOD = "260810~260816"
+DEFAULT_PRIOR_PERIOD = "260803~260809"
 
 CATEGORY_LABELS = {
     "ST": "반팔티셔츠",
@@ -72,8 +71,8 @@ def read_week_sales(path: Path) -> tuple[Counter[str], dict[str, str], Counter[s
     return style_amount, style_names, style_qty
 
 
-def read_inventory_for(styles: set[str]) -> dict[str, dict[str, Any]]:
-    trend_file = xlsx_in(CURRENT_DIR, "와키윌리_26SS 전상품 판매추이")
+def read_inventory_for(current_dir: Path, styles: set[str]) -> dict[str, dict[str, Any]]:
+    trend_file = xlsx_in(current_dir, "와키윌리_26SS 전상품 판매추이")
     workbook = openpyxl.load_workbook(trend_file, read_only=True, data_only=True)
     skip_sheets = {
         "TTL",
@@ -130,10 +129,29 @@ def make_action(sales_m: float, wow: float | None, sell_through: float, stock: i
     return "배분", "P2", "금주 판매 흐름과 잔여 재고 기준으로 배분 유지"
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Update latest.json from Wacky Willy weekly sales workbooks.")
+    parser.add_argument("--current-period", default=DEFAULT_CURRENT_PERIOD, help="Current sales folder/period, e.g. 260810~260816.")
+    parser.add_argument("--prior-period", default=DEFAULT_PRIOR_PERIOD, help="Prior comparison folder/period, e.g. 260803~260809.")
+    parser.add_argument("--week-label", default="8월 2주차", help="Display label for the current period.")
+    return parser.parse_args()
+
+
 def main() -> None:
-    current_sales, names, current_qty = read_week_sales(xlsx_in(CURRENT_DIR, f"판매집계현황 {CURRENT_PERIOD}"))
-    prior_sales, _, _ = read_week_sales(xlsx_in(PRIOR_DIR, f"판매집계현황 {PRIOR_PERIOD}"))
-    inventory = read_inventory_for(set(current_sales.keys()))
+    args = parse_args()
+    current_period = args.current_period
+    prior_period = args.prior_period
+    current_dir = SALES_ROOT / current_period
+    prior_dir = SALES_ROOT / prior_period
+
+    if not current_dir.exists():
+        raise FileNotFoundError(f"Current period folder not found: {current_dir}")
+    if not prior_dir.exists():
+        raise FileNotFoundError(f"Prior period folder not found: {prior_dir}")
+
+    current_sales, names, current_qty = read_week_sales(xlsx_in(current_dir, f"판매집계현황 {current_period}"))
+    prior_sales, _, _ = read_week_sales(xlsx_in(prior_dir, f"판매집계현황 {prior_period}"))
+    inventory = read_inventory_for(current_dir, set(current_sales.keys()))
     product_images = load_product_images()
 
     current_by_category: Counter[str] = Counter()
@@ -219,9 +237,9 @@ def main() -> None:
         "meta": {
             "brand": "Wacky Willy",
             "season": "26SS/26FW",
-            "weekLabel": "8월 2주차",
-            "period": CURRENT_PERIOD,
-            "comparePeriod": PRIOR_PERIOD,
+            "weekLabel": args.week_label,
+            "period": current_period,
+            "comparePeriod": prior_period,
             "amountUnit": "VAT- / 백만원",
             "updatedAt": datetime.now().strftime("%Y-%m-%d %H:%M"),
             "source": "판매집계현황, 전상품 판매추이",
@@ -234,7 +252,7 @@ def main() -> None:
             {"label": "금주", "value": round(current_total / 1_000_000, 1)},
         ],
         "summary": {
-            "headline": f"8월 2주차 WA26 주간 매출은 {current_total / 100_000_000:.2f}억으로 전주 대비 {total_wow:+.1f}%입니다.",
+            "headline": f"{args.week_label} WA26 주간 매출은 {current_total / 100_000_000:.2f}억으로 전주 대비 {total_wow:+.1f}%입니다.",
             "message": (
                 f"{best_category['category']}({best_category['categoryName']})가 금주 매출을 가장 크게 견인했습니다. "
                 f"상위 스타일 중 {best_reorder['sku']}는 판매율과 재고 기준으로 우선 점검하고, "
@@ -253,7 +271,7 @@ def main() -> None:
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
-    archive_name = "260810-260816.json"
+    archive_name = f"{current_period.replace('~', '-')}.json"
     for archive_dir in [ROOT / "data" / "archive", ROOT / "public" / "data" / "archive"]:
         archive_dir.mkdir(parents=True, exist_ok=True)
         (archive_dir / archive_name).write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
