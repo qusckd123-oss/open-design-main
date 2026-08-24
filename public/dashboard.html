@@ -74,25 +74,31 @@
       </div>
     </header>
 
-    <section class="no-print mb-5 grid gap-3 rounded-lg border border-line bg-white p-3 lg:grid-cols-[1fr_1fr_1fr_auto]">
+    <section class="no-print mb-5 grid gap-3 rounded-lg border border-line bg-white p-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_1fr_1fr_auto]">
       <label class="text-xs font-extrabold text-slate">시즌
         <select id="seasonFilter" class="mt-1 w-full rounded-md border border-line bg-paper px-3 py-2 text-sm font-bold text-ink"><option value="all">전체</option></select>
       </label>
       <label class="text-xs font-extrabold text-slate">액션 구분
         <select id="actionFilter" class="mt-1 w-full rounded-md border border-line bg-paper px-3 py-2 text-sm font-bold text-ink">
-          <option value="all">전체</option><option value="리오더">리오더</option><option value="배분">배분</option><option value="프로모션">프로모션</option>
+          <option value="all">전체</option><option value="리오더 검토">리오더 검토</option><option value="배분/RT 검토">배분/RT 검토</option><option value="프로모션 검토">프로모션 검토</option>
         </select>
+      </label>
+      <label class="text-xs font-extrabold text-slate">복종
+        <select id="categoryFilter" class="mt-1 w-full rounded-md border border-line bg-paper px-3 py-2 text-sm font-bold text-ink"><option value="all">전체</option></select>
+      </label>
+      <label class="text-xs font-extrabold text-slate">성별
+        <select id="genderFilter" class="mt-1 w-full rounded-md border border-line bg-paper px-3 py-2 text-sm font-bold text-ink"><option value="all">전체</option></select>
       </label>
       <label class="text-xs font-extrabold text-slate">정렬 기준
         <select id="sortFilter" class="mt-1 w-full rounded-md border border-line bg-paper px-3 py-2 text-sm font-bold text-ink">
-          <option value="priority">우선순위</option><option value="sales">금주 매출</option><option value="sellThrough">판매율</option><option value="wow">전주 대비</option><option value="stock">재고</option>
+          <option value="priority">우선순위</option><option value="sales">금주 매출</option><option value="sellThrough">판매율</option><option value="stockRate">잔여재고율</option><option value="wow">전주 대비</option><option value="stock">재고수량</option>
         </select>
       </label>
-      <button id="printButton" class="mt-5 inline-flex items-center justify-center gap-2 rounded-md bg-ink px-4 py-2 text-sm font-extrabold text-white lg:mt-4" type="button"><i data-lucide="printer" class="h-4 w-4"></i> PDF 저장</button>
+      <button id="printButton" class="mt-5 inline-flex items-center justify-center gap-2 rounded-md bg-ink px-4 py-2 text-sm font-extrabold text-white xl:mt-4" type="button"><i data-lucide="printer" class="h-4 w-4"></i> PDF 저장</button>
     </section>
 
     <nav class="no-print mb-5 grid gap-2 sm:grid-cols-3" aria-label="대시보드 화면 전환">
-      <button class="tab-button rounded-md border border-line bg-white px-4 py-3 text-left text-sm font-black text-ink" type="button" data-tab="reorder" aria-selected="true"><span class="mb-1 flex items-center gap-2"><i data-lucide="repeat-2" class="h-4 w-4"></i> 1. 리오더 의사결정</span><span class="block text-xs font-bold opacity-75">판매율, 잔여재고, 증감, P1 후보</span></button>
+      <button class="tab-button rounded-md border border-line bg-white px-4 py-3 text-left text-sm font-black text-ink" type="button" data-tab="reorder" aria-selected="true"><span class="mb-1 flex items-center gap-2"><i data-lucide="repeat-2" class="h-4 w-4"></i> 1. 리오더 의사결정</span><span class="block text-xs font-bold opacity-75">30% 시점, 잔여재고율, P1 후보</span></button>
       <button class="tab-button rounded-md border border-line bg-white px-4 py-3 text-left text-sm font-black text-ink" type="button" data-tab="briefing" aria-selected="false"><span class="mb-1 flex items-center gap-2"><i data-lucide="presentation" class="h-4 w-4"></i> 2. 주간 상품 성과</span><span class="block text-xs font-bold opacity-75">복종별 매출, 상위 스타일, 공유 요약</span></button>
       <button class="tab-button rounded-md border border-line bg-white px-4 py-3 text-left text-sm font-black text-ink" type="button" data-tab="launch" aria-selected="false"><span class="mb-1 flex items-center gap-2"><i data-lucide="radar" class="h-4 w-4"></i> 3. 신상품 런칭 반응</span><span class="block text-xs font-bold opacity-75">신규/초기 반응 대용 지표와 후속 확인</span></button>
     </nav>
@@ -102,10 +108,10 @@
     <section class="tab-panel" data-panel="reorder">
       <section class="mb-5 grid gap-5 xl:grid-cols-[1.35fr_.85fr]">
         <div class="panel overflow-hidden">
-          <div class="border-b border-line p-5"><h2 class="text-lg font-black text-ink">리오더 및 재고 액션 보드</h2><p class="text-sm leading-6 text-slate">판매율, 금주 매출, 전주 대비, 잔여재고를 기준으로 P1 후보와 배분/프로모션 대상을 정리합니다.</p></div>
+          <div class="border-b border-line p-5"><h2 class="text-lg font-black text-ink">리오더 및 재고 액션 보드</h2><p class="text-sm leading-6 text-slate">리오더는 판매율 30% 도달/임박 시점, 배분/RT는 매장 이동 또는 추가 배분, 프로모션은 할인/행사 검토 대상으로 분리합니다.</p></div>
           <div class="table-scroll">
             <table class="w-full min-w-[1280px] text-left text-sm">
-              <thead class="bg-paper text-xs uppercase text-slate"><tr><th class="px-4 py-3">우선</th><th class="px-4 py-3">품번</th><th class="px-4 py-3">상품명</th><th class="px-4 py-3">액션</th><th class="px-4 py-3">복종</th><th class="px-4 py-3 text-right">매출</th><th class="px-4 py-3 text-right">판매율</th><th class="px-4 py-3 text-right">전주 대비</th><th class="px-4 py-3 text-right">재고</th><th class="px-4 py-3">근거</th></tr></thead>
+              <thead class="bg-paper text-xs uppercase text-slate"><tr><th class="px-4 py-3">우선</th><th class="px-4 py-3">품번</th><th class="px-4 py-3">상품명</th><th class="px-4 py-3">액션</th><th class="px-4 py-3">시즌</th><th class="px-4 py-3">복종</th><th class="px-4 py-3">성별</th><th class="px-4 py-3 text-right">매출</th><th class="px-4 py-3 text-right">판매율</th><th class="px-4 py-3 text-right">잔여재고율</th><th class="px-4 py-3">리오더 시점</th><th class="px-4 py-3 text-right">전주 대비</th><th class="px-4 py-3 text-right">재고수량</th><th class="px-4 py-3">근거</th></tr></thead>
               <tbody id="actionRows" class="divide-y divide-line bg-white"></tbody>
             </table>
           </div>
@@ -113,8 +119,8 @@
         <aside class="panel p-5"><h2 class="text-lg font-black text-ink">P1 우선 점검</h2><div id="priorityList" class="mt-4 space-y-3"></div></aside>
       </section>
       <section class="mb-8 grid gap-5 xl:grid-cols-[1fr_1fr]">
-        <div class="panel p-5"><div class="mb-4"><h2 class="text-lg font-black text-ink">액션 분포</h2><p class="text-sm leading-6 text-slate">조회 조건에 맞는 상위 스타일을 리오더, 배분, 프로모션으로 나눕니다.</p></div><div class="mini-chart-box"><canvas id="actionChart"></canvas></div></div>
-        <div class="panel p-5"><div class="mb-4"><h2 class="text-lg font-black text-ink">재고 부담 상위</h2><p class="text-sm leading-6 text-slate">판매율이 낮거나 재고가 큰 품번을 별도로 확인합니다.</p></div><div class="mini-chart-box"><canvas id="stockChart"></canvas></div></div>
+        <div class="panel p-5"><div class="mb-4"><h2 class="text-lg font-black text-ink">액션 분포</h2><p class="text-sm leading-6 text-slate">조회 조건에 맞는 상위 스타일을 리오더 검토, 배분/RT 검토, 프로모션 검토로 나눕니다.</p></div><div class="mini-chart-box"><canvas id="actionChart"></canvas></div></div>
+        <div class="panel p-5"><div class="mb-4"><h2 class="text-lg font-black text-ink">재고 부담 상위</h2><p class="text-sm leading-6 text-slate">절대 수량보다 잔여재고율을 우선으로 보고, 동률일 때 재고 수량을 함께 봅니다.</p></div><div class="mini-chart-box"><canvas id="stockChart"></canvas></div></div>
       </section>
     </section>
 
@@ -142,7 +148,7 @@
     </section>
 
     <section class="mb-8">
-      <div class="mb-3 flex items-center justify-between gap-3"><h2 class="text-lg font-black text-ink">상위 품번 빠른 확인</h2><span class="text-xs font-bold text-slate">이미지 연동 전까지 품번 카드로 표시</span></div>
+      <div class="mb-3 flex items-center justify-between gap-3"><h2 class="text-lg font-black text-ink">상위 품번 빠른 확인</h2><span class="text-xs font-bold text-slate">품번·품명·판매율·액션 빠른 확인</span></div>
       <div id="productCards" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"></div>
     </section>
   </main>
@@ -151,7 +157,8 @@
     const fallbackData = { meta: { brand: "Wacky Willy", season: "26SS/26FW", weekLabel: "8월 2주차", period: "260810~260816", comparePeriod: "260803~260809", amountUnit: "VAT- / 백만원", updatedAt: "fallback", targetLabel: "전주 매출" }, categories: [], styles: [], launch: [], summary: { headline: "데이터를 불러오지 못했습니다.", message: "data/latest.json 연결을 확인해 주세요." } };
     const state = { raw: fallbackData, charts: {}, activeTab: "reorder" };
     const colors = ["#1E2A2E", "#2E6B5A", "#C79132", "#B94735", "#395B73", "#7E8E92", "#8B6F47", "#587B70"];
-    const actionLabels = ["리오더", "배분", "프로모션"];
+    const actionLabels = ["리오더 검토", "배분/RT 검토", "프로모션 검토"];
+    const genderLabels = { UNISEX: "유니", WOMEN: "우먼" };
 
     async function loadDashboardData() {
       try {
@@ -168,26 +175,67 @@
     }
 
     function initializeFilters() {
-      const seasons = Array.from(new Set([state.raw.meta.season, ...state.raw.categories.map(row => row.season).filter(Boolean)])).filter(Boolean);
+      const allStyles = state.raw.styles || [];
+      const seasons = Array.from(new Set(allStyles.map(row => row.season).filter(Boolean))).sort();
+      const categories = Array.from(new Set(allStyles.map(row => row.category).filter(Boolean))).sort();
+      const genders = Array.from(new Set(allStyles.map(row => row.gender).filter(Boolean))).sort();
       document.getElementById("seasonFilter").innerHTML = ["all", ...seasons].map(season => `<option value="${season}">${season === "all" ? "전체" : season}</option>`).join("");
+      document.getElementById("categoryFilter").innerHTML = ["all", ...categories].map(category => {
+        const sample = allStyles.find(row => row.category === category);
+        const label = category === "all" ? "전체" : `${category} ${sample?.categoryName || ""}`.trim();
+        return `<option value="${category}">${label}</option>`;
+      }).join("");
+      document.getElementById("genderFilter").innerHTML = ["all", ...genders].map(gender => `<option value="${gender}">${gender === "all" ? "전체" : genderLabels[gender] || gender}</option>`).join("");
     }
 
     function getFilters() {
-      return { season: document.getElementById("seasonFilter").value, action: document.getElementById("actionFilter").value, sort: document.getElementById("sortFilter").value };
+      return {
+        season: document.getElementById("seasonFilter").value,
+        action: document.getElementById("actionFilter").value,
+        category: document.getElementById("categoryFilter").value,
+        gender: document.getElementById("genderFilter").value,
+        sort: document.getElementById("sortFilter").value
+      };
     }
 
     function categories() {
-      const f = getFilters();
-      return state.raw.categories.filter(row => f.season === "all" || !row.season || row.season === f.season);
+      const grouped = new Map();
+      for (const row of styles(false)) {
+        const key = row.category || "ETC";
+        const item = grouped.get(key) || { category: key, categoryName: row.categoryName || key, season: row.season, sales: 0, target: 0, stock: 0, quantity: 0, stockRate: 0, sellThrough: 0, wow: 0 };
+        item.sales += Number(row.sales || 0);
+        item.target += Number(row.priorSales || 0);
+        item.stock += Number(row.stock || 0);
+        item.quantity += Number(row.cumQty || row.quantity || 0);
+        grouped.set(key, item);
+      }
+      return Array.from(grouped.values()).map(row => {
+        const denominator = row.stock + row.quantity;
+        row.sellThrough = denominator ? row.quantity / denominator * 100 : 0;
+        row.stockRate = denominator ? row.stock / denominator * 100 : Math.max(0, 100 - row.sellThrough);
+        row.wow = row.target ? (row.sales - row.target) / row.target * 100 : 0;
+        row.sales = Number(row.sales.toFixed(1));
+        row.target = Number(row.target.toFixed(1));
+        row.sellThrough = Number(row.sellThrough.toFixed(1));
+        row.stockRate = Number(row.stockRate.toFixed(1));
+        row.wow = Number(row.wow.toFixed(1));
+        return row;
+      }).sort((a, b) => Number(b.sales || 0) - Number(a.sales || 0));
     }
 
-    function styles() {
+    function styles(includeAction = true) {
       const f = getFilters();
-      const rows = state.raw.styles.filter(row => (f.season === "all" || !row.season || row.season === f.season) && (f.action === "all" || row.action === f.action));
+      const rows = state.raw.styles.filter(row =>
+        (f.season === "all" || !row.season || row.season === f.season) &&
+        (!includeAction || f.action === "all" || row.action === f.action) &&
+        (f.category === "all" || row.category === f.category) &&
+        (f.gender === "all" || row.gender === f.gender)
+      );
       const priorityRank = { P1: 1, P2: 2, P3: 3 };
       return rows.slice().sort((a, b) => {
         if (f.sort === "sales") return Number(b.sales || 0) - Number(a.sales || 0);
         if (f.sort === "sellThrough") return Number(b.sellThrough || 0) - Number(a.sellThrough || 0);
+        if (f.sort === "stockRate") return Number(b.stockRate ?? (100 - Number(b.sellThrough || 0))) - Number(a.stockRate ?? (100 - Number(a.sellThrough || 0)));
         if (f.sort === "wow") return Number(b.wow || 0) - Number(a.wow || 0);
         if (f.sort === "stock") return Number(b.stock || 0) - Number(a.stock || 0);
         return (priorityRank[a.priority] || 9) - (priorityRank[b.priority] || 9) || Number(b.sales || 0) - Number(a.sales || 0);
@@ -208,20 +256,20 @@
     function renderKpis() {
       const cat = categories();
       const st = styles();
-      const launchNow = state.raw.launch?.find(row => row.label === "금주")?.value;
-      const launchPrior = state.raw.launch?.find(row => row.label === "전주")?.value;
-      const totalSales = Number(launchNow || 0) || cat.reduce((sum, row) => sum + Number(row.sales || 0), 0);
-      const priorSales = Number(launchPrior || 0) || cat.reduce((sum, row) => sum + Number(row.target || 0), 0);
+      const totalSales = cat.reduce((sum, row) => sum + Number(row.sales || 0), 0);
+      const priorSales = cat.reduce((sum, row) => sum + Number(row.target || 0), 0);
       const avgSellThrough = cat.length ? cat.reduce((sum, row) => sum + Number(row.sellThrough || 0), 0) / cat.length : 0;
+      const avgStockRate = cat.length ? cat.reduce((sum, row) => sum + Number(row.stockRate ?? (100 - Number(row.sellThrough || 0))), 0) / cat.length : 0;
       const stock = cat.reduce((sum, row) => sum + Number(row.stock || 0), 0);
-      const reorderCount = st.filter(row => row.action === "리오더").length;
+      const reorderCount = st.filter(row => row.action === "리오더 검토").length;
+      const near30Count = st.filter(row => Number(row.sellThrough || 0) >= 25 && Number(row.sellThrough || 0) < 30).length;
       const p1Count = st.filter(row => row.priority === "P1").length;
       const wow = priorSales ? (totalSales - priorSales) / priorSales * 100 : 0;
       const kpis = [
         { label: "금주 매출", value: formatMoney(totalSales), sub: `전주 대비 ${pct(wow)}`, tone: wow >= 0 ? "green" : "red" },
         { label: "평균 판매율", value: `${avgSellThrough.toFixed(1)}%`, sub: avgSellThrough >= 60 ? "리오더 후보 확대" : "재고 운용 우선", tone: avgSellThrough >= 60 ? "green" : "amber" },
-        { label: "잔여 재고", value: stock.toLocaleString("ko-KR"), sub: "조회 복종 기준", tone: stock > 100000 ? "red" : "amber" },
-        { label: "리오더 후보", value: `${reorderCount} style`, sub: "액션 구분 기준", tone: "green" },
+        { label: "잔여재고율", value: `${avgStockRate.toFixed(1)}%`, sub: `${stock.toLocaleString("ko-KR")} pcs`, tone: avgStockRate >= 65 ? "red" : "amber" },
+        { label: "리오더 후보", value: `${reorderCount} style`, sub: `30% 임박 ${near30Count} style`, tone: "green" },
         { label: "P1 우선순위", value: `${p1Count} style`, sub: "회의 즉시 점검", tone: p1Count ? "red" : "amber" }
       ];
       const toneClass = { green: "border-l-green bg-[rgba(46,107,90,.08)]", amber: "border-l-amber bg-[rgba(199,145,50,.12)]", red: "border-l-red bg-[rgba(185,71,53,.08)]" };
@@ -239,24 +287,27 @@
       const cat = categories();
       const visibleStyles = styles();
       const topStyles = visibleStyles.slice().sort((a, b) => Number(b.sellThrough || 0) - Number(a.sellThrough || 0)).slice(0, 7);
-      const stockStyles = visibleStyles.slice().sort((a, b) => Number(b.stock || 0) - Number(a.stock || 0)).slice(0, 7);
+      const stockStyles = visibleStyles.slice().sort((a, b) =>
+        Number(b.stockRate ?? (100 - Number(b.sellThrough || 0))) - Number(a.stockRate ?? (100 - Number(a.sellThrough || 0))) ||
+        Number(b.stock || 0) - Number(a.stock || 0)
+      ).slice(0, 7);
       const launchStyles = visibleStyles.slice().sort((a, b) => (Number(b.wow || 0) + Number(b.sellThrough || 0) / 2) - (Number(a.wow || 0) + Number(a.sellThrough || 0) / 2)).slice(0, 7);
       const common = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { boxWidth: 10, boxHeight: 10, font: { family: "Pretendard" } } } } };
       upsertChart("sales", "salesChart", { type: "bar", data: { labels: cat.map(row => `${row.category} ${row.categoryName || ""}`.trim()), datasets: [{ label: "금주 매출", data: cat.map(row => row.sales), backgroundColor: "#1E2A2E", borderRadius: 5 }, { label: state.raw.meta.targetLabel || "전주 매출", data: cat.map(row => row.target), backgroundColor: "#DDE4E6", borderRadius: 5 }] }, options: { ...common, plugins: { ...common.plugins, legend: { position: "bottom" } }, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } } });
       upsertChart("action", "actionChart", { type: "doughnut", data: { labels: actionLabels, datasets: [{ data: actionLabels.map(action => visibleStyles.filter(row => row.action === action).length), backgroundColor: ["#2E6B5A", "#C79132", "#B94735"], borderWidth: 0 }] }, options: { ...common, cutout: "62%", plugins: { ...common.plugins, legend: { position: "bottom" } } } });
       upsertChart("style", "styleChart", { type: "bar", data: { labels: topStyles.map(row => row.sku), datasets: [{ label: "판매율", data: topStyles.map(row => row.sellThrough), backgroundColor: colors, borderRadius: 5 }] }, options: { ...common, indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { max: 100, ticks: { callback: value => `${value}%` } }, y: { grid: { display: false } } } } });
-      upsertChart("stock", "stockChart", { type: "bar", data: { labels: stockStyles.map(row => row.sku), datasets: [{ label: "잔여 재고", data: stockStyles.map(row => row.stock), backgroundColor: "#C79132", borderRadius: 5 }] }, options: { ...common, indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true }, y: { grid: { display: false } } } } });
+      upsertChart("stock", "stockChart", { type: "bar", data: { labels: stockStyles.map(row => row.sku), datasets: [{ label: "잔여재고율", data: stockStyles.map(row => row.stockRate ?? (100 - Number(row.sellThrough || 0))), backgroundColor: "#C79132", borderRadius: 5 }] }, options: { ...common, indexAxis: "y", plugins: { legend: { display: false }, tooltip: { callbacks: { afterLabel: ctx => `재고수량 ${Number(stockStyles[ctx.dataIndex]?.stock || 0).toLocaleString("ko-KR")} pcs` } } }, scales: { x: { beginAtZero: true, max: 100, ticks: { callback: value => `${value}%` } }, y: { grid: { display: false } } } } });
       upsertChart("launch", "launchChart", { type: "bar", data: { labels: launchStyles.map(row => row.sku), datasets: [{ label: "금주 매출", data: launchStyles.map(row => row.sales), backgroundColor: "#395B73", borderRadius: 5 }, { label: "판매율", data: launchStyles.map(row => row.sellThrough), backgroundColor: "#DDE4E6", borderRadius: 5, yAxisID: "y1" }] }, options: { ...common, plugins: { ...common.plugins, legend: { position: "bottom" } }, scales: { y: { beginAtZero: true, title: { display: true, text: "매출(백만원)" } }, y1: { beginAtZero: true, position: "right", grid: { drawOnChartArea: false }, ticks: { callback: value => `${value}%` }, title: { display: true, text: "판매율" } }, x: { grid: { display: false } } } } });
     }
 
     function renderTable() {
       const priorityClass = { P1: "badge-red", P2: "badge-amber", P3: "badge-green" };
-      document.getElementById("actionRows").innerHTML = styles().map(row => `<tr class="hover:bg-paper"><td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs font-black ${priorityClass[row.priority] || "badge-green"}">${row.priority || "-"}</span></td><td class="whitespace-nowrap px-4 py-3 font-mono text-xs font-black text-ink">${row.sku}</td><td class="min-w-[260px] px-4 py-3 font-semibold">${row.name}</td><td class="whitespace-nowrap px-4 py-3"><span class="inline-flex min-w-16 justify-center rounded-full border border-line bg-white px-3 py-1 text-xs font-black text-ink">${row.action}</span></td><td class="whitespace-nowrap px-4 py-3 font-bold text-ink">${row.category}</td><td class="whitespace-nowrap px-4 py-3 text-right font-bold">${formatMoney(row.sales)}</td><td class="whitespace-nowrap px-4 py-3 text-right font-bold">${Number(row.sellThrough || 0).toFixed(1)}%</td><td class="whitespace-nowrap px-4 py-3 text-right font-bold ${Number(row.wow || 0) >= 0 ? "text-green" : "text-red"}">${pct(row.wow)}</td><td class="whitespace-nowrap px-4 py-3 text-right">${Number(row.stock || 0).toLocaleString("ko-KR")}</td><td class="min-w-[360px] px-4 py-3 leading-6 text-slate">${row.note || ""}</td></tr>`).join("");
+      document.getElementById("actionRows").innerHTML = styles().map(row => `<tr class="hover:bg-paper"><td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs font-black ${priorityClass[row.priority] || "badge-green"}">${row.priority || "-"}</span></td><td class="whitespace-nowrap px-4 py-3 font-mono text-xs font-black text-ink">${row.sku}</td><td class="min-w-[260px] px-4 py-3 font-semibold">${row.name}</td><td class="whitespace-nowrap px-4 py-3"><span class="inline-flex min-w-24 justify-center rounded-full border border-line bg-white px-3 py-1 text-xs font-black text-ink">${row.action}</span></td><td class="whitespace-nowrap px-4 py-3 font-bold text-ink">${row.season || "-"}</td><td class="whitespace-nowrap px-4 py-3 font-bold text-ink">${row.category}</td><td class="whitespace-nowrap px-4 py-3 font-bold text-slate">${genderLabels[row.gender] || row.gender || "-"}</td><td class="whitespace-nowrap px-4 py-3 text-right font-bold">${formatMoney(row.sales)}</td><td class="whitespace-nowrap px-4 py-3 text-right font-bold">${Number(row.sellThrough || 0).toFixed(1)}%</td><td class="whitespace-nowrap px-4 py-3 text-right font-bold">${Number(row.stockRate ?? (100 - Number(row.sellThrough || 0))).toFixed(1)}%</td><td class="whitespace-nowrap px-4 py-3"><span class="rounded bg-paper px-2 py-1 text-xs font-black text-slate">${row.reorderTiming || "-"}</span></td><td class="whitespace-nowrap px-4 py-3 text-right font-bold ${Number(row.wow || 0) >= 0 ? "text-green" : "text-red"}">${pct(row.wow)}</td><td class="whitespace-nowrap px-4 py-3 text-right">${Number(row.stock || 0).toLocaleString("ko-KR")}</td><td class="min-w-[360px] px-4 py-3 leading-6 text-slate">${row.note || ""}</td></tr>`).join("");
     }
 
     function renderPriorityList() {
       const rows = styles().filter(row => row.priority === "P1").slice(0, 6);
-      document.getElementById("priorityList").innerHTML = (rows.length ? rows : styles().slice(0, 4)).map(row => `<div class="rounded-md border border-line bg-paper p-4"><div class="flex items-start justify-between gap-3"><div><p class="font-mono text-xs font-black text-ink">${row.sku}</p><p class="mt-1 text-sm font-black text-ink">${row.name}</p></div><span class="rounded-full bg-white px-2 py-1 text-xs font-black text-slate">${row.action}</span></div><div class="mt-3 grid grid-cols-3 gap-2 text-xs text-slate"><span><b class="block text-ink">${formatMoney(row.sales)}</b>매출</span><span><b class="block text-ink">${Number(row.sellThrough || 0).toFixed(1)}%</b>판매율</span><span><b class="block text-ink">${Number(row.stock || 0).toLocaleString("ko-KR")}</b>재고</span></div></div>`).join("");
+      document.getElementById("priorityList").innerHTML = (rows.length ? rows : styles().slice(0, 4)).map(row => `<div class="rounded-md border border-line bg-paper p-4"><div class="flex items-start justify-between gap-3"><div><p class="font-mono text-xs font-black text-ink">${row.sku}</p><p class="mt-1 text-sm font-black text-ink">${row.name}</p></div><span class="rounded-full bg-white px-2 py-1 text-xs font-black text-slate">${row.action}</span></div><div class="mt-3 grid grid-cols-4 gap-2 text-xs text-slate"><span><b class="block text-ink">${formatMoney(row.sales)}</b>매출</span><span><b class="block text-ink">${Number(row.sellThrough || 0).toFixed(1)}%</b>판매율</span><span><b class="block text-ink">${Number(row.stockRate ?? (100 - Number(row.sellThrough || 0))).toFixed(1)}%</b>재고율</span><span><b class="block text-ink">${row.reorderTiming || "-"}</b>시점</span></div></div>`).join("");
     }
 
     function renderSummary() {
@@ -269,7 +320,7 @@
         { title: "핵심 결론", body: state.raw.summary?.headline || "요약 데이터가 없습니다." },
         { title: "매출 견인", body: bestCategory ? `${bestCategory.category}(${bestCategory.categoryName})가 ${formatMoney(bestCategory.sales)}로 금주 매출 기여가 가장 큽니다.` : "조회 조건에 맞는 복종 데이터가 없습니다." },
         { title: "판매 속도", body: fastestCategory ? `${fastestCategory.category}(${fastestCategory.categoryName}) 판매율이 ${Number(fastestCategory.sellThrough || 0).toFixed(1)}%로 가장 높습니다.` : "조회 조건에 맞는 복종 데이터가 없습니다." },
-        { title: "우선 액션", body: p1 ? `${p1.sku}는 ${p1.action} 후보입니다. ${p1.note}` : "조회 조건에 맞는 품번 데이터가 없습니다." }
+        { title: "우선 액션", body: p1 ? `${p1.sku}는 ${p1.action} 후보입니다. 판매율 ${Number(p1.sellThrough || 0).toFixed(1)}%, 잔여재고율 ${Number(p1.stockRate ?? (100 - Number(p1.sellThrough || 0))).toFixed(1)}%, ${p1.reorderTiming || "시점 확인"}입니다. ${p1.note}` : "조회 조건에 맞는 품번 데이터가 없습니다." }
       ];
       document.getElementById("summaryList").innerHTML = items.map((item, index) => `<div class="rounded-md border border-line bg-paper p-4"><div class="mb-2 flex items-center gap-2"><span class="grid h-6 w-6 place-items-center rounded bg-ink text-xs font-black text-white">${index + 1}</span><b class="text-sm text-ink">${item.title}</b></div><p class="text-sm leading-6 text-slate">${item.body}</p></div>`).join("");
       document.getElementById("shareMessage").textContent = state.raw.summary?.message || "";
@@ -292,7 +343,7 @@
           ? `<a href="${productHref}" target="_blank" rel="noopener noreferrer" class="mt-3 block truncate text-xs font-bold text-blue">${sourceLabel} · ${row.imageSourceName}</a>`
           : `<p class="mt-3 text-xs font-bold text-red">이미지 확인 필요</p>`;
 
-        return `<article class="panel overflow-hidden"><div class="product-tile">${imageMarkup}</div><div class="p-4"><p class="text-xs font-bold text-slate">Wacky Willy · ${row.category}</p><h3 class="mt-1 min-h-[42px] text-sm font-black leading-5 text-ink">${row.name}</h3>${sourceMarkup}<div class="mt-3 flex items-center justify-between text-sm"><span class="font-black text-slate">판매율 ${Number(row.sellThrough || 0).toFixed(1)}%</span><span class="rounded-full bg-paper px-2 py-1 text-xs font-black text-slate">${row.action}</span></div></div></article>`;
+        return `<article class="panel overflow-hidden"><div class="product-tile">${imageMarkup}</div><div class="p-4"><p class="font-mono text-xs font-black text-ink">${row.sku}</p><p class="mt-1 text-xs font-bold text-slate">Wacky Willy · ${row.season || "-"} · ${row.category} · ${genderLabels[row.gender] || row.gender || "-"}</p><h3 class="mt-1 min-h-[42px] text-sm font-black leading-5 text-ink">${row.name}</h3>${sourceMarkup}<div class="mt-3 flex items-center justify-between text-sm"><span class="font-black text-slate">판매율 ${Number(row.sellThrough || 0).toFixed(1)}%</span><span class="rounded-full bg-paper px-2 py-1 text-xs font-black text-slate">${row.action}</span></div></div></article>`;
       }).join("");
     }
 
@@ -315,7 +366,7 @@
       setActiveTab(state.activeTab);
     }
 
-    ["seasonFilter", "actionFilter", "sortFilter"].forEach(id => document.getElementById(id).addEventListener("change", renderAll));
+    ["seasonFilter", "actionFilter", "categoryFilter", "genderFilter", "sortFilter"].forEach(id => document.getElementById(id).addEventListener("change", renderAll));
     document.querySelectorAll(".tab-button").forEach(button => button.addEventListener("click", () => setActiveTab(button.dataset.tab)));
     document.getElementById("printButton").addEventListener("click", () => window.print());
     loadDashboardData();

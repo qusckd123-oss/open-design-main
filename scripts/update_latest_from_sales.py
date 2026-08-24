@@ -131,10 +131,8 @@ def pct_change(current: float, prior: float) -> float:
 
 
 def reorder_timing(sell_through: float) -> tuple[str, int]:
-    if sell_through >= 60:
-        return "30% 초과·긴급", 0
     if sell_through >= 30:
-        return "30% 도달", 0
+        return "30% 도달/초과", 0
     if sell_through >= 25:
         return "30% 임박", round(30 - sell_through)
     return "30% 전 관찰", round(30 - sell_through)
@@ -143,10 +141,10 @@ def reorder_timing(sell_through: float) -> tuple[str, int]:
 def make_action(sales_m: float, wow: float | None, sell_through: float, stock: int) -> tuple[str, str, str]:
     stock_rate = max(0.0, 100 - sell_through)
     timing, gap = reorder_timing(sell_through)
-    if sell_through >= 30 and sales_m >= 5:
-        return "리오더 검토", "P1", f"{timing} 구간입니다. 리오더 투입 여부와 예상 입고 시점을 우선 확인"
-    if sell_through >= 25 and sales_m >= 8:
-        return "리오더 검토", "P2", f"{timing} 구간으로 30%까지 약 {gap}%p 남았습니다. 선제 리오더 검토"
+    if sell_through >= 30:
+        return "리오더 검토", "P1", f"{timing} 구간입니다. 판매율 30% 시점 기준으로 리오더 투입 여부와 예상 입고 시점을 우선 확인"
+    if sell_through >= 25:
+        return "리오더 검토", "P2", f"{timing} 구간으로 30%까지 약 {gap}%p 남았습니다. 판매율 30% 도달 전 선제 리오더 검토"
     if wow is not None and wow <= -35 and stock_rate >= 65:
         return "프로모션 검토", "P3", "전주 대비 둔화와 높은 잔여재고율이 동시에 발생해 가격 할인/행사 검토"
     if stock >= 800 and stock_rate >= 55:
@@ -265,7 +263,7 @@ def main() -> None:
     prior_total = sum(prior_sales.values())
     total_wow = pct_change(current_total, prior_total)
     best_category = max(categories, key=lambda row: row["sales"]) if categories else None
-    reorder_styles = [row for row in styles if row["action"] == "리오더"]
+    reorder_styles = [row for row in styles if row["action"] == "리오더 검토"]
     best_reorder = reorder_styles[0] if reorder_styles else (styles[0] if styles else None)
 
     payload = {
