@@ -597,3 +597,16 @@
 - Latest Sites/source commit in the dashboard sub-repository: `a73ea3e Add planning dashboard views`.
 - Latest saved Sites version: `5` (`appgprj_6a8571527d488191b555ada2eca3605b~appgver_a8cd8ab566ac8191bdae42b383ca88d5`), deployed via `appgdep_6a865eb89d4081919e7a908b1294ad3d`.
 - Verification completed: local build passed, Playwright local tab/render check passed, deployed root URL returned 200, and deployed `/data/latest.json` returned period `260810~260816`, current `636.0`, prior `774.5`, and 18 styles.
+
+## Current Decisions From Teams - 2026-09-01
+
+- 2026-09-01 current Teams rule: use `workspace/memory/current-teams-update-summary-2026-09-01.md` as the current Teams update source for local Teams chat/channel backups written on 2026-09-01 and clipped as 2026-08-31.
+- 2026-09-01 Gwangbok FSS schedule decision: construction completes 2026-09-13, products inbound 2026-09-14 through 2026-09-16, VM setup is 2026-09-17 10:00, and store opening is 2026-09-18; products display one single-hanging unit per SKU.
+- 2026-09-01 Gwangbok FSS GWP decision: give one `WA2501EC01` daily eco bag for purchases of at least KRW 150,000 from opening until stock runs out; operate 250 units total, 50 units in each of five colors.
+- 2026-09-01 sourcing-meeting decision: hold the 27SS sourcing/material/planning meeting this week on Friday at 15:00, then every Wednesday at 15:00 from the following week, reviewing unfixed materials and B/T release status.
+- 2026-09-01 S1 execution decision: collect the 27SS S1 PO sheet including global quantities by Friday; after approval, sourcing sends scanned work instructions to vendors first, followed by AI files after approved instructions are received.
+- 2026-09-01 additional-style decision: assign `WA2702ST17` and `WA2702ST78` to HNC and review CADs for added 27SS new-basic/carryover styles on 2026-09-10.
+- 2026-09-01 package-copy decision: apply C/P Cool Cotton copy to unisex and existing C100 copy to womens; use phone number `1551-6625` and the quality-guarantee address.
+- 2026-09-01 package-artwork working decision: current alignment is two-line typography for `STE1` and `STE4`, while `STE3` retains the KIKI design; finalize the complete `STE1`-`STE4` plan after the weekly meeting.
+- 2026-09-01 ecommerce-opening decision: because of Salesforce instability, fix own-mall openings at Tuesday 11:00, with a 10:00 pre-open for checks.
+- 2026-09-01 26WINTER content KPI decision: operate 15 looks including ALTER against 66 apparel SKUs and 60,677 pcs, targeting an additional 20% sell-through, 12,135 incremental units, KRW 1.9B incremental sales, 65% final sell-through, and KRW 6.16B final sales.
