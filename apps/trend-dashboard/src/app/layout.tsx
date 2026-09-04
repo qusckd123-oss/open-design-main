@@ -29,32 +29,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ko">
       <body>
         <div className="min-h-screen bg-canvas">
-          <header className="sticky top-0 z-20 border-b border-line bg-white/95 backdrop-blur">
-            <div className="mx-auto flex min-h-16 max-w-[1440px] flex-col gap-3 px-6 py-3 lg:flex-row lg:items-center lg:justify-between">
-              <Link href="/" className="flex items-center gap-3">
-                <span className="grid h-8 w-8 place-items-center rounded bg-ink text-sm font-semibold text-white">TS</span>
-                <div>
-                  <div className="text-sm font-semibold text-ink">상품기획 트렌드</div>
-                  <div className="text-xs text-muted">Trend · Store · Assortment</div>
-                </div>
+          <header className="sticky top-0 z-20 border-b border-line bg-canvas/95 backdrop-blur">
+            <div className="mx-auto flex min-h-[4.5rem] max-w-[1440px] flex-col gap-3 px-6 py-4 lg:flex-row lg:items-center lg:justify-between">
+              <Link href="/" className="flex items-center gap-2">
+                <span className="text-sm font-semibold uppercase tracking-[0.18em] text-ink">상품기획 트렌드</span>
+                <span className="text-xs text-muted">Trend · Store · Assortment</span>
               </Link>
-              <nav className="flex flex-wrap items-center gap-1 text-sm text-muted">
+              <nav className="flex flex-wrap items-center gap-6 text-sm font-medium text-muted">
                 {primaryNav.map((item) => (
-                  <Link key={item.href} className="rounded px-3 py-2 hover:bg-canvas hover:text-ink" href={item.href}>
+                  <Link key={item.href} className="hover:text-ink" href={item.href}>
                     {item.label}
                   </Link>
                 ))}
                 {featureFlags.enableInternalSales ? (
-                  <Link className="rounded px-3 py-2 hover:bg-canvas hover:text-ink" href="/sales">
+                  <Link className="hover:text-ink" href="/sales">
                     내부 판매
                   </Link>
                 ) : null}
                 {featureFlags.enableNaverTrends ? (
                   <>
-                    <Link className="rounded px-3 py-2 hover:bg-canvas hover:text-ink" href="/trends">
+                    <Link className="hover:text-ink" href="/trends">
                       검색 트렌드
                     </Link>
-                    <Link className="rounded px-3 py-2 hover:bg-canvas hover:text-ink" href="/settings/keywords">
+                    <Link className="hover:text-ink" href="/settings/keywords">
                       키워드
                     </Link>
                   </>
@@ -62,7 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </nav>
             </div>
           </header>
-          <main className="mx-auto max-w-[1440px] px-6 py-6">{children}</main>
+          <main className="mx-auto max-w-[1440px] px-6 py-10">{children}</main>
         </div>
       </body>
     </html>

@@ -5,125 +5,11 @@ import { attributeKoreanLabel, attributeTypeKoreanLabel, specificItemKoreanLabel
 import { bundleEvidenceStrength, type AttributeBundle, type BundleAttribute, type BundleEvidenceArticle } from "@/services/attribute-bundle-service";
 
 /**
- * Visual-first bundle card (uniform weight - used when no bundle is a
- * genuinely repeated observation yet, so no card should look "primary" by
- * arbitrary luck of list order). Reading order is visual -> composed name ->
- * attribute chips -> evidence strength -> counts. Every element is backed by
- * a direct attribute relation; nothing here is inferred from the image
- * itself.
+ * FASHION EDITORIAL INTELLIGENCE surface for attribute bundles: whitespace,
+ * typography, and thin dividers carry the hierarchy instead of bordered
+ * boxes. Every element is still backed by a direct attribute relation -
+ * only the presentation changed in this pass, never the underlying claim.
  */
-export function AttributeBundleCard({ bundle }: { bundle: AttributeBundle }) {
-  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread });
-  const heroArticle = findHeroArticle(bundle);
-  const itemLabel = specificItemKoreanLabel(bundle.specificItem) ?? bundle.specificItem.replaceAll("_", " ");
-
-  return (
-    <article className="flex flex-col overflow-hidden rounded border border-line bg-white shadow-subtle">
-      {heroArticle?.evidenceImageUrl ? (
-        <div className="flex items-center justify-center bg-slate-50 p-3">
-          <BundleHeroImage heroArticle={heroArticle} alt={bundle.displayName} size="lg" />
-        </div>
-      ) : (
-        <AttributeVisualPanel bundle={bundle} size="compact" />
-      )}
-      <div className="flex flex-1 flex-col gap-3 p-4">
-        <div className="text-xl font-semibold leading-tight text-ink">{bundle.displayName}</div>
-
-        <div className="flex flex-wrap gap-1.5">
-          {bundle.directAttributes.map((attribute) => (
-            <AttributeChip key={`${attribute.type}:${attribute.value}`} attribute={attribute} />
-          ))}
-        </div>
-
-        <div className="mt-auto space-y-1">
-          <EvidenceDots sourceSpread={bundle.bundleSourceSpread} articlePresence={bundle.bundleArticlePresence} label={strength} />
-          <div className="text-xs text-muted">
-            {bundle.bundleArticlePresence}개 기사 · {bundle.bundleSourceSpread}개 매체
-            {bundle.latestObservedAt ? ` · 최근 ${bundle.latestObservedAt.toISOString().slice(0, 10)}` : ""}
-          </div>
-        </div>
-
-        <Link className="text-xs font-semibold text-signal" href={`/items/${encodeURIComponent(bundle.specificItem)}`}>
-          근거 보기 →
-        </Link>
-        <p className="text-[11px] leading-snug text-muted">{itemLabel}을(를) 직접 수식한 표현에서만 추출했습니다.</p>
-      </div>
-    </article>
-  );
-}
-
-/**
- * Primary card for a genuinely REPEATED bundle (bundleArticlePresence >= 2 -
- * the same threshold bundleEvidenceStrength already uses for "반복 관측").
- * Deliberately larger/more prominent than SecondaryBundleCard, but the
- * wording stays exactly as conservative as everywhere else - only the
- * SPACE/SIZE communicates "this is the strongest thing we have," never new
- * copy like "뜨는" or "기획 우선".
- */
-export function PrimaryBundleCard({ bundle }: { bundle: AttributeBundle }) {
-  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread });
-  const heroArticle = findHeroArticle(bundle);
-
-  return (
-    <article className="flex flex-col overflow-hidden rounded border-2 border-signal/40 bg-white shadow-subtle">
-      {heroArticle?.evidenceImageUrl ? (
-        <div className="flex items-center justify-center bg-slate-50 p-4">
-          <BundleHeroImage heroArticle={heroArticle} alt={bundle.displayName} size="lg" />
-        </div>
-      ) : (
-        <AttributeVisualPanel bundle={bundle} size="full" />
-      )}
-      <div className="flex flex-1 flex-col gap-3 p-5">
-        <div className="text-2xl font-semibold leading-tight text-ink">{bundle.displayName}</div>
-
-        <div className="flex flex-wrap gap-1.5">
-          {bundle.directAttributes.map((attribute) => (
-            <AttributeChip key={`${attribute.type}:${attribute.value}`} attribute={attribute} />
-          ))}
-        </div>
-
-        <div className="mt-auto space-y-1">
-          <div className="text-sm font-semibold text-ink">{strength}</div>
-          <div className="text-xs text-muted">
-            {bundle.bundleArticlePresence}개 기사 · {bundle.bundleSourceSpread}개 매체
-            {bundle.latestObservedAt ? ` · 최근 ${bundle.latestObservedAt.toISOString().slice(0, 10)}` : ""}
-          </div>
-        </div>
-
-        <Link className="text-xs font-semibold text-signal" href={`/items/${encodeURIComponent(bundle.specificItem)}`}>
-          근거 보기 →
-        </Link>
-      </div>
-    </article>
-  );
-}
-
-/**
- * Compact card for the remaining single-observation bundles once a primary
- * repeated bundle exists. Deliberately no image/visual-panel slot at all -
- * that's what keeps its area/emphasis visibly lower than PrimaryBundleCard,
- * per the "1기사/1매체는 compact card" rule. Wording stays "단일 관측", never
- * upgraded just because it sits next to a stronger card.
- */
-export function SecondaryBundleCard({ bundle }: { bundle: AttributeBundle }) {
-  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread });
-  return (
-    <Link href={`/items/${encodeURIComponent(bundle.specificItem)}`} className="block rounded border border-line bg-white p-3 shadow-subtle transition hover:border-signal/40">
-      <div className="text-sm font-semibold leading-snug text-ink">{bundle.displayName}</div>
-      <div className="mt-2 flex flex-wrap gap-1">
-        {bundle.directAttributes.map((attribute) => (
-          <AttributeChip key={`${attribute.type}:${attribute.value}`} attribute={attribute} />
-        ))}
-      </div>
-      <div className="mt-2 flex items-center justify-between gap-2 text-xs">
-        <span className="font-semibold text-muted">{strength}</span>
-        <span className="shrink-0 text-muted">
-          {bundle.bundleArticlePresence}개 기사 · {bundle.bundleSourceSpread}개 매체
-        </span>
-      </div>
-    </Link>
-  );
-}
 
 /**
  * The only evidence article allowed to back a bundle hero is one whose image
@@ -156,97 +42,23 @@ function BundleHeroImage({ heroArticle, alt, size }: { heroArticle: BundleEviden
 }
 
 /**
- * Typographic attribute visual: the primary fallback whenever no
- * document-position-confident image exists (today, always). Fills the
- * available width rather than sitting in a small dashed box with empty
- * space beside it - the attributes ARE the content here, shown large, not a
- * placeholder standing in for a missing photo. Only real direct attributes
- * and the item label are ever shown; no invented color, pattern, or score.
+ * Small editorial subtitle line under a Korean composed name - the raw
+ * taxonomy values in English uppercase (e.g. "RECYCLED FABRIC / TOTE BAG"),
+ * a magazine-style descriptor line under the Korean headline. Never a
+ * separate translation - literally the same values already shown as chips
+ * elsewhere on the page.
  */
-export function AttributeVisualPanel({ bundle, size }: { bundle: AttributeBundle; size: "full" | "compact" }) {
-  const itemLabel = specificItemKoreanLabel(bundle.specificItem) ?? bundle.specificItem.replaceAll("_", " ");
-  const rows = [
-    ...bundle.directAttributes.map((attribute) => ({ key: `${attribute.type}:${attribute.value}`, label: attributeTypeKoreanLabel(attribute.type), value: attributeKoreanLabel(attribute.value) })),
-    { key: "item", label: "아이템", value: itemLabel }
-  ];
-  const isFull = size === "full";
-  return (
-    <div className={isFull ? "flex flex-col justify-center gap-4 bg-slate-50 px-6 py-8" : "flex flex-col justify-center gap-2.5 bg-slate-50 px-4 py-5"}>
-      {rows.map((row) => (
-        <div key={row.key}>
-          <div className={isFull ? "text-xs font-semibold uppercase tracking-[0.14em] text-muted" : "text-[10px] font-semibold uppercase tracking-[0.12em] text-muted"}>{row.label}</div>
-          <div className={isFull ? "text-3xl font-bold leading-tight text-ink" : "text-lg font-bold leading-tight text-ink"}>{row.value}</div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/**
- * Highlights one bundle (its strongest, per getPrimaryBundleForItem) at the
- * top of an item detail page. With a confident hero image, the image gets
- * real side space (worth allocating to a real photo). Without one, the
- * layout goes full-width single-column - name first, then the attribute
- * visual filling the whole card width, then evidence - instead of a small
- * image-shaped box with wasted space beside it.
- */
-export function BundleHighlight({ bundle }: { bundle: AttributeBundle }) {
-  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread });
-  const heroArticle = findHeroArticle(bundle);
-
-  if (heroArticle?.evidenceImageUrl) {
-    return (
-      <section className="flex flex-col gap-4 rounded border border-signal/30 bg-white p-5 shadow-subtle sm:flex-row sm:items-center">
-        <div className="flex justify-center sm:justify-start">
-          <BundleHeroImage heroArticle={heroArticle} alt={bundle.displayName} size="lg" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="text-xs font-semibold uppercase tracking-[0.12em] text-signal">요즘 보이는 상품 조합</div>
-          <div className="mt-1 text-2xl font-semibold leading-tight text-ink">{bundle.displayName}</div>
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {bundle.directAttributes.map((attribute) => (
-              <AttributeChip key={`${attribute.type}:${attribute.value}`} attribute={attribute} />
-            ))}
-          </div>
-          <div className="mt-3 space-y-1">
-            <EvidenceDots sourceSpread={bundle.bundleSourceSpread} articlePresence={bundle.bundleArticlePresence} label={strength} />
-            <div className="text-xs text-muted">{bundle.bundleArticlePresence}개 기사 · {bundle.bundleSourceSpread}개 매체</div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  return (
-    <section className="overflow-hidden rounded border border-signal/30 bg-white shadow-subtle">
-      <div className="p-5 pb-0">
-        <div className="text-xs font-semibold uppercase tracking-[0.12em] text-signal">요즘 보이는 상품 조합</div>
-        <div className="mt-1 text-2xl font-semibold leading-tight text-ink">{bundle.displayName}</div>
-      </div>
-      <AttributeVisualPanel bundle={bundle} size="full" />
-      <div className="space-y-1 p-5 pt-4">
-        <EvidenceDots sourceSpread={bundle.bundleSourceSpread} articlePresence={bundle.bundleArticlePresence} label={strength} />
-        <div className="text-xs text-muted">
-          {bundle.bundleArticlePresence}개 기사 · {bundle.bundleSourceSpread}개 매체
-          {bundle.latestObservedAt ? ` · 최근 ${bundle.latestObservedAt.toISOString().slice(0, 10)}` : ""}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function AttributeChip({ attribute }: { attribute: BundleAttribute }) {
-  return (
-    <span className="rounded-full border border-signal/30 bg-signal/5 px-2.5 py-1 text-xs font-medium text-ink">
-      {attributeKoreanLabel(attribute.value)}
-      <span className="ml-1 text-[10px] text-muted">{attributeTypeKoreanLabel(attribute.type)}</span>
-    </span>
-  );
+function englishSubtitle(bundle: AttributeBundle): string {
+  const attributeText = bundle.directAttributes.map((attribute) => attribute.value.replaceAll("_", " ")).join(" · ");
+  const itemText = bundle.specificItem.replaceAll("_", " ");
+  return attributeText ? `${attributeText} / ${itemText}` : itemText;
 }
 
 /**
  * Three dots = distinct outlets, not a score. One outlet can never look like
- * broad coverage no matter how many articles it published.
+ * broad coverage no matter how many articles it published. Teal is used here
+ * deliberately as the "signal indicator" - one of the few sanctioned uses of
+ * the accent color in this pass's reduced palette.
  */
 function EvidenceDots({ sourceSpread, articlePresence, label }: { sourceSpread: number; articlePresence: number; label: string }) {
   const filled = Math.min(3, Math.max(sourceSpread, articlePresence >= 2 ? 1 : 0));
@@ -256,18 +68,164 @@ function EvidenceDots({ sourceSpread, articlePresence, label }: { sourceSpread: 
         {"●".repeat(filled)}
         <span className="text-line">{"○".repeat(3 - filled)}</span>
       </span>
-      <span className="text-xs font-semibold text-ink">{label}</span>
+      <span className="text-sm font-semibold text-ink">{label}</span>
+    </div>
+  );
+}
+
+export function AttributeChip({ attribute }: { attribute: BundleAttribute }) {
+  return (
+    <span className="rounded-full border border-line bg-canvas px-2.5 py-1 text-xs font-medium text-ink">
+      {attributeKoreanLabel(attribute.value)}
+      <span className="ml-1 text-[10px] text-muted">{attributeTypeKoreanLabel(attribute.type)}</span>
+    </span>
+  );
+}
+
+/**
+ * CURRENT SIGNAL - the dashboard's lead story, not a card in a grid. No
+ * border, no shadow, no background surface: whitespace and type scale alone
+ * signal that this is the strongest thing on the page. Only rendered for a
+ * genuinely REPEATED bundle (bundleArticlePresence >= 2 - the same threshold
+ * bundleEvidenceStrength already uses for "반복 관측").
+ */
+export function CurrentSignalHero({ bundle }: { bundle: AttributeBundle }) {
+  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread });
+  const heroArticle = findHeroArticle(bundle);
+  const itemLabel = specificItemKoreanLabel(bundle.specificItem) ?? bundle.specificItem.replaceAll("_", " ");
+
+  return (
+    <div>
+      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-signal">Current Signal</p>
+
+      {heroArticle?.evidenceImageUrl ? (
+        <div className="mt-6 flex justify-center sm:justify-start">
+          <BundleHeroImage heroArticle={heroArticle} alt={bundle.displayName} size="lg" />
+        </div>
+      ) : (
+        <div className="mt-6 grid gap-x-10 gap-y-6 sm:grid-cols-2">
+          {bundle.directAttributes.map((attribute) => (
+            <div key={`${attribute.type}:${attribute.value}`}>
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">{attribute.type}</div>
+              <div className="mt-1 text-4xl font-bold leading-[1.05] text-ink md:text-5xl">{attributeKoreanLabel(attribute.value)}</div>
+            </div>
+          ))}
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">Item</div>
+            <div className="mt-1 text-4xl font-bold leading-[1.05] text-ink md:text-5xl">{itemLabel}</div>
+          </div>
+        </div>
+      )}
+
+      <h2 className="mt-8 text-3xl font-semibold leading-tight text-ink md:text-4xl">{bundle.displayName}</h2>
+      <p className="mt-1 text-xs font-medium uppercase tracking-[0.14em] text-muted">{englishSubtitle(bundle)}</p>
+
+      <div className="mt-5">
+        <EvidenceDots sourceSpread={bundle.bundleSourceSpread} articlePresence={bundle.bundleArticlePresence} label={strength} />
+      </div>
+      <p className="mt-2 text-sm text-muted">
+        {bundle.bundleArticlePresence}개 기사 · {bundle.bundleSourceSpread}개 매체
+        {bundle.latestObservedAt ? ` · 최근 ${bundle.latestObservedAt.toISOString().slice(0, 10)}` : ""}
+      </p>
+
+      <Link className="mt-5 inline-block text-sm font-semibold text-signal" href={`/items/${encodeURIComponent(bundle.specificItem)}`}>
+        근거 보기 →
+      </Link>
     </div>
   );
 }
 
 /**
+ * A single-observation bundle, presented as a light editorial tile - title,
+ * english descriptor, evidence line - separated from its neighbors by a
+ * thin top divider rather than each sitting in its own bordered box. Never
+ * upgraded in wording just because it sits next to CurrentSignalHero.
+ */
+export function SecondaryBundleCard({ bundle }: { bundle: AttributeBundle }) {
+  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread });
+  return (
+    <Link href={`/items/${encodeURIComponent(bundle.specificItem)}`} className="block border-t border-line py-4 transition first:border-t-0 first:pt-0 hover:opacity-70">
+      <div className="text-base font-semibold leading-snug text-ink">{bundle.displayName}</div>
+      <div className="mt-1 text-xs font-medium uppercase tracking-[0.1em] text-muted">{englishSubtitle(bundle)}</div>
+      <div className="mt-2 text-xs text-muted">
+        {strength} · {bundle.bundleArticlePresence}기사 · {bundle.bundleSourceSpread}매체
+      </div>
+    </Link>
+  );
+}
+
+/**
+ * Uniform-weight bundle tile, used when no bundle is yet a genuinely repeated
+ * observation (so nothing should look "primary" by arbitrary list order) and
+ * on /items where bundles sit in a multi-column grid rather than a linear
+ * list. A thin top rule stands in for the old full border+shadow box.
+ */
+export function AttributeBundleCard({ bundle }: { bundle: AttributeBundle }) {
+  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread });
+  return (
+    <article className="border-t-2 border-ink pt-3">
+      <div className="text-lg font-semibold leading-snug text-ink">{bundle.displayName}</div>
+      <div className="mt-1 text-xs font-medium uppercase tracking-[0.1em] text-muted">{englishSubtitle(bundle)}</div>
+
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        {bundle.directAttributes.map((attribute) => (
+          <AttributeChip key={`${attribute.type}:${attribute.value}`} attribute={attribute} />
+        ))}
+      </div>
+
+      <div className="mt-3 text-xs text-muted">
+        {strength} · {bundle.bundleArticlePresence}개 기사 · {bundle.bundleSourceSpread}개 매체
+        {bundle.latestObservedAt ? ` · 최근 ${bundle.latestObservedAt.toISOString().slice(0, 10)}` : ""}
+      </div>
+
+      <Link className="mt-3 inline-block text-xs font-semibold text-signal" href={`/items/${encodeURIComponent(bundle.specificItem)}`}>
+        근거 보기 →
+      </Link>
+    </article>
+  );
+}
+
+/**
+ * CURRENT COMBINATION - the item detail page's lead line, restating the
+ * bundle that got a planner here without repeating the big attribute
+ * typography (the DIRECT ATTRIBUTES bar chart right below it already is
+ * that visual). No border box; a single bottom divider closes the block.
+ */
+export function BundleHighlight({ bundle }: { bundle: AttributeBundle }) {
+  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread });
+  const heroArticle = findHeroArticle(bundle);
+
+  return (
+    <section className="border-b border-line pb-8">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-signal">Current Combination</p>
+
+      {heroArticle?.evidenceImageUrl ? (
+        <div className="mt-4 flex justify-center sm:justify-start">
+          <BundleHeroImage heroArticle={heroArticle} alt={bundle.displayName} size="lg" />
+        </div>
+      ) : null}
+
+      <h2 className="mt-3 text-3xl font-semibold leading-tight text-ink">{bundle.displayName}</h2>
+      <p className="mt-1 text-xs font-medium uppercase tracking-[0.14em] text-muted">{englishSubtitle(bundle)}</p>
+
+      <div className="mt-4">
+        <EvidenceDots sourceSpread={bundle.bundleSourceSpread} articlePresence={bundle.bundleArticlePresence} label={strength} />
+      </div>
+      <p className="mt-2 text-sm text-muted">
+        {bundle.bundleArticlePresence}개 기사 · {bundle.bundleSourceSpread}개 매체
+        {bundle.latestObservedAt ? ` · 최근 ${bundle.latestObservedAt.toISOString().slice(0, 10)}` : ""}
+      </p>
+    </section>
+  );
+}
+
+/**
  * Attribute matrix: attributes grouped by dimension (소재/디테일/...) with a
- * clear divider under each dimension label, one CSS horizontal bar per
- * attribute sized strictly by its real articlePresence relative to the
- * item's strongest attribute. Exact counts stay right-aligned in a fixed
- * column (tabular-nums) next to every bar so bar length and count can be
- * compared at a glance, never an invented score.
+ * thin rule under each dimension label, one horizontal bar per attribute
+ * sized strictly by its real articlePresence relative to the item's
+ * strongest attribute. Bars use near-black (not the teal accent) to read as
+ * an editorial data rule rather than a UI control; exact counts stay
+ * right-aligned next to every bar so length and count compare at a glance.
  */
 export function AttributeMatrix({ attributes, totalArticlePresence }: { attributes: BundleAttribute[]; totalArticlePresence: number }) {
   if (attributes.length === 0) return null;
@@ -281,11 +239,11 @@ export function AttributeMatrix({ attributes, totalArticlePresence }: { attribut
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {[...groups.entries()].map(([type, rows]) => (
         <div key={type}>
           <div className="flex items-center gap-2">
-            <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.12em] text-ink">{attributeTypeKoreanLabel(type)}</span>
+            <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.14em] text-ink">{attributeTypeKoreanLabel(type)}</span>
             <span aria-hidden className="h-px flex-1 bg-line" />
           </div>
           <div className="mt-3 space-y-3">
@@ -293,7 +251,7 @@ export function AttributeMatrix({ attributes, totalArticlePresence }: { attribut
               <div key={`${attribute.type}:${attribute.value}`} className="flex items-center gap-3">
                 <span className="w-24 shrink-0 truncate text-sm font-medium text-ink">{attributeKoreanLabel(attribute.value)}</span>
                 <div className="h-3 flex-1 rounded-full bg-slate-100">
-                  <div className="h-3 rounded-full bg-signal" style={{ width: `${attributeBarWidthPercent(attribute.articlePresence, max)}%` }} />
+                  <div className="h-3 rounded-full bg-ink" style={{ width: `${attributeBarWidthPercent(attribute.articlePresence, max)}%` }} />
                 </div>
                 <span className="w-32 shrink-0 text-right text-xs tabular-nums text-muted">
                   {attribute.articlePresence}개 기사 · {attribute.sourceSpread}개 매체
@@ -308,5 +266,5 @@ export function AttributeMatrix({ attributes, totalArticlePresence }: { attribut
 }
 
 export function BundleEmptyState({ message }: { message: string }) {
-  return <div className="rounded border border-dashed border-line bg-white p-6 text-sm text-muted">{message}</div>;
+  return <p className="border-t border-line pt-4 text-sm text-muted">{message}</p>;
 }
