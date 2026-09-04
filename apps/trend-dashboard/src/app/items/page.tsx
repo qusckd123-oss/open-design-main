@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { AttributeBundleCard, BundleEmptyState } from "@/components/AttributeBundle";
 import { GlobalFilterBar } from "@/components/GlobalFilterBar";
 import { categoryFilterOptions, categoryOfSpecificItem, matchesCategoryFilter, type BroadCategory } from "@/config/taxonomy";
 import { formatNumber } from "@/lib/format";
 import { evidenceStrengthLabel, formatRankChange, sourceLabel, trendValueLabel } from "@/lib/market-ui";
 import { buildFilterHref, parseGenderParam, parseScopeParam, valueOf } from "@/lib/planning-filters";
+import { getAttributeBundles } from "@/services/attribute-bundle-service";
 import { getItemTrendRows } from "@/services/business-analytics-service";
 import { getEditorialTrendRows, type EditorialTrendRow } from "@/services/editorial-analytics-service";
 import type { ItemTrendRow } from "@/types/business";
@@ -17,7 +19,13 @@ export default async function ItemsPage({ searchParams }: PageProps) {
   const category = (valueOf(params.category) as BroadCategory | "ALL" | undefined) ?? "ALL";
   const isOverseas = scope === "overseas";
 
-  const [editorialRows, marketItems] = await Promise.all([getEditorialTrendRows("real"), getItemTrendRows("real")]);
+  const [editorialRows, marketItems, bundles] = await Promise.all([getEditorialTrendRows("real"), getItemTrendRows("real"), getAttributeBundles("real")]);
+
+  // Bundles follow the same broad-category filter chip as the item cards.
+  // They are gender-agnostic: a direct attribute relation carries no gender
+  // evidence of its own, so it is never filtered by the UNI/WOMEN filter
+  // rather than being guessed into one.
+  const visibleBundles = bundles.filter((bundle) => matchesCategoryFilter(categoryOfSpecificItem(bundle.specificItem), category));
 
   // Domestic (default) evidence: only SPECIFIC_ITEM (SUB_ITEM) editorial
   // mentions become their own trend card. A broad category such as HEADWEAR
@@ -84,6 +92,22 @@ export default async function ItemsPage({ searchParams }: PageProps) {
         <Summary label="해외 참고 매칭" value={`${formatNumber(cards.filter((card) => card.store).length)}개`} />
         <Summary label="복수 매체 공통" value={`${formatNumber(cards.filter((card) => card.editorial.sourceSpread >= 2).length)}개`} />
       </div>
+
+      <section>
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-xl font-semibold text-ink">요즘 보이는 상품 조합</h2>
+          <p className="text-xs text-muted">기사에서 아이템을 직접 수식한 속성만 조합했습니다. 같은 기사에 함께 나온 것만으로는 조합하지 않습니다.</p>
+        </div>
+        {visibleBundles.length > 0 ? (
+          <div className="mt-3 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {visibleBundles.map((bundle) => <AttributeBundleCard key={bundle.key} bundle={bundle} />)}
+          </div>
+        ) : (
+          <div className="mt-3">
+            <BundleEmptyState message="직접 속성 근거가 아직 부족합니다. 현재 기사에서 아이템을 직접 수식하는 속성 표현이 확인된 조합이 없습니다." />
+          </div>
+        )}
+      </section>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {cards.map((card) => <SpecificItemCard key={`${card.editorial.type}:${card.editorial.value}`} card={card} />)}

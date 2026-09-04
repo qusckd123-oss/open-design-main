@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AttributeBundleCard } from "@/components/AttributeBundle";
 import { GlobalFilterBar } from "@/components/GlobalFilterBar";
 import { ProductImage } from "@/components/ProductImage";
 import { ProductLinkButton } from "@/components/ProductLinkButton";
@@ -18,6 +19,7 @@ import {
   trendValueLabel
 } from "@/lib/market-ui";
 import { buildFilterHref, parseGenderParam, parseScopeParam } from "@/lib/planning-filters";
+import { getAttributeBundles } from "@/services/attribute-bundle-service";
 import { getPlanningDashboardData, type PlanningInsight } from "@/services/planning-dashboard-service";
 import type { EditorialTrendRow } from "@/services/editorial-analytics-service";
 import type { MarketRow } from "@/types/business";
@@ -41,7 +43,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   const gender = parseGenderParam(params.gender);
   const scope = parseScopeParam(params.scope);
   const editorialType = valueOf(params.editorialType) ?? "SUB_ITEM";
-  const data = await getPlanningDashboardData(gender, scope);
+  const [data, bundles] = await Promise.all([getPlanningDashboardData(gender, scope), getAttributeBundles("real")]);
   const editorialRows = data.editorialByType[editorialType] ?? data.editorialByType.SUB_ITEM ?? [];
   const isOverseas = scope === "overseas";
 
@@ -71,6 +73,25 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           </div>
         </div>
       </section>
+
+      {/*
+        Bundles answer "어떤 조합?" rather than "어떤 아이템?", so when direct
+        attribute evidence exists it is shown above the item-level insight
+        cards. When it does not, this section is absent and the item insights
+        below remain the primary surface - never padded with placeholders.
+      */}
+      {bundles.length > 0 ? (
+        <section>
+          <SectionHeader
+            title="요즘 보이는 상품 조합"
+            description="기사에서 아이템을 직접 수식한 속성만 조합했습니다. 같은 기사에 함께 등장한 것만으로는 조합하지 않습니다."
+            href="/items"
+          />
+          <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {bundles.slice(0, 3).map((bundle) => <AttributeBundleCard key={bundle.key} bundle={bundle} />)}
+          </div>
+        </section>
+      ) : null}
 
       <section className="grid gap-4 lg:grid-cols-3">
         {data.planningInsights.slice(0, 3).map((insight) => <PlanningInsightCard key={insight.key} insight={insight} />)}

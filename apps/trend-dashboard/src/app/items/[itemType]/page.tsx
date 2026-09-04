@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { AttributeChip, AttributeMatrix } from "@/components/AttributeBundle";
 import { ProductImage } from "@/components/ProductImage";
 import { ProductLinkButton } from "@/components/ProductLinkButton";
+import { specificItemKoreanLabel } from "@/lib/korean-labels";
+import { getSpecificItemDirectAttributes, type BundleAttribute } from "@/services/attribute-bundle-service";
 import { formatCurrency, formatNumber } from "@/lib/format";
 import { editorialWhyThisItemLines, evidenceStrengthLabel, hasVerifiedMarketEvidence, mentionGenderKoreanLabel, sourceLabel, trendValueLabel } from "@/lib/market-ui";
 import { getItemTrendDetail } from "@/services/business-analytics-service";
@@ -9,53 +12,40 @@ import { getSpecificItemEditorialDetail, partitionCoOccurrence } from "@/service
 
 type PageProps = { params: Promise<{ itemType: string }> };
 
-// Korean display titles for known specific items (SUB_ITEM taxonomy values
-// only, see src/collectors/editorial/mentions.ts). Broad item-type pages
-// (e.g. /items/JACKET) keep their existing label - this map intentionally
-// does not attempt to translate the broader ItemType vocabulary, which uses
-// a different, only partially-overlapping set of category names. Taxonomy
-// keys themselves are never changed; this is display-only.
-const specificItemKoreanTitles: Record<string, string> = {
-  BODY_BAG: "보디백",
-  BACKPACK: "백팩",
-  SHOULDER_BAG: "숄더백",
-  TOTE_BAG: "토트백",
-  TRACK_JACKET: "트랙 재킷",
-  COACH_JACKET: "코치 재킷",
-  WORK_JACKET: "워크 재킷",
-  RINGER_TEE: "링거 티셔츠",
-  LONG_SLEEVE_TEE: "긴팔 티셔츠",
-  RUGBY_SHIRT: "럭비 셔츠",
-  WIDE_DENIM: "와이드 데님",
-  WIDE_PANTS: "와이드 팬츠",
-  KNIT_BEANIE: "니트 비니",
-  CAMP_CAP: "캠프 캡",
-  BALL_CAP: "볼캡",
-  BUCKET_HAT: "버킷햇"
-};
-
 export default async function ItemDetailPage({ params }: PageProps) {
   const { itemType } = await params;
-  const [detail, editorialDetail] = await Promise.all([getItemTrendDetail(itemType), getSpecificItemEditorialDetail(itemType.toUpperCase())]);
-  if (!detail) {
+  const [detail, editorialDetail, directAttributes] = await Promise.all([
+    getItemTrendDetail(itemType),
+    getSpecificItemEditorialDetail(itemType.toUpperCase()),
+    getSpecificItemDirectAttributes(itemType.toUpperCase())
+  ]);
+  const editorialMatch = editorialDetail.trend;
+  // Editorial evidence is the primary axis: a specific item can exist purely
+  // from magazine coverage with no overseas market row at all (TOTE_BAG is
+  // exactly that today). Only 404 when there is no evidence of any kind -
+  // otherwise the one item with a real attribute bundle would be unreachable
+  // from its own "근거 보기" link.
+  const hasEditorialEvidence = Boolean(editorialMatch) || directAttributes.length > 0;
+  if (!detail && !hasEditorialEvidence) {
     return (
       <div className="rounded border border-line bg-white p-6">
-        <h1 className="text-2xl font-semibold">Item not found</h1>
-        <Link className="mt-4 inline-block text-sm font-semibold text-signal" href="/items">Back to Items</Link>
+        <h1 className="text-2xl font-semibold">해당 아이템 근거를 찾을 수 없습니다</h1>
+        <Link className="mt-4 inline-block text-sm font-semibold text-signal" href="/items">← 세부 아이템 트렌드</Link>
       </div>
     );
   }
-  const editorialMatch = editorialDetail.trend;
-  const koreanTitle = detail.item.subItemType ? specificItemKoreanTitles[detail.item.subItemType] : undefined;
-  const showLegacyMarketBlock = hasVerifiedMarketEvidence(detail.products);
+  const specificItem = itemType.toUpperCase();
+  const koreanTitle = specificItemKoreanLabel(detail?.item.subItemType ?? specificItem);
+  const rawLabel = detail?.item.label ?? specificItem.replaceAll("_", " ");
+  const showLegacyMarketBlock = detail ? hasVerifiedMarketEvidence(detail.products) : false;
 
   return (
     <div className="space-y-6">
       <div>
         <Link className="text-xs font-semibold text-signal" href="/items">← 세부 아이템 트렌드</Link>
         <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-signal">세부 아이템 근거</p>
-        <h1 className="mt-2 text-3xl font-semibold">{koreanTitle ?? detail.item.label}</h1>
-        {koreanTitle ? <p className="mt-1 text-xs uppercase tracking-[0.1em] text-muted">{detail.item.label}</p> : null}
+        <h1 className="mt-2 text-3xl font-semibold">{koreanTitle ?? rawLabel}</h1>
+        {koreanTitle ? <p className="mt-1 text-xs uppercase tracking-[0.1em] text-muted">{rawLabel}</p> : null}
         <p className="mt-2 text-sm text-muted">매거진 근거를 우선으로 보여주고, 실제 검증된 해외 참고 랭킹 데이터가 있을 때만 별도로 표시합니다.</p>
       </div>
 
@@ -81,9 +71,15 @@ export default async function ItemDetailPage({ params }: PageProps) {
         </DetailBlock>
       </section>
 
+      <DirectAttributeSection
+        directAttributes={directAttributes}
+        specificItem={specificItem}
+        totalArticlePresence={editorialMatch?.articlePresence ?? 0}
+      />
+
       {editorialMatch ? <EditorialEvidenceSection item={editorialMatch} cooccurrence={editorialDetail.cooccurrence} /> : null}
 
-      {showLegacyMarketBlock ? (
+      {detail && showLegacyMarketBlock ? (
         <section className="space-y-4">
           <div className="rounded border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
             아래는 <strong>해외 참고</strong> 데이터입니다 (END/Rakuten 등 검증된 해외 랭킹 소스 기준). 국내 판매/재고 데이터가 아니며, 위 &quot;스토어 반응 (국내)&quot;와는 별개 축입니다.
@@ -162,6 +158,47 @@ function Summary({ title, rows }: { title: string; rows: Array<{ name: string; c
       <div className="mt-3 space-y-2">
         {rows.map((row) => <div key={row.name} className="flex justify-between text-sm"><span className="font-medium">{row.name}</span><span className="text-muted">{row.count} presence{row.averageRank ? ` / Avg Rank ${Math.round(row.averageRank)}` : ""}</span></div>)}
       </div>
+    </section>
+  );
+}
+
+/**
+ * [직접 속성 근거] - attributes that actually modified this item inside an
+ * article ("카본 블랙 ELVO 백팩"). This is the planning-relevant surface and
+ * intentionally sits ABOVE the weaker article co-occurrence block below it.
+ */
+function DirectAttributeSection({
+  directAttributes,
+  specificItem,
+  totalArticlePresence
+}: {
+  directAttributes: BundleAttribute[];
+  specificItem: string;
+  totalArticlePresence: number;
+}) {
+  const itemLabel = specificItemKoreanLabel(specificItem) ?? specificItem.replaceAll("_", " ");
+  return (
+    <section className="rounded border border-signal/30 bg-white p-5 shadow-subtle">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <div className="text-xs font-semibold uppercase tracking-[0.14em] text-signal">직접 속성 근거</div>
+        <div className="text-xs text-muted">기사 문장에서 {itemLabel}을(를) 직접 수식한 표현만 사용합니다.</div>
+      </div>
+      {directAttributes.length > 0 ? (
+        <>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {directAttributes.map((attribute) => (
+              <AttributeChip key={`${attribute.type}:${attribute.value}`} attribute={attribute} />
+            ))}
+          </div>
+          <div className="mt-4">
+            <AttributeMatrix attributes={directAttributes} totalArticlePresence={totalArticlePresence} />
+          </div>
+        </>
+      ) : (
+        <div className="mt-3 text-sm text-muted">
+          이 아이템을 직접 수식한 속성 표현이 아직 확인되지 않았습니다. 아래 &quot;함께 언급된 요소&quot;는 같은 기사에 등장했을 뿐이며, 이 아이템의 속성으로 해석하면 안 됩니다.
+        </div>
+      )}
     </section>
   );
 }

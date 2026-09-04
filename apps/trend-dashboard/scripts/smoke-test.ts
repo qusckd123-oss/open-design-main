@@ -4,6 +4,9 @@ import { assortmentCollectorSources, createMarketCollector, verifiedRankingColle
 import { classifyMarketAttributes, validateSubItemForCategory } from "../src/collectors/market/classification";
 import { inferEditorialGender } from "../src/collectors/editorial/gender";
 import { extractEditorialMentions } from "../src/collectors/editorial/mentions";
+import { extractDirectAttributeRelations } from "../src/collectors/editorial/attribute-relations";
+import { bundleEvidenceStrength, getAttributeBundles, getSpecificItemDirectAttributes } from "../src/services/attribute-bundle-service";
+import { composeBundleName } from "../src/lib/korean-labels";
 import { classifyFashionRelevance, parseArticlePage, parseGenericSitemap, parseNewsSitemap, parseRssItems, parseSitemapIndex } from "../src/collectors/editorial/rss";
 import { editorialSourceConfigs } from "../src/config/editorial-sources";
 import { aggregateEditorialMentions, auditUnmatchedFashionPhrases, getSpecificItemEditorialDetail, partitionCoOccurrence } from "../src/services/editorial-analytics-service";
@@ -45,6 +48,8 @@ async function main() {
   verifyEditorialHelpers();
   await verifySpecificItemEditorialCoOccurrence();
   verifyLegacyMarketBlockVisibility();
+  verifyDirectAttributeRelations();
+  await verifyAttributeBundles();
   verifyPlanningDashboardHelpers();
   verifyDomesticFirstTaxonomy();
   verifyEvidenceStrengthLabels();
@@ -617,6 +622,95 @@ async function verifySpecificItemEditorialCoOccurrence() {
 
   await prisma.editorialMention.deleteMany({ where: { post: { source: { in: [source1, source2] } } } });
   await prisma.editorialPost.deleteMany({ where: { source: { in: [source1, source2] } } });
+}
+
+function verifyDirectAttributeRelations() {
+  const find = (relations: ReturnType<typeof extractDirectAttributeRelations>, item: string, type: string, value: string) =>
+    relations.find((relation) => relation.specificItem === item && relation.attributeType === type && relation.attributeValue === value);
+
+  // A colour placed directly before the item noun is a direct modifier.
+  const red = extractDirectAttributeRelations({ title: "red track jacket", text: "" });
+  assert.ok(find(red, "TRACK_JACKET", "COLOR", "RED"), '"red track jacket" must yield TRACK_JACKET + COLOR:RED.');
+  assert.equal(red[0]?.relationKind, "DIRECT_PHRASE", "A modifier adjacent to the item noun is DIRECT_PHRASE evidence.");
+
+  // Same article, unrelated sentences: never a direct relation.
+  const separated = extractDirectAttributeRelations({
+    title: "이번 주 드롭",
+    text: "PLEASURES는 트랙 재킷을 선보인다. 별개로 공개된 러그는 레드 컬러가 특징이다."
+  });
+  assert.equal(find(separated, "TRACK_JACKET", "COLOR", "RED"), undefined, "A colour mentioned in a different sentence must never attach to the item.");
+
+  // Enumeration must not distribute the modifier across list members - this
+  // is the real HYPEBEAST sentence that would otherwise invent an oversized
+  // track jacket.
+  const enumerated = extractDirectAttributeRelations({
+    title: "",
+    text: "이번 캡슐은 오버사이즈 축구 셔츠와 트랙 재킷, 트레이닝 기어가 관중석을 벗어난다."
+  });
+  assert.equal(
+    enumerated.some((relation) => relation.specificItem === "TRACK_JACKET"),
+    false,
+    '"오버사이즈 축구 셔츠와 트랙 재킷" is an enumeration - the modifier belongs to 축구 셔츠, so no TRACK_JACKET relation may be emitted.'
+  );
+
+  // Korean direct modifier via an adnominal clause.
+  const recycled = extractDirectAttributeRelations({ title: "", text: "재활용 패브릭을 활용한 토트백을 선보인다." });
+  assert.ok(find(recycled, "TOTE_BAG", "MATERIAL", "RECYCLED_FABRIC"), '"재활용 패브릭을 활용한 토트백" must yield TOTE_BAG + MATERIAL:RECYCLED_FABRIC.');
+
+  // A modifier attached to a different head noun far from the item must not
+  // be captured (real côte&ciel sentence: 블랙 modifies 후드, not 숄더백).
+  const otherHead = extractDirectAttributeRelations({
+    title: "",
+    text: "스무스 블랙 후드가 일체형으로 더해져 입을 수 있는 베스트로 펼쳐지는 RENO 숄더백이 있다."
+  });
+  assert.equal(find(otherHead, "SHOULDER_BAG", "COLOR", "BLACK"), undefined, "블랙 modifies 후드 here, so SHOULDER_BAG must not inherit it.");
+
+  // Repeating the same phrase inside one article must not multiply evidence.
+  const duplicated = extractDirectAttributeRelations({
+    title: "red track jacket",
+    text: "red track jacket. red track jacket again."
+  });
+  assert.equal(
+    duplicated.filter((relation) => relation.specificItem === "TRACK_JACKET" && relation.attributeValue === "RED").length,
+    1,
+    "A phrase repeated within one article must collapse to a single relation (no article-presence inflation)."
+  );
+}
+
+async function verifyAttributeBundles() {
+  // Evidence strength stays conservative: article count alone never implies
+  // breadth, and only 3+ outlets WITH recent movement may be a candidate.
+  assert.equal(bundleEvidenceStrength({ articlePresence: 1, sourceSpread: 1 }), "단일 관측");
+  assert.equal(bundleEvidenceStrength({ articlePresence: 4, sourceSpread: 1 }), "반복 관측 · 특정 매체 집중", "Many articles from ONE outlet must never read as multi-source.");
+  assert.equal(bundleEvidenceStrength({ articlePresence: 2, sourceSpread: 2 }), "여러 매체 동시 관찰");
+  assert.equal(bundleEvidenceStrength({ articlePresence: 5, sourceSpread: 3, recentArticlePresence: 0 }), "여러 매체 동시 관찰", "Three outlets without recent movement is not yet a trend candidate.");
+  assert.equal(bundleEvidenceStrength({ articlePresence: 5, sourceSpread: 3, recentArticlePresence: 2 }), "강한 트렌드 후보");
+
+  // Deterministic bundle naming - composed from label maps, never freeform.
+  assert.equal(composeBundleName("TOTE_BAG", [{ type: "MATERIAL", value: "RECYCLED_FABRIC" }]), "재활용 원단 토트백");
+  assert.equal(composeBundleName("TRACK_JACKET", []), "트랙 재킷", "With no direct attributes the name must stay the bare item - no invented adjective.");
+  assert.equal(
+    composeBundleName("TOTE_BAG", [{ type: "COLOR", value: "RED" }, { type: "MATERIAL", value: "DENIM" }]),
+    "데님 레드 토트백",
+    "Attributes compose in a fixed dimension order (MATERIAL before COLOR), so the same evidence always yields the same name."
+  );
+
+  // Against REAL data: TRACK_JACKET has article co-occurrence but no direct
+  // attribute evidence, and that separation must hold.
+  const trackDirect = await getSpecificItemDirectAttributes("TRACK_JACKET", "real");
+  assert.equal(trackDirect.length, 0, "TRACK_JACKET co-occurrence (SPORTY/RED/NYLON...) must never be promoted into direct attributes.");
+  const trackCoOccurrence = await getSpecificItemEditorialDetail("TRACK_JACKET", "real");
+  assert.ok(
+    (trackCoOccurrence.cooccurrence.styles.length + trackCoOccurrence.cooccurrence.colors.length) > 0,
+    "TRACK_JACKET must still keep its article co-occurrence evidence after the direct/indirect split."
+  );
+
+  const bundles = await getAttributeBundles("real");
+  for (const bundle of bundles) {
+    assert.ok(bundle.directAttributes.length > 0, "A bundle must be backed by at least one direct attribute relation.");
+    assert.ok(bundle.bundleArticlePresence >= 1 && bundle.bundleSourceSpread >= 1, "Bundle counts must come from real articles/sources.");
+    assert.ok(bundle.bundleSourceSpread <= bundle.bundleArticlePresence, "Source spread can never exceed article presence.");
+  }
 }
 
 function verifyLegacyMarketBlockVisibility() {

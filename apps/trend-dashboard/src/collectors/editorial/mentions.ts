@@ -15,11 +15,13 @@ export type EditorialMention = {
   evidence: string;
 };
 
-type Rule = {
+export type EditorialRule = {
   type: EditorialMentionType;
   value: string;
   patterns: RegExp[];
 };
+
+type Rule = EditorialRule;
 
 const rules: Rule[] = [
   { type: "ITEM", value: "T_SHIRT", patterns: [rx("\\bt-?shirt\\b|\\btee\\b|\\uD2F0\\uC154\\uCE20|\\uBC18\\uD314|\\uB871t")] },
@@ -56,6 +58,11 @@ const rules: Rule[] = [
   { type: "MATERIAL", value: "FLEECE", patterns: [rx("\\bfleece\\b|\\uD50C\\uB9AC\\uC2A4")] },
   { type: "MATERIAL", value: "KNIT", patterns: [rx("\\bknit\\b|\\uB2C8\\uD2B8")] },
   { type: "MATERIAL", value: "CORDUROY", patterns: [rx("\\bcorduroy\\b|\\uCF54\\uB4C0\\uB85C\\uC774")] },
+  // Added after the 2026-09-04 direct-attribute audit: "재활용 패브릭을 활용한
+  // 토트백" / "아카이브 원단을 재활용해 만든 Zantan 토트백" appear as direct
+  // item modifiers in 2 distinct REAL articles, clearing the project's
+  // taxonomy-addition threshold (>= 2 articles or >= 2 sources).
+  { type: "MATERIAL", value: "RECYCLED_FABRIC", patterns: [rx("\\brecycled\\b|\\uC7AC\\uD65C\\uC6A9")] },
   { type: "STYLE", value: "WORKWEAR", patterns: [rx("\\bworkwear\\b|\\uC6CC\\uD06C\\uC6E8\\uC5B4")] },
   { type: "STYLE", value: "PREPPY", patterns: [rx("\\bpreppy\\b|\\uD504\\uB808\\uD53C")] },
   { type: "STYLE", value: "SPORTY", patterns: [rx("\\bsporty\\b|\\uC2A4\\uD3EC\\uD2F0|\\uC2A4\\uD3EC\\uCE20")] },
@@ -75,6 +82,13 @@ const rules: Rule[] = [
   { type: "BRAND", value: "STONE_ISLAND", patterns: [rx("\\bstone island\\b|\\uC2A4\\uD1A4 \\uC544\\uC77C\\uB79C\\uB4DC")] },
   { type: "BRAND", value: "LACOSTE", patterns: [rx("\\blacoste\\b|\\uB77C\\uCF54\\uC2A4\\uD14C")] }
 ];
+
+/**
+ * The single source of truth for editorial phrase matching. Exported so the
+ * direct-attribute relation extractor can reuse exactly these surface
+ * patterns instead of maintaining a second, drifting vocabulary.
+ */
+export const editorialRules: ReadonlyArray<EditorialRule> = rules;
 
 export function extractEditorialMentions(input: EditorialMentionInput): EditorialMention[] {
   const body = `${input.title}\n${input.text}`;
