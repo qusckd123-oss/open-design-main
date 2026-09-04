@@ -26,6 +26,12 @@ export async function collectEditorialFeed(source: EditorialSource, limit = 30, 
   if (source === "EYESMAG") return collectEyesmag(limit, options);
   if (source === "NONLABEL") return collectNonlabel(limit);
   if (source === "VISLA") return collectVisla(limit, options);
+  // HYPEBEAST_KR's RSS feed only ever exposes the newest items, so `--days`
+  // could filter but never reach back - which is why the corpus held ~2 days of
+  // the single highest attribute-density source. When a window IS requested we
+  // switch to the site's own public monthly sitemaps, exactly as EYESMAG
+  // already does. The default (no `days`) path stays on RSS, unchanged.
+  if (source === "HYPEBEAST_KR" && options.days) return collectHypebeastHistorical(limit, options.days);
   const response = await fetch(config.feedUrl, {
     headers: {
       "User-Agent": "TrendSignalDashboard/0.1 (+editorial source audit)",
@@ -299,6 +305,109 @@ export function parseVislaRichBody(html: string): string | null {
   return text || null;
 }
 
+/**
+ * HYPEBEAST KR article body. The public article page carries no JSON-LD
+ * `articleBody`, but the body itself is plain public HTML inside
+ * `<div class="post-body-content">`. The region is cut at the first trailing
+ * chrome marker (the tag list, a related-articles section, or the
+ * "Read Full Article" widget) rather than by counting closing tags, because
+ * the body legitimately nests figures/embeds - the same approach already used
+ * for VISLA's entry-content.
+ */
+export function parseHypebeastRichBody(html: string): string | null {
+  const match = html.match(/<div[^>]+class="[^"]*\bpost-body-content\b[^"]*"[^>]*>/);
+  if (!match || match.index === undefined) return null;
+  const start = match.index + match[0].length;
+  const region = html.slice(start, Math.min(html.length, start + 120000));
+  const stopPatterns = [/<div[^>]+class="[^"]*\bpost-body-content-tags\b/, /<section[^>]+class="[^"]*related/i, /Read Full Article/i];
+  let cutAt = region.length;
+  for (const pattern of stopPatterns) {
+    const found = region.match(pattern);
+    if (found?.index !== undefined) cutAt = Math.min(cutAt, found.index);
+  }
+  const text = stripHtml(region.slice(0, cutAt));
+  return text || null;
+}
+
+/**
+ * Public monthly sitemaps (declared in hypebeast.kr/robots.txt, which allows
+ * every article route and only disallows /api, /account, /wp-admin and the
+ * like). Returns article URLs whose month could still fall inside the window;
+ * the per-article publish date is checked again after parsing.
+ */
+async function getHypebeastEntries(days: number): Promise<string[]> {
+  const index = await fetchText("https://hypebeast.kr/sitemap.xml");
+  const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  const monthlySitemaps = parseSitemapIndex(index)
+    .filter((url) => /sitemap-post-\d{4}-\d{2}\.xml$/.test(url))
+    .filter((url) => {
+      const match = url.match(/sitemap-post-(\d{4})-(\d{2})\.xml$/);
+      if (!match) return false;
+      // Month sitemaps are inclusive of the whole month, so keep any month
+      // whose END is still on or after the cutoff.
+      const year = Number(match[1]);
+      const month = Number(match[2]);
+      return new Date(year, month, 0, 23, 59, 59) >= cutoff;
+    });
+
+  const urls: string[] = [];
+  for (const sitemapUrl of monthlySitemaps) {
+    const xml = await fetchText(sitemapUrl);
+    for (const entry of parseGenericSitemap(xml)) {
+      if (entry.url) urls.push(entry.url);
+    }
+  }
+  return [...new Set(urls)];
+}
+
+async function collectHypebeastHistorical(limit: number, days: number): Promise<EditorialCollectedPost[]> {
+  const urls = await getHypebeastEntries(days);
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  const posts: EditorialCollectedPost[] = [];
+
+  for (const url of urls) {
+    if (posts.length >= limit) break;
+    try {
+      const html = await fetchText(url);
+      const article = parseArticlePage(html, url);
+      const publishedAt = article.publishedAt;
+      // The sitemap is not date-filtered per entry, so enforce the window here.
+      if (!publishedAt || Number.isNaN(publishedAt.getTime()) || publishedAt.getTime() < cutoff) continue;
+      const richBody = parseHypebeastRichBody(html);
+      const text = (richBody && richBody.length > article.text.length ? richBody : article.text) || "";
+      const title = article.title;
+      if (!title) continue;
+      // NOTE: no sourceCategory is passed. The monthly sitemap covers every
+      // Hypebeast section (music, gaming, film...), so relevance must be earned
+      // from the article's own title/body evidence - never assumed "fashion"
+      // the way the /fashion RSS feed legitimately can.
+      const audienceGender = inferEditorialGender({ title, text });
+      const mentions = extractEditorialMentions({ title, text, postGender: audienceGender });
+      const fashionRelevance = classifyFashionRelevance({ title, text, mentionCount: mentions.length });
+      if (fashionRelevance === "NON_FASHION") continue;
+      posts.push({
+        source: "HYPEBEAST_KR",
+        externalPostId: article.canonicalUrl || url,
+        url: article.canonicalUrl || url,
+        canonicalUrl: article.canonicalUrl || url,
+        title,
+        publishedAt,
+        imageUrl: article.imageUrl,
+        excerpt: text.slice(0, 280) || null,
+        text: text || null,
+        audienceGender,
+        fashionRelevance,
+        mentions
+      });
+    } catch {
+      continue;
+    }
+    // Be a polite client on a site that publishes Crawl-delay for several bots.
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+  }
+  return posts;
+}
+
 async function collectVisla(limit: number, options: EditorialCollectOptions): Promise<EditorialCollectedPost[]> {
   const config = editorialSourceConfigs.VISLA;
   const response = await fetch(config.feedUrl, {
@@ -467,6 +576,11 @@ function canonicalizeNonlabelUrl(value: string) {
 
 function decodeEntities(value: string) {
   return value
+    // Numeric character references. HYPEBEAST_KR encodes Korean titles as hex
+    // entities ("&#xBC84;&#xD37C;" = 버퍼), which would otherwise be stored raw
+    // and break both display and phrase matching. Decimal form handled too.
+    .replace(/&#x([0-9a-f]+);/gi, (_match, hex: string) => safeCodePoint(Number.parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_match, decimal: string) => safeCodePoint(Number.parseInt(decimal, 10)))
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
@@ -476,4 +590,11 @@ function decodeEntities(value: string) {
     .replace(/&#8217;/g, "'")
     .replace(/&#8220;/g, "\"")
     .replace(/&#8221;/g, "\"");
+}
+
+/** Guards against malformed entities producing an exception or a lone surrogate. */
+function safeCodePoint(code: number): string {
+  if (!Number.isFinite(code) || code <= 0 || code > 0x10ffff) return "";
+  if (code >= 0xd800 && code <= 0xdfff) return "";
+  return String.fromCodePoint(code);
 }

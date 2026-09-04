@@ -9,7 +9,7 @@ import { bundleEvidenceStrength, getAttributeBundles, getPrimaryBundleForItem, g
 import { contentBlocksFromStoredText, resolveEvidenceImage, type ContentBlock } from "../src/collectors/editorial/image-relation";
 import { attributeBarWidthPercent } from "../src/lib/attribute-visual";
 import { composeBundleName } from "../src/lib/korean-labels";
-import { classifyFashionRelevance, parseArticlePage, parseEyesmagRichBody, parseGenericSitemap, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
+import { classifyFashionRelevance, parseArticlePage, parseEyesmagRichBody, parseGenericSitemap, parseHypebeastRichBody, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
 import { editorialSourceConfigs } from "../src/config/editorial-sources";
 import { aggregateEditorialMentions, auditUnmatchedFashionPhrases, getSpecificItemEditorialDetail, partitionCoOccurrence } from "../src/services/editorial-analytics-service";
 import { classifyDomesticTrendDemandInsight, classifyPlanningInsight, getPlanningDashboardData, matchesPlanningGender, planningItemKey } from "../src/services/planning-dashboard-service";
@@ -597,6 +597,36 @@ function verifyEditorialBodyParsers() {
   assert.equal(vislaBody!.includes("SHARE THIS"), false, "VISLA rich body must exclude the share widget text.");
   assert.equal(vislaBody!.includes("다른 기사 제목"), false, "VISLA rich body must exclude a related-articles teaser section beyond the cut point.");
   assert.equal(parseVislaRichBody("<html><body>no entry-content here</body></html>"), null, "Missing entry-content must return null, not fabricate text.");
+
+  // HYPEBEAST_KR: the public article page has no JSON-LD articleBody, but the
+  // body is plain public HTML in <div class="post-body-content">. Needed
+  // because the RSS feed only exposes the newest items, so historical
+  // collection has to read article pages instead.
+  const hypebeastHtml = `<html><body>
+    <div class="post-body-content">
+      <p>요약 BÉIS와 KidSuper는 9피스 트래블 캡슐 컬렉션을 위해 협업을 진행하였다.</p>
+      <p>크로커다일 엠보싱을 더한 Carrousel 백과 나일론 소재의 트랙 재킷이 포함된다.</p>
+      <div class="post-body-content-tags"><a href="#">KidSuper</a><a href="#">BEIS</a></div>
+    </div>
+    <section class="related-posts"><p>다른 기사 제목 - 절대 포함되면 안 됨</p></section>
+  </body></html>`;
+  const hypebeastBody = parseHypebeastRichBody(hypebeastHtml);
+  assert.ok(hypebeastBody, "HYPEBEAST_KR body must be extracted from post-body-content.");
+  assert.ok(hypebeastBody!.includes("트래블 캡슐 컬렉션"), "HYPEBEAST_KR body must keep the real article prose.");
+  assert.ok(hypebeastBody!.includes("나일론 소재의 트랙 재킷"), "HYPEBEAST_KR body must keep product/material phrasing - the whole point of the source.");
+  assert.equal(hypebeastBody!.includes("KidSuper</a>"), false, "HYPEBEAST_KR body must not keep raw markup.");
+  assert.equal(hypebeastBody!.includes("다른 기사 제목"), false, "HYPEBEAST_KR body must stop before the related-articles section.");
+  assert.equal(parseHypebeastRichBody("<html><body>no post body here</body></html>"), null, "Missing post-body-content must return null, not fabricate text.");
+
+  // HYPEBEAST_KR encodes Korean titles as hex numeric entities; without numeric
+  // entity decoding the stored title would be unreadable AND unmatchable by the
+  // phrase rules.
+  const entityArticle = parseArticlePage(
+    `<html><head><meta property="og:title" content="&#xBC84;&#xD37C;, &#x2018;&#xB9AC;&#xC9C0;&#xBAAC;&#xD2B8;&#x2019;"><meta property="og:url" content="https://hypebeast.kr/2026/9/x"><meta name="description" content="&#48260;&#54140; &#53468;&#49472;"></head></html>`,
+    "https://hypebeast.kr/2026/9/x"
+  );
+  assert.equal(entityArticle.title, "버퍼, ‘리지몬트’", "Hex numeric entities in a title must decode to real Korean text.");
+  assert.ok(entityArticle.text.includes("버퍼"), "Decimal numeric entities must decode too.");
 }
 
 async function verifySpecificItemEditorialCoOccurrence() {
