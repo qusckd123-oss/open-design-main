@@ -98,17 +98,25 @@ MARKET_COLLECTOR_USER_AGENT="TrendSignalDashboard/0.1 (+local market audit)"
 
 ## Install
 
+This app is a member of the repo's pnpm workspace (`pnpm-workspace.yaml` includes `apps/*`). Install from the repo root, not with `npm install`/`npm ci` inside this directory:
+
 ```bash
-cd apps/trend-dashboard
-npm install
-npm run db:setup
-npm run db:seed
+corepack pnpm install --filter @open-design/trend-dashboard... --frozen-lockfile
 ```
+
+Then set up the local database:
+
+```bash
+corepack pnpm --filter @open-design/trend-dashboard run db:setup
+corepack pnpm --filter @open-design/trend-dashboard run db:seed
+```
+
+**Known limitation:** a full, unfiltered `pnpm install` at the repo root can exit non-zero because of an unrelated `packages/sidecar-proto` postinstall/esbuild issue. That is a repo-wide lifecycle script problem, not a trend-dashboard dependency problem - the `--filter @open-design/trend-dashboard...` install above resolves and links this app's own dependencies correctly regardless of that unrelated failure.
 
 ## Run
 
 ```bash
-npm run dev
+corepack pnpm --filter @open-design/trend-dashboard dev
 ```
 
 Open `http://localhost:3000`.
@@ -420,16 +428,16 @@ Thresholds are configured in `src/config/business-signal.ts`.
 ## Validation
 
 ```bash
-npm run db:push
-npm run typecheck
-npm test
-npm run build
+corepack pnpm --filter @open-design/trend-dashboard run db:push
+corepack pnpm --filter @open-design/trend-dashboard run typecheck
+corepack pnpm --filter @open-design/trend-dashboard test
+corepack pnpm --filter @open-design/trend-dashboard run build
 ```
 
-On Windows PowerShell, if script execution blocks `npm.ps1`, use:
+On Windows PowerShell, if script execution blocks `.ps1` shims, use:
 
 ```bash
-cmd /c npm run typecheck
+cmd /c corepack pnpm --filter @open-design/trend-dashboard run typecheck
 ```
 
 ## Future
