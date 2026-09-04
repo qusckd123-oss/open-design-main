@@ -206,6 +206,31 @@ export async function getSpecificItemDirectAttributes(specificItem: string, data
     .sort((a, b) => b.articlePresence - a.articlePresence || b.sourceSpread - a.sourceSpread || a.value.localeCompare(b.value));
 }
 
+/**
+ * Bundles are already sorted (source spread, then article presence, then
+ * attribute richness) by getAttributeBundles, so the first bundle for a
+ * given specific item is its strongest direct-attribute evidence. Used to
+ * highlight one bundle at the top of the item detail page - TOTE_BAG has
+ * one (재활용 원단 토트백), TRACK_JACKET has none (direct attributes = 0).
+ */
+export async function getPrimaryBundleForItem(specificItem: string, dataMode = "real"): Promise<AttributeBundle | null> {
+  const bundles = await getAttributeBundles(dataMode);
+  return bundles.find((bundle) => bundle.specificItem === specificItem) ?? null;
+}
+
+/**
+ * The bundle image is an article hero image, never a product cutout (see
+ * docs/ATTRIBUTE_BUNDLE_AUDIT.md). It is picked deterministically - the
+ * first evidence article (already sorted newest-first) that has one - and
+ * the same image may legitimately be reused across bundles that share an
+ * evidence article. Returns null (never a guessed image) when no evidence
+ * article carries one, so the UI can fall back to an attribute-chip panel
+ * instead of an empty image box.
+ */
+export function selectBundleHeroImage(evidenceArticles: BundleEvidenceArticle[]): string | null {
+  return evidenceArticles.find((article) => article.imageUrl)?.imageUrl ?? null;
+}
+
 function dedupeAttributes<T extends { type: string; value: string }>(attributes: T[]): T[] {
   const seen = new Set<string>();
   return attributes.filter((attribute) => {

@@ -25,7 +25,7 @@ export type EditorialTrendRow = {
   current14dArticlePresence: number | null;
   previous14dArticlePresence: number | null;
   change14dArticlePresence: number | null;
-  evidenceArticles: Array<{ source: string; title: string; url: string; publishedAt: Date | null }>;
+  evidenceArticles: Array<{ source: string; title: string; url: string; publishedAt: Date | null; imageUrl: string | null }>;
   observation: "NEWLY_OBSERVED" | "OBSERVED";
   sourceContext: "SINGLE_SOURCE" | "MULTI_SOURCE";
   signal: "BASELINE" | "EARLY_DATA";
@@ -57,7 +57,7 @@ export type UnmatchedFashionPhrase = {
 export async function getEditorialTrendRows(dataMode = "real"): Promise<EditorialTrendRow[]> {
   const mentions = await prisma.editorialMention.findMany({
     where: { post: { dataMode, fashionRelevance: "FASHION_RELEVANT" } },
-    include: { post: { select: { source: true, title: true, url: true, publishedAt: true } } }
+    include: { post: { select: { source: true, title: true, url: true, publishedAt: true, imageUrl: true } } }
   });
   const sourcePostCounts = await prisma.editorialPost.groupBy({
     by: ["source"],
@@ -144,7 +144,7 @@ export function partitionCoOccurrence(rows: EditorialCoOccurrence[], threshold =
 }
 
 export function aggregateEditorialMentions(
-  mentions: Array<{ type: string; value: string; audienceGender: string; confidence: number; post: { source: string; title?: string; url?: string; publishedAt?: Date | null } }>,
+  mentions: Array<{ type: string; value: string; audienceGender: string; confidence: number; post: { source: string; title?: string; url?: string; publishedAt?: Date | null; imageUrl?: string | null } }>,
   sourcePostCounts: Record<string, number> = {}
 ): EditorialTrendRow[] {
   const anchorDate = maxDate(mentions.map((mention) => mention.post.publishedAt ?? null));
@@ -229,7 +229,8 @@ export function aggregateEditorialMentions(
             source: mention.post.source,
             title: mention.post.title ?? "",
             url: mention.post.url ?? "",
-            publishedAt: mention.post.publishedAt ?? null
+            publishedAt: mention.post.publishedAt ?? null,
+            imageUrl: mention.post.imageUrl ?? null
           })),
         observation: previous7dArticlePresence === 0 && (current7dArticlePresence ?? 0) > 0 ? "NEWLY_OBSERVED" as const : "OBSERVED" as const,
         sourceContext: entry.sources.size >= 2 ? "MULTI_SOURCE" as const : "SINGLE_SOURCE" as const,

@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { AttributeChip, AttributeMatrix } from "@/components/AttributeBundle";
+import { AttributeChip, AttributeMatrix, BundleHighlight } from "@/components/AttributeBundle";
 import { ProductImage } from "@/components/ProductImage";
 import { ProductLinkButton } from "@/components/ProductLinkButton";
 import { specificItemKoreanLabel } from "@/lib/korean-labels";
-import { getSpecificItemDirectAttributes, type BundleAttribute } from "@/services/attribute-bundle-service";
+import { getPrimaryBundleForItem, getSpecificItemDirectAttributes, type BundleAttribute } from "@/services/attribute-bundle-service";
 import { formatCurrency, formatNumber } from "@/lib/format";
 import { editorialWhyThisItemLines, evidenceStrengthLabel, hasVerifiedMarketEvidence, mentionGenderKoreanLabel, sourceLabel, trendValueLabel } from "@/lib/market-ui";
 import { getItemTrendDetail } from "@/services/business-analytics-service";
@@ -14,10 +14,11 @@ type PageProps = { params: Promise<{ itemType: string }> };
 
 export default async function ItemDetailPage({ params }: PageProps) {
   const { itemType } = await params;
-  const [detail, editorialDetail, directAttributes] = await Promise.all([
+  const [detail, editorialDetail, directAttributes, primaryBundle] = await Promise.all([
     getItemTrendDetail(itemType),
     getSpecificItemEditorialDetail(itemType.toUpperCase()),
-    getSpecificItemDirectAttributes(itemType.toUpperCase())
+    getSpecificItemDirectAttributes(itemType.toUpperCase()),
+    getPrimaryBundleForItem(itemType.toUpperCase())
   ]);
   const editorialMatch = editorialDetail.trend;
   // Editorial evidence is the primary axis: a specific item can exist purely
@@ -48,6 +49,8 @@ export default async function ItemDetailPage({ params }: PageProps) {
         {koreanTitle ? <p className="mt-1 text-xs uppercase tracking-[0.1em] text-muted">{rawLabel}</p> : null}
         <p className="mt-2 text-sm text-muted">매거진 근거를 우선으로 보여주고, 실제 검증된 해외 참고 랭킹 데이터가 있을 때만 별도로 표시합니다.</p>
       </div>
+
+      {primaryBundle ? <BundleHighlight bundle={primaryBundle} /> : null}
 
       {/*
         수요 검증 (NAVER Demand) block intentionally removed here - NAVER
@@ -241,6 +244,32 @@ function EditorialEvidenceSection({ item, cooccurrence }: { item: EditorialTrend
         ) : null}
       </div>
 
+      {/*
+        직접 속성 근거 -> 근거 기사 -> 기사 동반 요소 순서 (co-occurrence는
+        가장 약한 근거이므로 항상 마지막에 둔다).
+      */}
+      <div className="rounded border border-line bg-white p-5 shadow-subtle">
+        <div className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-muted">근거 기사</div>
+        <div className="space-y-3">
+          {item.evidenceArticles.map((article) => (
+            <div key={`${article.source}:${article.url || article.title}`} className="flex items-start gap-3 border-b border-line pb-3 last:border-b-0 last:pb-0">
+              <ProductImage src={article.imageUrl} alt={article.title || sourceLabel(article.source)} size="sm" />
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
+                  {sourceLabel(article.source)} · {article.publishedAt ? new Date(article.publishedAt).toISOString().slice(0, 10) : "-"}
+                </div>
+                <div className="mt-1 text-sm font-medium text-ink">{article.title}</div>
+              </div>
+              {article.url ? (
+                <a className="shrink-0 text-xs font-semibold text-signal" href={article.url} target="_blank" rel="noopener noreferrer">
+                  기사 보기 ↗
+                </a>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      </div>
+
       {hasAnyCoOccurrence ? (
         <div className="rounded border border-line bg-white p-5 shadow-subtle">
           <div className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">함께 언급된 요소</div>
@@ -271,27 +300,6 @@ function EditorialEvidenceSection({ item, cooccurrence }: { item: EditorialTrend
           ) : null}
         </div>
       ) : null}
-
-      <div className="rounded border border-line bg-white p-5 shadow-subtle">
-        <div className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-muted">근거 기사</div>
-        <div className="space-y-3">
-          {item.evidenceArticles.map((article) => (
-            <div key={`${article.source}:${article.url || article.title}`} className="flex items-start justify-between gap-3 border-b border-line pb-3 last:border-b-0 last:pb-0">
-              <div>
-                <div className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
-                  {sourceLabel(article.source)} · {article.publishedAt ? new Date(article.publishedAt).toISOString().slice(0, 10) : "-"}
-                </div>
-                <div className="mt-1 text-sm font-medium text-ink">{article.title}</div>
-              </div>
-              {article.url ? (
-                <a className="shrink-0 text-xs font-semibold text-signal" href={article.url} target="_blank" rel="noopener noreferrer">
-                  기사 보기 ↗
-                </a>
-              ) : null}
-            </div>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }

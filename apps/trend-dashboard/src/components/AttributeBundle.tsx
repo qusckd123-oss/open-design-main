@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ProductImage } from "@/components/ProductImage";
 import { attributeKoreanLabel, attributeTypeKoreanLabel, specificItemKoreanLabel } from "@/lib/korean-labels";
 import { sourceLabel } from "@/lib/market-ui";
-import { bundleEvidenceStrength, type AttributeBundle, type BundleAttribute } from "@/services/attribute-bundle-service";
+import { bundleEvidenceStrength, selectBundleHeroImage, type AttributeBundle, type BundleAttribute } from "@/services/attribute-bundle-service";
 
 /**
  * Visual-first bundle card. Reading order is image -> composed name ->
@@ -12,13 +12,13 @@ import { bundleEvidenceStrength, type AttributeBundle, type BundleAttribute } fr
  */
 export function AttributeBundleCard({ bundle }: { bundle: AttributeBundle }) {
   const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread });
-  const hero = bundle.evidenceArticles.find((article) => article.imageUrl)?.imageUrl ?? null;
+  const hero = selectBundleHeroImage(bundle.evidenceArticles);
   const itemLabel = specificItemKoreanLabel(bundle.specificItem) ?? bundle.specificItem.replaceAll("_", " ");
 
   return (
     <article className="flex flex-col overflow-hidden rounded border border-line bg-white shadow-subtle">
       <div className="flex items-center justify-center bg-slate-50 p-3">
-        <ProductImage src={hero} alt={bundle.displayName} size="lg" />
+        <BundleImage hero={hero} alt={bundle.displayName} attributes={bundle.directAttributes} size="lg" />
       </div>
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div>
@@ -50,6 +50,73 @@ export function AttributeBundleCard({ bundle }: { bundle: AttributeBundle }) {
         <p className="text-[11px] leading-snug text-muted">{itemLabel}을(를) 직접 수식한 표현에서만 추출했습니다.</p>
       </div>
     </article>
+  );
+}
+
+/**
+ * Bundle hero image, with an honest caption: the picture is the article's
+ * hero image, not a product cutout, and the same image may legitimately
+ * repeat across bundles that share an evidence article (see
+ * docs/ATTRIBUTE_BUNDLE_AUDIT.md). When no evidence article carries an
+ * image, the fallback is attribute-chip-centric rather than an empty
+ * "NO IMG" box - the chips are the actual evidence, so they replace the
+ * picture instead of leaving a blank placeholder next to it.
+ */
+function BundleImage({ hero, alt, attributes, size }: { hero: string | null; alt: string; attributes: BundleAttribute[]; size: "md" | "lg" }) {
+  if (hero) {
+    return (
+      <div className="flex flex-col items-center gap-1">
+        <ProductImage src={hero} alt={alt} size={size} />
+        <span className="text-[10px] text-muted" title="아이템 자체의 사진이 아니라 근거 기사의 대표 이미지입니다.">
+          기사 대표 이미지
+        </span>
+      </div>
+    );
+  }
+  const boxSize = size === "lg" ? "h-48 w-48" : "h-20 w-20";
+  return (
+    <div className={`flex ${boxSize} shrink-0 flex-col items-center justify-center gap-1.5 rounded border border-dashed border-line bg-slate-50 p-2 text-center`}>
+      <div className="flex flex-wrap justify-center gap-1">
+        {attributes.slice(0, 2).map((attribute) => (
+          <span key={`${attribute.type}:${attribute.value}`} className="rounded-full border border-line bg-white px-1.5 py-0.5 text-[10px] text-muted">
+            {attributeKoreanLabel(attribute.value)}
+          </span>
+        ))}
+      </div>
+      <span className="text-[10px] text-muted">이미지 없음</span>
+    </div>
+  );
+}
+
+/**
+ * Highlights one bundle (its strongest, per getPrimaryBundleForItem) at the
+ * top of an item detail page - image, composed name, chips, and evidence
+ * strength together, so a planner arriving from a bundle card immediately
+ * sees the same claim restated before scrolling into the fuller item detail.
+ */
+export function BundleHighlight({ bundle }: { bundle: AttributeBundle }) {
+  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread });
+  const hero = selectBundleHeroImage(bundle.evidenceArticles);
+
+  return (
+    <section className="flex flex-col gap-4 rounded border border-signal/30 bg-white p-5 shadow-subtle sm:flex-row sm:items-center">
+      <div className="flex justify-center sm:justify-start">
+        <BundleImage hero={hero} alt={bundle.displayName} attributes={bundle.directAttributes} size="lg" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="text-xs font-semibold uppercase tracking-[0.12em] text-signal">요즘 보이는 상품 조합</div>
+        <div className="mt-1 text-2xl font-semibold leading-tight text-ink">{bundle.displayName}</div>
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {bundle.directAttributes.map((attribute) => (
+            <AttributeChip key={`${attribute.type}:${attribute.value}`} attribute={attribute} />
+          ))}
+        </div>
+        <div className="mt-3 space-y-1">
+          <EvidenceDots sourceSpread={bundle.bundleSourceSpread} articlePresence={bundle.bundleArticlePresence} label={strength} />
+          <div className="text-xs text-muted">{bundle.bundleArticlePresence}개 기사 · {bundle.bundleSourceSpread}개 매체</div>
+        </div>
+      </div>
+    </section>
   );
 }
 

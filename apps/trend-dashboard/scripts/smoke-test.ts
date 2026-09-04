@@ -5,7 +5,7 @@ import { classifyMarketAttributes, validateSubItemForCategory } from "../src/col
 import { inferEditorialGender } from "../src/collectors/editorial/gender";
 import { extractEditorialMentions } from "../src/collectors/editorial/mentions";
 import { extractDirectAttributeRelations } from "../src/collectors/editorial/attribute-relations";
-import { bundleEvidenceStrength, getAttributeBundles, getSpecificItemDirectAttributes } from "../src/services/attribute-bundle-service";
+import { bundleEvidenceStrength, getAttributeBundles, getPrimaryBundleForItem, getSpecificItemDirectAttributes, selectBundleHeroImage } from "../src/services/attribute-bundle-service";
 import { composeBundleName } from "../src/lib/korean-labels";
 import { classifyFashionRelevance, parseArticlePage, parseEyesmagRichBody, parseGenericSitemap, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
 import { editorialSourceConfigs } from "../src/config/editorial-sources";
@@ -509,7 +509,7 @@ function verifyEditorialHelpers() {
   assert.equal(classifyFashionRelevance({ title: "Movie trailer", text: "A new movie opens.", mentionCount: 0 }), "NON_FASHION", "Non-fashion editorial should not enter trend metrics.");
 
   const aggregate = aggregateEditorialMentions([
-    { type: "ITEM", value: "BAG", audienceGender: "UNISEX", confidence: 0.95, post: { source: "EYESMAG", title: "Bag now", url: "https://example.com/1", publishedAt: new Date("2026-09-02T00:00:00.000Z") } },
+    { type: "ITEM", value: "BAG", audienceGender: "UNISEX", confidence: 0.95, post: { source: "EYESMAG", title: "Bag now", url: "https://example.com/1", publishedAt: new Date("2026-09-02T00:00:00.000Z"), imageUrl: "https://example.com/bag-hero.jpg" } },
     { type: "ITEM", value: "BAG", audienceGender: "WOMEN", confidence: 0.75, post: { source: "NONLABEL", title: "Bag earlier", url: "https://example.com/2", publishedAt: new Date("2026-08-27T00:00:00.000Z") } },
     { type: "ITEM", value: "JACKET", audienceGender: "MEN", confidence: 0.75, post: { source: "HYPEBEAST_KR", title: "Jacket", url: "https://example.com/3", publishedAt: new Date("2026-09-02T00:00:00.000Z") } }
   ], { EYESMAG: 10, NONLABEL: 5, HYPEBEAST_KR: 20 });
@@ -527,6 +527,8 @@ function verifyEditorialHelpers() {
   assert.equal(bag?.observation, "NEWLY_OBSERVED", "Previous zero and current positive article presence should be newly observed.");
   assert.equal(bag?.sourceContext, "MULTI_SOURCE", "Cross-source editorial trend context should be explicit.");
   assert.equal(bag?.evidenceArticles.length, 2, "Editorial trend rows should retain evidence articles.");
+  assert.equal(bag?.evidenceArticles[0]?.imageUrl, "https://example.com/bag-hero.jpg", "Evidence articles must carry the post image (newest article first) for article-card thumbnails.");
+  assert.equal(bag?.evidenceArticles[1]?.imageUrl, null, "A post with no image must report imageUrl null, never a fabricated fallback.");
   const sourceBuzz = aggregateEditorialMentions([
     { type: "ITEM", value: "CAP", audienceGender: "UNKNOWN", confidence: 0.75, post: { source: "HYPEBEAST_KR", title: "Cap 1", url: "https://example.com/cap-1", publishedAt: new Date("2026-09-02T00:00:00.000Z") } },
     { type: "ITEM", value: "CAP", audienceGender: "UNKNOWN", confidence: 0.75, post: { source: "HYPEBEAST_KR", title: "Cap 2", url: "https://example.com/cap-2", publishedAt: new Date("2026-09-02T00:00:00.000Z") } }
@@ -766,6 +768,29 @@ async function verifyAttributeBundles() {
     assert.ok(bundle.bundleArticlePresence >= 1 && bundle.bundleSourceSpread >= 1, "Bundle counts must come from real articles/sources.");
     assert.ok(bundle.bundleSourceSpread <= bundle.bundleArticlePresence, "Source spread can never exceed article presence.");
   }
+
+  // Hero image selection: reuse the first evidence article that actually has
+  // an image, stay null (never fabricated) when none do, and never suppress
+  // an image just because another bundle also cites the same article.
+  const articleWithImage = { source: "TEST", title: "t1", url: "https://example.com/1", publishedAt: null, imageUrl: "https://example.com/hero.jpg", evidenceText: "", sourceField: "BODY" as const };
+  const articleNoImage = { source: "TEST", title: "t2", url: "https://example.com/2", publishedAt: null, imageUrl: null, evidenceText: "", sourceField: "BODY" as const };
+  assert.equal(selectBundleHeroImage([articleNoImage, articleWithImage]), "https://example.com/hero.jpg", "Hero image must be the first evidence article that actually carries one.");
+  assert.equal(selectBundleHeroImage([articleNoImage]), null, "No evidence article has an image - hero must stay null, never fabricated.");
+  assert.equal(
+    selectBundleHeroImage([articleWithImage]),
+    selectBundleHeroImage([articleWithImage]),
+    "The same evidence-article image may legitimately be reused across bundles that cite it - selection must not dedupe it away."
+  );
+
+  // Primary bundle highlight: TOTE_BAG's strongest evidence (2 articles / 1
+  // source) must win over its two 1-article bundles; TRACK_JACKET has zero
+  // direct attributes, so it must have no primary bundle to highlight - the
+  // item detail page's empty state, not a fabricated bundle, must show.
+  const totePrimary = await getPrimaryBundleForItem("TOTE_BAG", "real");
+  assert.ok(totePrimary, "TOTE_BAG must resolve a primary bundle from real direct-attribute evidence.");
+  assert.equal(totePrimary?.displayName, "재활용 원단 토트백", "TOTE_BAG's strongest bundle (2 articles/1 source) must be the recycled-fabric one.");
+  const trackPrimary = await getPrimaryBundleForItem("TRACK_JACKET", "real");
+  assert.equal(trackPrimary, null, "TRACK_JACKET has zero direct attributes, so it must have no primary bundle to highlight.");
 }
 
 function verifyLegacyMarketBlockVisibility() {
