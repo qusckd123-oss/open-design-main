@@ -4,8 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "node scripts/write-data-config.mjs",
+    "dev": "vinext dev --hostname 127.0.0.1",
+    "prebuild": "node scripts/write-data-config.mjs",
     "build": "vinext build && node scripts/sites-postbuild.mjs",
-    "dev": "vinext dev --hostname 127.0.0.1"
+    "sales:login": "node scripts/sales-dashboard.mjs login",
+    "sales:inspect": "node scripts/sales-dashboard.mjs inspect",
+    "sales:sync": "node scripts/sales-dashboard.mjs sync",
+    "sales:sync:build": "npm run sales:sync && npm run build"
   },
   "dependencies": {
     "@vitejs/plugin-rsc": "^0.5.26",
@@ -13,8 +19,10 @@
     "react-dom": "^19.2.6",
     "react-server-dom-webpack": "^19.2.6",
     "typescript": "^5.9.2",
-    "vite": "^8.2.1",
-    "vinext": "^0.1.0"
+    "vinext": "^0.1.0",
+    "vite": "^8.2.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "playwright": "^1.62.1"
+  }
 }

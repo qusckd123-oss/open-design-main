@@ -12,10 +12,28 @@ const jsonFiles = [
     .map((file) => `data/archive/${file}`),
 ];
 
+// Walk dist/js recursively so new data-layer modules (js/data/*, js/data/providers/*) are picked
+// up automatically without editing this list by hand.
+function collectJsFiles(dir, base = dir) {
+  const files = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = `${dir}/${entry.name}`;
+    if (entry.isDirectory()) {
+      files.push(...collectJsFiles(fullPath, base));
+    } else if (entry.name.endsWith(".js")) {
+      files.push(fullPath.slice(base.length + 1));
+    }
+  }
+  return files;
+}
+
+const jsFiles = ["data-config.js", ...collectJsFiles("dist/js").map((path) => `js/${path}`)];
+
 const embeddedFiles = [
   ["index.html", "text/html; charset=utf-8", "utf8"],
   ["dashboard.html", "text/html; charset=utf-8", "utf8"],
   ...jsonFiles.map((path) => [path, "application/json; charset=utf-8", "utf8"]),
+  ...jsFiles.map((path) => [path, "application/javascript; charset=utf-8", "utf8"]),
   ["assets/bcave_logo.png", "image/png", "base64"],
 ].map(([path, contentType, encoding]) => {
   const body = readFileSync(`dist/${path}`, encoding);
