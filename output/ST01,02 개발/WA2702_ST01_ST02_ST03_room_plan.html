@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>와키윌리 27SS ST01/ST02/ST03 룸 기획 요약</title>
+<style>
+  :root{
+    --bg:#e9ecef;
+    --paper:#fff;
+    --ink:#1a1a1a;
+    --muted:#777;
+    --line:#e8ecef;
+    --deep:#2D4A5C;
+    --teal:#4A9E8E;
+    --amber:#B7770D;
+    --red:#C0392B;
+    --soft:#f7f8fa;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;padding:32px 0}
+  .section-wrap{width:800px;margin:0 auto 32px}
+  .section-label{font-size:11px;color:#9aa1a6;margin-bottom:6px;padding-left:2px}
+  .card{background:var(--paper);border-radius:10px;padding:30px 36px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  h1,h2,h3,p{margin:0}
+  h2{font-size:18px;color:#111;margin-bottom:4px;letter-spacing:-.2px}
+  .sub{font-size:12px;color:#888;line-height:1.6;margin-bottom:20px}
+  .section-title{display:inline-block;margin:20px 0 12px;padding:3px 10px;border-radius:3px;background:var(--deep);color:#fff;font-size:11px;font-weight:800;letter-spacing:.8px}
+  .section-title.teal{background:var(--teal)}
+  .section-title.amber{background:var(--amber)}
+  .headline{display:grid;grid-template-columns:1.1fr 1fr;gap:14px;align-items:stretch;margin-bottom:14px}
+  .headline-main{background:#f0f4f7;border-left:4px solid var(--deep);border-radius:8px;padding:16px 18px}
+  .headline-main strong{display:block;font-size:30px;line-height:1;color:var(--deep);margin-bottom:8px}
+  .headline-main p{font-size:13px;line-height:1.65;color:#333}
+  .headline-side{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .mini{background:var(--soft);border-radius:8px;padding:13px 14px}
+  .mini b{display:block;font-size:20px;color:var(--deep);line-height:1.1}
+  .mini span{display:block;margin-top:5px;font-size:11px;line-height:1.45;color:#777}
+  .product-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+  .product{border:1px solid var(--line);border-radius:8px;background:#fff;padding:14px}
+  .product .code{font-size:14px;font-weight:900;color:var(--deep);margin-bottom:3px}
+  .product .role{display:inline-block;margin-bottom:9px;border-radius:3px;background:var(--deep);color:#fff;font-size:10px;font-weight:900;padding:3px 7px}
+  .product .role.teal{background:var(--teal)}
+  .product .role.amber{background:var(--amber)}
+  .product dl{margin:0;display:grid;grid-template-columns:48px 1fr;gap:5px 8px;font-size:11.5px;line-height:1.52}
+  .product dt{color:#888;font-weight:800}
+  .product dd{margin:0;color:#333}
+  .qty{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:20px;font-weight:900;color:#111}
+  .qty span{display:block;margin-top:3px;color:#777;font-size:11px;font-weight:500;line-height:1.45}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  thead th{background:var(--deep);color:#fff;padding:8px 10px;text-align:center;font-size:11px}
+  thead th:first-child{text-align:left}
+  tbody tr:nth-child(even){background:#f9fafb}
+  tbody td{padding:8px 10px;border-bottom:1px solid #eef0f1;text-align:center;vertical-align:top;line-height:1.55}
+  tbody td:first-child{text-align:left;font-weight:900;color:var(--deep)}
+  tbody td:nth-child(2){text-align:left;color:#444;font-size:11.7px}
+  .decision{background:#f0f4f7;border-left:4px solid var(--deep);border-radius:7px;padding:14px 18px;margin-top:16px}
+  .decision-title{font-size:11px;font-weight:900;color:var(--deep);letter-spacing:.5px;margin-bottom:8px}
+  .decision p{font-size:12.5px;line-height:1.72;color:#333;margin-bottom:4px}
+  .decision p:before{content:'• ';color:var(--amber);font-weight:900}
+  .brand-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .brand-card{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+  .brand-img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#f1f2f2}
+  .brand-body{padding:13px 14px 15px}
+  .brand-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:7px}
+  .brand-name{font-size:14px;font-weight:900;color:#111;line-height:1.25}
+  .pill{font-size:10px;font-weight:900;color:#fff;background:var(--deep);border-radius:3px;padding:3px 7px;white-space:nowrap}
+  .pill.teal{background:var(--teal)}
+  .pill.amber{background:var(--amber)}
+  .brand-product{font-size:12px;font-weight:800;color:var(--deep);margin-bottom:5px;line-height:1.4}
+  .desc{font-size:11.8px;color:#555;line-height:1.65;min-height:70px}
+  .apply{margin-top:9px;background:#f7f8fa;border-radius:6px;padding:9px 10px;font-size:11.5px;line-height:1.58;color:#333}
+  .apply b{color:var(--red)}
+  .links{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+  .links a{font-size:10.5px;text-decoration:none;color:var(--deep);font-weight:800;background:#edf2f4;border-radius:3px;padding:4px 7px}
+  .period-note{font-size:11px;color:#999;text-align:right;line-height:1.6;margin-top:14px}
+  @media(max-width:860px){
+    body{padding:16px 0}.section-wrap{width:auto;margin:0 12px 24px}.card{padding:22px 18px}
+    .headline,.headline-side,.product-row,.brand-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="section-wrap">
+  <div class="section-label">[ 1 / 3 ] 핵심 결론</div>
+  <div class="card">
+    <h2>와키윌리 27SS ST01/ST02/ST03 룸 기획 요약</h2>
+    <p class="sub">25SS-26SS ST01/ST02 판매 흐름과 27SS 개발 방향을 기준으로, 회의에서 바로 판단할 수 있게 핵심만 정리했습니다.</p>
+
+    <div class="headline">
+      <div class="headline-main">
+        <strong>70~74K</strong>
+        <p>ST01~03 합산 권장 룸. 26SS ST01+02 72K와 총량은 비슷하게 유지하되, ST03을 신규 테스트로 분리합니다.</p>
+      </div>
+      <div class="headline-side">
+        <div class="mini"><b>1부위</b><span>소매+와끼 2부위에서 소매 또는 와끼 1부위로 축소</span></div>
+        <div class="mini"><b>3역할</b><span>ST01 기본 로고 / ST02 기능성 / ST03 시즌 무드</span></div>
+        <div class="mini"><b>65~70%</b><span>ST01 화이트/블랙/기본 컬러 비중</span></div>
+        <div class="mini"><b>8~10K</b><span>ST03은 처음부터 메인 룸 금지, 반응형 운영</span></div>
+      </div>
+    </div>
+
+    <div class="product-row">
+      <div class="product">
+        <div class="code">WA2702ST01</div>
+        <div class="role">MAIN BASIC</div>
+        <dl>
+          <dt>아트웍</dt><dd>착좌 두줄 워드로고 직자수</dd>
+          <dt>소재</dt><dd>20수 싱글</dd>
+          <dt>디테일</dt><dd>포인트 라벨 사용 X</dd>
+          <dt>컬러</dt><dd>화이트/블랙 중심 + 페이드 컬러</dd>
+        </dl>
+        <div class="qty">30~32K<span>기본 컬러 65~70%, 시즌 컬러 30~35%</span></div>
+      </div>
+
+      <div class="product">
+        <div class="code">WA2702ST02</div>
+        <div class="role teal">FUNCTION BASIC</div>
+        <dl>
+          <dt>아트웍</dt><dd>키키 로고 뉴기법</dd>
+          <dt>소재</dt><dd>쿨폰테 또는 쿨소로나</dd>
+          <dt>디테일</dt><dd>워드로고 포인트라벨 1부위</dd>
+          <dt>컬러</dt><dd>기본 컬러 중심, 기능성 무드</dd>
+        </dl>
+        <div class="qty">30~34K<span>소재 체감 좋으면 상단, 애매하면 30K 전후</span></div>
+      </div>
+
+      <div class="product">
+        <div class="code">WA2702ST03</div>
+        <div class="role amber">SEASON TEST</div>
+        <dl>
+          <dt>아트웍</dt><dd>센터 로고, 아치 또는 일자</dd>
+          <dt>소재</dt><dd>16수 슬럽 싱글</dd>
+          <dt>디테일</dt><dd>시즌 그래픽 라벨, 와끼 위 봉제</dd>
+          <dt>컬러</dt><dd>워시드/피그먼트 무드</dd>
+        </dl>
+        <div class="qty">8~10K<span>신규 테스트 후 QR/리오더 판단</span></div>
+      </div>
+    </div>
+
+    <div class="decision">
+      <div class="decision-title">회의 판단</div>
+      <p>ST01/ST02는 25SS처럼 깊게 잡지 말고, 26SS 수준에서 역할을 재정의합니다.</p>
+      <p>ST03은 ST01/ST02 대체가 아니라 시즌 무드 보강용입니다.</p>
+      <p>대표작은 디테일을 많이 넣는 상품이 아니라, 하나의 인지 장치를 반복하는 상품에서 만들어집니다.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section-wrap">
+  <div class="section-label">[ 2 / 3 ] 데이터 근거와 샘플 체크</div>
+  <div class="card">
+    <h2>왜 이렇게 잡는가</h2>
+    <p class="sub">핵심 근거만 남겼습니다. 자세한 숫자는 원본 `ST01, ST02.xlsx`와 품목리뷰/기획현황 파일에서 확인합니다.</p>
+    <table>
+      <thead>
+        <tr><th>품번</th><th>25SS-26SS 확인 내용</th><th>27SS 판단</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ST01</td>
+          <td>25SS 57K는 이월 영향이 컸고, 26SS 36K도 7월 기준 소진율 42% 수준. 동일 주차 판매도 25SS 1,168장에서 26SS 752장으로 하락.</td>
+          <td>30~32K. 가슴 워드로고 하나로 인지 집중. 페이드 컬러는 깊게 잡지 않음.</td>
+        </tr>
+        <tr>
+          <td>ST02</td>
+          <td>26SS ST 주간 매출 1위였지만 7월 기준 소진율은 35%. 기능성 소재 설득력이 있어야 가격 차이를 방어 가능.</td>
+          <td>30~34K. 쿨폰테/쿨소로나 샘플에서 착용감과 형태 안정성 확인 후 상단 룸 판단.</td>
+        </tr>
+        <tr>
+          <td>ST03</td>
+          <td>직접 대응 품번은 없지만, 그래픽/워싱/타이포는 소량 고효율 품번 중심으로 반응. 기본물과 역할이 다름.</td>
+          <td>8~10K. 센터 로고와 시즌 라벨로 신선도 담당. 리오더/QR 전제.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="section-title teal">샘플 체크 포인트</div>
+    <table>
+      <thead>
+        <tr><th>구분</th><th>꼭 볼 것</th><th>주의할 점</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>ST01</td><td>착좌 로고 크기, 두줄 워드로고 가독성, 페이드 컬러와 자수 배색</td><td>로고를 키우기보다 여백과 위치로 고급스럽게 보여야 함</td></tr>
+        <tr><td>ST02</td><td>쿨폰테/쿨소로나 터치감, 비침, 세탁 후 형태, 키키 로고 기법</td><td>로고가 귀여움 쪽으로 과해지면 기능성 무드가 약해짐</td></tr>
+        <tr><td>ST03</td><td>아치 vs 일자 로고, 안료 프린트 질감, 와끼 위 라벨 봉제 위치</td><td>처음부터 메인 물량으로 보면 위험. 시즌 테스트로 봐야 함</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-wrap">
+  <div class="section-label">[ 3 / 3 ] 브랜드별 대표 티셔츠/로고 상품 보드</div>
+  <div class="card">
+    <h2>브랜드별 시그니처 티셔츠 구조</h2>
+    <p class="sub">대표작 사례는 “하나의 인지 장치를 반복한다”는 근거로 사용합니다. 테켓/네이머/브라운브레스 이미지는 전달받은 레퍼런스로 교체했습니다.</p>
+    <div class="brand-grid">
+      <div class="brand-card">
+        <img class="brand-img" src="assets/namer-bluer-hoodie.png" alt="Namerclothing BLUER hoodie">
+        <div class="brand-body">
+          <div class="brand-top"><div class="brand-name">네이머클로딩</div><div class="pill">TEAM WORD</div></div>
+          <div class="brand-product">BLUER TEAM HOODIE / BLUER TEAM 라인</div>
+          <div class="desc">브랜드명보다 특정 문구가 먼저 떠오르는 구조. `BLUER`처럼 팀명/크루명 형태의 단어가 상품명과 브랜드 자산이 됩니다.</div>
+          <div class="apply"><b>WA2702 적용:</b> ST01의 두줄 워드로고도 기억되는 문구 구조로 잡아야 합니다.</div>
+          <div class="links"><a href="https://www.musinsa.com/products/2339102" target="_blank">무신사</a><a href="https://www.namerclothing.com/category/1110-1721%EC%8B%9C-sale-50/145/?cate_no=145&sort_method=7" target="_blank">공식몰</a></div>
+        </div>
+      </div>
+
+      <div class="brand-card">
+        <img class="brand-img" src="https://image.msscdn.net/images/goods_img/20260206/5992292/5992292_17707081148111_500.jpg" alt="thisisneverthat T-Logo W Tee">
+        <div class="brand-body">
+          <div class="brand-top"><div class="brand-name">디스이즈네버댓</div><div class="pill">SMALL LOGO</div></div>
+          <div class="brand-product">T-Logo W Tee / DSN Logo Tee</div>
+          <div class="desc">작은 착좌 로고, 짧은 워드마크, 충분한 여백이 반복되는 베이직 티 구조. 로고가 작아도 브랜드 인지가 됩니다.</div>
+          <div class="apply"><b>WA2702 적용:</b> ST01 자수 로고는 크게 키우기보다 여백과 위치가 중요합니다.</div>
+          <div class="links"><a href="https://www.musinsa.com/products/5992292" target="_blank">무신사</a><a href="https://www.endclothing.com/au/thisisneverthat-dsn-logo-t-shirt-tn231ttsst03-blk.html" target="_blank">END.</a></div>
+        </div>
+      </div>
+
+      <div class="brand-card">
+        <img class="brand-img" src="assets/brownbreath-back-logo.png" alt="Brownbreath logo t-shirt">
+        <div class="brand-body">
+          <div class="brand-top"><div class="brand-name">브라운브레스</div><div class="pill teal">SIGNATURE LOGO</div></div>
+          <div class="brand-product">TAG TEE / 로고 그래픽 티셔츠</div>
+          <div class="desc">브라운브레스는 태그/로고 그래픽을 반복해 상품군을 만듭니다. 한 장치가 계속 반복되면 시그니처가 됩니다.</div>
+          <div class="apply"><b>WA2702 적용:</b> ST02 라벨, ST03 시즌 라벨은 1부위만 써도 충분히 브랜드 장치가 됩니다.</div>
+          <div class="links"><a href="https://brownbreath.com/product/bb-tag-small-logo-tee-black/9926/" target="_blank">BB TAG</a><a href="https://brownbreath.com/product/splash-tag-tee-white/6399/" target="_blank">SPLASH TAG</a></div>
+        </div>
+      </div>
+
+      <div class="brand-card">
+        <img class="brand-img" src="assets/teket-logo-tee.png" alt="TEKET logo t-shirt">
+        <div class="brand-body">
+          <div class="brand-top"><div class="brand-name">테켓</div><div class="pill amber">FONT PLAY</div></div>
+          <div class="brand-product">로고 그래픽 티셔츠 / 빈티지 무드 라인</div>
+          <div class="desc">다양한 폰트의 로고 그래픽과 빈티지한 실루엣이 핵심입니다. 상품 하나보다 무드가 먼저 기억됩니다.</div>
+          <div class="apply"><b>WA2702 적용:</b> ST03은 센터 로고를 아치/일자 중 선택해 시즌 무드 담당 품번으로 분리합니다.</div>
+          <div class="links"><a href="https://shop.29cm.co.kr/brand/34509" target="_blank">29CM 브랜드</a><a href="https://www.29cm.co.kr/content/29-around-showroom/2024/09/13/teket" target="_blank">29CM 쇼룸</a></div>
+        </div>
+      </div>
+
+      <div class="brand-card">
+        <img class="brand-img" src="https://product-image.wconcept.co.kr/productimg/image/img2/75/308381975_NG17060.jpg" alt="Marithe Sport Classic Logo Tee">
+        <div class="brand-body">
+          <div class="brand-top"><div class="brand-name">마리떼 프랑소와 저버</div><div class="pill">CLASSIC LOGO</div></div>
+          <div class="brand-product">MARITHE SPORT CLASSIC LOGO TEE</div>
+          <div class="desc">클래식 로고를 중심으로 컬러/라인을 확장하는 구조. 로고 자체가 상품의 구매 이유가 됩니다.</div>
+          <div class="apply"><b>WA2702 적용:</b> ST01은 기본 컬러에서 워드로고가 안정적으로 보여야 합니다.</div>
+          <div class="links"><a href="https://www.wconcept.co.kr/Product/308381975" target="_blank">White</a><a href="https://www.wconcept.co.kr/Product/308381973" target="_blank">Black</a></div>
+        </div>
+      </div>
+
+      <div class="brand-card">
+        <img class="brand-img" src="https://image.msscdn.net/images/goods_img/20230223/3105468/3105468_17524599248986_500.jpg" alt="Satur Logo Embroidery Voyage T-shirt">
+        <div class="brand-body">
+          <div class="brand-top"><div class="brand-name">세터</div><div class="pill teal">EMBROIDERY</div></div>
+          <div class="brand-product">로고 자수 보야지 반팔 / Wave Logo Slub T-shirt</div>
+          <div class="desc">자수 로고 티셔츠와 슬럽 소재 로고 티를 함께 운영합니다. 기본 로고와 시즌 소재를 분리하는 방식이 좋습니다.</div>
+          <div class="apply"><b>WA2702 적용:</b> ST01은 자수 로고 기본물, ST03은 슬럽 소재 그래픽 티로 분리합니다.</div>
+          <div class="links"><a href="https://www.musinsa.com/products/3105468" target="_blank">무신사</a><a href="https://satur.co.kr/product/wave-logo-slub-t-shirt-yellow/5175/" target="_blank">공식몰 Slub</a></div>
+        </div>
+      </div>
+
+      <div class="brand-card">
+        <img class="brand-img" src="https://image.msscdn.net/thumbnails/images/goods_img/20220407/2471761/2471761_17736313856406_big.jpg" alt="Yale 2 Tone Arch T-shirt">
+        <div class="brand-body">
+          <div class="brand-top"><div class="brand-name">예일</div><div class="pill amber">ARCH LOGO</div></div>
+          <div class="brand-product">2 Tone Arch T-shirt / Arch Hoodie</div>
+          <div class="desc">아치 로고는 대중성이 높고 안정적입니다. 컬리지 무드가 있어 티셔츠/후디/스웻까지 확장하기 쉽습니다.</div>
+          <div class="apply"><b>WA2702 적용:</b> ST03 센터 로고는 아치와 일자 샘플을 비교해 결정합니다.</div>
+          <div class="links"><a href="https://global.musinsa.com/id/goods/2471761" target="_blank">Global Musinsa</a></div>
+        </div>
+      </div>
+
+      <div class="brand-card">
+        <img class="brand-img" src="https://covernat.co.kr/web/product/big/202506/8d66e84aea2629ea60a7f8156c157913.jpg" alt="Covernat C Logo Tee">
+        <div class="brand-body">
+          <div class="brand-top"><div class="brand-name">커버낫</div><div class="pill">SYMBOL BASIC</div></div>
+          <div class="brand-product">C 로고 티셔츠</div>
+          <div class="desc">작은 심볼 하나를 장기간 반복해 기본물 자산으로 만든 사례입니다.</div>
+          <div class="apply"><b>WA2702 적용:</b> 키키/WA/워드로고 중 품번별 하나를 명확히 반복해야 대표작이 됩니다.</div>
+          <div class="links"><a href="https://covernat.co.kr/product/c-%EB%A1%9C%EA%B3%A0-%ED%8B%B0%EC%85%94%EC%B8%A0-%ED%99%94%EC%9D%B4%ED%8A%B8/7912/" target="_blank">공식몰</a></div>
+        </div>
+      </div>
+    </div>
+    <p class="period-note">이미지/근거 출처: 전달 이미지, Musinsa, Global Musinsa, END., Brownbreath, 29CM, W Concept, Satur, Covernat.</p>
+  </div>
+</div>
+</body>
+</html>

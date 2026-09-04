@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>27년 2PACK·3PACK 면세 전용 검토 및 재고 축소안</title>
+  <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bcave: {
+              dark: '#264148',
+              medium: '#718790',
+              light: '#DEE2E3',
+              bg: '#F8F9FA',
+              red: '#B94735',
+              amber: '#D4A64F',
+              green: '#3D7465'
+            }
+          },
+          fontFamily: { sans: ['Pretendard', 'sans-serif'] }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: Pretendard, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      background: #F8F9FA;
+      color: #1f2f34;
+      letter-spacing: 0;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid rgba(113,135,144,.24);
+      border-radius: 8px;
+    }
+    .kpi-label { color: #718790; font-size: 13px; font-weight: 800; }
+    .kpi-value { color: #264148; font-size: 30px; line-height: 1; font-weight: 900; letter-spacing: 0; }
+    .chart-box { height: 250px; }
+    @media print {
+      body { background: #fff; }
+      .card { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="mx-auto max-w-7xl space-y-5 px-5 py-6 md:px-8">
+    <header class="flex flex-col gap-5 border-b border-bcave-light pb-5 md:flex-row md:items-end md:justify-between">
+      <div>
+        <div class="inline-flex rounded border border-bcave-light bg-white px-2.5 py-1 text-xs font-bold text-bcave-dark">WACKY WILLY · 27년 PACK 운영 수정안</div>
+        <h1 class="mt-2 text-3xl font-black text-bcave-dark md:text-4xl">STE3 전용 채널 운영 · STE1 재고 축소</h1>
+        <p class="mt-2 text-sm font-medium text-bcave-medium">데이터 기준: 2PACK 2025년 · 3PACK 2025.09~2026.08.10</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="text-right">
+          <div class="text-sm font-bold text-bcave-medium">운영안</div>
+          <div class="text-2xl font-black text-bcave-dark">STE1 20,000SET</div>
+          <div class="text-2xl font-black text-bcave-dark">STE3 15,000SET</div>
+        </div>
+        <img src="assets/bcave_logo.png" alt="B.CAVE" class="hidden h-9 object-contain sm:block" />
+      </div>
+    </header>
+
+    <section class="grid gap-4 md:grid-cols-2">
+      <div class="card border-l-4 border-l-bcave-green p-4">
+        <div class="kpi-label">WA2700STE1 2PACK</div>
+        <div class="kpi-value mt-2">20,000SET</div>
+        <div class="mt-2 text-sm text-bcave-medium">기본 20,000SET 운영</div>
+      </div>
+      <div class="card border-l-4 border-l-bcave-amber p-4">
+        <div class="kpi-label">WA2700STE3 3PACK</div>
+        <div class="kpi-value mt-2">15,000SET</div>
+        <div class="mt-2 text-sm text-bcave-medium">면세 전용 또는 면세+직영 전용</div>
+      </div>
+    </section>
+
+    <section class="grid gap-5 lg:grid-cols-3">
+      <div class="card border-l-4 border-l-bcave-amber p-5">
+        <div class="text-xs font-black text-bcave-amber">1 · STE3 전용 채널 근거</div>
+        <h2 class="mt-2 text-xl font-black text-bcave-dark">면세 or 면세+직영 전용</h2>
+        <div class="mt-4 space-y-2 text-sm leading-6">
+          <p><b>면세:</b> 8,369SET · 56.4%.</p>
+          <p><b>직영:</b> 2,809SET · 18.9%.</p>
+          <p><b>합산:</b> 11,178SET · 75.4%.</p>
+          <p><b>판단:</b> 채널 전용 운영 가능.</p>
+        </div>
+      </div>
+
+      <div class="card border-l-4 border-l-bcave-green p-5">
+        <div class="text-xs font-black text-bcave-green">2 · 발주 수량 근거</div>
+        <h2 class="mt-2 text-xl font-black text-bcave-dark">STE1 20,000 · STE3 15,000</h2>
+        <div class="mt-4 space-y-2 text-sm leading-6">
+          <p><b>STE3:</b> 1년 근사 판매 14,830SET.</p>
+          <p><b>판단:</b> LOSS 감안 15,000SET.</p>
+          <p><b>STE1:</b> 25년 판매 35,473SET.</p>
+          <p><b>면세:</b> 12,269SET 이탈 가능.</p>
+          <p><b>판단:</b> STE1 20,000SET 보수 발주.</p>
+        </div>
+      </div>
+
+      <div class="card border-l-4 border-l-bcave-medium p-5">
+        <div class="text-xs font-black text-bcave-medium">OPTION · 원가 확인 후</div>
+        <h2 class="mt-2 text-xl font-black text-bcave-dark">STE1 30,000SET 검토</h2>
+        <div class="mt-4 space-y-2 text-sm leading-6">
+          <p><b>기본:</b> STE1 20,000SET.</p>
+          <p><b>조건:</b> 30,000SET 원가 절감 큼.</p>
+          <p><b>대안:</b> STE1 30,000SET 오더.</p>
+          <p><b>운영:</b> 추가분은 리오더 버퍼.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid gap-4 md:grid-cols-3">
+      <div class="card p-4">
+        <div class="kpi-label">STE1 면세 비중</div>
+        <div class="kpi-value mt-2">34.6%</div>
+        <div class="mt-2 text-sm text-bcave-medium">12,269 / 35,473SET</div>
+      </div>
+      <div class="card p-4">
+        <div class="kpi-label">STE3 면세 비중</div>
+        <div class="kpi-value mt-2">56.4%</div>
+        <div class="mt-2 text-sm text-bcave-medium">8,369 / 14,830SET</div>
+      </div>
+      <div class="card p-4">
+        <div class="kpi-label">STE3 직영 비중</div>
+        <div class="kpi-value mt-2">18.9%</div>
+        <div class="mt-2 text-sm text-bcave-medium">2,809 / 14,830SET</div>
+      </div>
+    </section>
+
+    <section class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div class="card p-4">
+        <div class="kpi-label">2PACK 예상 원가</div>
+        <div class="kpi-value mt-2">10,600원</div>
+        <div class="mt-2 text-sm text-bcave-medium">-V · 원가율 23.7%</div>
+      </div>
+      <div class="card p-4">
+        <div class="kpi-label">3PACK 예상 원가</div>
+        <div class="kpi-value mt-2">12,800원</div>
+        <div class="mt-2 text-sm text-bcave-medium">원가율 23.9%</div>
+      </div>
+      <div class="card p-4">
+        <div class="kpi-label">2PACK 원단</div>
+        <div class="mt-2 text-lg font-black text-bcave-dark">CM30'S + PE75D</div>
+        <div class="mt-2 text-sm text-bcave-medium">190GSM · 쿨코튼</div>
+      </div>
+      <div class="card p-4">
+        <div class="kpi-label">3PACK 원단</div>
+        <div class="mt-2 text-lg font-black text-bcave-dark">CVC 26'S</div>
+        <div class="mt-2 text-sm text-bcave-medium">170GSM</div>
+      </div>
+    </section>
+
+    <section class="grid gap-5 lg:grid-cols-2">
+      <div class="card p-5">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-black text-bcave-dark">STE1 입고·판매·잔여 흐름</h2>
+            <p class="mt-1 text-sm text-bcave-medium">2025년 · WA2502STE1 / WA2503STE1</p>
+          </div>
+          <span class="rounded bg-bcave-green/10 px-2.5 py-1 text-xs font-bold text-bcave-green">재고 축소 근거</span>
+        </div>
+        <div class="chart-box mt-5"><canvas id="pack2FlowChart"></canvas></div>
+        <div class="mt-4 grid gap-3 text-sm md:grid-cols-4">
+          <div class="rounded bg-bcave-bg p-3">
+            <div class="font-black text-bcave-dark">판매</div>
+            <div class="mt-1">35,473SET</div>
+          </div>
+          <div class="rounded bg-bcave-bg p-3">
+            <div class="font-black text-bcave-dark">입고</div>
+            <div class="mt-1">53,119SET</div>
+          </div>
+          <div class="rounded bg-bcave-bg p-3">
+            <div class="font-black text-bcave-dark">연말 잔여</div>
+            <div class="mt-1">17,646SET</div>
+          </div>
+          <div class="rounded bg-bcave-bg p-3">
+            <div class="font-black text-bcave-dark">면세 제외</div>
+            <div class="mt-1">23,204SET</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-5">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-black text-bcave-dark">STE3 입고·판매·잔여 흐름</h2>
+            <p class="mt-1 text-sm text-bcave-medium">2025.09~2026.08.10 · WA2503STE3 / WA2602STE3</p>
+          </div>
+          <span class="rounded bg-bcave-amber/10 px-2.5 py-1 text-xs font-bold text-bcave-amber">채널 집중 근거</span>
+        </div>
+        <div class="chart-box mt-5"><canvas id="pack3FlowChart"></canvas></div>
+        <div class="mt-4 grid gap-3 text-sm md:grid-cols-4">
+          <div class="rounded bg-bcave-bg p-3">
+            <div class="font-black text-bcave-dark">1년 근사 판매</div>
+            <div class="mt-1">14,830SET</div>
+          </div>
+          <div class="rounded bg-bcave-bg p-3">
+            <div class="font-black text-bcave-dark">면세</div>
+            <div class="mt-1">8,369SET · 56.4%</div>
+          </div>
+          <div class="rounded bg-bcave-bg p-3">
+            <div class="font-black text-bcave-dark">직영</div>
+            <div class="mt-1">2,809SET · 18.9%</div>
+          </div>
+          <div class="rounded bg-bcave-bg p-3">
+            <div class="font-black text-bcave-dark">합산</div>
+            <div class="mt-1">11,178SET · 75.4%</div>
+          </div>
+        </div>
+        <div class="mt-3 rounded bg-bcave-bg p-3 text-sm">
+          <b class="text-bcave-dark">15,000SET 근거:</b>
+          1년 근사 판매 14,830SET에 3~4월 재고 부족 LOSS를 감안.
+        </div>
+      </div>
+    </section>
+
+    <section class="grid gap-5 lg:grid-cols-2">
+      <div class="card overflow-hidden p-5">
+        <h2 class="text-xl font-black text-bcave-dark">STE1 월별 상세</h2>
+        <div class="mt-4 overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-bcave-bg text-bcave-medium">
+              <tr>
+                <th class="px-3 py-2 text-left">월</th>
+                <th class="px-3 py-2 text-right">입고</th>
+                <th class="px-3 py-2 text-right">판매</th>
+                <th class="px-3 py-2 text-right">잔여</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">25.02</td><td class="px-3 py-2 text-right">20,000</td><td class="px-3 py-2 text-right">40</td><td class="px-3 py-2 text-right font-bold">19,960</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">25.03</td><td class="px-3 py-2 text-right">0</td><td class="px-3 py-2 text-right">4,021</td><td class="px-3 py-2 text-right font-bold">15,939</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">25.04</td><td class="px-3 py-2 text-right">20,022</td><td class="px-3 py-2 text-right">6,969</td><td class="px-3 py-2 text-right font-bold">28,992</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">25.05</td><td class="px-3 py-2 text-right">0</td><td class="px-3 py-2 text-right">5,897</td><td class="px-3 py-2 text-right font-bold">23,095</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">25.06</td><td class="px-3 py-2 text-right">13,097</td><td class="px-3 py-2 text-right">5,664</td><td class="px-3 py-2 text-right font-bold">30,528</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">25.07</td><td class="px-3 py-2 text-right">0</td><td class="px-3 py-2 text-right">4,229</td><td class="px-3 py-2 text-right font-bold">26,299</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">25.08</td><td class="px-3 py-2 text-right">0</td><td class="px-3 py-2 text-right">2,725</td><td class="px-3 py-2 text-right font-bold">23,574</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">25.09</td><td class="px-3 py-2 text-right">0</td><td class="px-3 py-2 text-right">2,485</td><td class="px-3 py-2 text-right font-bold">21,089</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">25.10</td><td class="px-3 py-2 text-right">0</td><td class="px-3 py-2 text-right">1,440</td><td class="px-3 py-2 text-right font-bold">19,649</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">25.11</td><td class="px-3 py-2 text-right">0</td><td class="px-3 py-2 text-right">1,021</td><td class="px-3 py-2 text-right font-bold">18,628</td></tr>
+              <tr><td class="px-3 py-2 font-semibold text-bcave-dark">25.12</td><td class="px-3 py-2 text-right">0</td><td class="px-3 py-2 text-right">982</td><td class="px-3 py-2 text-right font-bold">17,646</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card overflow-hidden p-5">
+        <h2 class="text-xl font-black text-bcave-dark">STE3 월별 상세</h2>
+        <div class="mt-4 overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-bcave-bg text-bcave-medium">
+              <tr>
+                <th class="px-3 py-2 text-left">월</th>
+                <th class="px-3 py-2 text-right">입고</th>
+                <th class="px-3 py-2 text-right">판매</th>
+                <th class="px-3 py-2 text-right">잔여</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">25.09</td><td class="px-3 py-2 text-right">9,382</td><td class="px-3 py-2 text-right">496</td><td class="px-3 py-2 text-right font-bold">8,886</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">25.10</td><td class="px-3 py-2 text-right">0</td><td class="px-3 py-2 text-right">1,623</td><td class="px-3 py-2 text-right font-bold">7,263</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">25.11</td><td class="px-3 py-2 text-right">632</td><td class="px-3 py-2 text-right">814</td><td class="px-3 py-2 text-right font-bold">7,081</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">25.12</td><td class="px-3 py-2 text-right">0</td><td class="px-3 py-2 text-right">459</td><td class="px-3 py-2 text-right font-bold">6,622</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">26.01</td><td class="px-3 py-2 text-right">0</td><td class="px-3 py-2 text-right">536</td><td class="px-3 py-2 text-right font-bold">6,086</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">26.02</td><td class="px-3 py-2 text-right">0</td><td class="px-3 py-2 text-right">672</td><td class="px-3 py-2 text-right font-bold">5,414</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">26.03</td><td class="px-3 py-2 text-right">0</td><td class="px-3 py-2 text-right">3,098</td><td class="px-3 py-2 text-right font-bold">2,316</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">26.04</td><td class="px-3 py-2 text-right">0</td><td class="px-3 py-2 text-right">711</td><td class="px-3 py-2 text-right font-bold">1,605</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">26.05</td><td class="px-3 py-2 text-right">5,000</td><td class="px-3 py-2 text-right">1,969</td><td class="px-3 py-2 text-right font-bold">4,636</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">26.06</td><td class="px-3 py-2 text-right">5,000</td><td class="px-3 py-2 text-right">1,734</td><td class="px-3 py-2 text-right font-bold">7,902</td></tr>
+              <tr class="border-b border-bcave-light/70"><td class="px-3 py-2 font-semibold text-bcave-dark">26.07</td><td class="px-3 py-2 text-right">0</td><td class="px-3 py-2 text-right">2,063</td><td class="px-3 py-2 text-right font-bold">5,839</td></tr>
+              <tr><td class="px-3 py-2 font-semibold text-bcave-dark">26.08</td><td class="px-3 py-2 text-right">0</td><td class="px-3 py-2 text-right">655</td><td class="px-3 py-2 text-right font-bold">5,184</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid gap-5 lg:grid-cols-5">
+      <div class="card p-5 lg:col-span-3">
+        <h2 class="text-xl font-black text-bcave-dark">최종 운영 방향</h2>
+        <div class="mt-4 grid gap-3 md:grid-cols-3">
+          <div class="rounded bg-bcave-bg p-4">
+            <div class="font-black text-bcave-dark">STE3</div>
+            <div class="mt-1 text-sm">전용 채널 운영</div>
+            <div class="text-sm text-bcave-medium">15,000SET 유지</div>
+          </div>
+          <div class="rounded bg-bcave-bg p-4">
+            <div class="font-black text-bcave-dark">STE1</div>
+            <div class="mt-1 text-sm">전 채널 운영</div>
+            <div class="text-sm text-bcave-medium">20,000SET 축소</div>
+          </div>
+          <div class="rounded bg-bcave-bg p-4">
+            <div class="font-black text-bcave-dark">목표</div>
+            <div class="mt-1 text-sm">재고 위험 축소</div>
+            <div class="text-sm text-bcave-medium">검증 수요 중심 발주</div>
+          </div>
+        </div>
+        <div class="chart-box mt-5"><canvas id="volumeChart"></canvas></div>
+      </div>
+      <div class="card p-5 lg:col-span-2">
+        <h2 class="text-xl font-black text-bcave-dark">판단 요약</h2>
+        <div class="mt-4 space-y-3 text-sm leading-6">
+          <p><b>STE3:</b> 면세+직영 75.4%.</p>
+          <p><b>STE3:</b> 1년 근사 판매 14,830SET.</p>
+          <p><b>STE3:</b> 3~4월 재고 부족 LOSS 감안.</p>
+          <p><b>STE3:</b> 면세 전용 검토.</p>
+          <p><b>대안:</b> 면세+직영 전용 검토.</p>
+          <p><b>STE1:</b> 면세 비중 34.6%.</p>
+          <p><b>STE1:</b> 면세 제외 수요 약 23,000SET.</p>
+          <p><b>STE1:</b> 전 채널형이나 재고 리스크 존재.</p>
+          <p><b>결론:</b> STE1을 20,000SET로 축소.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card p-5">
+      <h2 class="text-xl font-black text-bcave-dark">전체 컬러 아소트</h2>
+      <p class="mt-1 text-sm text-bcave-medium">운영안 35,000SET 기준</p>
+      <div class="mt-4 overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-bcave-bg text-bcave-medium">
+            <tr>
+              <th class="px-3 py-2 text-left">품번</th>
+              <th class="px-3 py-2 text-left">컬러</th>
+              <th class="px-3 py-2 text-left">구성</th>
+              <th class="px-3 py-2 text-right">수량</th>
+              <th class="px-3 py-2 text-right">전체 비중</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-bcave-light/70">
+              <td class="px-3 py-2 font-bold text-bcave-dark">WA2700STE1</td>
+              <td class="px-3 py-2 font-bold">TC</td>
+              <td class="px-3 py-2">BK+WH</td>
+              <td class="px-3 py-2 text-right font-bold">12,000</td>
+              <td class="px-3 py-2 text-right">34.3%</td>
+            </tr>
+            <tr class="border-b border-bcave-light/70">
+              <td class="px-3 py-2 font-bold text-bcave-dark">WA2700STE1</td>
+              <td class="px-3 py-2 font-bold">BK</td>
+              <td class="px-3 py-2">BK+BK</td>
+              <td class="px-3 py-2 text-right font-bold">5,000</td>
+              <td class="px-3 py-2 text-right">14.3%</td>
+            </tr>
+            <tr class="border-b border-bcave-light/70">
+              <td class="px-3 py-2 font-bold text-bcave-dark">WA2700STE1</td>
+              <td class="px-3 py-2 font-bold">WH</td>
+              <td class="px-3 py-2">WH+WH</td>
+              <td class="px-3 py-2 text-right font-bold">3,000</td>
+              <td class="px-3 py-2 text-right">8.6%</td>
+            </tr>
+            <tr class="border-b border-bcave-light/70">
+              <td class="px-3 py-2 font-bold text-bcave-dark">WA2700STE3</td>
+              <td class="px-3 py-2 font-bold">TC</td>
+              <td class="px-3 py-2">3PACK</td>
+              <td class="px-3 py-2 text-right font-bold">15,000</td>
+              <td class="px-3 py-2 text-right">42.9%</td>
+            </tr>
+            <tr class="bg-bcave-bg">
+              <td class="px-3 py-2 font-black text-bcave-dark" colspan="3">합계</td>
+              <td class="px-3 py-2 text-right font-black">35,000</td>
+              <td class="px-3 py-2 text-right font-black">100.0%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="grid gap-5 lg:grid-cols-2">
+      <div class="card overflow-hidden p-5">
+        <h2 class="text-xl font-black text-bcave-dark">STE1 컬러별 사이즈 아소트</h2>
+        <p class="mt-1 text-sm text-bcave-medium">20,000SET 기준 · 수량과 비중 병기</p>
+        <div class="mt-4 overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-bcave-bg text-bcave-medium">
+              <tr>
+                <th class="px-3 py-2 text-left">컬러</th>
+                <th class="px-3 py-2 text-right">총량</th>
+                <th class="px-3 py-2 text-right">XS</th>
+                <th class="px-3 py-2 text-right">S</th>
+                <th class="px-3 py-2 text-right">M</th>
+                <th class="px-3 py-2 text-right">L</th>
+                <th class="px-3 py-2 text-right">XL</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-bcave-light/70">
+                <td class="px-3 py-2 font-bold text-bcave-dark">TC</td>
+                <td class="px-3 py-2 text-right font-bold">12,000</td>
+                <td class="px-3 py-2 text-right">720<br><span class="text-xs text-bcave-medium">6%</span></td>
+                <td class="px-3 py-2 text-right">2,640<br><span class="text-xs text-bcave-medium">22%</span></td>
+                <td class="px-3 py-2 text-right">3,000<br><span class="text-xs text-bcave-medium">25%</span></td>
+                <td class="px-3 py-2 text-right font-bold">3,240<br><span class="text-xs text-bcave-medium">27%</span></td>
+                <td class="px-3 py-2 text-right">2,400<br><span class="text-xs text-bcave-medium">20%</span></td>
+              </tr>
+              <tr class="border-b border-bcave-light/70">
+                <td class="px-3 py-2 font-bold text-bcave-dark">BK</td>
+                <td class="px-3 py-2 text-right font-bold">5,000</td>
+                <td class="px-3 py-2 text-right">250<br><span class="text-xs text-bcave-medium">5%</span></td>
+                <td class="px-3 py-2 text-right">650<br><span class="text-xs text-bcave-medium">13%</span></td>
+                <td class="px-3 py-2 text-right">1,100<br><span class="text-xs text-bcave-medium">22%</span></td>
+                <td class="px-3 py-2 text-right font-bold">1,450<br><span class="text-xs text-bcave-medium">29%</span></td>
+                <td class="px-3 py-2 text-right">1,550<br><span class="text-xs text-bcave-medium">31%</span></td>
+              </tr>
+              <tr class="border-b border-bcave-light/70">
+                <td class="px-3 py-2 font-bold text-bcave-dark">WH</td>
+                <td class="px-3 py-2 text-right font-bold">3,000</td>
+                <td class="px-3 py-2 text-right">180<br><span class="text-xs text-bcave-medium">6%</span></td>
+                <td class="px-3 py-2 text-right">660<br><span class="text-xs text-bcave-medium">22%</span></td>
+                <td class="px-3 py-2 text-right">750<br><span class="text-xs text-bcave-medium">25%</span></td>
+                <td class="px-3 py-2 text-right font-bold">810<br><span class="text-xs text-bcave-medium">27%</span></td>
+                <td class="px-3 py-2 text-right">600<br><span class="text-xs text-bcave-medium">20%</span></td>
+              </tr>
+              <tr class="bg-bcave-bg">
+                <td class="px-3 py-2 font-black text-bcave-dark">합계</td>
+                <td class="px-3 py-2 text-right font-black">20,000</td>
+                <td class="px-3 py-2 text-right font-bold">1,150<br><span class="text-xs text-bcave-medium">5.8%</span></td>
+                <td class="px-3 py-2 text-right font-bold">3,950<br><span class="text-xs text-bcave-medium">19.8%</span></td>
+                <td class="px-3 py-2 text-right font-bold">4,850<br><span class="text-xs text-bcave-medium">24.3%</span></td>
+                <td class="px-3 py-2 text-right font-bold">5,500<br><span class="text-xs text-bcave-medium">27.5%</span></td>
+                <td class="px-3 py-2 text-right font-bold">4,550<br><span class="text-xs text-bcave-medium">22.8%</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card overflow-hidden p-5">
+        <h2 class="text-xl font-black text-bcave-dark">STE3 사이즈 아소트</h2>
+        <p class="mt-1 text-sm text-bcave-medium">15,000SET 기준 · 면세 전용 또는 면세+직영 전용</p>
+        <div class="mt-4 overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-bcave-bg text-bcave-medium">
+              <tr>
+                <th class="px-3 py-2 text-left">컬러</th>
+                <th class="px-3 py-2 text-right">총량</th>
+                <th class="px-3 py-2 text-right">XS</th>
+                <th class="px-3 py-2 text-right">S</th>
+                <th class="px-3 py-2 text-right">M</th>
+                <th class="px-3 py-2 text-right">L</th>
+                <th class="px-3 py-2 text-right">XL</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="px-3 py-2 font-bold text-bcave-dark">TC</td>
+                <td class="px-3 py-2 text-right font-bold">15,000</td>
+                <td class="px-3 py-2 text-right">600<br><span class="text-xs text-bcave-medium">4%</span></td>
+                <td class="px-3 py-2 text-right">3,000<br><span class="text-xs text-bcave-medium">20%</span></td>
+                <td class="px-3 py-2 text-right">3,750<br><span class="text-xs text-bcave-medium">25%</span></td>
+                <td class="px-3 py-2 text-right font-bold">4,200<br><span class="text-xs text-bcave-medium">28%</span></td>
+                <td class="px-3 py-2 text-right">3,450<br><span class="text-xs text-bcave-medium">23%</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-4 grid gap-3 text-sm md:grid-cols-2">
+          <div class="rounded bg-bcave-bg p-3">
+            <div class="font-black text-bcave-dark">면세+직영 수요</div>
+            <div class="mt-1">STE3 11,178SET 판매</div>
+          </div>
+          <div class="rounded bg-bcave-bg p-3">
+            <div class="font-black text-bcave-dark">운영 방식</div>
+            <div class="mt-1">전용 채널 우선 배분</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="text-xs text-bcave-medium pb-8">
+      Source: 추가 데이터/2PACK, 3PACK 판매/판매집계현황 2PACK, 3PACK.xlsx · 입고현황 2PACK, 3PACK.xlsx
+    </section>
+  </main>
+
+  <script>
+    const pack2Monthly = [
+      { month: '25.02', receipt: 20000, sales: 40, ending: 19960 },
+      { month: '25.03', receipt: 0, sales: 4021, ending: 15939 },
+      { month: '25.04', receipt: 20022, sales: 6969, ending: 28992 },
+      { month: '25.05', receipt: 0, sales: 5897, ending: 23095 },
+      { month: '25.06', receipt: 13097, sales: 5664, ending: 30528 },
+      { month: '25.07', receipt: 0, sales: 4229, ending: 26299 },
+      { month: '25.08', receipt: 0, sales: 2725, ending: 23574 },
+      { month: '25.09', receipt: 0, sales: 2485, ending: 21089 },
+      { month: '25.10', receipt: 0, sales: 1440, ending: 19649 },
+      { month: '25.11', receipt: 0, sales: 1021, ending: 18628 },
+      { month: '25.12', receipt: 0, sales: 982, ending: 17646 }
+    ];
+    const pack3Monthly = [
+      { month: '25.09', receipt: 9382, sales: 496, ending: 8886 },
+      { month: '25.10', receipt: 0, sales: 1623, ending: 7263 },
+      { month: '25.11', receipt: 632, sales: 814, ending: 7081 },
+      { month: '25.12', receipt: 0, sales: 459, ending: 6622 },
+      { month: '26.01', receipt: 0, sales: 536, ending: 6086 },
+      { month: '26.02', receipt: 0, sales: 672, ending: 5414 },
+      { month: '26.03', receipt: 0, sales: 3098, ending: 2316 },
+      { month: '26.04', receipt: 0, sales: 711, ending: 1605 },
+      { month: '26.05', receipt: 5000, sales: 1969, ending: 4636 },
+      { month: '26.06', receipt: 5000, sales: 1734, ending: 7902 },
+      { month: '26.07', receipt: 0, sales: 2063, ending: 5839 },
+      { month: '26.08', receipt: 0, sales: 655, ending: 5184 }
+    ];
+
+    function makeFlowChart(id, rows) {
+      new Chart(document.getElementById(id), {
+        type: 'bar',
+        data: {
+          labels: rows.map(r => r.month),
+          datasets: [
+            {
+              type: 'bar',
+              label: '입고',
+              data: rows.map(r => r.receipt),
+              backgroundColor: '#718790',
+              borderRadius: 4
+            },
+            {
+              type: 'bar',
+              label: '판매',
+              data: rows.map(r => r.sales),
+              backgroundColor: '#3D7465',
+              borderRadius: 4
+            },
+            {
+              type: 'line',
+              label: '잔여',
+              data: rows.map(r => r.ending),
+              borderColor: '#B94735',
+              backgroundColor: '#B94735',
+              tension: .25,
+              pointRadius: 3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 10, boxHeight: 10 } },
+            tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${Number(ctx.raw).toLocaleString()}SET` } }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: {
+              beginAtZero: true,
+              ticks: { callback: v => Number(v).toLocaleString() },
+              grid: { color: '#DEE2E3' }
+            }
+          }
+        }
+      });
+    }
+    makeFlowChart('pack2FlowChart', pack2Monthly);
+    makeFlowChart('pack3FlowChart', pack3Monthly);
+
+    const ctx = document.getElementById('volumeChart');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['STE1 조건부 대안', 'STE1 기본안', 'STE3 기본안'],
+        datasets: [{
+          label: 'SET',
+          data: [30000, 20000, 15000],
+          backgroundColor: ['#718790', '#3D7465', '#D4A64F'],
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: (ctx) => Number(ctx.raw).toLocaleString() + 'SET' } }
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            beginAtZero: true,
+            ticks: { callback: v => Number(v).toLocaleString() + 'SET' },
+            grid: { color: '#DEE2E3' }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

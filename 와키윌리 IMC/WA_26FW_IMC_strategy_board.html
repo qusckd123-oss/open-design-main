@@ -1,0 +1,987 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WA 26FW IMC Strategy Board</title>
+    <style>
+      :root {
+        --ink: #171717;
+        --paper: #f4f1e8;
+        --line: #252525;
+        --red: #e72f32;
+        --blue: #2857d9;
+        --mint: #b8ff4d;
+        --yellow: #ffd84a;
+        --gray: #ddd8cc;
+        --soft: #fffaf0;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          linear-gradient(rgba(23, 23, 23, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(23, 23, 23, 0.05) 1px, transparent 1px),
+          var(--paper);
+        background-size: 28px 28px;
+        font-family: "IBM Plex Sans KR", "SUIT", "Pretendard", "Malgun Gothic", sans-serif;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .shell {
+        width: min(1480px, calc(100vw - 40px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        border-bottom: 2px solid var(--line);
+        background: rgba(244, 241, 232, 0.92);
+        backdrop-filter: blur(14px);
+      }
+
+      .topbar .shell {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        min-height: 58px;
+        gap: 20px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 900;
+        letter-spacing: 0;
+      }
+
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border: 2px solid var(--ink);
+        background: var(--mint);
+        font-weight: 1000;
+      }
+
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      nav a {
+        border: 2px solid var(--line);
+        background: var(--soft);
+        padding: 7px 10px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      nav a:hover {
+        background: var(--yellow);
+      }
+
+      .hero {
+        min-height: calc(100vh - 58px);
+        display: grid;
+        grid-template-columns: minmax(0, 1.02fr) minmax(420px, 0.98fr);
+        align-items: stretch;
+        gap: 24px;
+        padding: 34px 0 24px;
+      }
+
+      .hero-copy {
+        border: 3px solid var(--line);
+        background: var(--soft);
+        padding: clamp(22px, 3.5vw, 46px);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 620px;
+      }
+
+      .eyebrow {
+        width: fit-content;
+        border: 2px solid var(--line);
+        background: var(--red);
+        color: white;
+        padding: 7px 10px;
+        font-weight: 900;
+        font-size: 13px;
+      }
+
+      h1 {
+        margin: 26px 0 0;
+        max-width: 940px;
+        font-size: clamp(54px, 8vw, 128px);
+        line-height: 0.88;
+        letter-spacing: 0;
+        font-weight: 1000;
+        text-transform: uppercase;
+      }
+
+      .hero-copy p {
+        margin: 24px 0 0;
+        max-width: 760px;
+        font-size: clamp(18px, 2vw, 28px);
+        line-height: 1.35;
+        font-weight: 800;
+      }
+
+      .thesis {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 28px;
+      }
+
+      .thesis div {
+        border: 2px solid var(--line);
+        background: white;
+        padding: 13px;
+        min-height: 106px;
+      }
+
+      .thesis b {
+        display: block;
+        font-size: 20px;
+        margin-bottom: 8px;
+      }
+
+      .thesis span {
+        display: block;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .hero-visual {
+        position: relative;
+        border: 3px solid var(--line);
+        background:
+          linear-gradient(135deg, rgba(255, 216, 74, 0.72), rgba(231, 47, 50, 0.08) 48%, rgba(40, 87, 217, 0.2)),
+          #fff;
+        overflow: hidden;
+        min-height: 620px;
+      }
+
+      .hero-visual::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(var(--line) 1.2px, transparent 1.2px);
+        background-size: 18px 18px;
+        opacity: 0.16;
+      }
+
+      .product-stack {
+        position: absolute;
+        inset: 34px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .product-tile {
+        position: relative;
+        border: 2px solid var(--line);
+        background: rgba(255, 255, 255, 0.86);
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+      }
+
+      .product-tile img {
+        width: min(96%, 360px);
+        height: 86%;
+        object-fit: contain;
+        filter: drop-shadow(0 18px 18px rgba(23, 23, 23, 0.18));
+      }
+
+      .product-tile:nth-child(1) {
+        grid-row: span 2;
+      }
+
+      .product-tile:nth-child(1) img {
+        width: min(106%, 430px);
+        height: 92%;
+      }
+
+      .label {
+        position: absolute;
+        left: 10px;
+        bottom: 10px;
+        border: 2px solid var(--line);
+        background: var(--mint);
+        padding: 5px 8px;
+        font-size: 12px;
+        font-weight: 1000;
+      }
+
+      section {
+        padding: 34px 0;
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: minmax(240px, 0.42fr) minmax(0, 1fr);
+        gap: 20px;
+        align-items: end;
+        margin-bottom: 16px;
+      }
+
+      .section-head h2 {
+        margin: 0;
+        font-size: clamp(30px, 4.5vw, 68px);
+        line-height: 0.96;
+        letter-spacing: 0;
+        font-weight: 1000;
+      }
+
+      .section-head p {
+        margin: 0;
+        max-width: 840px;
+        font-size: 18px;
+        line-height: 1.55;
+        font-weight: 700;
+      }
+
+      .strategy-grid {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 16px;
+      }
+
+      .panel {
+        border: 3px solid var(--line);
+        background: var(--soft);
+        padding: 18px;
+      }
+
+      .panel.dark {
+        background: var(--ink);
+        color: white;
+      }
+
+      .panel h3 {
+        margin: 0 0 14px;
+        font-size: 25px;
+        line-height: 1.1;
+      }
+
+      .truth-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .truth {
+        display: grid;
+        grid-template-columns: 42px 1fr;
+        gap: 12px;
+        align-items: start;
+        border-top: 2px solid currentColor;
+        padding-top: 11px;
+      }
+
+      .truth strong {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border: 2px solid currentColor;
+        background: var(--yellow);
+        color: var(--ink);
+      }
+
+      .truth b {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 18px;
+      }
+
+      .truth span {
+        font-size: 15px;
+        line-height: 1.48;
+      }
+
+      .campaign-formula {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        border: 3px solid var(--line);
+        background: white;
+      }
+
+      .formula-cell {
+        min-height: 158px;
+        padding: 16px;
+        border-right: 2px solid var(--line);
+      }
+
+      .formula-cell:last-child {
+        border-right: 0;
+      }
+
+      .formula-cell small {
+        display: block;
+        font-weight: 1000;
+        color: var(--blue);
+        margin-bottom: 14px;
+      }
+
+      .formula-cell b {
+        display: block;
+        font-size: 23px;
+        line-height: 1.08;
+        margin-bottom: 10px;
+      }
+
+      .formula-cell span {
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .timeline {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(190px, 1fr));
+        gap: 10px;
+      }
+
+      .month {
+        border: 3px solid var(--line);
+        background: white;
+        min-height: 376px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .month header {
+        border-bottom: 2px solid var(--line);
+        padding: 12px;
+        background: var(--gray);
+      }
+
+      .month:nth-child(1) header,
+      .month:nth-child(5) header {
+        background: var(--yellow);
+      }
+
+      .month:nth-child(3) header {
+        background: var(--mint);
+      }
+
+      .month h3 {
+        margin: 0;
+        font-size: 28px;
+      }
+
+      .month header span {
+        display: block;
+        margin-top: 2px;
+        font-size: 13px;
+        font-weight: 900;
+      }
+
+      .month .body {
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        flex: 1;
+      }
+
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .chip {
+        border: 2px solid var(--line);
+        background: var(--soft);
+        padding: 5px 7px;
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .month p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.48;
+      }
+
+      .shot {
+        margin-top: auto;
+        border: 2px solid var(--line);
+        background: #fff;
+        height: 112px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+      }
+
+      .shot img {
+        width: 96%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .role-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .role {
+        position: relative;
+        border: 3px solid var(--line);
+        background: white;
+        min-height: 440px;
+        display: grid;
+        grid-template-rows: 160px auto;
+        overflow: hidden;
+      }
+
+      .role figure {
+        margin: 0;
+        border-bottom: 2px solid var(--line);
+        background: var(--soft);
+        display: grid;
+        place-items: center;
+      }
+
+      .role figure img {
+        max-width: 98%;
+        max-height: 150px;
+        object-fit: contain;
+      }
+
+      .role .copy {
+        padding: 15px;
+      }
+
+      .role h3 {
+        margin: 0 0 8px;
+        font-size: 26px;
+        line-height: 1;
+      }
+
+      .role p {
+        margin: 0 0 12px;
+        font-size: 14px;
+        line-height: 1.48;
+      }
+
+      .role ul,
+      .action ul {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        display: grid;
+        gap: 7px;
+      }
+
+      .role li,
+      .action li {
+        position: relative;
+        padding-left: 16px;
+        font-size: 13px;
+        line-height: 1.42;
+      }
+
+      .role li::before,
+      .action li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.62em;
+        width: 8px;
+        height: 8px;
+        border: 2px solid var(--line);
+        background: var(--red);
+      }
+
+      .action-board {
+        display: grid;
+        grid-template-columns: 0.85fr 1.15fr;
+        gap: 16px;
+      }
+
+      .priority {
+        border: 3px solid var(--line);
+        background: var(--red);
+        color: white;
+        padding: 20px;
+        min-height: 480px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .priority h3 {
+        margin: 0;
+        font-size: clamp(34px, 5vw, 78px);
+        line-height: 0.9;
+      }
+
+      .priority p {
+        margin: 20px 0 0;
+        font-size: 20px;
+        line-height: 1.42;
+        font-weight: 800;
+      }
+
+      .priority .metric {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-top: 24px;
+      }
+
+      .metric div {
+        border: 2px solid white;
+        padding: 10px;
+      }
+
+      .metric b {
+        display: block;
+        font-size: 28px;
+      }
+
+      .metric span {
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .action {
+        border: 3px solid var(--line);
+        background: white;
+        padding: 15px;
+        min-height: 232px;
+      }
+
+      .action h3 {
+        margin: 0 0 10px;
+        font-size: 22px;
+        line-height: 1.1;
+      }
+
+      .kpi {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(130px, 1fr));
+        gap: 10px;
+      }
+
+      .kpi div {
+        border: 3px solid var(--line);
+        background: var(--soft);
+        padding: 14px;
+        min-height: 132px;
+      }
+
+      .kpi b {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 20px;
+      }
+
+      .kpi span {
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .footer-note {
+        border-top: 3px solid var(--line);
+        margin-top: 30px;
+        padding: 18px 0 32px;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      @media (max-width: 1120px) {
+        .hero,
+        .strategy-grid,
+        .action-board {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-copy,
+        .hero-visual {
+          min-height: 560px;
+        }
+
+        .timeline,
+        .role-grid,
+        .kpi {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 720px) {
+        .shell {
+          width: min(100vw - 22px, 1480px);
+        }
+
+        .topbar .shell {
+          grid-template-columns: 1fr;
+          padding: 8px 0;
+        }
+
+        nav {
+          justify-content: flex-start;
+        }
+
+        nav a {
+          font-size: 12px;
+          padding: 6px 8px;
+        }
+
+        .hero {
+          padding-top: 16px;
+        }
+
+        .hero-copy,
+        .hero-visual {
+          min-height: 520px;
+        }
+
+        .thesis,
+        .section-head,
+        .campaign-formula,
+        .timeline,
+        .role-grid,
+        .actions,
+        .kpi,
+        .priority .metric {
+          grid-template-columns: 1fr;
+        }
+
+        .formula-cell {
+          border-right: 0;
+          border-bottom: 2px solid var(--line);
+        }
+
+        .formula-cell:last-child {
+          border-bottom: 0;
+        }
+
+        .product-stack {
+          inset: 16px;
+          grid-template-columns: 1fr;
+          grid-template-rows: repeat(4, 1fr);
+        }
+
+        .product-tile:nth-child(1) {
+          grid-row: span 1;
+        }
+
+        h1 {
+          font-size: clamp(46px, 18vw, 82px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="shell">
+        <div class="brand"><span class="brand-mark">WA</span> 26FW IMC STRATEGY BOARD</div>
+        <nav aria-label="전략 보드 내비게이션">
+          <a href="#thesis">전략 진단</a>
+          <a href="#journey">월별 여정</a>
+          <a href="#roles">상품 역할</a>
+          <a href="#actions">보완 액션</a>
+          <a href="#kpi">KPI</a>
+        </nav>
+      </div>
+    </div>
+
+    <main>
+      <section class="hero shell" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <div>
+            <div class="eyebrow">26FW 보완 방향 / 상품 IMC → 시즌 캠페인</div>
+            <h1 id="hero-title">Wacky Warmth</h1>
+            <p>
+              이상하게 귀엽고, 확실히 따뜻한 겨울. 26FW는 상품별 출시표가 아니라
+              프리폴 진입부터 연말 기프트까지 이어지는 하나의 고객 여정으로 재편한다.
+            </p>
+          </div>
+          <div class="thesis" id="thesis">
+            <div><b>Message</b><span>카라, 셋업, 플리스, 다운, ACC를 하나로 묶는 시즌 언어가 필요하다.</span></div>
+            <div><b>Journey</b><span>8월부터 12월까지 감정과 구매 이유가 단계적으로 커져야 한다.</span></div>
+            <div><b>Conversion</b><span>ACC는 보조 노출이 아니라 선물·추가구매·객단가 전환 상품이다.</span></div>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-label="26FW 대표 상품 도식화">
+          <div class="product-stack">
+            <div class="product-tile">
+              <img src="imc_strategy_assets/hero_down_black.png" alt="블랙 다운 도식화" />
+              <span class="label">HERO OUTER</span>
+            </div>
+            <div class="product-tile">
+              <img src="imc_strategy_assets/teddy_fleece.png" alt="블루 테디 플리스 도식화" />
+              <span class="label">COZY FLEECE</span>
+            </div>
+            <div class="product-tile">
+              <img src="imc_strategy_assets/stripe_cardigan.png" alt="스트라이프 가디건 도식화" />
+              <span class="label">PRE-FALL KNIT</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="shell" aria-labelledby="strategy-title">
+        <div class="section-head">
+          <h2 id="strategy-title">전략 진단</h2>
+          <p>
+            현재 파일은 상품 묶음과 물량은 충분하지만, 소비자가 기억할 시즌 문장과
+            월별 행동 설계가 약하다. IMC의 목적을 “상품 노출”에서 “구매 이유 축적”으로 바꿔야 한다.
+          </p>
+        </div>
+
+        <div class="strategy-grid">
+          <div class="panel dark">
+            <h3>현재 구조의 약점</h3>
+            <div class="truth-list">
+              <div class="truth"><strong>1</strong><span><b>테마는 많지만 상위 캠페인이 약함</b>스트라이프, 셋업, 플리스, 다운, 레드가 같은 시즌으로 묶이는 이유가 더 선명해야 한다.</span></div>
+              <div class="truth"><strong>2</strong><span><b>월별 전개가 출시표에 가까움</b>8월 프리폴부터 12월 기프트까지 고객 감정이 누적되는 구조가 필요하다.</span></div>
+              <div class="truth"><strong>3</strong><span><b>ACC가 전환 장치로 설계되지 않음</b>백, 모자, 슈즈, 머플러는 객단가와 선물 수요를 만드는 Conversion 축으로 분리해야 한다.</span></div>
+              <div class="truth"><strong>4</strong><span><b>12월 캠페인 공백</b>FW 후반 매출을 할인으로만 넘기지 않으려면 레드/기프트 상품군이 실제 SKU와 연결돼야 한다.</span></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>새로운 캠페인 공식</h3>
+            <div class="campaign-formula">
+              <div class="formula-cell"><small>SEASON</small><b>Wacky Warmth</b><span>FW 기능성인 보온과 와키윌리다운 키치함을 한 문장으로 연결.</span></div>
+              <div class="formula-cell"><small>VISUAL</small><b>Warm Texture Clash</b><span>니트, 벨벳, 플리스, 코듀로이, 퍼를 의도적으로 섞는 촬영 톤.</span></div>
+              <div class="formula-cell"><small>CONTENT</small><b>Detail First</b><span>릴리 퀼팅, 더키, 그래픽, 레드 포인트를 짧은 디테일 콘텐츠로 반복.</span></div>
+              <div class="formula-cell"><small>SALES</small><b>Set + Gift</b><span>웨어 세트 구매와 ACC 선물 구매를 분리 운영해 전환 구조를 만든다.</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="shell" id="journey" aria-labelledby="journey-title">
+        <div class="section-head">
+          <h2 id="journey-title">월별 고객 여정</h2>
+          <p>상품 출시 월을 그대로 보여주지 말고, 소비자가 느끼는 계절 변화와 구매 명분을 순서대로 설계한다.</p>
+        </div>
+
+        <div class="timeline">
+          <article class="month">
+            <header><h3>08</h3><span>PRE-FALL SIGNAL</span></header>
+            <div class="body">
+              <div class="chip-row"><span class="chip">카라 스트라이프</span><span class="chip">가디건</span><span class="chip">그래픽 모자</span></div>
+              <p>가을이 시작되는 신호를 만든다. “얇게 바꾸는 첫 FW 룩”으로 카라/스트라이프/가디건을 전면에 둔다.</p>
+              <p><b>콘텐츠:</b> 등교·데일리 외출 3룩, 카라 디테일 클로즈업, ACC 같이 들기.</p>
+              <div class="shot"><img src="imc_strategy_assets/stripe_cardigan.png" alt="8월 스트라이프 가디건" /></div>
+            </div>
+          </article>
+
+          <article class="month">
+            <header><h3>09</h3><span>SET-UP REASON</span></header>
+            <div class="body">
+              <div class="chip-row"><span class="chip">져지코듀로이</span><span class="chip">벨벳 셋업</span><span class="chip">뉴베이직</span></div>
+              <p>상하의 조합이 가능한 셋업을 “고민 없이 귀여운 한 벌”로 제안한다.</p>
+              <p><b>콘텐츠:</b> 상하의 믹스매치, 소재 터치감, 컬러별 친구 착장.</p>
+              <div class="shot"><img src="imc_strategy_assets/setup_hoodie.png" alt="9월 셋업 후디" /></div>
+            </div>
+          </article>
+
+          <article class="month">
+            <header><h3>10</h3><span>COZY MATERIAL PUSH</span></header>
+            <div class="body">
+              <div class="chip-row"><span class="chip">테디 플리스</span><span class="chip">경량 아우터</span><span class="chip">더키</span></div>
+              <p>FW 피크 전 소재감을 각인한다. 보온성보다 먼저 “만지고 싶은 포근함”을 보여준다.</p>
+              <p><b>콘텐츠:</b> 플리스 질감 매크로, 레이어링 전후, 더키 그래픽 숏폼.</p>
+              <div class="shot"><img src="imc_strategy_assets/teddy_fleece.png" alt="10월 테디 플리스" /></div>
+            </div>
+          </article>
+
+          <article class="month">
+            <header><h3>11</h3><span>OUTER HERO MOMENT</span></header>
+            <div class="body">
+              <div class="chip-row"><span class="chip">코듀로이 다운</span><span class="chip">더플코트</span><span class="chip">퍼 디테일</span></div>
+              <p>고단가 아우터는 “올겨울 대표 착장”으로 집중한다. 룩북보다 착용 장면을 많이 만든다.</p>
+              <p><b>콘텐츠:</b> 출근/등교/주말 3상황, 보온 디테일, ACC 선물 연결.</p>
+              <div class="shot"><img src="imc_strategy_assets/duffle_coat.png" alt="11월 더플코트" /></div>
+            </div>
+          </article>
+
+          <article class="month">
+            <header><h3>12</h3><span>RED GIFT CLOSE</span></header>
+            <div class="body">
+              <div class="chip-row"><span class="chip">레드 컬렉션</span><span class="chip">머플러</span><span class="chip">백/모자</span></div>
+              <p>비어 있는 12월을 선물 캠페인으로 채운다. 대형 아우터보다 소액 구매와 컬러 포인트가 핵심이다.</p>
+              <p><b>콘텐츠:</b> 5만원대/10만원대 선물, 레드 포인트 룩, 커플·친구 선물 컷.</p>
+              <div class="shot"><img src="imc_strategy_assets/red_cardigan.png" alt="12월 레드 포인트 가디건" /></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="shell" id="roles" aria-labelledby="roles-title">
+        <div class="section-head">
+          <h2 id="roles-title">상품 역할 재정의</h2>
+          <p>모든 상품을 같은 방식으로 노출하면 IMC가 약해진다. 각 품번의 역할을 먼저 나누고 콘텐츠·예산·리오더 기준을 다르게 둔다.</p>
+        </div>
+
+        <div class="role-grid">
+          <article class="role">
+            <figure><img src="imc_strategy_assets/cloud_corduroy_down.png" alt="히어로 코듀로이 다운" /></figure>
+            <div class="copy">
+              <h3>Hero</h3>
+              <p>시즌 비주얼과 매출을 끌고 가는 대표 상품. 코듀로이 다운, 테디 플리스, 더플코트.</p>
+              <ul>
+                <li>키비주얼, 메인 배너, 룩북 첫 컷 배정</li>
+                <li>판매율과 검색/클릭 지표를 주간 모니터링</li>
+                <li>리오더 판단 기준을 가장 먼저 적용</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="role">
+            <figure><img src="imc_strategy_assets/light_outer.png" alt="스타일링용 경량 아우터" /></figure>
+            <div class="copy">
+              <h3>Support</h3>
+              <p>착장 완성도를 만드는 상품. 카라 니트, 가디건, 셋업, 뉴베이직 스웻.</p>
+              <ul>
+                <li>Hero 상품과 세트 착장으로 반복 노출</li>
+                <li>컬러별 친구 착장, 상하의 조합 콘텐츠</li>
+                <li>객단가 상승용 묶음 기획전에 투입</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="role">
+            <figure><img src="imc_strategy_assets/corduroy_pants.png" alt="워싱 코듀로이 팬츠" /></figure>
+            <div class="copy">
+              <h3>Conversion</h3>
+              <p>구매 장벽을 낮추는 전환 상품. 백, 모자, 슈즈, 머플러, 소액 ACC.</p>
+              <ul>
+                <li>웨어 착장 안에 필수적으로 동시 노출</li>
+                <li>선물 가격대별 큐레이션으로 분리 운영</li>
+                <li>상세 컷, 사이즈 비교 컷, 착용 컷 강화</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="role">
+            <figure><img src="imc_strategy_assets/wacky_graphic_knit.png" alt="와키 그래픽 니트" /></figure>
+            <div class="copy">
+              <h3>Character</h3>
+              <p>와키윌리다움을 기억시키는 상품. 더키, 릴리 퀼팅, 그래픽, 레드 포인트.</p>
+              <ul>
+                <li>짧은 릴스와 밈형 콘텐츠의 주인공으로 사용</li>
+                <li>디테일 클로즈업을 누적 자산화</li>
+                <li>시즌 전체 톤을 키치하게 만드는 장치</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="shell" id="actions" aria-labelledby="actions-title">
+        <div class="section-head">
+          <h2 id="actions-title">보완 액션</h2>
+          <p>이번 파일에서 바로 보완해야 할 것은 상품 추가보다 운영 설계다. 아래 항목이 채워져야 실행 가능한 IMC가 된다.</p>
+        </div>
+
+        <div class="action-board">
+          <aside class="priority">
+            <div>
+              <h3>12월을 비워두지 말 것</h3>
+              <p>FW 후반은 할인만 기다리는 구간이 아니라, 레드 포인트와 ACC 선물 수요로 시즌을 닫는 구간이다.</p>
+            </div>
+            <div class="metric">
+              <div><b>3-5</b><span>RED/GIFT ST 최소 확보</span></div>
+              <div><b>2</b><span>가격대별 선물 큐레이션</span></div>
+              <div><b>4W</b><span>11월 말부터 콘텐츠 운영</span></div>
+            </div>
+          </aside>
+
+          <div class="actions">
+            <article class="action">
+              <h3>시즌 슬로건 확정</h3>
+              <ul>
+                <li>`Wacky Warmth`를 기준으로 키비주얼 문장과 상세페이지 톤을 통일</li>
+                <li>“포근함 + 이상하게 귀여움”을 모든 IMC 코멘트의 상위 문장으로 반영</li>
+              </ul>
+            </article>
+            <article class="action">
+              <h3>악세 8월 블록 보강</h3>
+              <ul>
+                <li>우먼스 데일리백/그래픽 모자의 타겟과 착용 장면 기재</li>
+                <li>웨어 동시 스타일링, 사이즈 비교, 어깨 착용 컷을 필수 컷으로 지정</li>
+              </ul>
+            </article>
+            <article class="action">
+              <h3>대표 3룩 지정</h3>
+              <ul>
+                <li>각 IMC마다 히어로룩, 데일리룩, 구매전환룩을 고정</li>
+                <li>웨어+ACC 조합을 룩 단위로 운영해 객단가 상승을 설계</li>
+              </ul>
+            </article>
+            <article class="action">
+              <h3>주차별 실행표 연결</h3>
+              <ul>
+                <li>출시일 기준으로 촬영, 시딩, 릴스, 기획전, 라이브 일정을 주차별 배치</li>
+                <li>Hero 품번은 출시 전 티징, 출시 주 집중, 2주차 리마인드로 3단 운영</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="shell" id="kpi" aria-labelledby="kpi-title">
+        <div class="section-head">
+          <h2 id="kpi-title">운영 KPI</h2>
+          <p>IMC 파일에 아래 한 줄 체크표가 붙어야 상품 기획, 마케팅, 영업이 같은 기준으로 움직일 수 있다.</p>
+        </div>
+
+        <div class="kpi">
+          <div><b>노출</b><span>테마별 메인 배너, SNS 피드, 릴스, 상세페이지 노출 수량</span></div>
+          <div><b>반응</b><span>클릭률, 저장, 댓글 키워드, 소재/컬러별 반응 차이</span></div>
+          <div><b>전환</b><span>장바구니, 세트 구매율, ACC 동시 구매율</span></div>
+          <div><b>판매</b><span>7일/14일 판매율, 금액 상위 품번, 품절 컬러</span></div>
+          <div><b>시딩</b><span>인플루언서별 착장 컷 회수, 링크 클릭, 콘텐츠 재사용 가능 여부</span></div>
+          <div><b>리오더</b><span>Hero 품번 기준 판매율, 잔량, 입고 가능일, 대체 품번</span></div>
+        </div>
+
+        <div class="footer-note">
+          <span>Source: WA 26FW 상품 IMC_260604.xlsx / strategy interpretation</span>
+          <span>HTML board: WA_26FW_IMC_strategy_board.html</span>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

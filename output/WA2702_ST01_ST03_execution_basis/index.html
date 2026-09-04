@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WA2702 ST01-ST03 최종 진행안</title>
+<style>
+  :root{--navy:#2D4A5C;--teal:#4A9E8E;--amber:#B7770D;--red:#C0392B;--ink:#1A1A1A;--bg:#E9ECEF;--soft:#F7F8FA;--line:#E7EAEE;--cream:#FFF8F0}
+  *{box-sizing:border-box}
+  body{margin:0;padding:32px 0 54px;background:var(--bg);color:var(--ink);font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;letter-spacing:0}
+  .wrap{width:860px;max-width:calc(100% - 28px);margin:0 auto 24px}
+  .label{margin:0 0 6px 2px;color:#9CA3AF;font-size:11px}
+  .card{background:#fff;border-radius:10px;padding:30px 36px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  h1{margin:0 0 4px;font-size:23px;line-height:1.28}
+  h2{margin:0 0 4px;font-size:18px;line-height:1.35}
+  h3{margin:0 0 8px;font-size:14px;line-height:1.35}
+  p{margin:0}.sub{margin:0 0 18px;color:#888;font-size:12px;line-height:1.55}
+  .decision{margin:14px 0 18px;padding:14px 16px;border-radius:8px;background:#F0F4F7;border-left:4px solid var(--navy);font-size:14px;font-weight:800;line-height:1.65}.decision b{color:var(--red)}
+  .kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}.kpi{padding:14px 16px;border-radius:8px;background:var(--soft)}.kpi b{display:block;color:var(--navy);font-size:22px;line-height:1.1}.kpi span{display:block;margin-top:4px;color:#777;font-size:11px;line-height:1.45}
+  .review-grid,.style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.review,.style,.ref-block{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+  .review img,.ref-card img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:#f5f5f5}.review-body{padding:13px 14px}.review b{display:block;margin-bottom:6px;color:var(--navy);font-size:14px}.review p{color:#444;font-size:12px;line-height:1.6}
+  .head{padding:14px 15px;color:#fff;background:var(--navy)}.style:nth-child(2) .head{background:var(--teal)}.style:nth-child(3) .head{background:var(--amber)}.head strong{display:block;font-size:19px;line-height:1.1}.head span{display:block;margin-top:4px;font-size:11px;font-weight:800;opacity:.9}
+  .body{padding:14px 15px 15px}.price{display:flex;justify-content:space-between;gap:8px;margin-bottom:12px}.price b{font-size:18px;color:var(--red)}.price span{color:#555;font-size:12px;font-weight:800;text-align:right}
+  dl{display:grid;gap:7px;margin:0}.spec{display:grid;grid-template-columns:58px 1fr;gap:8px;color:#444;font-size:12px;line-height:1.45}.spec dt{margin:0;color:#888;font-weight:800}.spec dd{margin:0}
+  .section-title{display:inline-block;margin:20px 0 12px;padding:3px 10px;border-radius:3px;color:#fff;background:var(--navy);font-size:11px;font-weight:800;letter-spacing:.8px}
+  .note{margin-top:14px;padding:12px 16px;border-radius:7px;background:var(--cream);border-left:4px solid var(--amber);font-size:13px;line-height:1.65;color:#333}
+  .ref-block{margin-top:12px;padding:14px}.ref-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;margin-bottom:10px}.ref-head strong{color:var(--navy);font-size:15px}.ref-head span{color:#777;font-size:11px;line-height:1.45;text-align:right}
+  .ref-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.ref-card img{aspect-ratio:3/4;border-radius:8px}.ref-card .name{margin-top:6px;color:#222;font-size:12px;font-weight:800;line-height:1.35}.ref-card .desc{margin-top:2px;color:#666;font-size:11px;line-height:1.35}
+  @media(max-width:760px){body{padding-top:18px}.card{padding:22px 18px}.kpi-row,.review-grid,.style-grid,.ref-grid{grid-template-columns:1fr}.ref-head{display:block}.ref-head span{display:block;margin-top:3px;text-align:left}}
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="label">WA2702 ST LINE FINAL</div>
+    <section class="card">
+      <h1>27SS ST01-ST03 최종 진행안</h1>
+      <p class="sub">`ST01, ST02.xlsx` Sheet1 리뷰와 `ST01,02,03 래퍼런스.xlsx` 이미지를 붙여 정리한 최종본입니다.</p>
+      <div class="decision">결론: <b>ST01은 39,000원 물량형, ST02는 49,000원 기능성+스몰 키키, ST03은 앞판 대형 로고 캐리오버</b>로 분리합니다.</div>
+      <div class="kpi-row">
+        <div class="kpi"><b>72,000PCS</b><span>총 운영 수량<br>ST01 32K · ST02 30K · ST03 10K</span></div>
+        <div class="kpi"><b>1부위</b><span>디테일 축소<br>소매 or 와끼 중 1개만 사용</span></div>
+        <div class="kpi"><b>39~49K</b><span>판가 구조<br>ST01 39K / ST02·ST03 49K</span></div>
+      </div>
+
+      <div class="section-title">25SS~26SS REVIEW</div>
+      <div class="review-grid">
+        <article class="review">
+          <img src="final_assets/review_25ss_st01_colors.png" alt="25SS ST01 컬러 리뷰">
+          <div class="review-body">
+            <b>25SS ST01은 이월 판매가 큼</b>
+            <p>WA2502ST01은 57,000장 중 25년 12월 31일 35,200장 소진, 26년 7월 9일 46,500장 소진. 26년에만 약 11,300장이 추가 판매됐습니다.</p>
+          </div>
+        </article>
+        <article class="review">
+          <img src="final_assets/review_26ss_st01_colors.png" alt="26SS ST01 컬러 리뷰">
+          <div class="review-body">
+            <b>26SS ST01은 전년 이월과 겹침</b>
+            <p>WA2602ST01은 36,000장 중 26년 7월 8일 기준 15,000장, 소진율 42%. 전년 이월품과 차이가 작아 신상품 전환력이 약했습니다.</p>
+          </div>
+        </article>
+        <article class="review">
+          <img src="final_assets/review_tint_sales_screen.png" alt="경쟁사 판매 데이터 리뷰">
+          <div class="review-body">
+            <b>스몰로고만으로는 볼륨 한계</b>
+            <p>TINT와 Brownbreath 판매 흐름은 스몰로고보다 앞판 큰 로고가 강합니다. 스몰로고는 기본물·기능형 보조 역할로 보는 게 맞습니다.</p>
+          </div>
+        </article>
+      </div>
+      <div class="note">리뷰 판단: ST01은 전년과 달라 보이는 컬러/라벨 변화가 필요하고, ST03은 앞판 대형 로고 캐리오버로 별도 역할을 만들어야 합니다.</div>
+
+      <div class="section-title">STYLE PLAN</div>
+      <div class="style-grid">
+        <article class="style">
+          <div class="head"><strong>WA2702ST01</strong><span>BASIC VOLUME</span></div>
+          <div class="body">
+            <div class="price"><b>39,000원</b><span>32,000PCS</span></div>
+            <dl>
+              <div class="spec"><dt>아트웍</dt><dd>착좌 두줄 워드로고 직자수</dd></div>
+              <div class="spec"><dt>소재</dt><dd>20수 싱글</dd></div>
+              <div class="spec"><dt>디테일</dt><dd>메인라벨에 키키 IP 사용(전사 or 라벨)</dd></div>
+              <div class="spec"><dt>컬러</dt><dd>화이트/블랙 중심, 워시드 블랙·페이드 퍼플 등 과하지 않은 페이드 컬러 추가</dd></div>
+              <div class="spec"><dt>수량</dt><dd>화이트/블랙/8% 컬러를 60~70% 비중으로 잡고 나머지 컬러 추가</dd></div>
+            </dl>
+          </div>
+        </article>
+        <article class="style">
+          <div class="head"><strong>WA2702ST02</strong><span>KIKI FUNCTION</span></div>
+          <div class="body">
+            <div class="price"><b>49,000원</b><span>30,000PCS</span></div>
+            <dl>
+              <div class="spec"><dt>아트웍</dt><dd>착좌 가슴 스몰 키키 로고. 테두리 자수+바탕 프린트 또는 신규 기법 검토</dd></div>
+              <div class="spec"><dt>소재</dt><dd>쿨폰테 또는 쿨소로나</dd></div>
+              <div class="spec"><dt>디테일</dt><dd>워드로고 포인트라벨 1부위</dd></div>
+              <div class="spec"><dt>역할</dt><dd>기능성 소재와 키키 로고로 49,000원 설득</dd></div>
+            </dl>
+          </div>
+        </article>
+        <article class="style">
+          <div class="head"><strong>WA2702ST03</strong><span>CARRYOVER LOGO</span></div>
+          <div class="body">
+            <div class="price"><b>49,000원</b><span>10,000PCS</span></div>
+            <dl>
+              <div class="spec"><dt>아트웍</dt><dd>앞판 대형 센터 로고(아치 or 일자) 캐리오버. 안료 프린트</dd></div>
+              <div class="spec"><dt>소재</dt><dd>16수 슬럽 싱글</dd></div>
+              <div class="spec"><dt>디테일</dt><dd>와끼 위 봉제. 끼워 물림 X</dd></div>
+              <div class="spec"><dt>옵션</dt><dd>시즌 무드 그래픽 포인트라벨은 시즌별 추가 옵션으로 운영 가능</dd></div>
+              <div class="spec"><dt>역할</dt><dd>앞판 로고 캐리오버로 안정적인 시즌 기본 그래픽 축 확보</dd></div>
+            </dl>
+          </div>
+        </article>
+      </div>
+
+      <div class="section-title">REFERENCE APPENDIX</div>
+      <section class="ref-block">
+        <div class="ref-head"><strong>ST01 Reference</strong><span>착좌 가슴 스몰 워드로고 + 메인라벨 IP 참고</span></div>
+        <div class="ref-grid">
+          <div class="ref-card"><img src="final_assets/ref_st01_small_word_01.png" alt="ST01 스몰 워드로고 1"><div class="name">스몰 워드로고</div><div class="desc">착좌 가슴 로고 비율</div></div>
+          <div class="ref-card"><img src="final_assets/ref_st01_small_word_02.png" alt="ST01 스몰 워드로고 2"><div class="name">스몰 심볼</div><div class="desc">기본물용 로고 크기</div></div>
+          <div class="ref-card"><img src="final_assets/ref_st01_main_label_transfer.png" alt="ST01 메인라벨 전사"><div class="name">전사 라벨</div><div class="desc">키키 IP 라벨 후보</div></div>
+          <div class="ref-card"><img src="final_assets/ref_st01_main_label_label.png" alt="ST01 메인라벨 라벨"><div class="name">직조 라벨</div><div class="desc">키키 IP 라벨 후보</div></div>
+        </div>
+      </section>
+      <section class="ref-block">
+        <div class="ref-head"><strong>ST02 Reference</strong><span>`ST01,02,03 래퍼런스.xlsx` 기준 스몰 IP 로고 + 적용 기법 후보</span></div>
+        <div class="ref-grid">
+          <div class="ref-card"><img src="final_assets/ref_st02_small_ip_logo.png" alt="ST02 래퍼런스 스몰 IP 로고"><div class="name">스몰 IP 로고</div><div class="desc">착좌 가슴 위치 기준</div></div>
+          <div class="ref-card"><img src="final_assets/ref_st02_tech_patch_01.png" alt="ST02 래퍼런스 기법 후보 1"><div class="name">기법 후보 1</div><div class="desc">그래픽 패치 표현</div></div>
+          <div class="ref-card"><img src="final_assets/ref_st02_tech_patch_02.png" alt="ST02 래퍼런스 기법 후보 2"><div class="name">기법 후보 2</div><div class="desc">프린트+패치 조합</div></div>
+          <div class="ref-card"><img src="final_assets/ref_st02_tech_patch_03.png" alt="ST02 래퍼런스 기법 후보 3"><div class="name">기법 후보 3</div><div class="desc">볼륨감 있는 로고 표현</div></div>
+          <div class="ref-card"><img src="final_assets/ref_st02_tech_patch_04.png" alt="ST02 래퍼런스 기법 후보 4"><div class="name">기법 후보 4</div><div class="desc">캐릭터 와펜 표현</div></div>
+          <div class="ref-card"><img src="final_assets/ref_st02_tech_patch_05.png" alt="ST02 래퍼런스 기법 후보 5"><div class="name">기법 후보 5</div><div class="desc">캐릭터 그래픽 표현</div></div>
+        </div>
+      </section>
+      <section class="ref-block">
+        <div class="ref-head"><strong>ST03 Reference</strong><span>앞판 대형 로고 캐리오버 참고</span></div>
+        <div class="ref-grid">
+          <div class="ref-card"><img src="final_assets/ref_st03_front_logo_01.png" alt="ST03 앞판 로고 1"><div class="name">앞판 로고</div><div class="desc">대형 로고 비율</div></div>
+          <div class="ref-card"><img src="final_assets/ref_st03_front_logo_02.png" alt="ST03 앞판 로고 2"><div class="name">아치 로고</div><div class="desc">캐리오버형 로고</div></div>
+          <div class="ref-card"><img src="final_assets/ref_st03_front_logo_03.png" alt="ST03 앞판 로고 3"><div class="name">컬러 로고</div><div class="desc">시즌 컬러 적용</div></div>
+          <div class="ref-card"><img src="final_assets/ref_st03_front_logo_04.png" alt="ST03 앞판 로고 4"><div class="name">일자 로고</div><div class="desc">안료 프린트 참고</div></div>
+        </div>
+      </section>
+    </section>
+  </main>
+</body>
+</html>

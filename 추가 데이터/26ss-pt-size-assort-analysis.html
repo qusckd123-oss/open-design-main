@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>26SS 유니 PT 사이즈 아소트 분석</title>
+  <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bcave: {
+              dark: '#264148',
+              medium: '#718790',
+              light: '#DEE2E3',
+              bg: '#F8F9FA',
+              red: '#B94735',
+              amber: '#D4A64F',
+              green: '#3D7465'
+            }
+          },
+          fontFamily: {
+            sans: ['Pretendard', 'Malgun Gothic', 'Apple SD Gothic Neo', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --bcave-dark: #264148;
+      --bcave-medium: #718790;
+      --bcave-light: #DEE2E3;
+      --bcave-bg: #F8F9FA;
+      --bcave-red: #B94735;
+      --bcave-amber: #D4A64F;
+      --bcave-green: #3D7465;
+    }
+    body {
+      font-family: Pretendard, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      background: var(--bcave-bg);
+      color: var(--bcave-dark);
+    }
+    .panel {
+      background: #fff;
+      border: 1px solid rgba(113, 135, 144, 0.22);
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(38, 65, 72, 0.06);
+    }
+    .kpi {
+      background: #fff;
+      border: 1px solid rgba(113, 135, 144, 0.22);
+      border-radius: 8px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0;
+      color: var(--bcave-dark);
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(61, 116, 101, 0.12);
+      color: var(--bcave-green);
+      white-space: nowrap;
+    }
+    .risk {
+      background: rgba(185, 71, 53, 0.1);
+      color: var(--bcave-red);
+    }
+    .warn {
+      background: rgba(212, 166, 79, 0.16);
+      color: #8B651C;
+    }
+    .table-wrap {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+    th {
+      background: #EEF2F3;
+      color: #405861;
+      font-size: 12px;
+      font-weight: 800;
+      text-align: right;
+      padding: 11px 10px;
+      border-bottom: 1px solid rgba(113, 135, 144, 0.25);
+    }
+    th:first-child, td:first-child {
+      text-align: left;
+    }
+    td {
+      font-size: 13px;
+      text-align: right;
+      padding: 10px;
+      border-bottom: 1px solid rgba(113, 135, 144, 0.16);
+      color: #2D4850;
+    }
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+    .positive {
+      color: var(--bcave-green);
+      font-weight: 800;
+    }
+    .negative {
+      color: var(--bcave-red);
+      font-weight: 800;
+    }
+    .chart-box {
+      position: relative;
+      height: 310px;
+    }
+    @media print {
+      body { background: #fff; }
+      .panel, .kpi { box-shadow: none; break-inside: avoid; }
+      .no-print { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="mx-auto max-w-7xl px-5 py-6 lg:px-8">
+    <header class="mb-5 flex flex-col gap-4 border-b border-bcave-light pb-5 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <div class="mb-3 flex flex-wrap items-center gap-2">
+          <span class="chip">SIZE ASSORT ANALYSIS</span>
+          <span class="chip warn">26SS 유니 하의</span>
+        </div>
+        <h1 class="text-2xl font-black text-bcave-dark lg:text-3xl">26SS 유니 PT 사이즈별 아소트 비중 분석</h1>
+        <p class="mt-2 text-sm leading-6 text-bcave-medium">스웻류 · 데님류 · 우븐류 입고 아소트와 실제 판매 비중을 비교해 차기 사이즈 배분 조정 방향을 도출했습니다.</p>
+      </div>
+      <div class="text-left lg:text-right">
+        <div class="text-xl font-black text-bcave-dark">B.CAVE</div>
+        <div class="mt-1 text-xs leading-5 text-bcave-medium">Source: 추가 데이터/사이즈별 소진율분석 26SS 하의.xlsx<br />분석 기준: 입고 수량 비중 = 아소트 비중</div>
+      </div>
+    </header>
+
+    <section class="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+      <div class="kpi p-4">
+        <div class="text-xs font-bold text-bcave-medium">총 입고</div>
+        <div class="mt-2 text-2xl font-black">35,695</div>
+        <div class="mt-1 text-xs text-bcave-medium">발주 35,700 / 판매 9,300</div>
+      </div>
+      <div class="kpi p-4">
+        <div class="text-xs font-bold text-bcave-medium">전체 소진율</div>
+        <div class="mt-2 text-2xl font-black">26.1%</div>
+        <div class="mt-1 text-xs text-bcave-medium">판매 수량 ÷ 입고 수량</div>
+      </div>
+      <div class="kpi p-4">
+        <div class="text-xs font-bold text-bcave-medium">최대 부족 사이즈</div>
+        <div class="mt-2 text-2xl font-black text-bcave-green">S</div>
+        <div class="mt-1 text-xs text-bcave-medium">판매 비중 28.7% / 아소트 24.4%</div>
+      </div>
+      <div class="kpi p-4">
+        <div class="text-xs font-bold text-bcave-medium">최대 과배분 사이즈</div>
+        <div class="mt-2 text-2xl font-black text-bcave-red">L</div>
+        <div class="mt-1 text-xs text-bcave-medium">판매 비중 23.8% / 아소트 26.1%</div>
+      </div>
+      <div class="kpi p-4">
+        <div class="text-xs font-bold text-bcave-medium">조정 핵심</div>
+        <div class="mt-2 text-2xl font-black">S +4~6%p</div>
+        <div class="mt-1 text-xs text-bcave-medium">L/XL 합산 축소 권장</div>
+      </div>
+    </section>
+
+    <section class="mt-5 grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
+      <div class="panel p-5">
+        <div class="mb-4 flex items-center justify-between gap-3">
+          <h2 class="section-title">전체 하의 사이즈별 아소트 vs 판매 비중</h2>
+          <span class="chip risk">Gap = 판매 비중 - 아소트 비중</span>
+        </div>
+        <div class="chart-box">
+          <canvas id="sizeShareChart"></canvas>
+        </div>
+      </div>
+      <div class="panel p-5">
+        <h2 class="section-title">카테고리별 소진율</h2>
+        <p class="mt-2 text-sm leading-6 text-bcave-medium">데님류가 38.3%로 가장 빠르게 소진 중이며, 스웻류는 전체 물량이 가장 크지만 소진율은 17.6%로 낮습니다.</p>
+        <div class="mt-4 chart-box">
+          <canvas id="categorySellThroughChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-5 grid gap-5 lg:grid-cols-3">
+      <div class="panel p-5">
+        <div class="mb-3 flex items-center justify-between">
+          <h2 class="section-title">스웻류</h2>
+          <span class="chip">입고 16,950</span>
+        </div>
+        <p class="text-sm leading-6 text-bcave-medium">S/M 중심으로 수요가 몰리고 L은 가장 과배분입니다. 스웻류는 S 확대와 L 축소가 우선입니다.</p>
+        <div class="mt-4 h-56">
+          <canvas id="sweatGapChart"></canvas>
+        </div>
+      </div>
+      <div class="panel p-5">
+        <div class="mb-3 flex items-center justify-between">
+          <h2 class="section-title">데님류</h2>
+          <span class="chip">입고 11,557</span>
+        </div>
+        <p class="text-sm leading-6 text-bcave-medium">S 소진율이 45.4%로 가장 높습니다. M은 적정권, L/XL은 소폭 축소 여지가 있습니다.</p>
+        <div class="mt-4 h-56">
+          <canvas id="denimGapChart"></canvas>
+        </div>
+      </div>
+      <div class="panel p-5">
+        <div class="mb-3 flex items-center justify-between">
+          <h2 class="section-title">우븐류</h2>
+          <span class="chip">입고 7,188</span>
+        </div>
+        <p class="text-sm leading-6 text-bcave-medium">S 부족이 가장 크고 XL 판매 비중이 낮습니다. XL을 줄여 S로 재배분하는 방향이 적합합니다.</p>
+        <div class="mt-4 h-56">
+          <canvas id="wovenGapChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-5 grid gap-5 xl:grid-cols-[0.85fr_1.15fr]">
+      <div class="panel p-5">
+        <h2 class="section-title">Executive Summary</h2>
+        <div class="mt-4 space-y-3 text-sm leading-6">
+          <div class="rounded-md border border-bcave-light bg-bcave-bg p-3"><b>S 사이즈 부족:</b> 전체 Gap +4.3%p, 전 카테고리에서 공통적으로 판매 비중이 아소트 비중을 상회합니다.</div>
+          <div class="rounded-md border border-bcave-light bg-bcave-bg p-3"><b>L/XL 과배분:</b> L Gap -2.3%p, XL Gap -1.6%p로 후반 사이즈 물량을 줄일 근거가 명확합니다.</div>
+          <div class="rounded-md border border-bcave-light bg-bcave-bg p-3"><b>카테고리별 차등 적용:</b> 스웻류는 S/M 강화, 데님류는 S 강화 후 M 유지, 우븐류는 S 강화와 XL 축소가 핵심입니다.</div>
+        </div>
+      </div>
+      <div class="panel p-5">
+        <h2 class="section-title">권장 아소트 방향</h2>
+        <div class="table-wrap mt-4">
+          <table>
+            <thead>
+              <tr>
+                <th>구분</th>
+                <th>XS</th>
+                <th>S</th>
+                <th>M</th>
+                <th>L</th>
+                <th>XL</th>
+                <th>조정 포인트</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="font-bold">스웻류</td>
+                <td>8%</td>
+                <td class="positive">31%</td>
+                <td class="positive">31%</td>
+                <td class="negative">20%</td>
+                <td>10%</td>
+                <td class="text-left">L 축소분을 S/M으로 이동</td>
+              </tr>
+              <tr>
+                <td class="font-bold">데님류</td>
+                <td>-</td>
+                <td class="positive">27%</td>
+                <td>35%</td>
+                <td>26%</td>
+                <td class="negative">12%</td>
+                <td class="text-left">S 확대, M은 현 수준 유지</td>
+              </tr>
+              <tr>
+                <td class="font-bold">우븐류</td>
+                <td>-</td>
+                <td class="positive">29%</td>
+                <td>35%</td>
+                <td>26%</td>
+                <td class="negative">10%</td>
+                <td class="text-left">XL 축소분을 S 중심 배분</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-5 grid gap-5 xl:grid-cols-2">
+      <div class="panel p-5">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <h2 class="section-title">현재 아소트 비중</h2>
+          <span class="chip">입고 수량 기준</span>
+        </div>
+        <div class="table-wrap mt-4">
+          <table>
+            <thead>
+              <tr>
+                <th>구분</th>
+                <th>XS</th>
+                <th>S</th>
+                <th>M</th>
+                <th>L</th>
+                <th>XL</th>
+                <th>해석</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="font-bold">스웻류</td>
+                <td>8.0%</td>
+                <td>26.0%</td>
+                <td>29.6%</td>
+                <td class="negative">24.1%</td>
+                <td>12.4%</td>
+                <td class="text-left">L 비중이 판매 대비 높음</td>
+              </tr>
+              <tr>
+                <td class="font-bold">데님류</td>
+                <td>-</td>
+                <td>22.6%</td>
+                <td>35.6%</td>
+                <td>27.8%</td>
+                <td>14.0%</td>
+                <td class="text-left">S 배분이 낮고 M/L 중심</td>
+              </tr>
+              <tr>
+                <td class="font-bold">우븐류</td>
+                <td>-</td>
+                <td>23.4%</td>
+                <td>35.7%</td>
+                <td>28.2%</td>
+                <td class="negative">12.7%</td>
+                <td class="text-left">XL 비중 축소 여지</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel p-5">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <h2 class="section-title">실제 판매 비중</h2>
+          <span class="chip">판매 수량 기준</span>
+        </div>
+        <div class="table-wrap mt-4">
+          <table>
+            <thead>
+              <tr>
+                <th>구분</th>
+                <th>XS</th>
+                <th>S</th>
+                <th>M</th>
+                <th>L</th>
+                <th>XL</th>
+                <th>해석</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="font-bold">스웻류</td>
+                <td>7.4%</td>
+                <td class="positive">31.3%</td>
+                <td class="positive">31.4%</td>
+                <td>19.4%</td>
+                <td>10.4%</td>
+                <td class="text-left">S/M 판매 집중</td>
+              </tr>
+              <tr>
+                <td class="font-bold">데님류</td>
+                <td>-</td>
+                <td class="positive">26.8%</td>
+                <td>34.9%</td>
+                <td>25.6%</td>
+                <td>12.7%</td>
+                <td class="text-left">S가 현 아소트 초과</td>
+              </tr>
+              <tr>
+                <td class="font-bold">우븐류</td>
+                <td>-</td>
+                <td class="positive">28.9%</td>
+                <td>34.7%</td>
+                <td>26.5%</td>
+                <td>9.9%</td>
+                <td class="text-left">S 수요 강함, XL 낮음</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-5 panel p-5">
+      <h2 class="section-title">상세 데이터</h2>
+      <div class="table-wrap mt-4">
+        <table>
+          <thead>
+            <tr>
+              <th>구분</th>
+              <th>사이즈</th>
+              <th>입고</th>
+              <th>판매</th>
+              <th>아소트 비중</th>
+              <th>판매 비중</th>
+              <th>소진율</th>
+              <th>Gap</th>
+            </tr>
+          </thead>
+          <tbody id="detailRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="mt-5 panel p-5">
+      <h2 class="section-title">보고용 코멘트</h2>
+      <p class="mt-3 text-sm leading-7 text-bcave-dark">26SS 유니 PT 하의 사이즈 판매 흐름을 기준으로 보면, 전체적으로 S 사이즈 수요가 현재 아소트보다 높고 L/XL은 판매 비중 대비 입고 비중이 큰 구조입니다. 차기 아소트는 카테고리 공통으로 S를 확대하되, 스웻류는 S/M 비중을 동시에 강화하고 우븐류는 XL 축소폭을 크게 가져가는 방향이 적합합니다. 데님류는 전체 소진율이 가장 높아 S 보강 우선순위가 높고, M은 현 수준 유지가 적정합니다.</p>
+      <p class="mt-3 text-xs leading-6 text-bcave-medium">산식: 아소트 비중 = 사이즈별 입고 수량 / 카테고리 총 입고 수량, 판매 비중 = 사이즈별 판매 수량 / 카테고리 총 판매 수량, 소진율 = 판매 수량 / 입고 수량. 원본 파일의 시트 구분을 스웻류 · 데님류 · 우븐류 카테고리 기준으로 사용했습니다.</p>
+    </section>
+  </main>
+
+  <script>
+    const overall = [
+      { size: 'XS', inbound: 1348, sales: 221, assort: 3.8, salesShare: 2.4, sellThrough: 16.4, gap: -1.4 },
+      { size: 'S', inbound: 8699, sales: 2666, assort: 24.4, salesShare: 28.7, sellThrough: 30.6, gap: 4.3 },
+      { size: 'M', inbound: 11696, sales: 3137, assort: 32.8, salesShare: 33.7, sellThrough: 26.8, gap: 1.0 },
+      { size: 'L', inbound: 9320, sales: 2214, assort: 26.1, salesShare: 23.8, sellThrough: 23.8, gap: -2.3 },
+      { size: 'XL', inbound: 4632, sales: 1062, assort: 13.0, salesShare: 11.4, sellThrough: 22.9, gap: -1.6 }
+    ];
+
+    const categoryData = {
+      '스웻류': [
+        { size: 'XS', inbound: 1348, sales: 221, assort: 8.0, salesShare: 7.4, sellThrough: 16.4, gap: -0.5 },
+        { size: 'S', inbound: 4408, sales: 932, assort: 26.0, salesShare: 31.3, sellThrough: 21.1, gap: 5.3 },
+        { size: 'M', inbound: 5016, sales: 934, assort: 29.6, salesShare: 31.4, sellThrough: 18.6, gap: 1.8 },
+        { size: 'L', inbound: 4082, sales: 579, assort: 24.1, salesShare: 19.4, sellThrough: 14.2, gap: -4.6 },
+        { size: 'XL', inbound: 2096, sales: 311, assort: 12.4, salesShare: 10.4, sellThrough: 14.8, gap: -1.9 }
+      ],
+      '데님류': [
+        { size: 'S', inbound: 2612, sales: 1187, assort: 22.6, salesShare: 26.8, sellThrough: 45.4, gap: 4.2 },
+        { size: 'M', inbound: 4114, sales: 1545, assort: 35.6, salesShare: 34.9, sellThrough: 37.6, gap: -0.7 },
+        { size: 'L', inbound: 3208, sales: 1133, assort: 27.8, salesShare: 25.6, sellThrough: 35.3, gap: -2.2 },
+        { size: 'XL', inbound: 1623, sales: 564, assort: 14.0, salesShare: 12.7, sellThrough: 34.8, gap: -1.3 }
+      ],
+      '우븐류': [
+        { size: 'S', inbound: 1679, sales: 547, assort: 23.4, salesShare: 28.9, sellThrough: 32.6, gap: 5.5 },
+        { size: 'M', inbound: 2566, sales: 658, assort: 35.7, salesShare: 34.7, sellThrough: 25.6, gap: -1.0 },
+        { size: 'L', inbound: 2030, sales: 502, assort: 28.2, salesShare: 26.5, sellThrough: 24.7, gap: -1.7 },
+        { size: 'XL', inbound: 913, sales: 187, assort: 12.7, salesShare: 9.9, sellThrough: 20.5, gap: -2.8 }
+      ]
+    };
+
+    const fmt = (v, unit = '%') => `${Number(v).toFixed(1)}${unit}`;
+    const comma = (v) => Number(v).toLocaleString('ko-KR');
+    const palette = {
+      dark: '#264148',
+      medium: '#718790',
+      light: '#DEE2E3',
+      red: '#B94735',
+      amber: '#D4A64F',
+      green: '#3D7465'
+    };
+
+    new Chart(document.getElementById('sizeShareChart'), {
+      type: 'bar',
+      data: {
+        labels: overall.map(d => d.size),
+        datasets: [
+          { label: '아소트 비중', data: overall.map(d => d.assort), backgroundColor: palette.medium, borderRadius: 4 },
+          { label: '판매 비중', data: overall.map(d => d.salesShare), backgroundColor: palette.green, borderRadius: 4 },
+          { label: 'Gap', data: overall.map(d => d.gap), type: 'line', borderColor: palette.red, backgroundColor: palette.red, tension: 0.25, yAxisID: 'y1' }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+          y: { beginAtZero: true, ticks: { callback: v => `${v}%` }, grid: { color: 'rgba(113,135,144,0.16)' } },
+          y1: { position: 'right', ticks: { callback: v => `${v}%p` }, grid: { drawOnChartArea: false } }
+        },
+        plugins: { legend: { labels: { boxWidth: 10, usePointStyle: true } } }
+      }
+    });
+
+    new Chart(document.getElementById('categorySellThroughChart'), {
+      type: 'bar',
+      data: {
+        labels: ['스웻류', '데님류', '우븐류'],
+        datasets: [{
+          data: [17.6, 38.3, 26.3],
+          backgroundColor: [palette.amber, palette.green, palette.dark],
+          borderRadius: 5
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { x: { beginAtZero: true, ticks: { callback: v => `${v}%` }, grid: { color: 'rgba(113,135,144,0.16)' } } },
+        plugins: { legend: { display: false } }
+      }
+    });
+
+    function gapChart(id, rows) {
+      new Chart(document.getElementById(id), {
+        type: 'bar',
+        data: {
+          labels: rows.map(d => d.size),
+          datasets: [{
+            data: rows.map(d => d.gap),
+            backgroundColor: rows.map(d => d.gap >= 0 ? palette.green : palette.red),
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { ticks: { callback: v => `${v}%p` }, grid: { color: 'rgba(113,135,144,0.14)' } },
+            x: { grid: { display: false } }
+          },
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `Gap ${fmt(ctx.raw, '%p')}` } } }
+        }
+      });
+    }
+
+    gapChart('sweatGapChart', categoryData['스웻류']);
+    gapChart('denimGapChart', categoryData['데님류']);
+    gapChart('wovenGapChart', categoryData['우븐류']);
+
+    const tbody = document.getElementById('detailRows');
+    Object.entries(categoryData).forEach(([category, rows]) => {
+      rows.forEach(row => {
+        const tr = document.createElement('tr');
+        const gapClass = row.gap >= 0 ? 'positive' : 'negative';
+        tr.innerHTML = `
+          <td class="font-bold">${category}</td>
+          <td>${row.size}</td>
+          <td>${comma(row.inbound)}</td>
+          <td>${comma(row.sales)}</td>
+          <td>${fmt(row.assort)}</td>
+          <td>${fmt(row.salesShare)}</td>
+          <td>${fmt(row.sellThrough)}</td>
+          <td class="${gapClass}">${row.gap > 0 ? '+' : ''}${fmt(row.gap, '%p')}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WA2702 ST01-ST03 진행안 및 근거</title>
+<style>
+  :root {
+    --navy:#2D4A5C;
+    --teal:#4A9E8E;
+    --red:#C0392B;
+    --amber:#B7770D;
+    --ink:#1A1A1A;
+    --muted:#777;
+    --line:#E7EAEE;
+    --bg:#E9ECEF;
+    --soft:#F7F8FA;
+    --cream:#FFF8F0;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0;
+    padding:32px 0 52px;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    letter-spacing:0;
+  }
+  .section-wrap { width:820px; max-width:calc(100% - 28px); margin:0 auto 24px; }
+  .section-label { margin:0 0 6px 2px; color:#9CA3AF; font-size:11px; }
+  .card {
+    background:#fff;
+    border-radius:10px;
+    padding:30px 36px;
+    box-shadow:0 2px 12px rgba(0,0,0,.08);
+  }
+  h1 { margin:0 0 4px; font-size:23px; line-height:1.28; }
+  h2 { margin:0 0 4px; font-size:18px; line-height:1.35; }
+  h3 { margin:0 0 8px; font-size:14px; line-height:1.35; }
+  p { margin:0; }
+  .sub { margin-bottom:20px; color:#888; font-size:12px; line-height:1.55; }
+  .hero {
+    display:grid;
+    grid-template-columns:1fr 250px;
+    gap:22px;
+    align-items:stretch;
+  }
+  .decision {
+    padding:15px 18px;
+    border-radius:8px;
+    background:#F0F4F7;
+    border-left:4px solid var(--navy);
+    font-size:15px;
+    font-weight:800;
+    line-height:1.65;
+  }
+  .decision b { color:var(--red); }
+  .hero-visual {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  .hero-visual img {
+    width:100%;
+    height:100%;
+    min-height:112px;
+    display:block;
+    object-fit:cover;
+    border-radius:8px;
+    background:#f5f5f5;
+  }
+  .kpi-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:18px; }
+  .kpi { padding:14px 16px; border-radius:8px; background:var(--soft); }
+  .kpi .num { font-size:22px; font-weight:800; color:var(--navy); line-height:1.1; }
+  .kpi .lbl { margin-top:4px; color:#777; font-size:11px; line-height:1.45; }
+  .section-title {
+    display:inline-block;
+    margin:20px 0 12px;
+    padding:3px 10px;
+    border-radius:3px;
+    color:#fff;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.8px;
+  }
+  .dark { background:var(--navy); }
+  .teal { background:var(--teal); }
+  .amber { background:var(--amber); }
+  .red { background:var(--red); }
+  .style-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .style-card {
+    min-height:292px;
+    padding:0;
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+    background:#fff;
+  }
+  .style-head { padding:14px 15px; color:#fff; background:var(--navy); }
+  .style-card:nth-child(2) .style-head { background:var(--teal); }
+  .style-card:nth-child(3) .style-head { background:var(--amber); }
+  .style-head strong { display:block; font-size:19px; line-height:1.1; }
+  .style-head span { display:block; margin-top:4px; font-size:11px; font-weight:800; opacity:.9; }
+  .style-body { padding:14px 15px 15px; }
+  .price-line { display:flex; justify-content:space-between; gap:8px; margin-bottom:12px; }
+  .price-line b { font-size:18px; color:var(--red); }
+  .price-line span { color:#555; font-size:12px; font-weight:800; text-align:right; }
+  .spec-list { display:grid; gap:7px; }
+  .spec {
+    display:grid;
+    grid-template-columns:52px 1fr;
+    gap:8px;
+    color:#444;
+    font-size:12px;
+    line-height:1.45;
+  }
+  .spec dt { margin:0; color:#888; font-weight:800; }
+  .spec dd { margin:0; }
+  .basis-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .basis {
+    padding:14px 15px;
+    border-radius:8px;
+    background:var(--soft);
+    border-left:4px solid var(--navy);
+  }
+  .basis:nth-child(2) { border-left-color:var(--teal); }
+  .basis:nth-child(3) { border-left-color:var(--amber); }
+  .basis b { display:block; margin-bottom:6px; font-size:14px; }
+  .basis p { color:#555; font-size:12px; line-height:1.6; }
+  .callout {
+    margin-top:14px;
+    padding:12px 16px;
+    border-radius:7px;
+    background:var(--cream);
+    border-left:4px solid var(--amber);
+    color:#333;
+    font-size:13px;
+    line-height:1.65;
+  }
+  .compare {
+    width:100%;
+    border-collapse:collapse;
+    font-size:12px;
+  }
+  .compare th {
+    padding:8px 9px;
+    background:var(--navy);
+    color:#fff;
+    font-size:11px;
+    text-align:left;
+  }
+  .compare td {
+    padding:8px 9px;
+    border-bottom:1px solid #F0F0F0;
+    line-height:1.45;
+    vertical-align:top;
+  }
+  .compare tr:nth-child(even) td { background:#FAFAFA; }
+  .compare td:first-child { color:var(--navy); font-weight:800; white-space:nowrap; }
+  .num { text-align:right; font-weight:800; white-space:nowrap; }
+  .image-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .img-card img {
+    width:100%;
+    aspect-ratio:3/4;
+    display:block;
+    object-fit:cover;
+    border-radius:8px;
+    background:#f5f5f5;
+  }
+  .ic-code { margin-top:6px; color:#888; font-size:10px; }
+  .ic-name { margin-top:2px; color:#222; font-size:12px; font-weight:800; line-height:1.35; }
+  .ic-stat { margin-top:2px; color:#555; font-size:11px; }
+  .note {
+    margin-top:10px;
+    padding:10px 12px;
+    border-radius:6px;
+    background:var(--soft);
+    color:#666;
+    font-size:11px;
+    line-height:1.6;
+  }
+  @media (max-width:760px) {
+    body { padding-top:18px; }
+    .card { padding:22px 18px; }
+    .hero, .kpi-row, .style-grid, .basis-grid, .image-grid { grid-template-columns:1fr; }
+    .hero-visual { grid-template-columns:repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+  <section class="section-wrap">
+    <div class="section-label">WA2702 ST LINE EXECUTION</div>
+    <div class="card">
+      <div class="hero">
+        <div>
+          <h1>27SS ST01-ST03 진행안</h1>
+          <div class="sub">핵심은 디테일 축소와 역할 분리입니다. 소매+와끼 2부위 디테일은 소매 또는 와끼 1부위로 줄입니다.</div>
+          <div class="decision">
+            방향: <b>ST01은 39,000원 물량형, ST02는 49,000원 기능/키키형, ST03은 49,000원 시즌 로고형</b>으로 진행합니다.
+          </div>
+          <div class="kpi-row">
+            <div class="kpi"><div class="num">72,000PCS</div><div class="lbl">총 운영 수량<br>ST01 32K · ST02 30K · ST03 10K</div></div>
+            <div class="kpi"><div class="num">1부위</div><div class="lbl">디테일 축소<br>소매 or 와끼 중 1개만 사용</div></div>
+            <div class="kpi"><div class="num">39~49K</div><div class="lbl">판가 구조<br>기본 39K / 기능·시즌 49K</div></div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <img src="27ss_st_competitor_assets/kiki_character.png" alt="키키 캐릭터">
+          <img src="27ss_st_competitor_assets/teket_symbol.png" alt="Teket 기본 로고 티셔츠">
+          <img src="27ss_st_competitor_assets/bb_tag_og.png" alt="Brownbreath 기본 티셔츠">
+          <img src="27ss_st_competitor_assets/tint_t_logo.png" alt="THISISNEVERTHAT 기본 티셔츠">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-wrap">
+    <div class="section-label">STYLE SUMMARY</div>
+    <div class="card">
+      <h2>스타일별 진행안</h2>
+      <div class="sub">보고용으로 필요한 스펙만 압축했습니다.</div>
+      <div class="style-grid">
+        <article class="style-card">
+          <div class="style-head"><strong>WA2702ST01</strong><span>BASIC VOLUME</span></div>
+          <div class="style-body">
+            <div class="price-line"><b>39,000원</b><span>32,000PCS</span></div>
+            <dl class="spec-list">
+              <div class="spec"><dt>아트웍</dt><dd>착좌 두줄 워드로고 직자수</dd></div>
+              <div class="spec"><dt>소재</dt><dd>20수 싱글</dd></div>
+              <div class="spec"><dt>디테일</dt><dd>포인트 라벨 미사용</dd></div>
+              <div class="spec"><dt>컬러</dt><dd>화이트/블랙 중심, 워시드 블랙·페이드 퍼플 등 페이드 컬러 추가</dd></div>
+              <div class="spec"><dt>수량</dt><dd>화이트/블랙/8% 컬러를 60~70% 비중으로 운영</dd></div>
+            </dl>
+          </div>
+        </article>
+
+        <article class="style-card">
+          <div class="style-head"><strong>WA2702ST02</strong><span>KIKI FUNCTION</span></div>
+          <div class="style-body">
+            <div class="price-line"><b>49,000원</b><span>30,000PCS</span></div>
+            <dl class="spec-list">
+              <div class="spec"><dt>아트웍</dt><dd>키키 로고. 테두리 자수+바탕 프린트 또는 신규 기법</dd></div>
+              <div class="spec"><dt>소재</dt><dd>쿨폰테 또는 쿨소로나</dd></div>
+              <div class="spec"><dt>디테일</dt><dd>워드로고 포인트 라벨 1부위</dd></div>
+              <div class="spec"><dt>역할</dt><dd>기능성 소재와 키키 로고로 49,000원 설득</dd></div>
+              <div class="spec"><dt>판단</dt><dd>ST 라인 내 메인 볼륨 스타일</dd></div>
+            </dl>
+          </div>
+        </article>
+
+        <article class="style-card">
+          <div class="style-head"><strong>WA2702ST03</strong><span>SEASON LOGO</span></div>
+          <div class="style-body">
+            <div class="price-line"><b>49,000원</b><span>10,000PCS</span></div>
+            <dl class="spec-list">
+              <div class="spec"><dt>아트웍</dt><dd>센터 로고 아치 또는 일자, 안료 프린트</dd></div>
+              <div class="spec"><dt>소재</dt><dd>16수 슬럽 싱글</dd></div>
+              <div class="spec"><dt>디테일</dt><dd>시즌 무드 그래픽 포인트 라벨, 와끼 위 봉제</dd></div>
+              <div class="spec"><dt>운영</dt><dd>끼워 물림 없이 봉제, 시즌별 라벨만 변경</dd></div>
+              <div class="spec"><dt>판단</dt><dd>과투입 없이 시즌성 보강용 소량 운영</dd></div>
+            </dl>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-wrap">
+    <div class="section-label">WHY THIS WORKS</div>
+    <div class="card">
+      <h2>진행 근거</h2>
+      <div class="sub">경쟁사 가격대와 27SS 운영 효율을 같이 봤을 때, 현재안은 무리한 상향이 아니라 정리된 구조입니다.</div>
+      <div class="basis-grid">
+        <div class="basis">
+          <b>1. 가격 사다리가 선명함</b>
+          <p>경쟁사 기본 ST는 39,000~59,000원에 분포합니다. ST01 39,000원은 진입 가격, ST02·ST03 49,000원은 소재/시즌성 반영 가격으로 설명됩니다.</p>
+        </div>
+        <div class="basis">
+          <b>2. 디테일 축소로 완성도 확보</b>
+          <p>소매+와끼 2부위 디테일은 원가와 생산 리스크가 큽니다. 1부위로 줄이면 가격 저항을 낮추고, 아트웍과 컬러에 힘을 남길 수 있습니다.</p>
+        </div>
+        <div class="basis">
+          <b>3. 시즌 운영이 쉬움</b>
+          <p>ST03은 포인트 라벨만 시즌별로 변경하면 됩니다. 본체 구조를 유지해 반복 생산이 가능하고, 시즌 무드만 빠르게 바꿀 수 있습니다.</p>
+        </div>
+      </div>
+      <div class="callout">
+        최종 판단: 디테일은 줄이고, 가격은 낮추되, 각 스타일의 이유는 남깁니다. ST01은 대량 기본물, ST02는 기능성+키키, ST03은 시즌 로고로 역할이 겹치지 않습니다.
+      </div>
+
+      <div class="section-title dark">PRICE CHECK</div>
+      <table class="compare">
+        <thead>
+          <tr><th>구분</th><th>근거</th><th>가격</th><th>이번 진행안 연결</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Brownbreath</td><td>TAG/CROP 기본 로고 티셔츠</td><td class="num">39,000~49,000</td><td>ST01 39,000원의 기준선</td></tr>
+          <tr><td>Teket</td><td>Symbol/Plan 기본 로고 티셔츠</td><td class="num">55,000</td><td>49,000원 기능/시즌형은 가격 저항 낮음</td></tr>
+          <tr><td>TINT</td><td>T-Logo/Arch/INTL. 기본 로고 티셔츠</td><td class="num">55,000~59,000</td><td>ST02·ST03 49,000원은 경쟁가 대비 보수적</td></tr>
+          <tr><td>TINT</td><td>2PACK/포켓/오버다잉 등 사양 차별형</td><td class="num">59,000~65,000</td><td>이번안은 상위 사양 과투입 없이 49,000원 유지</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section-wrap">
+    <div class="section-label">REFERENCE</div>
+    <div class="card">
+      <h2>참고 이미지</h2>
+      <div class="sub">회의 자료에서는 이 정도 컷만 있으면 가격·그래픽 방향 설명이 됩니다.</div>
+      <div class="image-grid">
+        <div class="img-card"><img src="27ss_st_competitor_assets/kiki_character.png" alt="키키 캐릭터"><div class="ic-code">WACKY WILLY</div><div class="ic-name">키키 로고 방향</div><div class="ic-stat">ST02 핵심 아트웍</div></div>
+        <div class="img-card"><img src="27ss_st_competitor_assets/bb_tag_og.png" alt="Brownbreath TAG OG TEE"><div class="ic-code">Brownbreath</div><div class="ic-name">TAG OG TEE</div><div class="ic-stat">49,000원 기본 로고</div></div>
+        <div class="img-card"><img src="27ss_st_competitor_assets/teket_symbol.png" alt="Teket Symbol Tee"><div class="ic-code">Teket</div><div class="ic-name">Symbol Tee White</div><div class="ic-stat">55,000원 기본 로고</div></div>
+        <div class="img-card"><img src="27ss_st_competitor_assets/tint_t_logo.png" alt="THISISNEVERTHAT T-Logo Tee"><div class="ic-code">THISISNEVERTHAT</div><div class="ic-name">T-Logo Tee</div><div class="ic-stat">55,000원 주력 가격</div></div>
+      </div>
+      <div class="note">이미지 출처: 기존 27SS 경쟁사 기본물 분석 엑셀 추출 이미지 및 와키윌리 키키 캐릭터 파일.</div>
+    </div>
+  </section>
+</body>
+</html>

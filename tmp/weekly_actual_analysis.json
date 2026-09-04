@@ -1,0 +1,2193 @@
+{
+  "rows": {
+    "current": 11303,
+    "previous": 13101,
+    "style_map": 697
+  },
+  "totals": {
+    "26SS_의류": {
+      "cur_qty": 9582,
+      "cur_amt": 498865271,
+      "prev_qty": 12250,
+      "prev_amt": 631707573,
+      "diff_qty": -2668,
+      "diff_amt": -132842302,
+      "wow": -21.0290817583724
+    },
+    "26SS_ACC/용품": {
+      "cur_qty": 1887,
+      "cur_amt": 84120895,
+      "prev_qty": 1963,
+      "prev_amt": 98493645,
+      "diff_qty": -76,
+      "diff_amt": -14372750,
+      "wow": -14.592565845238035
+    },
+    "26FW_의류": {
+      "cur_qty": 679,
+      "cur_amt": 38234089,
+      "prev_qty": 684,
+      "prev_amt": 32177829,
+      "diff_qty": -5,
+      "diff_amt": 6056260,
+      "wow": 18.82122003942528
+    },
+    "26FW_ACC/용품": {
+      "cur_qty": 492,
+      "cur_amt": 14796238,
+      "prev_qty": 632,
+      "prev_amt": 12087320,
+      "diff_qty": -140,
+      "diff_amt": 2708918,
+      "wow": 22.411237561345278
+    }
+  },
+  "genders": {
+    "26SS_유니섹스": {
+      "cur_qty": 6099,
+      "cur_amt": 305332797,
+      "prev_qty": 7834,
+      "prev_amt": 380773832,
+      "diff_qty": -1735,
+      "diff_amt": -75441035,
+      "wow": -19.81255765495986
+    },
+    "26SS_우먼스": {
+      "cur_qty": 3348,
+      "cur_amt": 188249746,
+      "prev_qty": 4277,
+      "prev_amt": 245790786,
+      "diff_qty": -929,
+      "diff_amt": -57541040,
+      "wow": -23.41057650550009
+    },
+    "26FW_유니섹스": {
+      "cur_qty": 362,
+      "cur_amt": 15918850,
+      "prev_qty": 304,
+      "prev_amt": 12371429,
+      "diff_qty": 58,
+      "diff_amt": 3547421,
+      "wow": 28.674302701813993
+    },
+    "26FW_우먼스": {
+      "cur_qty": 317,
+      "cur_amt": 22315239,
+      "prev_qty": 380,
+      "prev_amt": 19806400,
+      "diff_qty": -63,
+      "diff_amt": 2508839,
+      "wow": 12.666809718070926
+    }
+  },
+  "cats": [
+    {
+      "cur_qty": 4211,
+      "cur_amt": 180635141,
+      "prev_qty": 5600,
+      "prev_amt": 238163612,
+      "diff_qty": -1389,
+      "diff_amt": -57528471,
+      "wow": -24.155021212896287,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST"
+    },
+    {
+      "cur_qty": 2062,
+      "cur_amt": 84675319,
+      "prev_qty": 2674,
+      "prev_amt": 115516283,
+      "diff_qty": -612,
+      "diff_amt": -30840964,
+      "wow": -26.698369441128918,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "ST"
+    },
+    {
+      "cur_qty": 769,
+      "cur_amt": 42901204,
+      "prev_qty": 1190,
+      "prev_amt": 66806966,
+      "diff_qty": -421,
+      "diff_amt": -23905762,
+      "wow": -35.7833373244341,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "SO"
+    },
+    {
+      "cur_qty": 250,
+      "cur_amt": 18565538,
+      "prev_qty": 438,
+      "prev_amt": 32146600,
+      "diff_qty": -188,
+      "diff_amt": -13581062,
+      "wow": -42.247273428605205,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "SO"
+    },
+    {
+      "cur_qty": 96,
+      "cur_amt": 9698100,
+      "prev_qty": 0,
+      "prev_amt": 0,
+      "diff_qty": 96,
+      "diff_amt": 9698100,
+      "wow": null,
+      "season": "26FW",
+      "gender": "우먼스",
+      "cat": "CD"
+    },
+    {
+      "cur_qty": 197,
+      "cur_amt": 10364089,
+      "prev_qty": 380,
+      "prev_amt": 19806400,
+      "diff_qty": -183,
+      "diff_amt": -9442311,
+      "wow": -47.67302992971968,
+      "season": "26FW",
+      "gender": "우먼스",
+      "cat": "ST"
+    },
+    {
+      "cur_qty": 227,
+      "cur_amt": 13662758,
+      "prev_qty": 130,
+      "prev_amt": 7057600,
+      "diff_qty": 97,
+      "diff_amt": 6605158,
+      "wow": 93.58929381092723,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "LT"
+    },
+    {
+      "cur_qty": 224,
+      "cur_amt": 15881850,
+      "prev_qty": 312,
+      "prev_amt": 21921747,
+      "diff_qty": -88,
+      "diff_amt": -6039897,
+      "wow": -27.552078764525472,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "SS"
+    },
+    {
+      "cur_qty": 116,
+      "cur_amt": 9922787,
+      "prev_qty": 177,
+      "prev_amt": 15042208,
+      "diff_qty": -61,
+      "diff_amt": -5119421,
+      "wow": -34.03370701960776,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "PT"
+    },
+    {
+      "cur_qty": 105,
+      "cur_amt": 9402740,
+      "prev_qty": 53,
+      "prev_amt": 4465899,
+      "diff_qty": 52,
+      "diff_amt": 4936841,
+      "wow": 110.54528998528627,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "CR"
+    },
+    {
+      "cur_qty": 101,
+      "cur_amt": 7474586,
+      "prev_qty": 151,
+      "prev_amt": 11536788,
+      "diff_qty": -50,
+      "diff_amt": -4062202,
+      "wow": -35.210857649460145,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "SS"
+    },
+    {
+      "cur_qty": 171,
+      "cur_amt": 12891899,
+      "prev_qty": 204,
+      "prev_amt": 15574174,
+      "diff_qty": -33,
+      "diff_amt": -2682275,
+      "wow": -17.22258271931468,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "PT"
+    },
+    {
+      "cur_qty": 177,
+      "cur_amt": 15235643,
+      "prev_qty": 193,
+      "prev_amt": 17690370,
+      "diff_qty": -16,
+      "diff_amt": -2454727,
+      "wow": -13.876063643666017,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "CD"
+    },
+    {
+      "cur_qty": 77,
+      "cur_amt": 7236060,
+      "prev_qty": 52,
+      "prev_amt": 5037000,
+      "diff_qty": 25,
+      "diff_amt": 2199060,
+      "wow": 43.658129839189996,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "HZ"
+    },
+    {
+      "cur_qty": 32,
+      "cur_amt": 2136200,
+      "prev_qty": 0,
+      "prev_amt": 0,
+      "diff_qty": 32,
+      "diff_amt": 2136200,
+      "wow": null,
+      "season": "26FW",
+      "gender": "유니섹스",
+      "cat": "LT"
+    },
+    {
+      "cur_qty": 184,
+      "cur_amt": 13812794,
+      "prev_qty": 165,
+      "prev_amt": 11773491,
+      "diff_qty": 19,
+      "diff_amt": 2039303,
+      "wow": 17.32114119762779,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "HZ"
+    },
+    {
+      "cur_qty": 79,
+      "cur_amt": 6885534,
+      "prev_qty": 90,
+      "prev_amt": 8645155,
+      "diff_qty": -11,
+      "diff_amt": -1759621,
+      "wow": -20.35383980969688,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "SR"
+    },
+    {
+      "cur_qty": 36,
+      "cur_amt": 1873096,
+      "prev_qty": 62,
+      "prev_amt": 3431550,
+      "diff_qty": -26,
+      "diff_amt": -1558454,
+      "wow": -45.41545365796797,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "CR"
+    },
+    {
+      "cur_qty": 15,
+      "cur_amt": 1487850,
+      "prev_qty": 0,
+      "prev_amt": 0,
+      "diff_qty": 15,
+      "diff_amt": 1487850,
+      "wow": null,
+      "season": "26FW",
+      "gender": "우먼스",
+      "cat": "KT"
+    },
+    {
+      "cur_qty": 330,
+      "cur_amt": 13782650,
+      "prev_qty": 304,
+      "prev_amt": 12371429,
+      "diff_qty": 26,
+      "diff_amt": 1411221,
+      "wow": 11.407097757259892,
+      "season": "26FW",
+      "gender": "유니섹스",
+      "cat": "ST"
+    },
+    {
+      "cur_qty": 73,
+      "cur_amt": 4754820,
+      "prev_qty": 52,
+      "prev_amt": 3390088,
+      "diff_qty": 21,
+      "diff_amt": 1364732,
+      "wow": 40.256536113516816,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "SH"
+    },
+    {
+      "cur_qty": 35,
+      "cur_amt": 4015457,
+      "prev_qty": 42,
+      "prev_amt": 4992955,
+      "diff_qty": -7,
+      "diff_amt": -977498,
+      "wow": -19.57754476056764,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "JK"
+    },
+    {
+      "cur_qty": 105,
+      "cur_amt": 9437066,
+      "prev_qty": 107,
+      "prev_amt": 10237803,
+      "diff_qty": -2,
+      "diff_amt": -800737,
+      "wow": -7.821375347816323,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "JK"
+    },
+    {
+      "cur_qty": 91,
+      "cur_amt": 6831998,
+      "prev_qty": 83,
+      "prev_amt": 6190467,
+      "diff_qty": 8,
+      "diff_amt": 641531,
+      "wow": 10.363208462301793,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "SH"
+    },
+    {
+      "cur_qty": 7,
+      "cur_amt": 584100,
+      "prev_qty": 1,
+      "prev_amt": 79200,
+      "diff_qty": 6,
+      "diff_amt": 504900,
+      "wow": 637.5,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "KT"
+    },
+    {
+      "cur_qty": 6,
+      "cur_amt": 458200,
+      "prev_qty": 0,
+      "prev_amt": 0,
+      "diff_qty": 6,
+      "diff_amt": 458200,
+      "wow": null,
+      "season": "26FW",
+      "gender": "우먼스",
+      "cat": "LT"
+    },
+    {
+      "cur_qty": 23,
+      "cur_amt": 1368425,
+      "prev_qty": 19,
+      "prev_amt": 1145000,
+      "diff_qty": 4,
+      "diff_amt": 223425,
+      "wow": 19.51310043668122,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "HD"
+    },
+    {
+      "cur_qty": 2,
+      "cur_amt": 208000,
+      "prev_qty": 0,
+      "prev_amt": 0,
+      "diff_qty": 2,
+      "diff_amt": 208000,
+      "wow": null,
+      "season": "26FW",
+      "gender": "우먼스",
+      "cat": "PT"
+    },
+    {
+      "cur_qty": 20,
+      "cur_amt": 2311850,
+      "prev_qty": 23,
+      "prev_amt": 2489045,
+      "diff_qty": -3,
+      "diff_amt": -177195,
+      "wow": -7.118995438009357,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "OP"
+    },
+    {
+      "cur_qty": 105,
+      "cur_amt": 3849590,
+      "prev_qty": 115,
+      "prev_amt": 4021955,
+      "diff_qty": -10,
+      "diff_amt": -172365,
+      "wow": -4.285602399827945,
+      "season": "26SS",
+      "gender": "키즈",
+      "cat": "ST"
+    }
+  ],
+  "styles_best": [
+    {
+      "cur_qty": 472,
+      "cur_amt": 17639913,
+      "prev_qty": 576,
+      "prev_amt": 22416221,
+      "diff_qty": -104,
+      "diff_amt": -4776308,
+      "wow": -21.307373798643404,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST02",
+      "name": "더블 키키와펜 반팔티셔츠"
+    },
+    {
+      "cur_qty": 475,
+      "cur_amt": 15551353,
+      "prev_qty": 545,
+      "prev_amt": 17909991,
+      "diff_qty": -70,
+      "diff_amt": -2358638,
+      "wow": -13.169398019239653,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST01",
+      "name": "키키 와펜 반팔티셔츠"
+    },
+    {
+      "cur_qty": 211,
+      "cur_amt": 11550516,
+      "prev_qty": 105,
+      "prev_amt": 5930350,
+      "diff_qty": 106,
+      "diff_amt": 5620166,
+      "wow": 94.7695498579342,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602STC3",
+      "name": "먼작귀 친구들 그래픽 반팔티셔츠"
+    },
+    {
+      "cur_qty": 121,
+      "cur_amt": 11195997,
+      "prev_qty": 134,
+      "prev_amt": 12846651,
+      "diff_qty": -13,
+      "diff_amt": -1650654,
+      "wow": -12.848905134886907,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "CD",
+      "code": "WA2602CD52",
+      "name": "우먼스 릴리와펜 라운드넥 반팔 가디건"
+    },
+    {
+      "cur_qty": 236,
+      "cur_amt": 9564323,
+      "prev_qty": 301,
+      "prev_amt": 12834170,
+      "diff_qty": -65,
+      "diff_amt": -3269847,
+      "wow": -25.477666261238554,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "ST",
+      "code": "WA2602ST78",
+      "name": "우먼스 릴리 아플리케 세미크롭 반팔티셔츠"
+    },
+    {
+      "cur_qty": 269,
+      "cur_amt": 9514072,
+      "prev_qty": 351,
+      "prev_amt": 12595040,
+      "diff_qty": -82,
+      "diff_amt": -3080968,
+      "wow": -24.461756373937675,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "ST",
+      "code": "WA2602ST51",
+      "name": "우먼스 릴리와펜 레귤러핏 반팔티셔츠"
+    },
+    {
+      "cur_qty": 223,
+      "cur_amt": 9351818,
+      "prev_qty": 297,
+      "prev_amt": 12713389,
+      "diff_qty": -74,
+      "diff_amt": -3361571,
+      "wow": -26.44118731834604,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "ST",
+      "code": "WA2602ST55",
+      "name": "우먼스 빅릴리 그래픽 반팔티셔츠"
+    },
+    {
+      "cur_qty": 237,
+      "cur_amt": 9336007,
+      "prev_qty": 294,
+      "prev_amt": 12291179,
+      "diff_qty": -57,
+      "diff_amt": -2955172,
+      "wow": -24.043031185210143,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "ST",
+      "code": "WA2602ST72",
+      "name": "우먼스 스트라이프 반팔티셔츠"
+    },
+    {
+      "cur_qty": 199,
+      "cur_amt": 9082921,
+      "prev_qty": 483,
+      "prev_amt": 24568361,
+      "diff_qty": -284,
+      "diff_amt": -15485440,
+      "wow": -63.030008391687176,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602STE3",
+      "name": "3PACK 반팔 티셔츠"
+    },
+    {
+      "cur_qty": 141,
+      "cur_amt": 8628788,
+      "prev_qty": 214,
+      "prev_amt": 13383560,
+      "diff_qty": -73,
+      "diff_amt": -4754772,
+      "wow": -35.526959941898866,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "SO",
+      "code": "WA2602SO04",
+      "name": "리얼 와이드 스웻 숏팬츠"
+    },
+    {
+      "cur_qty": 111,
+      "cur_amt": 8553280,
+      "prev_qty": 133,
+      "prev_amt": 10460426,
+      "diff_qty": -22,
+      "diff_amt": -1907146,
+      "wow": -18.23201081867985,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "SS",
+      "code": "WA2602SS31",
+      "name": "이지 데님 반팔셔츠"
+    },
+    {
+      "cur_qty": 196,
+      "cur_amt": 7956166,
+      "prev_qty": 249,
+      "prev_amt": 10007589,
+      "diff_qty": -53,
+      "diff_amt": -2051423,
+      "wow": -20.49867355663787,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602STE1",
+      "name": "2PACK 반팔 티셔츠"
+    },
+    {
+      "cur_qty": 172,
+      "cur_amt": 7907535,
+      "prev_qty": 179,
+      "prev_amt": 8397335,
+      "diff_qty": -7,
+      "diff_amt": -489800,
+      "wow": -5.832802907112793,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST47",
+      "name": "키키 타이포 그래픽 반팔티셔츠"
+    },
+    {
+      "cur_qty": 91,
+      "cur_amt": 7766486,
+      "prev_qty": 61,
+      "prev_amt": 5821737,
+      "diff_qty": 30,
+      "diff_amt": 1944749,
+      "wow": 33.40496144020247,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "KT",
+      "code": "WA2602KT64",
+      "name": "우먼스 리본 카라 반팔 니트"
+    },
+    {
+      "cur_qty": 137,
+      "cur_amt": 7200605,
+      "prev_qty": 188,
+      "prev_amt": 10329700,
+      "diff_qty": -51,
+      "diff_amt": -3129095,
+      "wow": -30.29221565001888,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST27",
+      "name": "키키 라이딩 반팔티셔츠"
+    },
+    {
+      "cur_qty": 73,
+      "cur_amt": 6886418,
+      "prev_qty": 108,
+      "prev_amt": 10308360,
+      "diff_qty": -35,
+      "diff_amt": -3421942,
+      "wow": -33.195794481372396,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "SO",
+      "code": "WA2602SO75",
+      "name": "우먼스 아플리케 데님 버뮤다팬츠"
+    },
+    {
+      "cur_qty": 161,
+      "cur_amt": 6492334,
+      "prev_qty": 194,
+      "prev_amt": 7690250,
+      "diff_qty": -33,
+      "diff_amt": -1197916,
+      "wow": -15.577074867527063,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST33",
+      "name": "키키 하와이안 반팔티셔츠"
+    },
+    {
+      "cur_qty": 189,
+      "cur_amt": 6309549,
+      "prev_qty": 183,
+      "prev_amt": 6809834,
+      "diff_qty": 6,
+      "diff_amt": -500285,
+      "wow": -7.346508005922024,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "ST",
+      "code": "WA2602ST52",
+      "name": "우먼스 릴리와펜 크롭핏 반팔티셔츠"
+    },
+    {
+      "cur_qty": 132,
+      "cur_amt": 6089160,
+      "prev_qty": 127,
+      "prev_amt": 5978360,
+      "diff_qty": 5,
+      "diff_amt": 110800,
+      "wow": 1.8533510862510787,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST48",
+      "name": "컬러 타이포 그래픽 반팔티셔츠"
+    },
+    {
+      "cur_qty": 75,
+      "cur_amt": 5834170,
+      "prev_qty": 69,
+      "prev_amt": 5323889,
+      "diff_qty": 6,
+      "diff_amt": 510281,
+      "wow": 9.58474153011079,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "SH",
+      "code": "WA2601SH62",
+      "name": "우먼스 오버핏 체크 셔츠"
+    },
+    {
+      "cur_qty": 116,
+      "cur_amt": 5765700,
+      "prev_qty": 89,
+      "prev_amt": 4872817,
+      "diff_qty": 27,
+      "diff_amt": 892883,
+      "wow": 18.323754001022408,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST12",
+      "name": "8컷 그래픽 반팔티셔츠"
+    },
+    {
+      "cur_qty": 69,
+      "cur_amt": 5744300,
+      "prev_qty": 68,
+      "prev_amt": 5716614,
+      "diff_qty": 1,
+      "diff_amt": 27686,
+      "wow": 0.484307668840331,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "KT",
+      "code": "WA2602KT51",
+      "name": "우먼스 릴리와펜 케이블 카라 반팔 니트"
+    },
+    {
+      "cur_qty": 140,
+      "cur_amt": 5664846,
+      "prev_qty": 211,
+      "prev_amt": 8784016,
+      "diff_qty": -71,
+      "diff_amt": -3119170,
+      "wow": -35.50961200434972,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "SO",
+      "code": "WA2602SO11",
+      "name": "베이직 나일론 숏팬츠"
+    },
+    {
+      "cur_qty": 125,
+      "cur_amt": 5447500,
+      "prev_qty": 223,
+      "prev_amt": 10049754,
+      "diff_qty": -98,
+      "diff_amt": -4602254,
+      "wow": -45.79469308402972,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "SO",
+      "code": "WA2602SO01",
+      "name": "베이직 스웻 숏팬츠"
+    },
+    {
+      "cur_qty": 93,
+      "cur_amt": 5380675,
+      "prev_qty": 133,
+      "prev_amt": 7763291,
+      "diff_qty": -40,
+      "diff_amt": -2382616,
+      "wow": -30.690798528613705,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "SO",
+      "code": "WA2602SO02",
+      "name": "스웻 카고 숏팬츠"
+    },
+    {
+      "cur_qty": 96,
+      "cur_amt": 5277969,
+      "prev_qty": 45,
+      "prev_amt": 2614290,
+      "diff_qty": 51,
+      "diff_amt": 2663679,
+      "wow": 101.88919362427275,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602STC2",
+      "name": "먼작귀 무당벌레 그래픽 반팔티셔츠"
+    },
+    {
+      "cur_qty": 77,
+      "cur_amt": 5139870,
+      "prev_qty": 114,
+      "prev_amt": 7530164,
+      "diff_qty": -37,
+      "diff_amt": -2390294,
+      "wow": -31.742920871311703,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "SO",
+      "code": "WA2602SO32",
+      "name": "이지 데님 숏팬츠"
+    },
+    {
+      "cur_qty": 54,
+      "cur_amt": 5009497,
+      "prev_qty": 18,
+      "prev_amt": 1755139,
+      "diff_qty": 36,
+      "diff_amt": 3254358,
+      "wow": 185.4188186804578,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "CR",
+      "code": "WA2601CRC1",
+      "name": "먼작귀 친구들 그래픽 맨투맨"
+    },
+    {
+      "cur_qty": 119,
+      "cur_amt": 4936275,
+      "prev_qty": 132,
+      "prev_amt": 5917215,
+      "diff_qty": -13,
+      "diff_amt": -980940,
+      "wow": -16.57773124687881,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "ST",
+      "code": "WA2602ST61",
+      "name": "우먼스 링거 그래픽 크롭 반팔티셔츠"
+    },
+    {
+      "cur_qty": 93,
+      "cur_amt": 4913250,
+      "prev_qty": 89,
+      "prev_amt": 5041060,
+      "diff_qty": 4,
+      "diff_amt": -127810,
+      "wow": -2.5353794638429217,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "ST",
+      "code": "WA2602ST71",
+      "name": "우먼스 헨리넥 아일렛 반팔티셔츠"
+    }
+  ],
+  "styles_up": [
+    {
+      "cur_qty": 211,
+      "cur_amt": 11550516,
+      "prev_qty": 105,
+      "prev_amt": 5930350,
+      "diff_qty": 106,
+      "diff_amt": 5620166,
+      "wow": 94.7695498579342,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602STC3",
+      "name": "먼작귀 친구들 그래픽 반팔티셔츠"
+    },
+    {
+      "cur_qty": 45,
+      "cur_amt": 4276800,
+      "prev_qty": 0,
+      "prev_amt": 0,
+      "diff_qty": 45,
+      "diff_amt": 4276800,
+      "wow": null,
+      "season": "26FW",
+      "gender": "우먼스",
+      "cat": "CD",
+      "code": "WA2603CD51",
+      "name": "우먼스 릴리와펜 라운드넥 가디건"
+    },
+    {
+      "cur_qty": 67,
+      "cur_amt": 4431198,
+      "prev_qty": 3,
+      "prev_amt": 211500,
+      "diff_qty": 64,
+      "diff_amt": 4219698,
+      "wow": 1995.1290780141842,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "LT",
+      "code": "WA2601LT15",
+      "name": "원포인트 스트라이프 롱슬리브"
+    },
+    {
+      "cur_qty": 54,
+      "cur_amt": 5009497,
+      "prev_qty": 18,
+      "prev_amt": 1755139,
+      "diff_qty": 36,
+      "diff_amt": 3254358,
+      "wow": 185.4188186804578,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "CR",
+      "code": "WA2601CRC1",
+      "name": "먼작귀 친구들 그래픽 맨투맨"
+    },
+    {
+      "cur_qty": 96,
+      "cur_amt": 5277969,
+      "prev_qty": 45,
+      "prev_amt": 2614290,
+      "diff_qty": 51,
+      "diff_amt": 2663679,
+      "wow": 101.88919362427275,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602STC2",
+      "name": "먼작귀 무당벌레 그래픽 반팔티셔츠"
+    },
+    {
+      "cur_qty": 58,
+      "cur_amt": 2614500,
+      "prev_qty": 0,
+      "prev_amt": 0,
+      "diff_qty": 58,
+      "diff_amt": 2614500,
+      "wow": null,
+      "season": "26FW",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2603ST16",
+      "name": "멀티 그래픽 반팔 티셔츠"
+    },
+    {
+      "cur_qty": 21,
+      "cur_amt": 2201800,
+      "prev_qty": 0,
+      "prev_amt": 0,
+      "diff_qty": 21,
+      "diff_amt": 2201800,
+      "wow": null,
+      "season": "26FW",
+      "gender": "우먼스",
+      "cat": "CD",
+      "code": "WA2603CD55",
+      "name": "우먼스 스트라이프 가디건"
+    },
+    {
+      "cur_qty": 57,
+      "cur_amt": 4730290,
+      "prev_qty": 31,
+      "prev_amt": 2595540,
+      "diff_qty": 26,
+      "diff_amt": 2134750,
+      "wow": 82.24685421916055,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "HZ",
+      "code": "WA2601HZ01",
+      "name": "베이직 키키로고 후드집업"
+    },
+    {
+      "cur_qty": 19,
+      "cur_amt": 1948900,
+      "prev_qty": 0,
+      "prev_amt": 0,
+      "diff_qty": 19,
+      "diff_amt": 1948900,
+      "wow": null,
+      "season": "26FW",
+      "gender": "우먼스",
+      "cat": "CD",
+      "code": "WA2603CD53",
+      "name": "우먼스 케이블 가디건"
+    },
+    {
+      "cur_qty": 91,
+      "cur_amt": 7766486,
+      "prev_qty": 61,
+      "prev_amt": 5821737,
+      "diff_qty": 30,
+      "diff_amt": 1944749,
+      "wow": 33.40496144020247,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "KT",
+      "code": "WA2602KT64",
+      "name": "우먼스 리본 카라 반팔 니트"
+    },
+    {
+      "cur_qty": 88,
+      "cur_amt": 4860942,
+      "prev_qty": 53,
+      "prev_amt": 3023390,
+      "diff_qty": 35,
+      "diff_amt": 1837552,
+      "wow": 60.777868551526595,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602STC1",
+      "name": "먼작귀 그래픽 반팔티셔츠"
+    },
+    {
+      "cur_qty": 41,
+      "cur_amt": 1829800,
+      "prev_qty": 0,
+      "prev_amt": 0,
+      "diff_qty": 41,
+      "diff_amt": 1829800,
+      "wow": null,
+      "season": "26FW",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2603ST15",
+      "name": "타이포 아트웍 포인트 반팔 티셔츠"
+    },
+    {
+      "cur_qty": 15,
+      "cur_amt": 1487850,
+      "prev_qty": 0,
+      "prev_amt": 0,
+      "diff_qty": 15,
+      "diff_amt": 1487850,
+      "wow": null,
+      "season": "26FW",
+      "gender": "우먼스",
+      "cat": "KT",
+      "code": "WA2603KT62",
+      "name": "우먼스 케이블 오픈카라 풀오버"
+    },
+    {
+      "cur_qty": 27,
+      "cur_amt": 2541517,
+      "prev_qty": 12,
+      "prev_amt": 1136760,
+      "diff_qty": 15,
+      "diff_amt": 1404757,
+      "wow": 123.57551286111403,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "CR",
+      "code": "WA2601CRC2",
+      "name": "먼작귀 그래픽 맨투맨"
+    },
+    {
+      "cur_qty": 22,
+      "cur_amt": 1277350,
+      "prev_qty": 0,
+      "prev_amt": 0,
+      "diff_qty": 22,
+      "diff_amt": 1277350,
+      "wow": null,
+      "season": "26FW",
+      "gender": "유니섹스",
+      "cat": "LT",
+      "code": "WA2603LT14",
+      "name": "오벌 로고 래글런 롱슬리브"
+    },
+    {
+      "cur_qty": 27,
+      "cur_amt": 2071934,
+      "prev_qty": 12,
+      "prev_amt": 1054600,
+      "diff_qty": 15,
+      "diff_amt": 1017334,
+      "wow": 96.46633794803718,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "SR",
+      "code": "WA2602SR61",
+      "name": "우먼스 나일론 카고 롱 스커트"
+    },
+    {
+      "cur_qty": 45,
+      "cur_amt": 3737320,
+      "prev_qty": 31,
+      "prev_amt": 2763600,
+      "diff_qty": 14,
+      "diff_amt": 973720,
+      "wow": 35.23375307569837,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "HZ",
+      "code": "WA2601HZ51",
+      "name": "우먼스 릴리와펜 크롭 후드집업"
+    },
+    {
+      "cur_qty": 29,
+      "cur_amt": 2153989,
+      "prev_qty": 17,
+      "prev_amt": 1209440,
+      "diff_qty": 12,
+      "diff_amt": 944549,
+      "wow": 78.09804537637254,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "LT",
+      "code": "WA2601LTC2",
+      "name": "먼작귀 그래픽 긴팔티셔츠"
+    },
+    {
+      "cur_qty": 26,
+      "cur_amt": 1456646,
+      "prev_qty": 9,
+      "prev_amt": 519200,
+      "diff_qty": 17,
+      "diff_amt": 937446,
+      "wow": 180.55585516178735,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "CD",
+      "code": "WA2601CD65",
+      "name": "우먼스 베이직 코튼 라운드넥 가디건"
+    },
+    {
+      "cur_qty": 116,
+      "cur_amt": 5765700,
+      "prev_qty": 89,
+      "prev_amt": 4872817,
+      "diff_qty": 27,
+      "diff_amt": 892883,
+      "wow": 18.323754001022408,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST12",
+      "name": "8컷 그래픽 반팔티셔츠"
+    },
+    {
+      "cur_qty": 10,
+      "cur_amt": 858850,
+      "prev_qty": 0,
+      "prev_amt": 0,
+      "diff_qty": 10,
+      "diff_amt": 858850,
+      "wow": null,
+      "season": "26FW",
+      "gender": "유니섹스",
+      "cat": "LT",
+      "code": "WA2603LT15",
+      "name": "와플 후드 레이어드 롱슬리브"
+    },
+    {
+      "cur_qty": 32,
+      "cur_amt": 2346571,
+      "prev_qty": 20,
+      "prev_amt": 1510270,
+      "diff_qty": 12,
+      "diff_amt": 836301,
+      "wow": 55.374270825746386,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "LT",
+      "code": "WA2601LTC1",
+      "name": "먼작귀 컬러 그래픽 긴팔티셔츠"
+    },
+    {
+      "cur_qty": 14,
+      "cur_amt": 1738890,
+      "prev_qty": 8,
+      "prev_amt": 988290,
+      "diff_qty": 6,
+      "diff_amt": 750600,
+      "wow": 75.9493670886076,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "HZ",
+      "code": "WA2601HZ15",
+      "name": "데님라이크 후드집업(SET-UP)"
+    },
+    {
+      "cur_qty": 17,
+      "cur_amt": 1816850,
+      "prev_qty": 10,
+      "prev_amt": 1068600,
+      "diff_qty": 7,
+      "diff_amt": 748250,
+      "wow": 70.02152348867678,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "HZ",
+      "code": "WA2601HZ52",
+      "name": "우먼스 데님워싱 크롭 후드집업"
+    },
+    {
+      "cur_qty": 97,
+      "cur_amt": 3809328,
+      "prev_qty": 66,
+      "prev_amt": 3094759,
+      "diff_qty": 31,
+      "diff_amt": 714569,
+      "wow": 23.08964930710275,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "ST",
+      "code": "WA2602ST66",
+      "name": "우먼스 블러 릴리 세미크롭 반팔티셔츠"
+    },
+    {
+      "cur_qty": 11,
+      "cur_amt": 1075900,
+      "prev_qty": 5,
+      "prev_amt": 465900,
+      "diff_qty": 6,
+      "diff_amt": 610000,
+      "wow": 130.92938398798026,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "JK",
+      "code": "WA2602JK33",
+      "name": "저밀도 풀집업 점퍼"
+    },
+    {
+      "cur_qty": 18,
+      "cur_amt": 1267635,
+      "prev_qty": 10,
+      "prev_amt": 705701,
+      "diff_qty": 8,
+      "diff_amt": 561934,
+      "wow": 79.62777436903164,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "PT",
+      "code": "WA2601PT37",
+      "name": "와이드 코튼 워싱 이지팬츠"
+    },
+    {
+      "cur_qty": 5,
+      "cur_amt": 559300,
+      "prev_qty": 0,
+      "prev_amt": 0,
+      "diff_qty": 5,
+      "diff_amt": 559300,
+      "wow": null,
+      "season": "26FW",
+      "gender": "우먼스",
+      "cat": "CD",
+      "code": "WA2603CD56",
+      "name": "우먼스 패턴 믹스 가디건"
+    },
+    {
+      "cur_qty": 28,
+      "cur_amt": 1787880,
+      "prev_qty": 20,
+      "prev_amt": 1242008,
+      "diff_qty": 8,
+      "diff_amt": 545872,
+      "wow": 43.950763602166816,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "SH",
+      "code": "WA2601SH12",
+      "name": "베이직 체크 긴팔셔츠"
+    },
+    {
+      "cur_qty": 46,
+      "cur_amt": 1607190,
+      "prev_qty": 32,
+      "prev_amt": 1076400,
+      "diff_qty": 14,
+      "diff_amt": 530790,
+      "wow": 49.311594202898554,
+      "season": "26SS",
+      "gender": "키즈",
+      "cat": "ST",
+      "code": "WA2602ST82",
+      "name": "키즈 타이포 그래픽 반팔티셔츠"
+    }
+  ],
+  "styles_down": [
+    {
+      "cur_qty": 199,
+      "cur_amt": 9082921,
+      "prev_qty": 483,
+      "prev_amt": 24568361,
+      "diff_qty": -284,
+      "diff_amt": -15485440,
+      "wow": -63.030008391687176,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602STE3",
+      "name": "3PACK 반팔 티셔츠"
+    },
+    {
+      "cur_qty": 472,
+      "cur_amt": 17639913,
+      "prev_qty": 576,
+      "prev_amt": 22416221,
+      "diff_qty": -104,
+      "diff_amt": -4776308,
+      "wow": -21.307373798643404,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST02",
+      "name": "더블 키키와펜 반팔티셔츠"
+    },
+    {
+      "cur_qty": 141,
+      "cur_amt": 8628788,
+      "prev_qty": 214,
+      "prev_amt": 13383560,
+      "diff_qty": -73,
+      "diff_amt": -4754772,
+      "wow": -35.526959941898866,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "SO",
+      "code": "WA2602SO04",
+      "name": "리얼 와이드 스웻 숏팬츠"
+    },
+    {
+      "cur_qty": 125,
+      "cur_amt": 5447500,
+      "prev_qty": 223,
+      "prev_amt": 10049754,
+      "diff_qty": -98,
+      "diff_amt": -4602254,
+      "wow": -45.79469308402972,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "SO",
+      "code": "WA2602SO01",
+      "name": "베이직 스웻 숏팬츠"
+    },
+    {
+      "cur_qty": 32,
+      "cur_amt": 1665456,
+      "prev_qty": 101,
+      "prev_amt": 5487500,
+      "diff_qty": -69,
+      "diff_amt": -3822044,
+      "wow": -69.65000455580865,
+      "season": "26FW",
+      "gender": "우먼스",
+      "cat": "ST",
+      "code": "WA2603STW4",
+      "name": "우먼스 타이포 패치워크 반팔티셔츠"
+    },
+    {
+      "cur_qty": 9,
+      "cur_amt": 379053,
+      "prev_qty": 88,
+      "prev_amt": 3836241,
+      "diff_qty": -79,
+      "diff_amt": -3457188,
+      "wow": -90.11915570476413,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "ST",
+      "code": "WA2602ST79",
+      "name": "우먼스 빅릴리 디벨롭 반팔 티셔츠"
+    },
+    {
+      "cur_qty": 73,
+      "cur_amt": 6886418,
+      "prev_qty": 108,
+      "prev_amt": 10308360,
+      "diff_qty": -35,
+      "diff_amt": -3421942,
+      "wow": -33.195794481372396,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "SO",
+      "code": "WA2602SO75",
+      "name": "우먼스 아플리케 데님 버뮤다팬츠"
+    },
+    {
+      "cur_qty": 223,
+      "cur_amt": 9351818,
+      "prev_qty": 297,
+      "prev_amt": 12713389,
+      "diff_qty": -74,
+      "diff_amt": -3361571,
+      "wow": -26.44118731834604,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "ST",
+      "code": "WA2602ST55",
+      "name": "우먼스 빅릴리 그래픽 반팔티셔츠"
+    },
+    {
+      "cur_qty": 109,
+      "cur_amt": 4447776,
+      "prev_qty": 196,
+      "prev_amt": 7718370,
+      "diff_qty": -87,
+      "diff_amt": -3270594,
+      "wow": -42.37415412839758,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST32",
+      "name": "키키 서핑 그래픽 반팔티셔츠"
+    },
+    {
+      "cur_qty": 236,
+      "cur_amt": 9564323,
+      "prev_qty": 301,
+      "prev_amt": 12834170,
+      "diff_qty": -65,
+      "diff_amt": -3269847,
+      "wow": -25.477666261238554,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "ST",
+      "code": "WA2602ST78",
+      "name": "우먼스 릴리 아플리케 세미크롭 반팔티셔츠"
+    },
+    {
+      "cur_qty": 137,
+      "cur_amt": 7200605,
+      "prev_qty": 188,
+      "prev_amt": 10329700,
+      "diff_qty": -51,
+      "diff_amt": -3129095,
+      "wow": -30.29221565001888,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST27",
+      "name": "키키 라이딩 반팔티셔츠"
+    },
+    {
+      "cur_qty": 140,
+      "cur_amt": 5664846,
+      "prev_qty": 211,
+      "prev_amt": 8784016,
+      "diff_qty": -71,
+      "diff_amt": -3119170,
+      "wow": -35.50961200434972,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "SO",
+      "code": "WA2602SO11",
+      "name": "베이직 나일론 숏팬츠"
+    },
+    {
+      "cur_qty": 36,
+      "cur_amt": 3095359,
+      "prev_qty": 72,
+      "prev_amt": 6203248,
+      "diff_qty": -36,
+      "diff_amt": -3107889,
+      "wow": -50.10099547849771,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "PT",
+      "code": "WA2602PT71",
+      "name": "우먼스 와이드핏 저온스 데님팬츠"
+    },
+    {
+      "cur_qty": 269,
+      "cur_amt": 9514072,
+      "prev_qty": 351,
+      "prev_amt": 12595040,
+      "diff_qty": -82,
+      "diff_amt": -3080968,
+      "wow": -24.461756373937675,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "ST",
+      "code": "WA2602ST51",
+      "name": "우먼스 릴리와펜 레귤러핏 반팔티셔츠"
+    },
+    {
+      "cur_qty": 59,
+      "cur_amt": 4207020,
+      "prev_qty": 101,
+      "prev_amt": 7167848,
+      "diff_qty": -42,
+      "diff_amt": -2960828,
+      "wow": -41.307070127603154,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "SO",
+      "code": "WA2602SO73",
+      "name": "우먼스 데님 버뮤다 팬츠"
+    },
+    {
+      "cur_qty": 237,
+      "cur_amt": 9336007,
+      "prev_qty": 294,
+      "prev_amt": 12291179,
+      "diff_qty": -57,
+      "diff_amt": -2955172,
+      "wow": -24.043031185210143,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "ST",
+      "code": "WA2602ST72",
+      "name": "우먼스 스트라이프 반팔티셔츠"
+    },
+    {
+      "cur_qty": 11,
+      "cur_amt": 616550,
+      "prev_qty": 159,
+      "prev_amt": 3445600,
+      "diff_qty": -148,
+      "diff_amt": -2829050,
+      "wow": -82.10616438356165,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST45",
+      "name": "세미 크롭 다잉 반팔티셔츠"
+    },
+    {
+      "cur_qty": 69,
+      "cur_amt": 2486750,
+      "prev_qty": 135,
+      "prev_amt": 5204700,
+      "diff_qty": -66,
+      "diff_amt": -2717950,
+      "wow": -52.22106941802601,
+      "season": "26FW",
+      "gender": "우먼스",
+      "cat": "ST",
+      "code": "WA2603STE2",
+      "name": "우먼스 2PACK 릴리 반팔티셔츠"
+    },
+    {
+      "cur_qty": 57,
+      "cur_amt": 2557575,
+      "prev_qty": 110,
+      "prev_amt": 5064811,
+      "diff_qty": -53,
+      "diff_amt": -2507236,
+      "wow": -49.50305154526003,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST38",
+      "name": "슬로건 타이포 반팔티셔츠"
+    },
+    {
+      "cur_qty": 98,
+      "cur_amt": 4005796,
+      "prev_qty": 162,
+      "prev_amt": 6512700,
+      "diff_qty": -64,
+      "diff_amt": -2506904,
+      "wow": -38.492545334500285,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST17",
+      "name": "키치 그래픽 반팔티셔츠"
+    },
+    {
+      "cur_qty": 79,
+      "cur_amt": 4138750,
+      "prev_qty": 169,
+      "prev_amt": 6614540,
+      "diff_qty": -90,
+      "diff_amt": -2475790,
+      "wow": -37.42951134923971,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "ST",
+      "code": "WA2602ST70",
+      "name": "우먼스 다잉 그래픽 반팔티셔츠"
+    },
+    {
+      "cur_qty": 77,
+      "cur_amt": 5139870,
+      "prev_qty": 114,
+      "prev_amt": 7530164,
+      "diff_qty": -37,
+      "diff_amt": -2390294,
+      "wow": -31.742920871311703,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "SO",
+      "code": "WA2602SO32",
+      "name": "이지 데님 숏팬츠"
+    },
+    {
+      "cur_qty": 93,
+      "cur_amt": 5380675,
+      "prev_qty": 133,
+      "prev_amt": 7763291,
+      "diff_qty": -40,
+      "diff_amt": -2382616,
+      "wow": -30.690798528613705,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "SO",
+      "code": "WA2602SO02",
+      "name": "스웻 카고 숏팬츠"
+    },
+    {
+      "cur_qty": 475,
+      "cur_amt": 15551353,
+      "prev_qty": 545,
+      "prev_amt": 17909991,
+      "diff_qty": -70,
+      "diff_amt": -2358638,
+      "wow": -13.169398019239653,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST01",
+      "name": "키키 와펜 반팔티셔츠"
+    },
+    {
+      "cur_qty": 12,
+      "cur_amt": 1035640,
+      "prev_qty": 38,
+      "prev_amt": 3262250,
+      "diff_qty": -26,
+      "diff_amt": -2226610,
+      "wow": -68.25381255268603,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "CD",
+      "code": "WA2602CD66",
+      "name": "우먼스 썸머 라운드넥 가디건"
+    },
+    {
+      "cur_qty": 93,
+      "cur_amt": 3916295,
+      "prev_qty": 156,
+      "prev_amt": 6081527,
+      "diff_qty": -63,
+      "diff_amt": -2165232,
+      "wow": -35.60342657362205,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST31",
+      "name": "바캉스 그래픽 반팔티셔츠"
+    },
+    {
+      "cur_qty": 196,
+      "cur_amt": 7956166,
+      "prev_qty": 249,
+      "prev_amt": 10007589,
+      "diff_qty": -53,
+      "diff_amt": -2051423,
+      "wow": -20.49867355663787,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602STE1",
+      "name": "2PACK 반팔 티셔츠"
+    },
+    {
+      "cur_qty": 113,
+      "cur_amt": 4241198,
+      "prev_qty": 168,
+      "prev_amt": 6266579,
+      "diff_qty": -55,
+      "diff_amt": -2025381,
+      "wow": -32.32036171569847,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST04",
+      "name": "베이직 스트라이프 반팔티셔츠"
+    },
+    {
+      "cur_qty": 51,
+      "cur_amt": 2628459,
+      "prev_qty": 89,
+      "prev_amt": 4637162,
+      "diff_qty": -38,
+      "diff_amt": -2008703,
+      "wow": -43.31750756173711,
+      "season": "26SS",
+      "gender": "유니섹스",
+      "cat": "ST",
+      "code": "WA2602ST23",
+      "name": "키키 링거 반팔티셔츠"
+    },
+    {
+      "cur_qty": 21,
+      "cur_amt": 1105905,
+      "prev_qty": 56,
+      "prev_amt": 3083100,
+      "diff_qty": -35,
+      "diff_amt": -1977195,
+      "wow": -64.13009633161428,
+      "season": "26SS",
+      "gender": "우먼스",
+      "cat": "ST",
+      "code": "WA2602ST64",
+      "name": "우먼스 썸머그래픽 링거 세미오버 반팔티셔츠"
+    }
+  ],
+  "channels": {
+    "WA2602ST02": [
+      {
+        "channel": "아울렛",
+        "qty": 155,
+        "amt": 5547220,
+        "share": 31.446980492477483
+      },
+      {
+        "channel": "백화점",
+        "qty": 109,
+        "amt": 3979160,
+        "share": 22.55770762588228
+      },
+      {
+        "channel": "직영점",
+        "qty": 107,
+        "amt": 3924932,
+        "share": 22.250291143726162
+      }
+    ],
+    "WA2602ST01": [
+      {
+        "channel": "아울렛",
+        "qty": 133,
+        "amt": 4033670,
+        "share": 25.937743166141235
+      },
+      {
+        "channel": "면세점",
+        "qty": 107,
+        "amt": 3745000,
+        "share": 24.08150596285738
+      },
+      {
+        "channel": "백화점",
+        "qty": 100,
+        "amt": 3198800,
+        "share": 20.569271368221145
+      }
+    ],
+    "WA2602STC3": [
+      {
+        "channel": "직영점",
+        "qty": 52,
+        "amt": 2858550,
+        "share": 24.74824501346953
+      },
+      {
+        "channel": "온라인(자사몰)",
+        "qty": 42,
+        "amt": 1990166,
+        "share": 17.230104698352868
+      },
+      {
+        "channel": "백화점",
+        "qty": 31,
+        "amt": 1829000,
+        "share": 15.834790411095053
+      }
+    ],
+    "WA2602CD52": [
+      {
+        "channel": "면세점",
+        "qty": 45,
+        "amt": 4032000,
+        "share": 36.012871386085585
+      },
+      {
+        "channel": "백화점",
+        "qty": 34,
+        "amt": 3366000,
+        "share": 30.064316737491087
+      },
+      {
+        "channel": "직영점",
+        "qty": 28,
+        "amt": 2509650,
+        "share": 22.415600861629382
+      }
+    ],
+    "WA2602ST78": [
+      {
+        "channel": "직영점",
+        "qty": 86,
+        "amt": 3050480,
+        "share": 31.894364086198262
+      },
+      {
+        "channel": "백화점",
+        "qty": 55,
+        "amt": 2522100,
+        "share": 26.3698747940654
+      },
+      {
+        "channel": "아울렛",
+        "qty": 45,
+        "amt": 1795890,
+        "share": 18.776969368349437
+      }
+    ],
+    "WA2602ST51": [
+      {
+        "channel": "면세점",
+        "qty": 82,
+        "amt": 2870000,
+        "share": 30.165842764275908
+      },
+      {
+        "channel": "백화점",
+        "qty": 72,
+        "amt": 2638500,
+        "share": 27.732604924579086
+      },
+      {
+        "channel": "아울렛",
+        "qty": 52,
+        "amt": 1869870,
+        "share": 19.653729759455256
+      }
+    ],
+    "WA2602ST55": [
+      {
+        "channel": "면세점",
+        "qty": 90,
+        "amt": 4032000,
+        "share": 43.11461151190068
+      },
+      {
+        "channel": "직영점",
+        "qty": 61,
+        "amt": 2116824,
+        "share": 22.63542767834019
+      },
+      {
+        "channel": "아울렛",
+        "qty": 39,
+        "amt": 1716500,
+        "share": 18.354719905797996
+      }
+    ],
+    "WA2602ST72": [
+      {
+        "channel": "직영점",
+        "qty": 81,
+        "amt": 2915302,
+        "share": 31.22643331351401
+      },
+      {
+        "channel": "아울렛",
+        "qty": 65,
+        "amt": 2568360,
+        "share": 27.510262149546378
+      },
+      {
+        "channel": "백화점",
+        "qty": 59,
+        "amt": 2438850,
+        "share": 26.123052392741354
+      }
+    ],
+    "WA2602STE3": [
+      {
+        "channel": "직영점",
+        "qty": 120,
+        "amt": 5784688,
+        "share": 63.68752959538016
+      },
+      {
+        "channel": "면세점",
+        "qty": 52,
+        "amt": 2329600,
+        "share": 25.64813676129078
+      },
+      {
+        "channel": "백화점",
+        "qty": 10,
+        "amt": 502800,
+        "share": 5.535664132716777
+      }
+    ],
+    "WA2602SO04": [
+      {
+        "channel": "아울렛",
+        "qty": 69,
+        "amt": 4189170,
+        "share": 48.54876490186108
+      },
+      {
+        "channel": "백화점",
+        "qty": 37,
+        "amt": 2385100,
+        "share": 27.641193641563568
+      },
+      {
+        "channel": "직영점",
+        "qty": 15,
+        "amt": 924600,
+        "share": 10.71529396712493
+      }
+    ],
+    "WA2603CD51": [
+      {
+        "channel": "백화점",
+        "qty": 24,
+        "amt": 2366100,
+        "share": 55.32407407407407
+      },
+      {
+        "channel": "직영점",
+        "qty": 14,
+        "amt": 1237500,
+        "share": 28.935185185185187
+      },
+      {
+        "channel": "아울렛",
+        "qty": 3,
+        "amt": 297000,
+        "share": 6.944444444444445
+      }
+    ],
+    "WA2601LT15": [
+      {
+        "channel": "온라인(무신사)",
+        "qty": 39,
+        "amt": 2438270,
+        "share": 55.025074483243586
+      },
+      {
+        "channel": "해외 위탁",
+        "qty": 14,
+        "amt": 1160346,
+        "share": 26.185830558688643
+      },
+      {
+        "channel": "온라인(위탁몰)",
+        "qty": 9,
+        "amt": 547105,
+        "share": 12.346661106093656
+      }
+    ],
+    "WA2601CRC1": [
+      {
+        "channel": "백화점",
+        "qty": 13,
+        "amt": 1287000,
+        "share": 25.691202130673002
+      },
+      {
+        "channel": "온라인(위탁몰)",
+        "qty": 13,
+        "amt": 1231695,
+        "share": 24.587199074078693
+      },
+      {
+        "channel": "직영점",
+        "qty": 10,
+        "amt": 915750,
+        "share": 18.28027843913271
+      }
+    ],
+    "WA2602STC2": [
+      {
+        "channel": "직영점",
+        "qty": 34,
+        "amt": 1873250,
+        "share": 35.49187196817564
+      },
+      {
+        "channel": "온라인(위탁몰)",
+        "qty": 18,
+        "amt": 997570,
+        "share": 18.90064151570424
+      },
+      {
+        "channel": "백화점",
+        "qty": 14,
+        "amt": 826000,
+        "share": 15.649959293053826
+      }
+    ],
+    "WA2603ST16": [
+      {
+        "channel": "직영점",
+        "qty": 27,
+        "amt": 1151500,
+        "share": 44.042838018741634
+      },
+      {
+        "channel": "백화점",
+        "qty": 17,
+        "amt": 828100,
+        "share": 31.673360107095043
+      },
+      {
+        "channel": "아울렛",
+        "qty": 10,
+        "amt": 455700,
+        "share": 17.429718875502008
+      }
+    ],
+    "WA2603CD55": [
+      {
+        "channel": "백화점",
+        "qty": 8,
+        "amt": 872000,
+        "share": 39.603960396039604
+      },
+      {
+        "channel": "아울렛",
+        "qty": 6,
+        "amt": 643100,
+        "share": 29.207920792079207
+      },
+      {
+        "channel": "직영점",
+        "qty": 5,
+        "amt": 479600,
+        "share": 21.782178217821784
+      }
+    ],
+    "WA2601HZ01": [
+      {
+        "channel": "백화점",
+        "qty": 24,
+        "amt": 1877040,
+        "share": 39.68128803942253
+      },
+      {
+        "channel": "면세점",
+        "qty": 14,
+        "amt": 1254400,
+        "share": 26.518458699149523
+      },
+      {
+        "channel": "직영점",
+        "qty": 7,
+        "amt": 638550,
+        "share": 13.499172355183298
+      }
+    ],
+    "WA2603CD53": [
+      {
+        "channel": "아울렛",
+        "qty": 7,
+        "amt": 730300,
+        "share": 37.47242033967879
+      },
+      {
+        "channel": "백화점",
+        "qty": 7,
+        "amt": 684500,
+        "share": 35.12237672533224
+      },
+      {
+        "channel": "직영점",
+        "qty": 3,
+        "amt": 316100,
+        "share": 16.21940581866694
+      }
+    ],
+    "WA2602KT64": [
+      {
+        "channel": "직영점",
+        "qty": 42,
+        "amt": 3240000,
+        "share": 41.71770862652685
+      },
+      {
+        "channel": "면세점",
+        "qty": 34,
+        "amt": 3046400,
+        "share": 39.22494677773191
+      },
+      {
+        "channel": "백화점",
+        "qty": 10,
+        "amt": 980100,
+        "share": 12.619606859524371
+      }
+    ],
+    "WA2602SO01": [
+      {
+        "channel": "백화점",
+        "qty": 46,
+        "amt": 1914280,
+        "share": 35.1405231757687
+      },
+      {
+        "channel": "아울렛",
+        "qty": 44,
+        "amt": 1768020,
+        "share": 32.45562184488298
+      },
+      {
+        "channel": "직영점",
+        "qty": 15,
+        "amt": 769950,
+        "share": 14.13400642496558
+      }
+    ],
+    "WA2603STW4": [
+      {
+        "channel": "직영점",
+        "qty": 18,
+        "amt": 908600,
+        "share": 54.55562920905746
+      },
+      {
+        "channel": "면세점",
+        "qty": 9,
+        "amt": 478800,
+        "share": 28.74888318874831
+      },
+      {
+        "channel": "백화점",
+        "qty": 4,
+        "amt": 236000,
+        "share": 14.170293301053885
+      }
+    ],
+    "WA2602ST79": [
+      {
+        "channel": "직영점",
+        "qty": 3,
+        "amt": 139650,
+        "share": 36.84181367777066
+      },
+      {
+        "channel": "백화점",
+        "qty": 3,
+        "amt": 122100,
+        "share": 32.21185427895307
+      },
+      {
+        "channel": "면세점",
+        "qty": 1,
+        "amt": 44800,
+        "share": 11.818927696126927
+      }
+    ],
+    "WA2602SO75": [
+      {
+        "channel": "백화점",
+        "qty": 37,
+        "amt": 3643200,
+        "share": 52.904136809586646
+      },
+      {
+        "channel": "아울렛",
+        "qty": 12,
+        "amt": 1118700,
+        "share": 16.24502027033503
+      },
+      {
+        "channel": "직영점",
+        "qty": 7,
+        "amt": 608850,
+        "share": 8.841316341819507
+      }
+    ],
+    "WA2602ST32": [
+      {
+        "channel": "직영점",
+        "qty": 31,
+        "amt": 1210752,
+        "share": 27.22151475254149
+      },
+      {
+        "channel": "면세점",
+        "qty": 25,
+        "amt": 1120000,
+        "share": 25.181124229277735
+      },
+      {
+        "channel": "백화점",
+        "qty": 27,
+        "amt": 1100840,
+        "share": 24.75034713978402
+      }
+    ]
+  }
+}

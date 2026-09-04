@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>와키윌리 아트그로서리 성수 팝업 핵심 리뷰</title>
+<style>
+:root {
+  --paper: oklch(0.965 0.014 88);
+  --panel: oklch(0.995 0.006 88);
+  --ink: oklch(0.19 0.018 126);
+  --muted: oklch(0.49 0.018 126);
+  --line: oklch(0.84 0.018 102);
+  --green: oklch(0.42 0.065 130);
+  --brick: oklch(0.52 0.13 38);
+  --gold: oklch(0.78 0.13 82);
+  --yellow: oklch(0.91 0.16 95);
+  --blue: oklch(0.45 0.095 238);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 26px 30px 34px;
+}
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 310px;
+  gap: 24px;
+  align-items: end;
+  border-bottom: 3px solid var(--ink);
+  padding-bottom: 15px;
+}
+.eyebrow {
+  color: var(--brick);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+h1 {
+  margin: 7px 0 8px;
+  font-size: 34px;
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+.lead {
+  max-width: 760px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.stamp {
+  border: 1px solid var(--ink);
+  background: var(--panel);
+  padding: 14px 16px;
+}
+.stamp span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+.stamp b {
+  display: block;
+  margin-top: 4px;
+  font-size: 24px;
+  line-height: 1.15;
+}
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 14px 0;
+}
+.kpi {
+  min-height: 88px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 12px;
+}
+.kpi span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 7px;
+}
+.kpi strong {
+  display: block;
+  font-size: 27px;
+  line-height: 1;
+}
+.kpi em {
+  display: block;
+  color: var(--green);
+  font-style: normal;
+  font-weight: 800;
+  font-size: 11px;
+  margin-top: 7px;
+}
+.verdict {
+  display: grid;
+  grid-template-columns: .74fr 1.26fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.result {
+  background: var(--ink);
+  color: oklch(0.985 0.006 88);
+  padding: 16px 18px;
+}
+.result span {
+  display: block;
+  color: var(--yellow);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .06em;
+  margin-bottom: 8px;
+}
+.result strong {
+  display: block;
+  font-size: 24px;
+  line-height: 1.25;
+}
+.reasons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.reason {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 13px 14px;
+}
+.reason b {
+  display: block;
+  color: var(--brick);
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+.reason p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap: 12px;
+  align-items: start;
+}
+section {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 14px;
+}
+h2 {
+  margin: 0 0 9px;
+  font-size: 18px;
+  line-height: 1.2;
+}
+.note {
+  margin: -4px 0 10px;
+  color: var(--muted);
+  font-size: 11px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+th {
+  background: var(--green);
+  color: oklch(0.985 0.006 88);
+  padding: 7px 8px;
+  text-align: left;
+  font-size: 11px;
+}
+td {
+  border-bottom: 1px solid oklch(0.90 0.012 102);
+  padding: 8px;
+  vertical-align: top;
+  word-break: keep-all;
+}
+tr:last-child td { border-bottom: 0; }
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.highlight td {
+  background: oklch(0.94 0.11 95);
+  font-weight: 900;
+}
+.bad {
+  color: var(--brick);
+  font-weight: 900;
+}
+.tag {
+  display: inline-block;
+  background: var(--yellow);
+  border: 1px solid var(--ink);
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 900;
+}
+.actions {
+  display: grid;
+  gap: 8px;
+}
+.action {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+}
+.action:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.action b {
+  color: var(--brick);
+}
+.action span {
+  color: var(--ink);
+}
+.footer {
+  margin-top: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+@media (max-width: 900px) {
+  .page { padding: 18px 14px 24px; }
+  .hero, .verdict, .grid { grid-template-columns: 1fr; }
+  .kpis, .reasons { grid-template-columns: 1fr 1fr; }
+  h1 { font-size: 28px; }
+  .footer { flex-direction: column; }
+}
+@media (max-width: 560px) {
+  .kpis, .reasons { grid-template-columns: 1fr; }
+  .action { grid-template-columns: 1fr; gap: 3px; }
+}
+@media print {
+  @page { size: A4 landscape; margin: 7mm; }
+  body { background: oklch(0.995 0.006 88); }
+  .page { max-width: none; padding: 0; }
+  h1 { font-size: 28px; }
+  .lead { font-size: 11px; }
+  .kpis { gap: 7px; margin: 9px 0; }
+  .kpi { min-height: 70px; padding: 9px; }
+  .kpi strong { font-size: 22px; }
+  .result strong { font-size: 20px; }
+  section { padding: 10px; }
+  th, td { padding: 5px 6px; font-size: 10px; }
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">WACKY WILLY · ART GROCERY REVIEW</div>
+      <h1>성수 팝업 판매 부진<br>핵심만 보는 리뷰</h1>
+      <p class="lead">기간 2026.07.09-07.12, 와키윌리 성수 FSS. 상세 나열보다 다음 팝업에서 바로 바꿔야 할 판단만 남겼습니다.</p>
+    </div>
+    <div class="stamp">
+      <span>최종 판단</span>
+      <b>상품보다 유입과 첫 구매 명분이 약했다</b>
+    </div>
+  </header>
+
+  <div class="kpis">
+    <div class="kpi"><span>고객 판매</span><strong>23장</strong><em>50% 임직원 추정 4장 제외</em></div>
+    <div class="kpi"><span>고객 실판매</span><strong>1,029천원</strong><em>총 실판매 1,127천원</em></div>
+    <div class="kpi"><span>판매 집중</span><strong>7/11</strong><em>16장, 고객 판매 69.6%</em></div>
+    <div class="kpi"><span>최다 반응</span><strong>체리</strong><em>8장, 고객 판매 34.8%</em></div>
+  </div>
+
+  <div class="verdict">
+    <div class="result">
+      <span>ONE LINE</span>
+      <strong>1장 노세일보다 더 큰 문제는 입객 부족, 첫 구매 명분 부족, 그래픽 반응 편중입니다.</strong>
+    </div>
+    <div class="reasons">
+      <div class="reason"><b>유입</b><p>오픈일 우천, 4일 단기 운영으로 트래픽 회복 시간이 부족했습니다.</p></div>
+      <div class="reason"><b>전환</b><p>49,000원 1장 구매를 설득할 선물 패키지, 한정성, 현장 멘트가 약했습니다.</p></div>
+      <div class="reason"><b>상품</b><p>체리 반응이 가장 강했습니다. 전체 SKU를 균등하게 밀 필요가 없습니다.</p></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <section>
+      <h2>숫자로 봐야 할 장면</h2>
+      <p class="note">일자별 상세는 줄이고 판단에 필요한 변화만 남겼습니다.</p>
+      <table>
+        <thead>
+          <tr><th>구분</th><th>핵심 숫자</th><th>해석</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>초반 2일</td>
+            <td class="num">7장 / 333,200원</td>
+            <td>오픈 효과가 약했고, 정상가 구매만으로는 속도가 나지 않았습니다.</td>
+          </tr>
+          <tr class="highlight">
+            <td>7/11</td>
+            <td class="num">16장 / 695,800원</td>
+            <td>고객 판매의 대부분이 하루에 몰렸습니다. 현장 조건이 맞으면 팔리는 상품입니다.</td>
+          </tr>
+          <tr>
+            <td>7/12</td>
+            <td class="num bad">고객 판매 0장</td>
+            <td>마감일에도 자연 유입과 전환 장치가 작동하지 않았습니다.</td>
+          </tr>
+          <tr>
+            <td>프로모션</td>
+            <td class="num">2장 6장, 3장 7장</td>
+            <td>다구매 혜택은 일부 작동했습니다. 첫 구매를 여는 1장 혜택이 필요합니다.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>그래픽 운영 순서</h2>
+      <p class="note">전면 노출은 반응 순서대로 좁힙니다.</p>
+      <table>
+        <thead>
+          <tr><th>우선</th><th>그래픽</th><th>수량</th><th>운영</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td><b>체리</b></td><td class="num">8장</td><td><span class="tag">전면 유지</span></td></tr>
+          <tr><td>2</td><td>아보카도</td><td class="num">5장</td><td>체리 옆 보조 주력</td></tr>
+          <tr><td>3</td><td>어셈블</td><td class="num">4장</td><td>BK 반응 확인용</td></tr>
+          <tr><td>보조</td><td>그레이프 / 캐럿</td><td class="num">각 3장</td><td>전면 축소, 선택지 역할</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <section style="margin-top:12px;">
+    <h2>다음 팝업에서 바로 바꿀 것</h2>
+    <div class="actions">
+      <div class="action"><b>가격</b><span>1장 구매 명분을 만듭니다. 예: 1장 선물 패키지 포함, 2장 69,000원, 3장 109,000원.</span></div>
+      <div class="action"><b>진열</b><span>체리, 아보카도, 어셈블 순으로 전면 배치합니다. 캐럿과 그레이프는 보조 노출로 줄입니다.</span></div>
+      <div class="action"><b>POP</b><span>컨셉 설명보다 구매 문구를 씁니다. “선물용 패키지 가능”, “FSS 한정 그래픽”처럼 즉시 이해되는 문장으로 바꿉니다.</span></div>
+      <div class="action"><b>운영</b><span>홍대/명동 1일차 고객 판매가 5장 미만이면 즉시 1장 혜택 또는 전면 진열을 변경합니다.</span></div>
+    </div>
+  </section>
+
+  <div class="footer">
+    <span>Source: 판매 현황 XLSX, 50% 판매 4장은 임직원 구매 추정으로 고객 판매 분석에서 제외.</span>
+    <span>작성: 2026-07-13 · WACKY WILLY</span>
+  </div>
+</main>
+</body>
+</html>

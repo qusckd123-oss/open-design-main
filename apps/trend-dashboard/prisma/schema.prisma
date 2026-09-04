@@ -1,0 +1,383 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id               String            @id @default(cuid())
+  externalId       String            @unique
+  source           String            @default("musinsa")
+  brand            String
+  name             String
+  url              String
+  imageUrl         String?
+  category         String
+  gender           String?
+  color            String?
+  isNew            Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  rankingSnapshots RankingSnapshot[]
+  tag              ProductTag?
+
+  @@index([brand])
+  @@index([category])
+  @@index([source])
+}
+
+model RankingSnapshot {
+  id           String   @id @default(cuid())
+  productId    String
+  rank         Int
+  price        Int?
+  salePrice    Int?
+  discountRate Int?
+  reviewCount  Int?
+  likeCount    Int?
+  isSoldOut    Boolean  @default(false)
+  collectedAt  DateTime
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, collectedAt])
+  @@index([rank])
+  @@index([collectedAt])
+}
+
+model CollectionRun {
+  id           String    @id @default(cuid())
+  source       String
+  mode         String
+  startedAt    DateTime
+  completedAt  DateTime?
+  status       String
+  productCount Int       @default(0)
+  fetchedCount Int       @default(0)
+  errorCount   Int       @default(0)
+  errorMessage String?
+  createdAt    DateTime  @default(now())
+  errors       CollectionError[]
+
+  @@index([source])
+  @@index([startedAt])
+  @@index([status])
+}
+
+model CollectionError {
+  id              String        @id @default(cuid())
+  collectionRunId String
+  source          String
+  externalId      String?
+  url             String?
+  reason          String
+  timestamp       DateTime      @default(now())
+  collectionRun   CollectionRun @relation(fields: [collectionRunId], references: [id], onDelete: Cascade)
+
+  @@index([source])
+  @@index([timestamp])
+}
+
+model TrendKeyword {
+  id        String                 @id @default(cuid())
+  name      String                 @unique
+  category  String
+  aliases   String
+  shoppingKeyword String?
+  naverShoppingCategory String?
+  // Specific-item taxonomy linkage for DEMAND SIGNAL (see src/config/taxonomy.ts).
+  // Nullable: not every legacy keyword maps cleanly to one SPECIFIC_ITEM yet.
+  specificItem   String?
+  // PLANNING gender ("UNISEX" | "WOMEN") - which product-planning area this
+  // keyword/item belongs to. This is NOT the NAVER shopper gender (see the
+  // snapshot models' `gender` field) and must never be conflated with it.
+  planningGender String?
+  active    Boolean                @default(true)
+  createdAt DateTime               @default(now())
+  updatedAt DateTime               @updatedAt
+  snapshots KeywordTrendSnapshot[]
+  shoppingAgeSnapshots KeywordShoppingAgeSnapshot[]
+
+  @@index([category])
+  @@index([active])
+  @@index([specificItem])
+  @@index([planningGender])
+}
+
+model KeywordTrendSnapshot {
+  id          String       @id @default(cuid())
+  keywordId   String
+  source      String
+  ageGroup    String
+  // NAVER shopper gender ("ALL" | "FEMALE" | "MALE") - who searched, never
+  // the product's planning gender.
+  gender      String       @default("ALL")
+  period      DateTime
+  ratio       Float
+  // "real" only for actual NAVER API responses; "mock" for locally generated
+  // demo data. Must never be mixed when reading REAL demand data.
+  dataMode    String       @default("mock")
+  collectedAt DateTime
+  keyword     TrendKeyword @relation(fields: [keywordId], references: [id], onDelete: Cascade)
+
+  @@unique([keywordId, source, ageGroup, gender, period])
+  @@index([source])
+  @@index([ageGroup])
+  @@index([period])
+  @@index([collectedAt])
+  @@index([dataMode])
+}
+
+model KeywordShoppingAgeSnapshot {
+  id          String       @id @default(cuid())
+  keywordId   String
+  source      String
+  ageGroup    String
+  // NAVER shopper gender ("ALL" | "FEMALE" | "MALE") - who searched/clicked,
+  // never the product's planning gender.
+  gender      String       @default("ALL")
+  period      DateTime
+  ratio       Float
+  // "real" only for actual NAVER API responses; "mock" for locally generated
+  // demo data. Must never be mixed when reading REAL demand data.
+  dataMode    String       @default("mock")
+  collectedAt DateTime
+  keyword     TrendKeyword @relation(fields: [keywordId], references: [id], onDelete: Cascade)
+
+  @@unique([keywordId, source, ageGroup, gender, period])
+  @@index([source])
+  @@index([ageGroup])
+  @@index([period])
+  @@index([collectedAt])
+  @@index([dataMode])
+}
+
+model ProductTag {
+  id          String   @id @default(cuid())
+  productId   String   @unique
+  itemType    String?
+  fit         String?
+  mainColor   String?
+  subColor    String?
+  material    String?
+  graphicType String?
+  detail      String?
+  style       String?
+  gender      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model InternalProduct {
+  id                String          @id @default(cuid())
+  externalProductId String?
+  productCode       String          @unique
+  productName       String
+  brand             String?
+  category          String?
+  season            String?
+  gender            String?
+  imageUrl          String?
+  itemType          String?
+  subItemType       String?
+  fit               String?
+  mainColor         String?
+  subColor          String?
+  material          String?
+  graphicType       String?
+  detail            String?
+  style             String?
+  dataMode          String          @default("sample")
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  salesSnapshots    SalesSnapshot[]
+
+  @@index([brand])
+  @@index([category])
+  @@index([itemType])
+  @@index([subItemType])
+  @@index([dataMode])
+}
+
+model SalesSnapshot {
+  id               String          @id @default(cuid())
+  productId        String
+  periodDate       DateTime
+  salesQty         Int?
+  salesAmount      Int?
+  stockQty         Int?
+  orderQty         Int?
+  sellThroughRate  Float?
+  discountRate     Float?
+  normalSalesRate  Float?
+  storeSalesQty    Int?
+  onlineSalesQty   Int?
+  dataMode         String          @default("sample")
+  importRunId      String?
+  createdAt        DateTime        @default(now())
+  product          InternalProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, periodDate])
+  @@index([periodDate])
+  @@index([dataMode])
+}
+
+model MarketProduct {
+  id               String                  @id @default(cuid())
+  source           String
+  externalProductId String
+  brand            String
+  name             String
+  category         String?
+  url              String?
+  imageUrl         String?
+  itemType         String?
+  subItemType      String?
+  fit              String?
+  mainColor        String?
+  subColor         String?
+  material         String?
+  graphicType      String?
+  detail           String?
+  style            String?
+  gender           String?
+  dataMode         String                  @default("sample")
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+  rankingSnapshots MarketRankingSnapshot[]
+
+  @@unique([source, externalProductId])
+  @@index([source])
+  @@index([category])
+  @@index([itemType])
+  @@index([subItemType])
+  @@index([dataMode])
+}
+
+model MarketRankingSnapshot {
+  id              String        @id @default(cuid())
+  marketProductId String
+  source          String
+  periodDate      DateTime
+  rankingCategory String        @default("ALL")
+  observedCategory String        @default("ALL")
+  audienceSegment String        @default("ALL")
+  metricType      String        @default("UNKNOWN")
+  rankingVerified Boolean       @default(false)
+  rankingScope    String        @default("UNKNOWN")
+  sourcePosition  Int?
+  rank            Int?
+  price           Int?
+  salePrice       Int?
+  discountRate    Int?
+  reviewCount     Int?
+  likeCount       Int?
+  dataMode        String        @default("sample")
+  importRunId     String?
+  rawData         String?
+  createdAt       DateTime      @default(now())
+  marketProduct   MarketProduct @relation(fields: [marketProductId], references: [id], onDelete: Cascade)
+
+  @@unique([marketProductId, source, periodDate, rankingScope, rankingCategory, observedCategory, audienceSegment])
+  @@index([source])
+  @@index([rankingCategory])
+  @@index([observedCategory])
+  @@index([audienceSegment])
+  @@index([metricType])
+  @@index([rankingVerified])
+  @@index([rankingScope])
+  @@index([rank])
+  @@index([sourcePosition])
+  @@index([periodDate])
+  @@index([dataMode])
+}
+
+model EditorialPost {
+  id              String              @id @default(cuid())
+  source          String
+  externalPostId  String
+  url             String
+  canonicalUrl    String?
+  title           String
+  publishedAt     DateTime?
+  imageUrl        String?
+  excerpt         String?
+  text            String?
+  audienceGender  String              @default("UNKNOWN")
+  fashionRelevance String             @default("UNKNOWN")
+  dataMode        String              @default("sample")
+  collectedAt     DateTime            @default(now())
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  mentions        EditorialMention[]
+
+  @@unique([source, externalPostId])
+  @@index([source])
+  @@index([publishedAt])
+  @@index([audienceGender])
+  @@index([fashionRelevance])
+  @@index([dataMode])
+}
+
+model EditorialMention {
+  id         String        @id @default(cuid())
+  postId     String
+  type       String
+  value      String
+  audienceGender String      @default("UNKNOWN")
+  confidence Float         @default(1)
+  evidence   String?
+  createdAt  DateTime      @default(now())
+  post       EditorialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, type, value])
+  @@index([type])
+  @@index([value])
+  @@index([audienceGender])
+  @@index([confidence])
+}
+
+model ImportRun {
+  id           String        @id @default(cuid())
+  type         String
+  source       String
+  fileName     String?
+  rankingCategory String?
+  audienceSegment String?
+  dataMode     String        @default("sample")
+  startedAt    DateTime
+  completedAt  DateTime?
+  status       String
+  totalRows    Int           @default(0)
+  fetchedRows  Int           @default(0)
+  successRows  Int           @default(0)
+  failedRows   Int           @default(0)
+  skippedRows  Int           @default(0)
+  errorMessage String?
+  createdAt    DateTime      @default(now())
+  errors       ImportError[]
+
+  @@index([type])
+  @@index([source])
+  @@index([rankingCategory])
+  @@index([status])
+  @@index([startedAt])
+  @@index([dataMode])
+}
+
+model ImportError {
+  id          String    @id @default(cuid())
+  importRunId String
+  rowNumber   Int?
+  field       String?
+  reason      String
+  rawRow      String?
+  createdAt   DateTime  @default(now())
+  importRun   ImportRun @relation(fields: [importRunId], references: [id], onDelete: Cascade)
+
+  @@index([importRunId])
+  @@index([createdAt])
+}

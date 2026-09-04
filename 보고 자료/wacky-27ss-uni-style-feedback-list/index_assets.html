@@ -1,0 +1,1607 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>27SS 와키윌리 유니 품번별 피드백</title>
+  <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bcave: { dark: '#264148', medium: '#718790', light: '#DEE2E3', bg: '#F8F9FA', red: '#B94735', amber: '#D4A64F', green: '#3D7465' }
+          },
+          fontFamily: { sans: ['Pretendard', 'sans-serif'] }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root { --dark:#264148; --medium:#718790; --light:#DEE2E3; --bg:#F8F9FA; --red:#B94735; --amber:#D4A64F; --green:#3D7465; }
+    body { margin:0; background:var(--bg); color:#1d2f35; font-family:Pretendard, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
+    .page { max-width:1480px; margin:0 auto; padding:24px; }
+    .header { display:flex; justify-content:space-between; gap:24px; align-items:flex-end; padding-bottom:18px; border-bottom:1px solid var(--light); }
+    .chip { display:inline-flex; border:1px solid var(--light); background:#fff; color:var(--medium); padding:5px 10px; font-size:12px; font-weight:800; margin-bottom:10px; }
+    h1 { margin:0; font-size:30px; line-height:1.25; color:var(--dark); font-weight:900; letter-spacing:0; }
+    .subtitle { margin:8px 0 0; max-width:820px; color:var(--medium); font-size:14px; line-height:1.7; }
+    .logo { height:32px; object-fit:contain; }
+    .metrics { display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:12px; margin:18px 0; }
+    .card { background:#fff; border:1px solid #e5eaec; border-radius:8px; box-shadow:0 8px 26px rgba(38,65,72,.06); }
+    .metric { padding:15px; border-left:4px solid var(--dark); }
+    .metric .label { color:var(--medium); font-size:12px; font-weight:800; }
+    .metric .value { margin-top:6px; color:var(--dark); font-size:24px; font-weight:900; }
+    .dashboard { display:grid; grid-template-columns:1.2fr .8fr; gap:16px; margin-bottom:18px; }
+    .chart-card { padding:18px; }
+    .chart-box { height:250px; position:relative; }
+    .summary-list { display:grid; gap:10px; }
+    .summary-item { border:1px solid #eef2f3; background:#fbfcfc; padding:12px; border-radius:8px; font-size:13px; line-height:1.6; }
+    .summary-item strong { display:block; color:var(--dark); margin-bottom:4px; }
+    .nav { position:sticky; top:0; z-index:5; display:flex; gap:8px; flex-wrap:wrap; padding:12px 0; background:rgba(248,249,250,.94); backdrop-filter:blur(6px); }
+    .nav a { display:inline-flex; gap:6px; align-items:center; padding:7px 10px; border:1px solid var(--light); background:#fff; color:var(--dark); text-decoration:none; font-size:12px; font-weight:800; border-radius:6px; }
+    .nav span { color:var(--medium); font-weight:700; }
+    .category-section { margin-top:18px; background:#fff; border:1px solid #e5eaec; border-radius:8px; overflow:hidden; }
+    .section-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 18px; background:#f1f4f5; border-bottom:1px solid #e1e7e9; }
+    .section-head h2 { margin:0; color:var(--dark); font-size:20px; font-weight:900; }
+    .section-head p { margin:4px 0 0; color:var(--medium); font-size:12px; font-weight:700; }
+    .top-link { color:var(--medium); font-size:12px; font-weight:800; text-decoration:none; }
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; min-width:1180px; }
+    th { background:#fbfcfc; color:var(--dark); font-size:12px; text-align:left; padding:10px 12px; border-bottom:1px solid #e7ecee; white-space:nowrap; }
+    td { padding:12px; border-top:1px solid #edf1f2; vertical-align:middle; font-size:13px; line-height:1.55; }
+    .sku-cell { width:150px; }
+    .image-cell { width:170px; }
+    .product-img { width:150px; height:105px; object-fit:contain; background:#F8F9FA; border:1px solid #e8edef; border-radius:6px; display:block; }
+    .image-missing { width:150px; height:105px; display:flex; align-items:center; justify-content:center; background:#F8F9FA; border:1px dashed #c9d2d6; color:var(--medium); border-radius:6px; font-size:12px; }
+    .num-cell { width:82px; text-align:right; font-weight:900; color:var(--dark); font-variant-numeric:tabular-nums; }
+    .dist-cell { width:88px; font-variant-numeric:tabular-nums; color:var(--medium); }
+    .comment-cell { min-width:380px; max-width:560px; color:#263b42; }
+    .action-cell { width:150px; font-weight:800; color:var(--dark); }
+    .status { display:inline-flex; align-items:center; justify-content:center; min-width:76px; padding:5px 9px; border-radius:999px; font-size:12px; font-weight:900; white-space:nowrap; }
+    .status-green { color:#1f5e4f; background:#e4f0ec; }
+    .status-amber { color:#76581a; background:#f7eed9; }
+    .status-red { color:#8d3328; background:#f4e2df; }
+    .status-gray { color:#5d7078; background:#eef2f3; }
+    .footnote { margin-top:18px; color:var(--medium); font-size:12px; line-height:1.7; }
+    @media (max-width:900px) { .page { padding:16px; } .header,.dashboard { display:block; } .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } h1 { font-size:24px; } .chart-card { margin-bottom:14px; } }
+    @media print { body { background:#fff; } .card,.category-section { box-shadow:none; break-inside:avoid; } .nav,.top-link { display:none; } .page { max-width:none; padding:10px; } }
+  </style>
+</head>
+<body>
+  <main class="page" id="top">
+    <header class="header">
+      <div>
+        <div class="chip">27SS 품평회 · 유니 · 품번별 피드백</div>
+        <h1>와키윌리 유니 전체 스타일 피드백 리스트</h1>
+        <p class="subtitle">상품MAP의 전체 품번을 기준으로 이미지와 설문 데이터를 매칭했습니다. 카테고리별로 품번, 이미지, 평균점수, 주요 의견, 판정, 조치 의견을 한 줄씩 확인할 수 있습니다.</p>
+      </div>
+      <div style="text-align:right;color:var(--medium);font-size:12px;line-height:1.7">
+        <img class="logo" src="assets/bcave_logo.png" alt="B.CAVE">
+        <div>Generated: 2026-08-05</div>
+      </div>
+    </header>
+
+    <section class="metrics">
+      <div class="card metric"><div class="label">전체 품번</div><div class="value">104개</div></div>
+      <div class="card metric"><div class="label">설문 매칭</div><div class="value">94개</div></div>
+      <div class="card metric"><div class="label">이미지 매칭</div><div class="value">104개</div></div>
+      <div class="card metric"><div class="label">전체 평균</div><div class="value">2.67점</div></div>
+      <div class="card metric"><div class="label">출시 우선</div><div class="value">2개</div></div>
+      <div class="card metric"><div class="label">재검토</div><div class="value">53개</div></div>
+    </section>
+
+    <section class="dashboard">
+      <div class="card chart-card">
+        <h2 style="margin:0 0 12px;color:var(--dark);font-size:18px;font-weight:900">카테고리별 평균점수</h2>
+        <div class="chart-box"><canvas id="categoryChart"></canvas></div>
+      </div>
+      <div class="card chart-card">
+        <h2 style="margin:0 0 12px;color:var(--dark);font-size:18px;font-weight:900">핵심 판단</h2>
+        <div class="summary-list">
+          <div class="summary-item"><strong>살릴 스타일</strong>SWA2702ST026, SWA2702SO014는 수치상 가장 안정적인 출시 우선 후보입니다.</div>
+          <div class="summary-item"><strong>보완 방향</strong>전면 로고·패치·프린팅 부담, 소재 두께·무게, 색상 보완 의견을 품번별 조치에 반영했습니다.</div>
+          <div class="summary-item"><strong>재검토 기준</strong>평균 2.4점 미만은 드랍 또는 전면 재검토, 2.7점 미만은 보완안 없을 경우 축소 검토로 표시했습니다.</div>
+        </div>
+      </div>
+    </section>
+
+    <nav class="nav"><a href="#cat-JK">JK <span>7</span></a><a href="#cat-CD,KT">CD,KT <span>5</span></a><a href="#cat-SH">SH <span>5</span></a><a href="#cat-SS">SS <span>6</span></a><a href="#cat-PT-져지">PT-져지 <span>9</span></a><a href="#cat-PT-우븐">PT-우븐 <span>7</span></a><a href="#cat-SO">SO <span>12</span></a><a href="#cat-HZ">HZ <span>9</span></a><a href="#cat-HD">HD <span>4</span></a><a href="#cat-CR">CR <span>6</span></a><a href="#cat-LT">LT <span>10</span></a><a href="#cat-ST">ST <span>24</span></a></nav>
+
+    
+        <section class="category-section" id="cat-JK">
+          <div class="section-head">
+            <div>
+              <h2>JK</h2>
+              <p>7개 품번 · 평균 2.60점</p>
+            </div>
+            <a class="top-link" href="#top">상단</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>품번</th>
+                  <th>이미지</th>
+                  <th>평균점수</th>
+                  <th>3점 이상</th>
+                  <th>4/3/2/1</th>
+                  <th>주요 의견사항</th>
+                  <th>판정</th>
+                  <th>조치 의견</th>
+                </tr>
+              </thead>
+              <tbody>
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701JK001</div><div class="mt-1 text-xs text-bcave-medium">JK</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701JK001.png" alt="SWA2701JK001"></td>
+        <td class="num-cell">2.79</td>
+        <td class="num-cell">57.9%</td>
+        <td class="dist-cell">5/6/7/1</td>
+        <td class="comment-cell">오렌지 색상 브라운이나 다른컬러로 / 유아틱 / 정상가 20이하 추천드립니다. / 소재감이나 컬러감은 괜찮은데 패치가 너무 많는느낌</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">그래픽/로고 위치 보완</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701JK002</div><div class="mt-1 text-xs text-bcave-medium">JK</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701JK002.png" alt="SWA2701JK002"></td>
+        <td class="num-cell">2.63</td>
+        <td class="num-cell">57.9%</td>
+        <td class="dist-cell">5/6/4/4</td>
+        <td class="comment-cell">앞판 와펜 너무 저연령층 / 앞판 디자인 보다는 뒤판 추천드립니다. / 체크 느낌은 좋은데 소재 fw성이고 앞에 패치 부담 / 전면 로고에 대한 과한 디자인</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701JK003</div><div class="mt-1 text-xs text-bcave-medium">JK</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701JK003.png" alt="SWA2701JK003"></td>
+        <td class="num-cell">2.53</td>
+        <td class="num-cell">57.9%</td>
+        <td class="dist-cell">3/8/4/4</td>
+        <td class="comment-cell">오더 X 추천합니다 / 체크매칭과 워싱에 대한 조합이 좋음 / 소재 좋으나 타이포는 그닥. / 안예뻐요</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701JK004</div><div class="mt-1 text-xs text-bcave-medium">JK</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701JK004.png" alt="SWA2701JK004"></td>
+        <td class="num-cell">2.53</td>
+        <td class="num-cell">52.6%</td>
+        <td class="dist-cell">2/8/7/2</td>
+        <td class="comment-cell">오더 X / 경쟁력이 떨어지는 디자인 이걸 사야겠다 하는 포인트가 없음 / 소재는 괜찮은데 자칫하면 올드한느낌 / 배색 트랙자켓에 대한 배색 컬러 고민</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701JK005</div><div class="mt-1 text-xs text-bcave-medium">JK</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701JK005.png" alt="SWA2701JK005"></td>
+        <td class="num-cell">2.53</td>
+        <td class="num-cell">57.9%</td>
+        <td class="dist-cell">2/9/5/3</td>
+        <td class="comment-cell">색상을 조금 더 빈티지하게 / 디테일이 조금 아쉽 / 빈티지한 디자인이나 어중간함 좀더 그런지한 느낌이 추가되면 좋을듯 / 기본으로 요청</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701JK006</div><div class="mt-1 text-xs text-bcave-medium">JK</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701JK006.png" alt="SWA2701JK006"></td>
+        <td class="num-cell">2.47</td>
+        <td class="num-cell">52.6%</td>
+        <td class="dist-cell">3/7/5/4</td>
+        <td class="comment-cell">겉과 안감 보색 너무 상이함 / 너무 두꺼워요 / 스타일은 괜찮으나 배색에 대한 불호 / 연청 내피 컬러 변경 요망. 너무 두껍기도 하다.</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702JK001</div><div class="mt-1 text-xs text-bcave-medium">JK</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702JK001.png" alt="SWA2702JK001"></td>
+        <td class="num-cell">2.74</td>
+        <td class="num-cell">73.7%</td>
+        <td class="dist-cell">3/11/2/3</td>
+        <td class="comment-cell">낮은 연령층들이 찾을것 같습니다 / 파이핑에 수정 필요 / 잘 모르겠다 / 색상은 예쁜데 디테일이안예뻐요</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">컬러 보완</td>
+      </tr>
+    </tbody>
+            </table>
+          </div>
+        </section>
+        
+        <section class="category-section" id="cat-CD,KT">
+          <div class="section-head">
+            <div>
+              <h2>CD,KT</h2>
+              <p>5개 품번 · 평균 2.38점</p>
+            </div>
+            <a class="top-link" href="#top">상단</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>품번</th>
+                  <th>이미지</th>
+                  <th>평균점수</th>
+                  <th>3점 이상</th>
+                  <th>4/3/2/1</th>
+                  <th>주요 의견사항</th>
+                  <th>판정</th>
+                  <th>조치 의견</th>
+                </tr>
+              </thead>
+              <tbody>
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701CD001</div><div class="mt-1 text-xs text-bcave-medium">CD,KT</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701CD001.png" alt="SWA2701CD001"></td>
+        <td class="num-cell">2.11</td>
+        <td class="num-cell">36.8%</td>
+        <td class="dist-cell">0/7/7/5</td>
+        <td class="comment-cell">카라부분 처지는거 보완 필요합니다 / 기본 유니 가디건 판매 저조 / 베이직한 로고와 컬러 변경 필요 / 블루컬러는 빼도 좋을듯. 넥라인 변경 굿</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701CD002</div><div class="mt-1 text-xs text-bcave-medium">CD,KT</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701CD002.png" alt="SWA2701CD002"></td>
+        <td class="num-cell">2.68</td>
+        <td class="num-cell">63.2%</td>
+        <td class="dist-cell">3/9/5/2</td>
+        <td class="comment-cell">패턴이랑 컬러는 괜찮은거같습니다 / 디자인에 대한 와키윌리스러우나 조직감 변경 필요 / 외국인이 좋아할듯 / 색상이 안예뻐요 아이보리나 블랙으로 나왔으면 좋겠어요</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701CD003</div><div class="mt-1 text-xs text-bcave-medium">CD,KT</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701CD003.png" alt="SWA2701CD003"></td>
+        <td class="num-cell">2.26</td>
+        <td class="num-cell">42.1%</td>
+        <td class="dist-cell">4/4/4/7</td>
+        <td class="comment-cell">10대고객 타겟층에 안맞을거같아요 / 다 좋은데 컬러만 변경합시다. 너무 과한 느낑 / 안나가요 / 동방신기 1집 뮤직비디오 촬영옷</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702CD004</div><div class="mt-1 text-xs text-bcave-medium">CD,KT</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702CD004.png" alt="SWA2702CD004"></td>
+        <td class="num-cell">2.47</td>
+        <td class="num-cell">52.6%</td>
+        <td class="dist-cell">3/7/5/4</td>
+        <td class="comment-cell">나쁘지 않으나 잘 팔릴지는 모르겠음 / 예뻐요</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702KT001</div><div class="mt-1 text-xs text-bcave-medium">CD,KT</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702KT001.png" alt="SWA2702KT001"></td>
+        <td class="num-cell">2.37</td>
+        <td class="num-cell">52.6%</td>
+        <td class="dist-cell">2/8/4/5</td>
+        <td class="comment-cell">색감이 너무 예쁩 니다 / 패턴에 대한 희귀성 좋음 / 좋음 / 색상 너무이상해요</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    </tbody>
+            </table>
+          </div>
+        </section>
+        
+        <section class="category-section" id="cat-SH">
+          <div class="section-head">
+            <div>
+              <h2>SH</h2>
+              <p>5개 품번 · 평균 2.49점</p>
+            </div>
+            <a class="top-link" href="#top">상단</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>품번</th>
+                  <th>이미지</th>
+                  <th>평균점수</th>
+                  <th>3점 이상</th>
+                  <th>4/3/2/1</th>
+                  <th>주요 의견사항</th>
+                  <th>판정</th>
+                  <th>조치 의견</th>
+                </tr>
+              </thead>
+              <tbody>
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701SH001</div><div class="mt-1 text-xs text-bcave-medium">SH</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701SH001.png" alt="SWA2701SH001"></td>
+        <td class="num-cell">2.89</td>
+        <td class="num-cell">63.2%</td>
+        <td class="dist-cell">6/6/6/1</td>
+        <td class="comment-cell">특색이 없어 보입니다 / 데님 셔츠는 안뽑아도 좋을듯 가격은 좋다. / 기본 셔츠는 잘 안나가서 프린팅이 좀있음좋겠어요 / 무난하지만 디테일이 추가되면 좋을 것 같습니다.</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">그래픽/로고 위치 보완</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701SH002</div><div class="mt-1 text-xs text-bcave-medium">SH</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701SH002.png" alt="SWA2701SH002"></td>
+        <td class="num-cell">2.32</td>
+        <td class="num-cell">36.8%</td>
+        <td class="dist-cell">3/4/8/4</td>
+        <td class="comment-cell">백프린팅도 자수로 했으면 / 비싸요. 과해요 / 안예뻐요 / 원단이랑 백 레터링이 조금 더 디테일을 살리면 좋을 것 같습니다.</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701SH003</div><div class="mt-1 text-xs text-bcave-medium">SH</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701SH003.png" alt="SWA2701SH003"></td>
+        <td class="num-cell">2.37</td>
+        <td class="num-cell">47.4%</td>
+        <td class="dist-cell">2/7/6/4</td>
+        <td class="comment-cell">색상이.. / 체크포인트가 빠지거나 좀 큰 체크면 좋을듯함 / 체크 아까운데 기본 형태가 판매에 도움될거같습니다 / 취저, 최애, 좋아요 발렌</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701SH004</div><div class="mt-1 text-xs text-bcave-medium">SH</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701SH004.png" alt="SWA2701SH004"></td>
+        <td class="num-cell">2.53</td>
+        <td class="num-cell">52.6%</td>
+        <td class="dist-cell">4/6/5/4</td>
+        <td class="comment-cell">전면 포켓 불필요 / 소량 뽑으면 좋을듯 / 소재가좀더후들하면 좋을듯</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701SH005</div><div class="mt-1 text-xs text-bcave-medium">SH</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701SH005.png" alt="SWA2701SH005"></td>
+        <td class="num-cell">2.32</td>
+        <td class="num-cell">36.8%</td>
+        <td class="dist-cell">4/3/7/5</td>
+        <td class="comment-cell">소재 디자인 컬러 모두 별로 / 호불호강할듯 / 핑크별로 / 핑크 색깔 최악</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    </tbody>
+            </table>
+          </div>
+        </section>
+        
+        <section class="category-section" id="cat-SS">
+          <div class="section-head">
+            <div>
+              <h2>SS</h2>
+              <p>6개 품번 · 평균 2.67점</p>
+            </div>
+            <a class="top-link" href="#top">상단</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>품번</th>
+                  <th>이미지</th>
+                  <th>평균점수</th>
+                  <th>3점 이상</th>
+                  <th>4/3/2/1</th>
+                  <th>주요 의견사항</th>
+                  <th>판정</th>
+                  <th>조치 의견</th>
+                </tr>
+              </thead>
+              <tbody>
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SS001</div><div class="mt-1 text-xs text-bcave-medium">SS</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SS001.png" alt="SWA2702SS001"></td>
+        <td class="num-cell">2.67</td>
+        <td class="num-cell">61.1%</td>
+        <td class="dist-cell">5/6/3/4</td>
+        <td class="comment-cell">귀엽습니다 / 색상 정리만</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SS002</div><div class="mt-1 text-xs text-bcave-medium">SS</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SS002.png" alt="SWA2702SS002"></td>
+        <td class="num-cell">2.58</td>
+        <td class="num-cell">57.9%</td>
+        <td class="dist-cell">4/7/4/4</td>
+        <td class="comment-cell">가격 더올려도 좋을것 같습니다 / 별로, 트렌드에 뒤쳐진 아이템 잘하는 브랜드들이 이미 많음 / 제눈에는 예뻐요 그런데 잘 안나가요 이런디자인 / 디자인은 예쁜데 대중적으로 판매가 쉽지는 않은 상품입니다.</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SS003</div><div class="mt-1 text-xs text-bcave-medium">SS</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SS003.png" alt="SWA2702SS003"></td>
+        <td class="num-cell">2.42</td>
+        <td class="num-cell">47.4%</td>
+        <td class="dist-cell">5/4/4/6</td>
+        <td class="comment-cell">색상 노란색,가격 더올려도 좋을것 같습니다 / 핫썸머 발매 좋은 스타일 / 귀엽 / 예쁜데 안나갈디자인</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SS004</div><div class="mt-1 text-xs text-bcave-medium">SS</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SS004.png" alt="SWA2702SS004"></td>
+        <td class="num-cell">2.32</td>
+        <td class="num-cell">42.1%</td>
+        <td class="dist-cell">4/4/5/6</td>
+        <td class="comment-cell">너무 좋은데요 / 앞판을 뒷판으로 추천드립니다. / 가격.. 내려주세... / 주려고하는 느낌이 명확함 등판에도 일부 패턴, 그래픽이 추가되면 더 좋을듯</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SS005</div><div class="mt-1 text-xs text-bcave-medium">SS</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SS005.png" alt="SWA2702SS005"></td>
+        <td class="num-cell">3.11</td>
+        <td class="num-cell">88.9%</td>
+        <td class="dist-cell">5/11/1/1</td>
+        <td class="comment-cell">26이랑 비슷한것 같아요 / 무난합니다 / 그만 뽑아도 될듯</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SS006</div><div class="mt-1 text-xs text-bcave-medium">SS</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SS006.png" alt="SWA2702SS006"></td>
+        <td class="num-cell">2.89</td>
+        <td class="num-cell">73.7%</td>
+        <td class="dist-cell">4/10/4/1</td>
+        <td class="comment-cell">블루보다는 그레이가 이쁠듯 / 좋습니다 / 좋아요 / 예뻐요</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">컬러 보완</td>
+      </tr>
+    </tbody>
+            </table>
+          </div>
+        </section>
+        
+        <section class="category-section" id="cat-PT-져지">
+          <div class="section-head">
+            <div>
+              <h2>PT-져지</h2>
+              <p>9개 품번 · 평균 2.47점</p>
+            </div>
+            <a class="top-link" href="#top">상단</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>품번</th>
+                  <th>이미지</th>
+                  <th>평균점수</th>
+                  <th>3점 이상</th>
+                  <th>4/3/2/1</th>
+                  <th>주요 의견사항</th>
+                  <th>판정</th>
+                  <th>조치 의견</th>
+                </tr>
+              </thead>
+              <tbody>
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701PT001</div><div class="mt-1 text-xs text-bcave-medium">PT-져지</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701PT001.png" alt="SWA2701PT001"></td>
+        <td class="num-cell">2.42</td>
+        <td class="num-cell">42.1%</td>
+        <td class="dist-cell">3/5/8/3</td>
+        <td class="comment-cell">가격이 왜 비싼지... 컬러마다 디테일도 왜 다른지.. / 디자인에 비해 비쌉니다 / 포인트컬러가 판매 쉽지않을거같습니다 / 데미지가 부조화 , 패치는 한쪽으로 진행</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701PT002</div><div class="mt-1 text-xs text-bcave-medium">PT-져지</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701PT002.png" alt="SWA2701PT002"></td>
+        <td class="num-cell">2.22</td>
+        <td class="num-cell">38.9%</td>
+        <td class="dist-cell">3/4/5/6</td>
+        <td class="comment-cell">워싱에 대한 호조 , 악센트컬러 1개 진행 , 베이직 컬러 2개 / 제발 핑크 좀 뺍시다. / 컬러가 너무과해요디자인은 예뻐요</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701PT003</div><div class="mt-1 text-xs text-bcave-medium">PT-져지</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701PT003.png" alt="SWA2701PT003"></td>
+        <td class="num-cell">2.05</td>
+        <td class="num-cell">42.1%</td>
+        <td class="dist-cell">2/6/2/9</td>
+        <td class="comment-cell">남성고객이 착용하기에 적합할지싶습니다! / 와플 조직감 불호 / 소재도 나쁘지 않음 시도 좋은듯 / 호불호강함</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701PT004</div><div class="mt-1 text-xs text-bcave-medium">PT-져지</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701PT004.png" alt="SWA2701PT004"></td>
+        <td class="num-cell">2.42</td>
+        <td class="num-cell">42.1%</td>
+        <td class="dist-cell">2/6/9/2</td>
+        <td class="comment-cell">카모 원단 어려움 / 옆부분 타이포 디테일이 좀 과하다. / 차콜만 나올</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701PT005</div><div class="mt-1 text-xs text-bcave-medium">PT-져지</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701PT005.png" alt="SWA2701PT005"></td>
+        <td class="num-cell">2.72</td>
+        <td class="num-cell">55.6%</td>
+        <td class="dist-cell">5/5/6/2</td>
+        <td class="comment-cell">그래픽 디자인은좋으나 와플조직 불호 다잉스타일이면 좋을것 같다 / 필요함. 좋다~! / 디자인은 예쁨</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">그래픽/로고 위치 보완</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701PT006</div><div class="mt-1 text-xs text-bcave-medium">PT-져지</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701PT006.png" alt="SWA2701PT006"></td>
+        <td class="num-cell">2.68</td>
+        <td class="num-cell">52.6%</td>
+        <td class="dist-cell">4/6/8/1</td>
+        <td class="comment-cell">가격만 조금 줄이면..</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701PT008</div><div class="mt-1 text-xs text-bcave-medium">PT-져지</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701PT008.png" alt="SWA2701PT008"></td>
+        <td class="num-cell">2.74</td>
+        <td class="num-cell">57.9%</td>
+        <td class="dist-cell">5/6/6/2</td>
+        <td class="comment-cell">SWA2701PT005 그래픽을 적용하면 좋을 것 같음 / 좋아요</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">그래픽/로고 위치 보완</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701PT009</div><div class="mt-1 text-xs text-bcave-medium">PT-져지</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701PT009.png" alt="SWA2701PT009"></td>
+        <td class="num-cell">2.53</td>
+        <td class="num-cell">47.4%</td>
+        <td class="dist-cell">4/5/7/3</td>
+        <td class="comment-cell">그닥..</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701PT018</div><div class="mt-1 text-xs text-bcave-medium">PT-져지</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701PT018.png" alt="SWA2701PT018"></td>
+        <td class="num-cell">-</td>
+        <td class="num-cell">-</td>
+        <td class="dist-cell">-</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-gray">데이터 없음</span></td>
+        <td class="action-cell">설문 미진행, 별도 확인</td>
+      </tr>
+    </tbody>
+            </table>
+          </div>
+        </section>
+        
+        <section class="category-section" id="cat-PT-우븐">
+          <div class="section-head">
+            <div>
+              <h2>PT-우븐</h2>
+              <p>7개 품번 · 평균 2.72점</p>
+            </div>
+            <a class="top-link" href="#top">상단</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>품번</th>
+                  <th>이미지</th>
+                  <th>평균점수</th>
+                  <th>3점 이상</th>
+                  <th>4/3/2/1</th>
+                  <th>주요 의견사항</th>
+                  <th>판정</th>
+                  <th>조치 의견</th>
+                </tr>
+              </thead>
+              <tbody>
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701PT011</div><div class="mt-1 text-xs text-bcave-medium">PT-우븐</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701PT011.png" alt="SWA2701PT011"></td>
+        <td class="num-cell">3.00</td>
+        <td class="num-cell">66.7%</td>
+        <td class="dist-cell">6/4/4/1</td>
+        <td class="comment-cell">밸크로 불호 / 좋아요 다 좋아요</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701PT012</div><div class="mt-1 text-xs text-bcave-medium">PT-우븐</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701PT012.png" alt="SWA2701PT012"></td>
+        <td class="num-cell">2.84</td>
+        <td class="num-cell">57.9%</td>
+        <td class="dist-cell">7/4/6/2</td>
+        <td class="comment-cell">좋아요~ / 예뻐요</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701PT013</div><div class="mt-1 text-xs text-bcave-medium">PT-우븐</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701PT013.png" alt="SWA2701PT013"></td>
+        <td class="num-cell">2.89</td>
+        <td class="num-cell">68.4%</td>
+        <td class="dist-cell">6/7/4/2</td>
+        <td class="comment-cell">좋아요~!</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701PT014</div><div class="mt-1 text-xs text-bcave-medium">PT-우븐</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701PT014.png" alt="SWA2701PT014"></td>
+        <td class="num-cell">2.68</td>
+        <td class="num-cell">52.6%</td>
+        <td class="dist-cell">5/5/7/2</td>
+        <td class="comment-cell">자수 조합이 너무 튀어요 / 좋아요</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701PT015</div><div class="mt-1 text-xs text-bcave-medium">PT-우븐</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701PT015.png" alt="SWA2701PT015"></td>
+        <td class="num-cell">2.74</td>
+        <td class="num-cell">57.9%</td>
+        <td class="dist-cell">6/5/5/3</td>
+        <td class="comment-cell">좋아요</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701PT016</div><div class="mt-1 text-xs text-bcave-medium">PT-우븐</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701PT016.png" alt="SWA2701PT016"></td>
+        <td class="num-cell">2.32</td>
+        <td class="num-cell">47.4%</td>
+        <td class="dist-cell">3/6/4/6</td>
+        <td class="comment-cell">스트라이프는 너무 파자마 같습니다 / 상품은 괜찮은데 혼자 튀는 느낌이라 연출어려울듯싶습니다 / 좋아요</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701PT017</div><div class="mt-1 text-xs text-bcave-medium">PT-우븐</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701PT017.png" alt="SWA2701PT017"></td>
+        <td class="num-cell">2.58</td>
+        <td class="num-cell">52.6%</td>
+        <td class="dist-cell">5/5/5/4</td>
+        <td class="comment-cell">허리가 편하던지/사이즈가 다양하게 나오면 좋을것 같습니다 / 좋아요</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    </tbody>
+            </table>
+          </div>
+        </section>
+        
+        <section class="category-section" id="cat-SO">
+          <div class="section-head">
+            <div>
+              <h2>SO</h2>
+              <p>12개 품번 · 평균 2.75점</p>
+            </div>
+            <a class="top-link" href="#top">상단</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>품번</th>
+                  <th>이미지</th>
+                  <th>평균점수</th>
+                  <th>3점 이상</th>
+                  <th>4/3/2/1</th>
+                  <th>주요 의견사항</th>
+                  <th>판정</th>
+                  <th>조치 의견</th>
+                </tr>
+              </thead>
+              <tbody>
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SO001</div><div class="mt-1 text-xs text-bcave-medium">SO</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SO001.png" alt="SWA2702SO001"></td>
+        <td class="num-cell">2.79</td>
+        <td class="num-cell">57.9%</td>
+        <td class="dist-cell">6/5/6/2</td>
+        <td class="comment-cell">블루는 뽑지 말아요ㅠ / 기장이 좀 더길었으면 좋을거같아요</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SO002</div><div class="mt-1 text-xs text-bcave-medium">SO</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SO002.png" alt="SWA2702SO002"></td>
+        <td class="num-cell">-</td>
+        <td class="num-cell">-</td>
+        <td class="dist-cell">-</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-gray">데이터 없음</span></td>
+        <td class="action-cell">설문 미진행, 별도 확인</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SO003</div><div class="mt-1 text-xs text-bcave-medium">SO</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SO003.png" alt="SWA2702SO003"></td>
+        <td class="num-cell">3.11</td>
+        <td class="num-cell">72.2%</td>
+        <td class="dist-cell">8/5/4/1</td>
+        <td class="comment-cell">너무 정직한 컬러같은데 워싱 더 들어가면 좋을거같아요 / 좋아요</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">컬러 보완</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SO004</div><div class="mt-1 text-xs text-bcave-medium">SO</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SO004.png" alt="SWA2702SO004"></td>
+        <td class="num-cell">2.58</td>
+        <td class="num-cell">47.4%</td>
+        <td class="dist-cell">6/3/6/4</td>
+        <td class="comment-cell">호불호가 갈릴듯 / 좋아요 노란색은 힘드네요.</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SO005</div><div class="mt-1 text-xs text-bcave-medium">SO</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SO005.png" alt="SWA2702SO005"></td>
+        <td class="num-cell">2.47</td>
+        <td class="num-cell">47.4%</td>
+        <td class="dist-cell">4/5/6/4</td>
+        <td class="comment-cell">스트라이프 디자인 긴바지는 파자마 스러운데 반바지는 시원해보이고 좋은것 같습니다 / 좋아요 / 끈빼도될듯</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SO006</div><div class="mt-1 text-xs text-bcave-medium">SO</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SO006.png" alt="SWA2702SO006"></td>
+        <td class="num-cell">2.74</td>
+        <td class="num-cell">57.9%</td>
+        <td class="dist-cell">7/4/4/4</td>
+        <td class="comment-cell">좋습니다</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SO007</div><div class="mt-1 text-xs text-bcave-medium">SO</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SO007.png" alt="SWA2702SO007"></td>
+        <td class="num-cell">-</td>
+        <td class="num-cell">-</td>
+        <td class="dist-cell">-</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-gray">데이터 없음</span></td>
+        <td class="action-cell">설문 미진행, 별도 확인</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SO009</div><div class="mt-1 text-xs text-bcave-medium">SO</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SO009.png" alt="SWA2702SO009"></td>
+        <td class="num-cell">2.26</td>
+        <td class="num-cell">42.1%</td>
+        <td class="dist-cell">3/5/5/6</td>
+        <td class="comment-cell">기장이 좀 더 길게 나오면 좋을 것 같습니다 / 별로입니다</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SO011</div><div class="mt-1 text-xs text-bcave-medium">SO</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SO011.png" alt="SWA2702SO011"></td>
+        <td class="num-cell">2.42</td>
+        <td class="num-cell">47.4%</td>
+        <td class="dist-cell">4/5/5/5</td>
+        <td class="comment-cell">너무 두꺼워요 / 강력추천입니다 다만 소재가 조금 부드러운소재로 바꼈으면 합니다 / 핑크뺍시다 / 컬러..이상해요</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SO012</div><div class="mt-1 text-xs text-bcave-medium">SO</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SO012.png" alt="SWA2702SO012"></td>
+        <td class="num-cell">2.95</td>
+        <td class="num-cell">68.4%</td>
+        <td class="dist-cell">7/6/4/2</td>
+        <td class="comment-cell">나쁘지 않음</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SO013</div><div class="mt-1 text-xs text-bcave-medium">SO</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SO013.png" alt="SWA2702SO013"></td>
+        <td class="num-cell">2.84</td>
+        <td class="num-cell">73.7%</td>
+        <td class="dist-cell">5/9/2/3</td>
+        <td class="comment-cell">색감 / 좋아요</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702SO014</div><div class="mt-1 text-xs text-bcave-medium">SO</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702SO014.png" alt="SWA2702SO014"></td>
+        <td class="num-cell">3.37</td>
+        <td class="num-cell">84.2%</td>
+        <td class="dist-cell">11/5/2/1</td>
+        <td class="comment-cell">완전 굿 / 디테일 좋아요</td>
+        <td><span class="status status-green">출시 우선</span></td>
+        <td class="action-cell">출시 유지</td>
+      </tr>
+    </tbody>
+            </table>
+          </div>
+        </section>
+        
+        <section class="category-section" id="cat-HZ">
+          <div class="section-head">
+            <div>
+              <h2>HZ</h2>
+              <p>9개 품번 · 평균 2.56점</p>
+            </div>
+            <a class="top-link" href="#top">상단</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>품번</th>
+                  <th>이미지</th>
+                  <th>평균점수</th>
+                  <th>3점 이상</th>
+                  <th>4/3/2/1</th>
+                  <th>주요 의견사항</th>
+                  <th>판정</th>
+                  <th>조치 의견</th>
+                </tr>
+              </thead>
+              <tbody>
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701HZ001</div><div class="mt-1 text-xs text-bcave-medium">HZ</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701HZ001.png" alt="SWA2701HZ001"></td>
+        <td class="num-cell">2.53</td>
+        <td class="num-cell">57.9%</td>
+        <td class="dist-cell">3/8/4/4</td>
+        <td class="comment-cell">무거워서 1품번 말고 3품번으로 나오면 될것 같습니다 / 컬러감이 어려울거같아요 / 베이직 컬러 필요 / 주황색, 민트는 빼고 갑시다. 한개만..</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701HZ002</div><div class="mt-1 text-xs text-bcave-medium">HZ</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701HZ002.png" alt="SWA2701HZ002"></td>
+        <td class="num-cell">2.74</td>
+        <td class="num-cell">68.4%</td>
+        <td class="dist-cell">5/8/2/4</td>
+        <td class="comment-cell">가격 159,000으로 / 다잉 컬러 호조 / 핑크ㅠ제외좀 / 핑크는 좀</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">컬러 보완</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701HZ003</div><div class="mt-1 text-xs text-bcave-medium">HZ</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701HZ003.png" alt="SWA2701HZ003"></td>
+        <td class="num-cell">2.21</td>
+        <td class="num-cell">42.1%</td>
+        <td class="dist-cell">4/4/3/8</td>
+        <td class="comment-cell">와플 보단 디자인변경 / 소재굿</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701HZ004</div><div class="mt-1 text-xs text-bcave-medium">HZ</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701HZ004.png" alt="SWA2701HZ004"></td>
+        <td class="num-cell">2.21</td>
+        <td class="num-cell">42.1%</td>
+        <td class="dist-cell">2/6/5/6</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701HZ005</div><div class="mt-1 text-xs text-bcave-medium">HZ</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701HZ005.png" alt="SWA2701HZ005"></td>
+        <td class="num-cell">2.89</td>
+        <td class="num-cell">63.2%</td>
+        <td class="dist-cell">8/4/4/3</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701HZ006</div><div class="mt-1 text-xs text-bcave-medium">HZ</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701HZ006.png" alt="SWA2701HZ006"></td>
+        <td class="num-cell">3.05</td>
+        <td class="num-cell">73.7%</td>
+        <td class="dist-cell">7/7/4/1</td>
+        <td class="comment-cell">외플소재 변경 디자인 그래픽 호조</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">그래픽/로고 위치 보완</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701HZ007</div><div class="mt-1 text-xs text-bcave-medium">HZ</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701HZ007.png" alt="SWA2701HZ007"></td>
+        <td class="num-cell">-</td>
+        <td class="num-cell">-</td>
+        <td class="dist-cell">-</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-gray">데이터 없음</span></td>
+        <td class="action-cell">설문 미진행, 별도 확인</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701HZ009</div><div class="mt-1 text-xs text-bcave-medium">HZ</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701HZ009.png" alt="SWA2701HZ009"></td>
+        <td class="num-cell">2.26</td>
+        <td class="num-cell">36.8%</td>
+        <td class="dist-cell">4/3/6/6</td>
+        <td class="comment-cell">원단 조금만 도톰했으면</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701HZ011</div><div class="mt-1 text-xs text-bcave-medium">HZ</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701HZ011.png" alt="SWA2701HZ011"></td>
+        <td class="num-cell">-</td>
+        <td class="num-cell">-</td>
+        <td class="dist-cell">-</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-gray">데이터 없음</span></td>
+        <td class="action-cell">설문 미진행, 별도 확인</td>
+      </tr>
+    </tbody>
+            </table>
+          </div>
+        </section>
+        
+        <section class="category-section" id="cat-HD">
+          <div class="section-head">
+            <div>
+              <h2>HD</h2>
+              <p>4개 품번 · 평균 2.56점</p>
+            </div>
+            <a class="top-link" href="#top">상단</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>품번</th>
+                  <th>이미지</th>
+                  <th>평균점수</th>
+                  <th>3점 이상</th>
+                  <th>4/3/2/1</th>
+                  <th>주요 의견사항</th>
+                  <th>판정</th>
+                  <th>조치 의견</th>
+                </tr>
+              </thead>
+              <tbody>
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701HD001</div><div class="mt-1 text-xs text-bcave-medium">HD</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701HD001.png" alt="SWA2701HD001"></td>
+        <td class="num-cell">2.63</td>
+        <td class="num-cell">52.6%</td>
+        <td class="dist-cell">5/5/6/3</td>
+        <td class="comment-cell">무거워요</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701HD002</div><div class="mt-1 text-xs text-bcave-medium">HD</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701HD002.png" alt="SWA2701HD002"></td>
+        <td class="num-cell">2.37</td>
+        <td class="num-cell">47.4%</td>
+        <td class="dist-cell">3/6/5/5</td>
+        <td class="comment-cell">안나갈듯</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701HD003</div><div class="mt-1 text-xs text-bcave-medium">HD</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701HD003.png" alt="SWA2701HD003"></td>
+        <td class="num-cell">2.67</td>
+        <td class="num-cell">55.6%</td>
+        <td class="dist-cell">4/6/6/2</td>
+        <td class="comment-cell">좋음 / 차콜은 잘나갈 것 같습니다.</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701HD004</div><div class="mt-1 text-xs text-bcave-medium">HD</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701HD004.png" alt="SWA2701HD004"></td>
+        <td class="num-cell">-</td>
+        <td class="num-cell">-</td>
+        <td class="dist-cell">-</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-gray">데이터 없음</span></td>
+        <td class="action-cell">설문 미진행, 별도 확인</td>
+      </tr>
+    </tbody>
+            </table>
+          </div>
+        </section>
+        
+        <section class="category-section" id="cat-CR">
+          <div class="section-head">
+            <div>
+              <h2>CR</h2>
+              <p>6개 품번 · 평균 2.87점</p>
+            </div>
+            <a class="top-link" href="#top">상단</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>품번</th>
+                  <th>이미지</th>
+                  <th>평균점수</th>
+                  <th>3점 이상</th>
+                  <th>4/3/2/1</th>
+                  <th>주요 의견사항</th>
+                  <th>판정</th>
+                  <th>조치 의견</th>
+                </tr>
+              </thead>
+              <tbody>
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701CR001</div><div class="mt-1 text-xs text-bcave-medium">CR</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701CR001.png" alt="SWA2701CR001"></td>
+        <td class="num-cell">-</td>
+        <td class="num-cell">-</td>
+        <td class="dist-cell">-</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-gray">데이터 없음</span></td>
+        <td class="action-cell">설문 미진행, 별도 확인</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701CR002</div><div class="mt-1 text-xs text-bcave-medium">CR</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701CR002.png" alt="SWA2701CR002"></td>
+        <td class="num-cell">2.58</td>
+        <td class="num-cell">52.6%</td>
+        <td class="dist-cell">4/6/6/3</td>
+        <td class="comment-cell">크롭기장 불호 / 핑크색 이상해요</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701CR003</div><div class="mt-1 text-xs text-bcave-medium">CR</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701CR003.png" alt="SWA2701CR003"></td>
+        <td class="num-cell">3.00</td>
+        <td class="num-cell">68.4%</td>
+        <td class="dist-cell">8/5/4/2</td>
+        <td class="comment-cell">지금 입고 싶음 / 예뻐여 차콜도 같이나오면 좋아요</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701CR004</div><div class="mt-1 text-xs text-bcave-medium">CR</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701CR004.png" alt="SWA2701CR004"></td>
+        <td class="num-cell">2.89</td>
+        <td class="num-cell">78.9%</td>
+        <td class="dist-cell">4/11/2/2</td>
+        <td class="comment-cell">문구가.. / 로고 디자인 변경 필요 / 귀여움 / 스크래치 빼면 좋을 것 같음</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">그래픽/로고 위치 보완</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701CR005</div><div class="mt-1 text-xs text-bcave-medium">CR</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701CR005.png" alt="SWA2701CR005"></td>
+        <td class="num-cell">2.95</td>
+        <td class="num-cell">68.4%</td>
+        <td class="dist-cell">7/6/4/2</td>
+        <td class="comment-cell">지난 스타일과 너무 중복 / 소매까지의 그래픽이 다소 과함 / 블루컬러 변경 필요 / 외국인들 강추</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">그래픽/로고 위치 보완</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701CR006</div><div class="mt-1 text-xs text-bcave-medium">CR</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701CR006.png" alt="SWA2701CR006"></td>
+        <td class="num-cell">2.94</td>
+        <td class="num-cell">76.5%</td>
+        <td class="dist-cell">5/8/2/2</td>
+        <td class="comment-cell">그래픽 디자인 호조 / 좋아요 / 소재도 좋아요</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">그래픽/로고 위치 보완</td>
+      </tr>
+    </tbody>
+            </table>
+          </div>
+        </section>
+        
+        <section class="category-section" id="cat-LT">
+          <div class="section-head">
+            <div>
+              <h2>LT</h2>
+              <p>10개 품번 · 평균 2.57점</p>
+            </div>
+            <a class="top-link" href="#top">상단</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>품번</th>
+                  <th>이미지</th>
+                  <th>평균점수</th>
+                  <th>3점 이상</th>
+                  <th>4/3/2/1</th>
+                  <th>주요 의견사항</th>
+                  <th>판정</th>
+                  <th>조치 의견</th>
+                </tr>
+              </thead>
+              <tbody>
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701LT001</div><div class="mt-1 text-xs text-bcave-medium">LT</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701LT001.png" alt="SWA2701LT001"></td>
+        <td class="num-cell">-</td>
+        <td class="num-cell">-</td>
+        <td class="dist-cell">-</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-gray">데이터 없음</span></td>
+        <td class="action-cell">설문 미진행, 별도 확인</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701LT002</div><div class="mt-1 text-xs text-bcave-medium">LT</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701LT002.png" alt="SWA2701LT002"></td>
+        <td class="num-cell">1.89</td>
+        <td class="num-cell">21.1%</td>
+        <td class="dist-cell">2/2/7/8</td>
+        <td class="comment-cell">끈부분 안쪽이 안보이게 안감이 있었으면... / 유니가 아니면 갠츈 / 남성분이 입기에 앞섶이 너무 파인 느낌 / 아일렛 디테일 제거필여</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701LT003</div><div class="mt-1 text-xs text-bcave-medium">LT</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701LT003.png" alt="SWA2701LT003"></td>
+        <td class="num-cell">2.05</td>
+        <td class="num-cell">31.6%</td>
+        <td class="dist-cell">2/4/6/7</td>
+        <td class="comment-cell">앞판 포인트가 과함 / 원단 조금 얇은거로.. / 이벤트적인 상품 인거죠? / 한글에 대한 의문점</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701LT004</div><div class="mt-1 text-xs text-bcave-medium">LT</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701LT004.png" alt="SWA2701LT004"></td>
+        <td class="num-cell">2.67</td>
+        <td class="num-cell">50.0%</td>
+        <td class="dist-cell">5/4/7/2</td>
+        <td class="comment-cell">색감이별로 / 색상 조합이 아쉽습니다.</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701LT005</div><div class="mt-1 text-xs text-bcave-medium">LT</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701LT005.png" alt="SWA2701LT005"></td>
+        <td class="num-cell">2.42</td>
+        <td class="num-cell">57.9%</td>
+        <td class="dist-cell">2/9/3/5</td>
+        <td class="comment-cell">상품의 실 수요와 와펜디자인의 매치가 안맞는것 같습니다 / 회색보단 다른색</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701LT006</div><div class="mt-1 text-xs text-bcave-medium">LT</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701LT006.png" alt="SWA2701LT006"></td>
+        <td class="num-cell">2.47</td>
+        <td class="num-cell">47.4%</td>
+        <td class="dist-cell">4/5/6/4</td>
+        <td class="comment-cell">전판의 디자인이 너무 심심한것 같습니다</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701LT007</div><div class="mt-1 text-xs text-bcave-medium">LT</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701LT007.png" alt="SWA2701LT007"></td>
+        <td class="num-cell">2.76</td>
+        <td class="num-cell">64.7%</td>
+        <td class="dist-cell">4/7/4/2</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701LT008</div><div class="mt-1 text-xs text-bcave-medium">LT</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701LT008.png" alt="SWA2701LT008"></td>
+        <td class="num-cell">2.89</td>
+        <td class="num-cell">78.9%</td>
+        <td class="dist-cell">4/11/2/2</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701LT009</div><div class="mt-1 text-xs text-bcave-medium">LT</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701LT009.png" alt="SWA2701LT009"></td>
+        <td class="num-cell">2.95</td>
+        <td class="num-cell">73.7%</td>
+        <td class="dist-cell">6/8/3/2</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2701LT011</div><div class="mt-1 text-xs text-bcave-medium">LT</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2701LT011.png" alt="SWA2701LT011"></td>
+        <td class="num-cell">3.05</td>
+        <td class="num-cell">84.2%</td>
+        <td class="dist-cell">6/10/1/2</td>
+        <td class="comment-cell">로고에 와키윌리가 안보여요.. ㅠ / 와펜이 귀엽습니다 / 뜬금 아이스크림..</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">그래픽/로고 위치 보완</td>
+      </tr>
+    </tbody>
+            </table>
+          </div>
+        </section>
+        
+        <section class="category-section" id="cat-ST">
+          <div class="section-head">
+            <div>
+              <h2>ST</h2>
+              <p>24개 품번 · 평균 2.85점</p>
+            </div>
+            <a class="top-link" href="#top">상단</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>품번</th>
+                  <th>이미지</th>
+                  <th>평균점수</th>
+                  <th>3점 이상</th>
+                  <th>4/3/2/1</th>
+                  <th>주요 의견사항</th>
+                  <th>판정</th>
+                  <th>조치 의견</th>
+                </tr>
+              </thead>
+              <tbody>
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST001</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST001.png" alt="SWA2702ST001"></td>
+        <td class="num-cell">-</td>
+        <td class="num-cell">-</td>
+        <td class="dist-cell">-</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-gray">데이터 없음</span></td>
+        <td class="action-cell">설문 미진행, 별도 확인</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST002</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST002.png" alt="SWA2702ST002"></td>
+        <td class="num-cell">2.53</td>
+        <td class="num-cell">63.2%</td>
+        <td class="dist-cell">2/10/3/4</td>
+        <td class="comment-cell">와펜이 포인트 주기 좋은것 같습니다 / 로고 세탁 시 문제 되는지</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST003</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST003.png" alt="SWA2702ST003"></td>
+        <td class="num-cell">3.05</td>
+        <td class="num-cell">84.2%</td>
+        <td class="dist-cell">6/10/1/2</td>
+        <td class="comment-cell">지금 출시해주세요</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST004</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST004.png" alt="SWA2702ST004"></td>
+        <td class="num-cell">2.21</td>
+        <td class="num-cell">36.8%</td>
+        <td class="dist-cell">2/5/7/5</td>
+        <td class="comment-cell">원단 좀만 얇은거로 했으면.. / 지금 출시해주세요</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST005</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST005.png" alt="SWA2702ST005"></td>
+        <td class="num-cell">2.83</td>
+        <td class="num-cell">66.7%</td>
+        <td class="dist-cell">4/8/5/1</td>
+        <td class="comment-cell">예쁜데 너무 두꺼워요 / 무거워요.. 원단 다른거.. / 두께만 좀 얇게 / 얇게나오면 좋을 것 같음.</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">소재·두께 재점검</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST006</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST006.png" alt="SWA2702ST006"></td>
+        <td class="num-cell">2.47</td>
+        <td class="num-cell">42.1%</td>
+        <td class="dist-cell">5/3/7/4</td>
+        <td class="comment-cell">프린팅 이던가 자수던가.. 한가지로만? / 스트라이프에는 호조 그래픽이여도 난해함</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST007</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST007.png" alt="SWA2702ST007"></td>
+        <td class="num-cell">2.67</td>
+        <td class="num-cell">55.6%</td>
+        <td class="dist-cell">4/6/6/2</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST008</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST008.png" alt="SWA2702ST008"></td>
+        <td class="num-cell">2.50</td>
+        <td class="num-cell">50.0%</td>
+        <td class="dist-cell">3/6/6/3</td>
+        <td class="comment-cell">등판 강조시 더 좋을 것 같음 / 프린팅이 잘 안보여요 / 그래픽 컬러 조합 조정 시 괜찮을 것 같음</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST009</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST009.png" alt="SWA2702ST009"></td>
+        <td class="num-cell">2.39</td>
+        <td class="num-cell">44.4%</td>
+        <td class="dist-cell">3/5/6/4</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">드랍 또는 전면 재검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST011</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST011.png" alt="SWA2702ST011"></td>
+        <td class="num-cell">3.11</td>
+        <td class="num-cell">72.2%</td>
+        <td class="dist-cell">8/5/4/1</td>
+        <td class="comment-cell">기존 2년간 스타일과 너무 중복됨 / 기장이 애매합니다</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST012</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST012.png" alt="SWA2702ST012"></td>
+        <td class="num-cell">3.18</td>
+        <td class="num-cell">64.7%</td>
+        <td class="dist-cell">10/1/5/1</td>
+        <td class="comment-cell">예뻐요</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST013</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST013.png" alt="SWA2702ST013"></td>
+        <td class="num-cell">3.11</td>
+        <td class="num-cell">77.8%</td>
+        <td class="dist-cell">7/7/3/1</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST014</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST014.png" alt="SWA2702ST014"></td>
+        <td class="num-cell">3.11</td>
+        <td class="num-cell">73.7%</td>
+        <td class="dist-cell">9/5/3/2</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST015</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST015.png" alt="SWA2702ST015"></td>
+        <td class="num-cell">3.17</td>
+        <td class="num-cell">77.8%</td>
+        <td class="dist-cell">8/6/3/1</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST016</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST016.png" alt="SWA2702ST016"></td>
+        <td class="num-cell">2.67</td>
+        <td class="num-cell">61.1%</td>
+        <td class="dist-cell">5/6/3/4</td>
+        <td class="comment-cell">강력추천합니다 / 로고 세탁 시 문제될 것 같음 / 반짝이풀빼면될듯 ㅠㅠ</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST017</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST017.png" alt="SWA2702ST017"></td>
+        <td class="num-cell">2.58</td>
+        <td class="num-cell">63.2%</td>
+        <td class="dist-cell">3/9/3/4</td>
+        <td class="comment-cell">땀나면 그대로 달라붙어요 / 디자인은 괜찮은데 컬러가 어려울거같습니다 / 컬러 변경 필요 / 모노컬러 좀</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST018</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST018.png" alt="SWA2702ST018"></td>
+        <td class="num-cell">2.78</td>
+        <td class="num-cell">72.2%</td>
+        <td class="dist-cell">4/9/2/3</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST019</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST019.png" alt="SWA2702ST019"></td>
+        <td class="num-cell">2.94</td>
+        <td class="num-cell">72.2%</td>
+        <td class="dist-cell">6/7/3/2</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST021</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST021.png" alt="SWA2702ST021"></td>
+        <td class="num-cell">2.68</td>
+        <td class="num-cell">57.9%</td>
+        <td class="dist-cell">6/5/4/4</td>
+        <td class="comment-cell">젤리포인트 끈적임 잡을 수 있음이 관건, 주타겟 고객에게 백팩 사용 시 불편 할 수 있을 것 같음 / 로고가 앞에 있어도 잘나갈듯.. / 땀이 배출이 안되는 디자인 입니다</td>
+        <td><span class="status status-red">재검토</span></td>
+        <td class="action-cell">보완안 없으면 축소</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST022</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST022.png" alt="SWA2702ST022"></td>
+        <td class="num-cell">2.84</td>
+        <td class="num-cell">63.2%</td>
+        <td class="dist-cell">7/5/4/3</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST023</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST023.png" alt="SWA2702ST023"></td>
+        <td class="num-cell">3.16</td>
+        <td class="num-cell">78.9%</td>
+        <td class="dist-cell">8/7/3/1</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">보완 후 출시 검토</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST024</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST024.png" alt="SWA2702ST024"></td>
+        <td class="num-cell">3.16</td>
+        <td class="num-cell">78.9%</td>
+        <td class="dist-cell">9/6/2/2</td>
+        <td class="comment-cell">프린팅 조금 진하게</td>
+        <td><span class="status status-amber">보완 검토</span></td>
+        <td class="action-cell">그래픽/로고 위치 보완</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST026</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST026.png" alt="SWA2702ST026"></td>
+        <td class="num-cell">3.47</td>
+        <td class="num-cell">94.7%</td>
+        <td class="dist-cell">11/7/0/1</td>
+        <td class="comment-cell">좋은데요 / 가격이 조금 아쉽습니다 정상가 49000 추천드립니다 / 가격을 낮춰주면 잘나갈거같아요 / 투팩 디벨롭 괜찮</td>
+        <td><span class="status status-green">출시 우선</span></td>
+        <td class="action-cell">출시 유지</td>
+      </tr>
+    
+      <tr>
+        <td class="sku-cell"><div class="font-black text-bcave-dark">SWA2702ST029</div><div class="mt-1 text-xs text-bcave-medium">ST</div></td>
+        <td class="image-cell"><img class="product-img" src="assets/SWA2702ST029.png" alt="SWA2702ST029"></td>
+        <td class="num-cell">-</td>
+        <td class="num-cell">-</td>
+        <td class="dist-cell">-</td>
+        <td class="comment-cell">별도 의견 없음</td>
+        <td><span class="status status-gray">데이터 없음</span></td>
+        <td class="action-cell">설문 미진행, 별도 확인</td>
+      </tr>
+    </tbody>
+            </table>
+          </div>
+        </section>
+        
+
+    <p class="footnote">평가 기준: 4점 출시 적합, 3점 일부 보완 필요, 2점 재검토 필요, 1점 출시 부적합. 이미지 출처는 상품MAP 원본 내 삽입 이미지이며, 설문 RAW에 없는 품번은 데이터 없음으로 표시했습니다.</p>
+  </main>
+  <script>
+    Chart.defaults.font.family = 'Pretendard, sans-serif';
+    Chart.defaults.color = '#264148';
+    new Chart(document.getElementById('categoryChart'), {
+      type: 'bar',
+      data: {
+        labels: ["JK", "CD,KT", "SH", "SS", "PT-져지", "PT-우븐", "SO", "HZ", "HD", "CR", "LT", "ST"],
+        datasets: [
+          { label: '평균점수', data: [2.6, 2.38, 2.49, 2.67, 2.47, 2.72, 2.75, 2.56, 2.56, 2.87, 2.57, 2.85], backgroundColor: '#264148' },
+          { label: '품번 수', data: [7, 5, 5, 6, 9, 7, 12, 9, 4, 6, 10, 24], backgroundColor: '#D4A64F', yAxisID: 'count' }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { min: 0, max: 4, grid: { color: '#edf1f2' } },
+          count: { position: 'right', min: 0, grid: { drawOnChartArea: false } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

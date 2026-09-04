@@ -1,0 +1,367 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>와키윌리 26SS 7월4주차 주간회의 — 기획</title>
+<style>
+  body { font-family: 'Pretendard','Apple SD Gothic Neo',sans-serif; background:#e9ecef; padding:32px 0; margin:0; }
+
+  .section-wrap { width:800px; margin:0 auto 32px; }
+  .section-label { font-size:11px; color:#aaa; margin-bottom:6px; padding-left:2px; }
+  .card { background:#fff; border-radius:10px; padding:30px 36px; box-shadow:0 2px 12px rgba(0,0,0,.08); }
+
+  h2 { font-size:18px; color:#1a1a1a; margin:0 0 3px; }
+  .sub { font-size:12px; color:#888; margin-bottom:20px; }
+  .section-title {
+    font-size:11px; font-weight:700; letter-spacing:.8px; color:#fff;
+    display:inline-block; padding:3px 10px; border-radius:3px;
+    margin-bottom:12px; margin-top:20px;
+  }
+  .section-title.dark  { background:#2D4A5C; }
+  .section-title.teal  { background:#4A9E8E; }
+  .section-title.red   { background:#C0392B; }
+  .section-title.amber { background:#B7770D; }
+  .divider { border:none; border-top:1px solid #eee; margin:20px 0; }
+
+  td.img-cell { padding:3px 6px 3px 3px; vertical-align:middle; }
+  td.img-cell img { width:56px; height:56px; object-fit:cover; border-radius:6px; display:block; background:#f0f0f0; }
+
+  .kpi-row { display:flex; gap:14px; margin-bottom:12px; }
+  .kpi { background:#f7f8fa; border-radius:8px; padding:14px 18px; flex:1; min-width:120px; }
+  .kpi .num { font-size:22px; font-weight:700; color:#2D4A5C; line-height:1.1; }
+  .kpi .badge { font-size:12px; font-weight:600; margin-left:4px; }
+  .badge.up   { color:#4A9E8E; }
+  .badge.down { color:#C0392B; }
+  .badge.neg  { color:#B7770D; }
+  .kpi .lbl { font-size:11px; color:#888; margin-top:3px; }
+
+  .ratio-bar { display:flex; border-radius:4px; overflow:hidden; height:20px; margin:14px 0 6px; }
+  .ratio-bar .uni  { background:#2D4A5C; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; }
+  .ratio-bar .wms  { background:#4A9E8E; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; }
+  .ratio-legend { display:flex; gap:16px; font-size:11px; color:#555; }
+  .dot { width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:5px; vertical-align:middle; }
+
+  .block-header { display:flex; align-items:flex-end; gap:14px; margin-bottom:16px; padding:14px 18px; border-radius:8px; }
+  .block-header.uni { background:#f0f4f7; border-left:4px solid #2D4A5C; }
+  .block-header.wms { background:#f0faf8; border-left:4px solid #4A9E8E; }
+  .block-header .main-num { font-size:26px; font-weight:700; color:#1a1a1a; }
+  .block-header .stats { font-size:13px; color:#555; line-height:1.8; }
+  .block-header .stats b { color:#C0392B; }
+  .block-header .stats .g { color:#4A9E8E; font-weight:700; }
+
+  table { width:100%; border-collapse:collapse; font-size:12.5px; }
+  thead th { background:#2D4A5C; color:#fff; padding:7px 10px; text-align:center; font-weight:600; font-size:11px; }
+  thead th:first-child { text-align:left; }
+  tbody tr:nth-child(even) { background:#f9f9f9; }
+  tbody td { padding:7px 10px; border-bottom:1px solid #f0f0f0; text-align:center; }
+  tbody td:first-child { text-align:left; font-weight:700; color:#2D4A5C; }
+  tbody td:nth-child(2) { font-size:11px; color:#888; text-align:left; }
+  .up   { color:#4A9E8E; font-weight:600; }
+  .down { color:#C0392B; font-weight:600; }
+  .flat { color:#888; }
+  .hi   { background:#fff8f0 !important; }
+  .hi td { background:#fff8f0; }
+
+  .cp-box { background:#f7f8fa; border-radius:7px; padding:14px 18px; margin-top:16px; }
+  .cp-box .cp-title { font-size:11px; font-weight:700; color:#2D4A5C; letter-spacing:.5px; margin-bottom:8px; }
+  .cp-item { font-size:12.5px; color:#333; line-height:1.7; margin-bottom:4px; }
+  .cp-item::before { content:'▸ '; color:#B7770D; font-size:11px; }
+  .cp-item b { color:#C0392B; }
+  .cp-item .teal { color:#4A9E8E; font-weight:600; }
+  .cp-action { font-size:12px; color:#555; margin-left:14px; line-height:1.6; }
+  .cp-action::before { content:'☞ '; color:#2D4A5C; }
+
+  .best-rank { font-size:16px; font-weight:700; color:#2D4A5C; }
+  .rank1 { color:#C0392B; }
+  .rank2 { color:#B7770D; }
+  .rank3 { color:#2D4A5C; }
+
+  .img-row { display:flex; gap:14px; margin-top:18px; flex-wrap:wrap; }
+  .img-card { flex:1; min-width:160px; max-width:185px; }
+  .img-card img { width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:8px; background:#f5f5f5; display:block; }
+  .img-card .ic-code { font-size:10px; color:#888; margin-top:6px; }
+  .img-card .ic-name { font-size:12px; font-weight:700; color:#1a1a1a; margin:2px 0; line-height:1.3; }
+  .img-card .ic-stat { font-size:11px; }
+
+  .agenda-item { padding:12px 16px; border-radius:7px; margin-bottom:8px; font-size:13px; line-height:1.6; }
+  .agenda-item.issue { background:#fff3f2; border-left:3px solid #C0392B; }
+  .agenda-item.action { background:#f0faf8; border-left:3px solid #4A9E8E; }
+  .agenda-item .ai-label { font-size:10px; font-weight:700; letter-spacing:.5px; margin-bottom:4px; }
+  .issue .ai-label { color:#C0392B; }
+  .action .ai-label { color:#4A9E8E; }
+
+  .period-note { font-size:11px; color:#aaa; margin-top:14px; text-align:right; }
+
+  .bta-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:4px; }
+  .bta-card { background:#f7f8fa; border-radius:8px; padding:13px 14px; }
+  .bta-head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
+  .bta-head strong { font-size:13px; font-weight:700; color:#2D4A5C; }
+  .bta-head span { font-size:11px; color:#888; }
+  .bta-desc { font-size:10.5px; color:#888; margin-bottom:8px; }
+  .bta-row { display:flex; align-items:center; gap:7px; margin-bottom:4px; }
+  .bta-label { font-size:11px; width:38px; color:#555; flex-shrink:0; }
+  .bta-bar { flex:1; height:9px; background:#e9ecef; border-radius:3px; overflow:hidden; }
+  .bta-num { font-size:11.5px; font-weight:700; color:#1a1a1a; width:52px; text-align:right; flex-shrink:0; }
+  .bta-rate { font-size:10px; color:#888; width:56px; text-align:right; flex-shrink:0; }
+  .bta-note { font-size:11.5px; color:#555; margin:7px 0 0; padding-top:7px; border-top:1px solid #e4e8ec; line-height:1.6; }
+  .bta-caption { font-size:11px; color:#888; margin:8px 0 4px; padding:8px 12px; background:#f7f8fa; border-radius:6px; }
+
+  .rise-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+  .rise-card { border:1px solid #e9ecef; border-radius:8px; padding:12px 13px; background:#fff; display:flex; gap:11px; }
+  .rc-img { flex-shrink:0; width:80px; height:106px; object-fit:cover; border-radius:6px; background:#f0f0f0; display:block; }
+  .rc-body { flex:1; min-width:0; }
+  .rc-pill { display:inline-block; font-size:10px; font-weight:700; color:#fff; border-radius:3px; padding:2px 7px; margin-bottom:6px; }
+  .rc-code { font-size:13px; font-weight:700; color:#2D4A5C; }
+  .rc-name { font-size:11px; color:#555; margin:2px 0 6px; line-height:1.4; }
+  .rc-stats { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:6px; }
+  .rc-stat { font-size:10.5px; background:#f7f8fa; border-radius:3px; padding:2px 6px; color:#444; }
+  .rc-stat.wow { background:#e8f7f4; color:#2a7d6e; font-weight:700; }
+  .rc-reason { font-size:11px; color:#555; line-height:1.6; border-top:1px solid #f0f0f0; padding-top:5px; }
+
+  /* 매장형태 뱃지 */
+  .ch-badge { display:inline-block; font-size:10px; font-weight:800; padding:1px 8px 2px; border-radius:999px; margin-left:6px; white-space:nowrap; vertical-align:1px; }
+  .ch-badge.duty   { background:#e8f7f4; color:#1a7a6c; }
+  .ch-badge.outlet { background:#fff3e0; color:#b7770d; }
+  .ch-badge.direct { background:#eef2f7; color:#2D4A5C; }
+  .ch-badge.dept   { background:#fdeef0; color:#c0392b; }
+
+  /* 매장형태별 판매 막대 */
+  .store-bar-row { display:flex; align-items:center; gap:10px; margin:7px 0; }
+  .store-bar-label { width:60px; font-size:12px; font-weight:700; color:#333; flex-shrink:0; }
+  .store-bar-track { flex:1; height:16px; background:#eef1f4; border-radius:4px; overflow:hidden; }
+  .store-bar-fill { height:100%; border-radius:4px; }
+  .store-bar-val { width:150px; text-align:right; font-size:11.5px; color:#555; flex-shrink:0; }
+
+  /* TOP 매장 리스트 */
+  .top-store-row { display:flex; align-items:center; gap:10px; padding:6px 0; border-bottom:1px solid #f0f0f0; }
+  .top-store-rank { width:20px; font-size:13px; font-weight:800; color:#2D4A5C; flex-shrink:0; }
+  .top-store-name { flex:1; font-size:12.5px; font-weight:700; color:#1a1a1a; }
+  .top-store-type { font-size:10px; color:#888; font-weight:600; margin-left:4px; }
+  .top-store-amt { font-size:12.5px; font-weight:700; color:#2D4A5C; width:80px; text-align:right; flex-shrink:0; }
+  .top-store-track { width:90px; height:8px; background:#eef1f4; border-radius:3px; overflow:hidden; flex-shrink:0; }
+  .top-store-fill { height:100%; background:#4A9E8E; border-radius:3px; }
+
+  /* 리오더 원인 2분할 바 */
+  .split-bar { display:flex; height:30px; border-radius:6px; overflow:hidden; margin:10px 0 4px; }
+  .split-bar div { display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; font-weight:800; }
+  .split-legend { display:flex; gap:20px; font-size:11px; color:#555; margin-bottom:14px; }
+
+  /* 입고 타임라인 */
+  .tl-wrap { position:relative; height:56px; margin:58px 6px 30px; border-top:2px solid #d8e0e7; }
+  .tl-band { position:absolute; top:0; bottom:-22px; background:#fff3f2; }
+  .tl-band-label { position:absolute; bottom:-20px; right:0; font-size:10px; font-weight:700; color:#C0392B; white-space:nowrap; }
+  .tl-dot { position:absolute; top:-5px; width:10px; height:10px; border-radius:50%; background:#4A9E8E; transform:translateX(-50%); box-shadow:0 0 0 3px #fff; }
+  .tl-pill { position:absolute; top:-34px; transform:translateX(-50%); font-size:10px; font-weight:700; color:#1a7a6c; background:#e8f7f4; padding:2px 7px; border-radius:999px; white-space:nowrap; }
+  .tl-axis { position:absolute; top:8px; transform:translateX(-50%); font-size:9.5px; color:#999; white-space:nowrap; }
+
+  .img-cell,.img-card img{overflow:hidden}
+  .img-cell img{width:58px;height:72px;object-fit:contain;background:#f6f7f8;border-radius:6px}
+  .rc-img{flex-shrink:0;width:80px;height:106px;object-fit:contain;background:#f6f7f8;border-radius:6px;display:block}
+  .img-fallback{width:58px;height:72px;background:#f3f5f6;border-radius:6px;display:flex;align-items:center;justify-content:center;text-align:center;color:#999;font-size:9px;line-height:1.25}
+  .rise-card .img-fallback{flex-shrink:0;width:80px;height:106px}
+  .rise-grid{max-width:100%;overflow:hidden}
+  .rise-card{min-width:0;overflow:hidden}
+  .rc-body,.rc-code,.rc-name,.rc-reason,.rc-stats{min-width:0;overflow-wrap:anywhere;word-break:keep-all}
+  .rc-stat{white-space:normal}
+  .bar{height:10px;background:#e9ecef;border-radius:4px;overflow:hidden}
+  .bar i{display:block;height:100%;background:#4A9E8E}
+  .mini{font-size:11px;color:#888}
+  .note{background:#f7f8fa;border-radius:7px;padding:13px 16px;margin-top:14px;font-size:12.5px;line-height:1.7;color:#333}
+  .note b{color:#C0392B}
+  .ratio-bar .kids{background:#B7770D;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;min-width:14px}
+  .store-row{display:grid;grid-template-columns:34px 110px 1fr 120px;gap:10px;align-items:center;margin:8px 0;font-size:12px}
+  .store-row b{background:#eef2f4;border-radius:4px;padding:3px 0;text-align:center;color:#2D4A5C}
+  .store-row em{font-style:normal;text-align:right;font-weight:700}
+  .store-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:12px}
+  .store-table th{background:#2D4A5C;color:#fff;padding:7px;text-align:center}
+  .store-table td{padding:7px;border-bottom:1px solid #edf0f2;text-align:center;vertical-align:middle}
+  .store-table td:nth-child(2){text-align:left}
+  .store-table span{display:block;font-size:10px;color:#777;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="section-wrap">
+  <div class="section-label">[ 1 / 10 ] 전체 KPI 요약</div>
+  <div class="card">
+    <h2>와키윌리 26SS — 7월 4주차 주간회의 기획 파트</h2>
+    <div class="sub">기간: 2026.07.20 ~ 07.26 &nbsp;|&nbsp; ERP 기준: 2026.07.27</div>
+    <div class="section-title dark">전체 KPI</div>
+    <div class="kpi-row">
+      <div class="kpi"><div class="num">8.01억 <span class="badge down">-14.6%</span></div><div class="lbl">26SS APP+ACC 합계 / 전주 9.38억</div></div>
+      <div class="kpi"><div class="num">7.00억 <span class="badge down">-4.0%</span></div><div class="lbl">26SS APP 주간 / WoW -14.3%</div></div>
+      <div class="kpi"><div class="num">46.0%</div><div class="lbl">26SS APP 누계 판매율</div></div>
+      <div class="kpi"><div class="num">1.00억 <span class="badge down">-44.8%</span></div><div class="lbl">26SS ACC 주간 / WoW -17.0%</div></div>
+    </div>
+    <div class="section-title dark" style="margin-top:18px;">성별 구도 (26SS 의류)</div>
+    <div class="ratio-bar"><div class="uni" style="width:58.1%">유니섹스 58.1%</div><div class="wms" style="width:41.0%">우먼스 41.0%</div><div class="kids" style="width:0.9%">K</div></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;">
+      <div class="cp-item"><b>유니 4.07억</b><br>YoY -20.3% · WoW -12.9%<br>누계 94.15억 · 판매율 39.1%</div>
+      <div class="cp-item"><b>우먼 2.87억</b><br>YoY +37.1% · WoW -16.4%<br>누계 82.79억 · 판매율 58.9%</div>
+      <div class="cp-item"><b>키즈 0.06억 (0.9%)</b><br>YoY -34.0% · WoW -8.2%<br>판매율 36.0%</div>
+      <div class="cp-item"><b>핵심 판단</b><br>7월 3주 반등 후 조정. 유니 ST/PT와 우먼 KT/PT 하락 확인 필요.</div>
+    </div>
+    <div class="period-note">※ 원본 파일은 아이템 집계 단위라 품번별 전주대비 증가/감소 TOP은 확정하지 않습니다.</div>
+  </div>
+</div>
+
+<div class="section-wrap">
+  <div class="section-label">[ 2 / 10 ] 주간 BEST 10 + 주목 상품</div>
+  <div class="card">
+    <div class="section-title dark">주간 BEST 10</div>
+    <p style="font-size:11px;color:#aaa;margin:0 0 10px;">전체 APP(유니+우먼스) 주간 실판매금액 기준 · 판매베스트_update 파일 기준</p>
+    <table><thead><tr><th style="width:28px;">순위</th><th style="width:66px;">이미지</th><th>품번</th><th style="text-align:left;">품명</th><th>TAG가</th><th>주간 수량</th><th>주간 실판매</th><th>WoW</th><th>할인율</th><th>소진율</th></tr></thead><tbody><tr class="hi"><td class="best-rank rank1">1</td><td class="img-cell"><img src="https://image.msscdn.net/images/goods_img/20250224/4825551/4825551_17412537394918_500.jpg" alt="WA2502ST06WH" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-fallback',textContent:'이미지 확인 필요'}));"></td><td><b>WA2502ST06WH</b></td><td style="text-align:left;">와키윌리 릴리 반팔 티셔츠</td><td>49,000</td><td>478</td><td>937만</td><td class="down">-11.5%</td><td>60.0%</td><td>75.0%</td></tr>
+<tr class="hi"><td class="best-rank rank2">2</td><td class="img-cell"><img src="https://i3.momoshop.com.tw/1775828037/goodsimg/0014/660/517/14660517_R_m.webp" alt="WA2602ST01BK" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-fallback',textContent:'이미지 확인 필요'}));"></td><td><b>WA2602ST01BK</b></td><td style="text-align:left;">키키 와펜 반팔티셔츠</td><td>39,000</td><td>361</td><td>935만</td><td class="up">+84.6%</td><td>33.6%</td><td>48.0%</td></tr>
+<tr class="hi"><td class="best-rank rank3">3</td><td class="img-cell"><img src="https://image.msscdn.net/images/goods_img/20260302/6068535/6068535_17727625291299_500.jpg" alt="WA2602ST02BK" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-fallback',textContent:'이미지 확인 필요'}));"></td><td><b>WA2602ST02BK</b></td><td style="text-align:left;">더블 키키와펜 반팔티셔츠</td><td>49,000</td><td>242</td><td>863만</td><td class="up">+29.6%</td><td>27.2%</td><td>36.9%</td></tr>
+<tr><td class="best-rank">4</td><td class="img-cell"><img src="https://image.msscdn.net/images/goods_img/20260302/6068535/6068535_17727625291299_500.jpg" alt="WA2602ST02WH" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-fallback',textContent:'이미지 확인 필요'}));"></td><td><b>WA2602ST02WH</b></td><td style="text-align:left;">더블 키키와펜 반팔티셔츠</td><td>49,000</td><td>244</td><td>803만</td><td class="up">+38.4%</td><td>32.9%</td><td>35.1%</td></tr>
+<tr><td class="best-rank">5</td><td class="img-cell"><img src="https://image.msscdn.net/thumbnails/images/goods_img/20260224/6049149/6049149_17803632045173_big.jpg?w=1200" alt="WA2602SO04BK" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-fallback',textContent:'이미지 확인 필요'}));"></td><td><b>WA2602SO04BK</b></td><td style="text-align:left;">리얼 와이드 스웻 숏팬츠</td><td>69,000</td><td>127</td><td>782만</td><td class="up">+28.8%</td><td>10.7%</td><td>42.4%</td></tr>
+<tr><td class="best-rank">6</td><td class="img-cell"><img src="https://image.msscdn.net/thumbnails/images/goods_img/20260224/6049149/6049149_17803632045173_big.jpg?w=1200" alt="WA2602SO04GR" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-fallback',textContent:'이미지 확인 필요'}));"></td><td><b>WA2602SO04GR</b></td><td style="text-align:left;">리얼 와이드 스웻 숏팬츠</td><td>69,000</td><td>126</td><td>766만</td><td class="up">+77.0%</td><td>11.9%</td><td>38.4%</td></tr>
+<tr><td class="best-rank">7</td><td class="img-cell"><img src="https://image.msscdn.net/thumbnails/images/goods_img/20260406/6263585/6263585_17757984886550_big.jpg?w=1200" alt="WA2602ST27CH" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-fallback',textContent:'이미지 확인 필요'}));"></td><td><b>WA2602ST27CH</b></td><td style="text-align:left;">키키 라이딩 반팔티셔츠</td><td>59,000</td><td>133</td><td>718만</td><td class="up">+78.7%</td><td>8.5%</td><td>66.6%</td></tr>
+<tr><td class="best-rank">8</td><td class="img-cell"><img src="https://image.msscdn.net/images/goods_img/20260302/6068535/6068535_17727625291299_500.jpg" alt="WA2602ST02GN" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-fallback',textContent:'이미지 확인 필요'}));"></td><td><b>WA2602ST02GN</b></td><td style="text-align:left;">더블 키키와펜 반팔티셔츠</td><td>49,000</td><td>207</td><td>716만</td><td class="up">+31.6%</td><td>29.4%</td><td>50.1%</td></tr>
+<tr><td class="best-rank">9</td><td class="img-cell"><img src="https://image.msscdn.net/thumbnails/images/goods_img/20260202/5969875/5969875_17760425393545_big.png?w=780" alt="WA2602KT64DN" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-fallback',textContent:'이미지 확인 필요'}));"></td><td><b>WA2602KT64DN</b></td><td style="text-align:left;">우먼스 리본 카라 반팔 니트</td><td>99,000</td><td>71</td><td>686만</td><td class="down">-14.0%</td><td>2.5%</td><td>85.0%</td></tr>
+<tr><td class="best-rank">10</td><td class="img-cell"><img src="https://i1.momoshop.com.tw/1775828037/goodsimg/0014/660/517/14660517_R1_m.webp" alt="WA2602ST01WH" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-fallback',textContent:'이미지 확인 필요'}));"></td><td><b>WA2602ST01WH</b></td><td style="text-align:left;">키키 와펜 반팔티셔츠</td><td>39,000</td><td>206</td><td>662만</td><td class="up">+18.2%</td><td>17.6%</td><td>40.9%</td></tr></tbody></table>
+    <div class="section-title teal" style="margin-top:16px;">WoW 주목 상품</div>
+    <div class="img-row"><div class="img-card"><img src="https://i3.momoshop.com.tw/1775828037/goodsimg/0014/660/517/14660517_R_m.webp" alt="WA2602ST01BK" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-fallback',textContent:'이미지 확인 필요'}));"><div class="ic-code">WA2602ST01BK</div><div class="ic-name">키키 와펜 반팔티셔츠</div><div class="ic-stat">WoW <b class="up">+84.6%</b> · 935만</div></div>
+<div class="img-card"><img src="https://image.msscdn.net/thumbnails/images/goods_img/20260406/6263585/6263585_17757984886550_big.jpg?w=1200" alt="WA2602ST27CH" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-fallback',textContent:'이미지 확인 필요'}));"><div class="ic-code">WA2602ST27CH</div><div class="ic-name">키키 라이딩 반팔티셔츠</div><div class="ic-stat">WoW <b class="up">+78.7%</b> · 718만</div></div>
+<div class="img-card"><img src="https://image.msscdn.net/thumbnails/images/goods_img/20260224/6049149/6049149_17803632045173_big.jpg?w=1200" alt="WA2602SO04GR" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-fallback',textContent:'이미지 확인 필요'}));"><div class="ic-code">WA2602SO04GR</div><div class="ic-name">리얼 와이드 스웻 숏팬츠</div><div class="ic-stat">WoW <b class="up">+77.0%</b> · 766만</div></div>
+<div class="img-card"><img src="https://image.msscdn.net/images/goods_img/20260302/6068535/6068535_17727625291299_500.jpg" alt="WA2602ST02WH" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-fallback',textContent:'이미지 확인 필요'}));"><div class="ic-code">WA2602ST02WH</div><div class="ic-name">더블 키키와펜 반팔티셔츠</div><div class="ic-stat">WoW <b class="up">+38.4%</b> · 803만</div></div></div>
+  </div>
+</div>
+
+<div class="section-wrap">
+  <div class="section-label">[ 2-1 / 10 ] BEST10 — 매장형태별 판매</div>
+  <div class="card">
+    <div class="section-title amber">BEST10 매장형태별 판매 (주간자료 RAW_260726.xlsx 대조)</div>
+    <p class="sub">BEST10 품번 합산 · 매장명 기준 면세/백화점/아울렛/직영/온라인 재분류</p>
+    <div class="store-row"><b>DP</b><span>백화점</span><div class="bar"><i style="width:100.0%"></i></div><em>30.4% · 2,234만</em></div>
+<div class="store-row"><b>OL</b><span>아울렛</span><div class="bar"><i style="width:83.7%"></i></div><em>25.4% · 1,871만</em></div>
+<div class="store-row"><b>DR</b><span>직영점</span><div class="bar"><i style="width:40.4%"></i></div><em>12.3% · 903만</em></div>
+<div class="store-row"><b>DF</b><span>면세점</span><div class="bar"><i style="width:28.4%"></i></div><em>8.6% · 634만</em></div>
+<div class="store-row"><b>ETC</b><span>해외/기타</span><div class="bar"><i style="width:24.1%"></i></div><em>7.3% · 539만</em></div>
+<div class="store-row"><b>ETC</b><span>기타</span><div class="bar"><i style="width:22.4%"></i></div><em>6.8% · 500만</em></div>
+<div class="store-row"><b>ON</b><span>온라인/자사몰</span><div class="bar"><i style="width:19.3%"></i></div><em>5.9% · 431만</em></div>
+<div class="store-row"><b>MS</b><span>무신사</span><div class="bar"><i style="width:11.1%"></i></div><em>3.4% · 249만</em></div>
+    <div class="section-title teal" style="margin-top:14px;">TOP 5 매장</div>
+    <table><thead><tr><th>순위</th><th>매장</th><th>매장형태</th><th>실판매</th></tr></thead><tbody><tr><td>1</td><td>와키윌리_명동_WI</td><td>직영점</td><td>456만</td></tr>
+<tr><td>2</td><td>롯_동부산아울렛_WI</td><td>아울렛</td><td>432만</td></tr>
+<tr><td>3</td><td>와키윌리 공식홈페이지</td><td>온라인/자사몰</td><td>431만</td></tr>
+<tr><td>4</td><td>태국 - RSP</td><td>해외/기타</td><td>430만</td></tr>
+<tr><td>5</td><td>와키윌리_성수_WI</td><td>직영점</td><td>265만</td></tr></tbody></table>
+    <div class="note">BEST10은 오프라인 90.8% 주도입니다. 단, WA2502ST06WH는 온라인 비중이 높아 공식몰·무신사 잔여 이월 수요를 분리해 봅니다.</div>
+  </div>
+</div>
+
+<div class="section-wrap">
+  <div class="section-label">[ 2-2 / 10 ] 6월말~7월초 입고 재개 vs 이번 주 반등</div>
+  <div class="card">
+    <div class="section-title amber">입고 재개 vs 이번 주 조정 — 인과관계 확인</div>
+    <div class="cp-box" style="margin-top:0;">
+      <div class="split-bar"><div style="width:65%;background:#C0392B;">ST 재하락 점검 65%</div><div style="width:35%;background:#4A9E8E;">SO 반등 추적 35%</div></div>
+      <div class="split-legend"><span><b style="color:#C0392B;">●</b> 유니/WMS ST 모두 WoW -17%대</span><span><b style="color:#4A9E8E;">●</b> SO04 BK/GR BEST10 동시 진입</span></div>
+      <div class="cp-item"><b>판단</b><br>7월 3주 반등 이후 APP 합계가 WoW -14.6%로 조정. ST/PT 하락이 전체 부진의 주된 원인이고, SO/HZ/LT 반등은 규모상 상쇄가 어렵습니다.</div>
+    </div>
+    <div class="cp-action">입고/출고일과 매장 재고를 함께 대조해 SO04 반등이 수요 반등인지 출고 효과인지 분리 확인합니다.</div>
+  </div>
+</div>
+
+<div class="section-wrap">
+  <div class="section-label">[ 3 / 10 ] 유니섹스 복종별 상세</div>
+  <div class="card">
+    <div class="block-header uni"><div><div style="font-size:11px; color:#2D4A5C; font-weight:700; margin-bottom:4px;">UNISEX</div><div class="main-num">4.07억</div></div><div class="stats">YoY &nbsp;<b>-20.3%</b>&nbsp;|&nbsp; WoW -12.9%&nbsp;|&nbsp; 누계 판매율 39.1%<br><span style="font-size:11px; color:#888;">ST 2.59억이 UNI 매출의 핵심 볼륨이나 WoW -17.7%로 재하락</span></div></div>
+    <table><thead><tr><th>복종</th><th>아이템</th><th>주간 수량</th><th>주간 실판매</th><th>YoY</th><th>WoW</th><th>할인율</th><th>누계 판매율</th></tr></thead><tbody><tr class="hi"><td>ST</td><td>반팔티셔츠</td><td>6,730</td><td>259백만</td><td class="down">-20.6%</td><td class="down">-17.7%</td><td>-</td><td>47.0%</td></tr>
+<tr><td>SO</td><td>쇼츠</td><td>1,459</td><td>80백만</td><td class="down">-5.4%</td><td class="up">+5.2%</td><td>-</td><td>35.7%</td></tr>
+<tr><td>SS</td><td>반팔셔츠</td><td>309</td><td>21백만</td><td class="down">-40.4%</td><td class="down">-10.3%</td><td>-</td><td>39.1%</td></tr>
+<tr><td>PT</td><td>팬츠</td><td>163</td><td>12백만</td><td class="down">-42.7%</td><td class="down">-31.2%</td><td>-</td><td>24.6%</td></tr>
+<tr><td>HZ</td><td>후드집업</td><td>186</td><td>13백만</td><td class="down">-47.2%</td><td class="up">+11.5%</td><td>-</td><td>31.9%</td></tr>
+<tr><td>JK</td><td>점퍼</td><td>119</td><td>10백만</td><td class="up">+30.8%</td><td class="down">-20.4%</td><td>-</td><td>48.7%</td></tr>
+<tr><td>LT</td><td>롱슬리브</td><td>86</td><td>4백만</td><td class="up">+52.0%</td><td class="up">+29.0%</td><td>-</td><td>29.6%</td></tr></tbody></table>
+    <div class="cp-box"><div class="cp-title">핵심 판단</div><div class="cp-item">ST가 하락 전환하며 전체 부진을 주도. PT는 판매율 24.6%와 WoW -31.2%가 겹쳐 재고 관리 우선순위가 높습니다. JK는 YoY +30.8%, 판매율 48.7%로 가장 견조합니다.</div></div>
+  </div>
+</div>
+
+<div class="section-wrap">
+  <div class="section-label">[ 4 / 10 ] 유니섹스 — ST 반팔티셔츠 매출 구성</div>
+  <div class="card">
+    <div class="block-header uni" style="margin-bottom:16px;"><div><div style="font-size:11px;color:#2D4A5C;font-weight:700;margin-bottom:4px;">UNISEX</div><div style="font-size:18px;font-weight:700;color:#1a1a1a;">ST 반팔티셔츠 B/T/A 판매</div></div><div class="stats" style="font-size:11px;color:#888;">발주리스트 BTA 시트 기준 · UNI ST 162 SKU</div></div>
+    <div class="bta-grid"><div class="bta-card"><div class="bta-head"><strong>Basic</strong><span>17.96억 · 실판비중 38.5%</span></div><div class="bta-desc">안정 볼륨</div><div class="bta-row"><span class="bta-label">실판</span><div class="bta-bar"><div style="height:100%;width:63.0%;background:#2D4A5C;border-radius:3px;"></div></div><span class="bta-num">17.96억</span><span class="bta-rate">41.6%</span></div><p class="bta-note">SKU 21 · 발주구성 41.0% · 판매구성 37.3%</p></div>
+<div class="bta-card"><div class="bta-head"><strong>Trend</strong><span>28.53억 · 실판비중 61.2%</span></div><div class="bta-desc">유니 ST 핵심 매출축</div><div class="bta-row"><span class="bta-label">실판</span><div class="bta-bar"><div style="height:100%;width:100.0%;background:#2D4A5C;border-radius:3px;"></div></div><span class="bta-num">28.53억</span><span class="bta-rate">48.4%</span></div><p class="bta-note">SKU 138 · 발주구성 59.0% · 판매구성 62.4%</p></div>
+<div class="bta-card"><div class="bta-head"><strong>Accent</strong><span>0.13억 · 실판비중 0.3%</span></div><div class="bta-desc">소규모 반응</div><div class="bta-row"><span class="bta-label">실판</span><div class="bta-bar"><div style="height:100%;width:0.5%;background:#2D4A5C;border-radius:3px;"></div></div><span class="bta-num">0.13억</span><span class="bta-rate">0.0%</span></div><p class="bta-note">SKU 3 · 발주구성 0.0% · 판매구성 0.3%</p></div></div>
+    <p class="bta-caption">T가 실판구성 61.2%, 판매율 48.4%로 유니 ST 핵심축입니다. B는 안정 볼륨이나 이번 주 ST 하락 방어는 부족했고, A는 규모가 작아 전체 흐름 영향이 제한적입니다.</p>
+  </div>
+</div>
+
+<div class="section-wrap">
+  <div class="section-label">[ 5 / 10 ] 유니섹스 — 전주대비 올라온 상품</div>
+  <div class="card">
+    <div class="block-header uni" style="margin-bottom:16px;"><div><div style="font-size:11px;color:#2D4A5C;font-weight:700;margin-bottom:4px;">UNISEX</div><div style="font-size:18px;font-weight:700;color:#1a1a1a;">전주대비 올라온 상품</div></div><div class="stats" style="font-size:12px;color:#555;">TOP10 내 WoW 상승 품번</div></div>
+    <div class="rise-grid"><div class="rise-card"><img class="rc-img" src="https://i3.momoshop.com.tw/1775828037/goodsimg/0014/660/517/14660517_R_m.webp" alt="WA2602ST01BK" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-fallback',textContent:'이미지 확인 필요'}));"><div class="rc-body"><div class="rc-pill">WoW +84.6%</div><div class="rc-code">WA2602ST01BK</div><div class="rc-name">키키 와펜 반팔티셔츠</div><div class="rc-stats"><span class="rc-stat">361pcs</span><span class="rc-stat wow">935만</span></div><div class="rc-reason">TOP10 내 전주대비 상승 품번. 매장 RAW 기준 오프라인 반응 점검 필요.</div></div></div>
+<div class="rise-card"><img class="rc-img" src="https://image.msscdn.net/thumbnails/images/goods_img/20260406/6263585/6263585_17757984886550_big.jpg?w=1200" alt="WA2602ST27CH" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-fallback',textContent:'이미지 확인 필요'}));"><div class="rc-body"><div class="rc-pill">WoW +78.7%</div><div class="rc-code">WA2602ST27CH</div><div class="rc-name">키키 라이딩 반팔티셔츠</div><div class="rc-stats"><span class="rc-stat">133pcs</span><span class="rc-stat wow">718만</span></div><div class="rc-reason">TOP10 내 전주대비 상승 품번. 매장 RAW 기준 오프라인 반응 점검 필요.</div></div></div></div>
+  </div>
+</div>
+
+<div class="section-wrap">
+  <div class="section-label">[ 6 / 10 ] 우먼스 복종별 상세</div>
+  <div class="card">
+    <div class="block-header wms"><div><div style="font-size:11px; color:#4A9E8E; font-weight:700; margin-bottom:4px;">WOMENS</div><div class="main-num">2.87억</div></div><div class="stats">YoY &nbsp;<span class="g">+37.1%</span>&nbsp;|&nbsp; WoW -16.4%&nbsp;|&nbsp; 누계 판매율 58.9%<br><span style="font-size:11px; color:#888;">ST/W 1.42억, CD/W가 가장 선명한 선방</span></div></div>
+    <table><thead><tr><th>복종</th><th>아이템</th><th>주간 수량</th><th>주간 실판매</th><th>YoY</th><th>WoW</th><th>할인율</th><th>누계 판매율</th></tr></thead><tbody><tr class="hi"><td>ST/W</td><td>반팔티셔츠</td><td>3,491</td><td>142백만</td><td class="up">+44.2%</td><td class="down">-17.8%</td><td>-</td><td>65.3%</td></tr>
+<tr><td>CD/W</td><td>가디건</td><td>180</td><td>16백만</td><td class="up">+326.7%</td><td class="up">+16.3%</td><td>-</td><td>63.4%</td></tr>
+<tr><td>SS/W</td><td>반팔셔츠</td><td>247</td><td>18백만</td><td class="up">+121.9%</td><td class="down">-17.2%</td><td>-</td><td>62.4%</td></tr>
+<tr><td>SO/W</td><td>쇼츠</td><td>491</td><td>35백만</td><td class="up">+36.4%</td><td class="down">-11.2%</td><td>-</td><td>52.7%</td></tr>
+<tr><td>KT/W</td><td>니트</td><td>295</td><td>27백만</td><td class="up">+34.1%</td><td class="down">-25.8%</td><td>-</td><td>64.6%</td></tr>
+<tr><td>PT/W</td><td>팬츠</td><td>184</td><td>16백만</td><td class="down">-14.9%</td><td class="down">-36.7%</td><td>-</td><td>44.1%</td></tr>
+<tr><td>JK/W</td><td>점퍼</td><td>55</td><td>6백만</td><td class="down">-61.6%</td><td class="up">+28.1%</td><td>-</td><td>68.4%</td></tr>
+<tr><td>HD/W</td><td>후드</td><td>16</td><td>1백만</td><td class="down">-25.5%</td><td class="up">+29.1%</td><td>-</td><td>20.4%</td></tr>
+<tr><td>OP/W</td><td>원피스</td><td>39</td><td>4백만</td><td class="up">+7.6%</td><td class="up">+22.0%</td><td>-</td><td>48.1%</td></tr>
+<tr><td>SR/W</td><td>스커트</td><td>86</td><td>8백만</td><td class="up">+61.5%</td><td class="down">-28.9%</td><td>-</td><td>68.9%</td></tr></tbody></table>
+    <div class="cp-box"><div class="cp-title">핵심 판단</div><div class="cp-item">우먼스는 YoY +37.1%로 성장 우위는 유지했지만 WoW -16.4%로 조정. CD/W는 YoY +326.7%, WoW +16.3%, 판매율 63.4%로 가장 선명합니다. KT/W와 PT/W는 하락 폭 확인이 필요합니다.</div></div>
+  </div>
+</div>
+
+<div class="section-wrap">
+  <div class="section-label">[ 7 / 10 ] 우먼스 — ST 반팔티셔츠 B/T/A</div>
+  <div class="card">
+    <div class="block-header wms" style="margin-bottom:16px;"><div><div style="font-size:11px;color:#4A9E8E;font-weight:700;margin-bottom:4px;">WOMENS</div><div style="font-size:18px;font-weight:700;color:#1a1a1a;">ST 반팔티셔츠 B/T/A 판매</div></div><div class="stats" style="font-size:11px;color:#888;">발주리스트 BTA 시트 기준 · WMS ST 78 SKU</div></div>
+    <div class="bta-grid"><div class="bta-card"><div class="bta-head"><strong>Basic</strong><span>19.04억 · 실판비중 63.7%</span></div><div class="bta-desc">우먼 ST 메인 축</div><div class="bta-row"><span class="bta-label">실판</span><div class="bta-bar"><div style="height:100%;width:100.0%;background:#2D4A5C;border-radius:3px;"></div></div><span class="bta-num">19.04억</span><span class="bta-rate">68.0%</span></div><p class="bta-note">SKU 32 · 발주구성 61.4% · 판매구성 64.4%</p></div>
+<div class="bta-card"><div class="bta-head"><strong>Trend</strong><span>10.31억 · 실판비중 34.5%</span></div><div class="bta-desc">보조 성장축</div><div class="bta-row"><span class="bta-label">실판</span><div class="bta-bar"><div style="height:100%;width:54.2%;background:#2D4A5C;border-radius:3px;"></div></div><span class="bta-num">10.31억</span><span class="bta-rate">57.9%</span></div><p class="bta-note">SKU 43 · 발주구성 37.8% · 판매구성 33.8%</p></div>
+<div class="bta-card"><div class="bta-head"><strong>Accent</strong><span>0.55억 · 실판비중 1.8%</span></div><div class="bta-desc">과소 SKU 초과 반응</div><div class="bta-row"><span class="bta-label">실판</span><div class="bta-bar"><div style="height:100%;width:2.9%;background:#2D4A5C;border-radius:3px;"></div></div><span class="bta-num">0.55억</span><span class="bta-rate">144.0%</span></div><p class="bta-note">SKU 3 · 발주구성 0.8% · 판매구성 1.9%</p></div></div>
+    <p class="bta-caption">B가 실판구성 63.7%, 판매율 68.0%로 우먼 ST 메인 축입니다. A는 SKU 3개이지만 판매율 144.0%로 초과 반응이라 품절/대체 컬러 검토 가치가 있습니다.</p>
+  </div>
+</div>
+
+<div class="section-wrap">
+  <div class="section-label">[ 8 / 10 ] 우먼스 — 전주대비 올라온 상품</div>
+  <div class="card">
+    <div class="block-header wms" style="margin-bottom:16px;"><div><div style="font-size:11px;color:#4A9E8E;font-weight:700;margin-bottom:4px;">WOMENS</div><div style="font-size:18px;font-weight:700;color:#1a1a1a;">전주대비 올라온 상품</div></div><div class="stats" style="font-size:12px;color:#555;">TOP10 진입 우먼 품번 및 선방 품목</div></div>
+    <div class="rise-grid"><div class="rise-card"><img class="rc-img" src="https://image.msscdn.net/thumbnails/images/goods_img/20260202/5969875/5969875_17760425393545_big.png?w=780" alt="WA2602KT64DN" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-fallback',textContent:'이미지 확인 필요'}));"><div class="rc-body"><div class="rc-pill">WoW -14.0%</div><div class="rc-code">WA2602KT64DN</div><div class="rc-name">우먼스 리본 카라 반팔 니트</div><div class="rc-stats"><span class="rc-stat">71pcs</span><span class="rc-stat wow">686만</span></div><div class="rc-reason">TOP10 내 전주대비 상승 품번. 매장 RAW 기준 오프라인 반응 점검 필요.</div></div></div><div class="rise-card"><img class="rc-img" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='220'><rect width='100%' height='100%' fill='%23f3f5f6'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23999' font-size='16'>CD/W</text></svg>" alt="CD/W" loading="lazy"><div class="rc-body"><div class="rc-pill">CD/W</div><div class="rc-code">가디건</div><div class="rc-name">YoY +326.7% · WoW +16.3%</div><div class="rc-reason">BTA 기준 CD/W T 판매율 85.0%. 선방 품목의 재고 잔량과 추가 입고 가능성을 점검합니다.</div></div></div><div class="rise-card"><img class="rc-img" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='220'><rect width='100%' height='100%' fill='%23f3f5f6'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23999' font-size='16'>KT/PT</text></svg>" alt="KT/PT" loading="lazy"><div class="rc-body"><div class="rc-pill">관리</div><div class="rc-code">KT/W · PT/W</div><div class="rc-name">WoW -25.8% / -36.7%</div><div class="rc-reason">판매율은 높거나 평균 이하로 갈리지만 이번 주 하락 폭이 커 프로모션·출고·노출 변화 확인이 필요합니다.</div></div></div></div>
+  </div>
+</div>
+
+<div class="section-wrap">
+  <div class="section-label">[ 9 / 10 ] 전시즌 실적 요약 (25FW / 25SS)</div>
+  <div class="card">
+    <div class="section-title dark">25FW / 25SS 전주 대비 판매 비교</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr><th style="background:#6b7e8a;color:#fff;padding:8px 10px;text-align:left;">시즌</th><th style="background:#6b7e8a;color:#fff;padding:8px 10px;text-align:center;">구분</th><th style="background:#6b7e8a;color:#fff;padding:8px 10px;text-align:right;">이번 주</th><th style="background:#6b7e8a;color:#fff;padding:8px 10px;text-align:right;">전주</th><th style="background:#6b7e8a;color:#fff;padding:8px 10px;text-align:right;">WoW</th><th style="background:#6b7e8a;color:#fff;padding:8px 10px;text-align:left;">판단</th></tr></thead><tbody><tr style="background:#f7f8fa;"><td style="padding:7px 10px;font-weight:700;color:#2D4A5C;">25FW</td><td style="padding:7px 10px;text-align:center;font-weight:600;">APP TTL</td><td style="padding:7px 10px;text-align:right;">0.32억</td><td style="padding:7px 10px;text-align:right;">0.40억</td><td style="padding:7px 10px;text-align:right;color:#C0392B;font-weight:700;">-19.0%</td><td style="padding:7px 10px;text-align:left;">전주 대비 감소. 유니 하락이 전체를 끌어내림</td></tr>
+<tr><td style="padding:7px 10px;font-weight:700;color:#2D4A5C;">25FW</td><td style="padding:7px 10px;text-align:center;font-weight:600;">UNI TTL</td><td style="padding:7px 10px;text-align:right;">0.26억</td><td style="padding:7px 10px;text-align:right;">0.34억</td><td style="padding:7px 10px;text-align:right;color:#C0392B;font-weight:700;">-23.7%</td><td style="padding:7px 10px;text-align:left;">FW 잔여 판매 둔화</td></tr>
+<tr style="background:#f7f8fa;"><td style="padding:7px 10px;font-weight:700;color:#2D4A5C;">25FW</td><td style="padding:7px 10px;text-align:center;font-weight:600;">WMS TTL</td><td style="padding:7px 10px;text-align:right;">0.06억</td><td style="padding:7px 10px;text-align:right;">0.06억</td><td style="padding:7px 10px;text-align:right;color:#2F8F7E;font-weight:700;">+7.5%</td><td style="padding:7px 10px;text-align:left;">소규모지만 전주 대비 소폭 증가</td></tr>
+<tr><td style="padding:7px 10px;font-weight:700;color:#2D4A5C;">25SS</td><td style="padding:7px 10px;text-align:center;font-weight:600;">APP TTL</td><td style="padding:7px 10px;text-align:right;">1.55억</td><td style="padding:7px 10px;text-align:right;">1.59억</td><td style="padding:7px 10px;text-align:right;color:#C0392B;font-weight:700;">-2.8%</td><td style="padding:7px 10px;text-align:left;">시즌 막바지 잔여 판매는 전주와 유사</td></tr>
+<tr style="background:#f7f8fa;"><td style="padding:7px 10px;font-weight:700;color:#2D4A5C;">25SS</td><td style="padding:7px 10px;text-align:center;font-weight:600;">UNI TTL</td><td style="padding:7px 10px;text-align:right;">1.22억</td><td style="padding:7px 10px;text-align:right;">1.13억</td><td style="padding:7px 10px;text-align:right;color:#2F8F7E;font-weight:700;">+8.1%</td><td style="padding:7px 10px;text-align:left;">유니 잔여 판매는 전주 대비 증가</td></tr>
+<tr><td style="padding:7px 10px;font-weight:700;color:#2D4A5C;">25SS</td><td style="padding:7px 10px;text-align:center;font-weight:600;">WMS TTL</td><td style="padding:7px 10px;text-align:right;">0.32억</td><td style="padding:7px 10px;text-align:right;">0.44억</td><td style="padding:7px 10px;text-align:right;color:#C0392B;font-weight:700;">-26.2%</td><td style="padding:7px 10px;text-align:left;">우먼 잔여 판매 둔화</td></tr></tbody></table>
+    <div class="period-note">* 이번 주는 7/27 주간 판매리뷰 금년 블록 기준, 전주는 7/20 주간회의 9번 페이지 표시값 기준으로 비교했습니다.</div>
+  </div>
+</div>
+
+<div class="section-wrap">
+  <div class="section-label">[ 10 / 10 ] 회의 아젠다 & 다음 액션</div>
+  <div class="card">
+    <div class="section-title red">결정 필요 이슈</div>
+    <div class="agenda-item issue"><div class="ai-label">ISSUE 1 &nbsp;|&nbsp; ST 재하락</div>유니 ST 2.59억, 우먼 ST/W 1.42억 모두 WoW -17%대. 7월 3주 반등 이후 노출·출고·재고 분산 변화를 확인해야 합니다.</div>
+    <div class="agenda-item issue"><div class="ai-label">ISSUE 2 &nbsp;|&nbsp; PT 재고 처리</div>유니 PT 판매율 24.6%, WoW -31.2%. 우먼 PT/W도 WoW -36.7%로 급락해 재고 소진 방향 재점검이 필요합니다.</div>
+    <div class="agenda-item issue"><div class="ai-label">ISSUE 3 &nbsp;|&nbsp; 우먼 A 반응</div>우먼 ST A는 SKU 3개지만 판매율 144.0%. 품절 전환 여부와 대체 컬러/리오더 가능성을 확인합니다.</div>
+    <div class="divider"></div>
+    <div class="section-title teal">다음 액션</div>
+    <div class="agenda-item action"><div class="ai-label">ACTION 1 &nbsp;|&nbsp; 매장별 TOP10 재고 점검</div>TOP10이 오프라인 90.8% 주도이므로 SO04, ST27, ST02 계열의 점별 사이즈 결품을 우선 확인합니다.</div>
+    <div class="agenda-item action"><div class="ai-label">ACTION 2 &nbsp;|&nbsp; B/T/A 운영</div>유니 ST는 T 노출 유지, 우먼 ST는 B 물량 방어와 A 반응 품목의 품절 리스크를 따로 관리합니다.</div>
+    <div class="period-note">2026.07.27 ERP 기준</div>
+  </div>
+</div>
+</body>
+</html>

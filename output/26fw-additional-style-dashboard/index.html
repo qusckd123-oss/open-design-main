@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>B.CAVE - 26FW 추가 구성 스타일 대시보드</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bcave: { dark: '#264148', medium: '#718790', light: '#DEE2E3', bg: '#F8F9FA', red: '#B94735', amber: '#D4A64F', green: '#3D7465' }
+          },
+          fontFamily: { sans: ['Pretendard', 'sans-serif'] },
+          boxShadow: { report: '0 16px 44px rgba(38, 65, 72, 0.10)' }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root { --bcave-dark:#264148; --bcave-medium:#718790; --bcave-light:#DEE2E3; --bcave-bg:#F8F9FA; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: Pretendard, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      letter-spacing: 0;
+      background: linear-gradient(135deg, rgba(248,249,250,.98), rgba(222,226,227,.80)), radial-gradient(circle at 8% 8%, rgba(38,65,72,.12), transparent 34%), radial-gradient(circle at 92% 12%, rgba(212,166,79,.13), transparent 30%);
+      color: #1f2933;
+    }
+    .card { background: rgba(255,255,255,.95); border: 1px solid rgba(38,65,72,.13); border-radius: 8px; box-shadow: 0 10px 30px rgba(38,65,72,.07); padding: 1.5rem; }
+    .pill { display:inline-flex; align-items:center; min-height:28px; padding:0 12px; border-radius:999px; font-size:12px; font-weight:900; }
+    .section-title { border-left: 5px solid #718790; padding-left: .875rem; color: #264148; font-weight: 900; }
+    .chart-box { position: relative; height: 20rem; }
+    .product-img { width: 100%; height: 210px; object-fit: contain; background: #F8F9FA; border-radius: 6px; display: block; }
+    @media print { body { background:#fff; } .card { box-shadow:none; break-inside: avoid; } .print-break { break-before: page; } }
+  </style>
+</head>
+<body class="p-4 md:p-10">
+  <div class="mx-auto max-w-7xl space-y-6">
+    <header class="rounded-lg border border-bcave-dark/20 bg-white/90 p-6 shadow-report">
+      <div class="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+        <div>
+          <span class="pill bg-bcave-light text-bcave-dark">26FW 추가 구성 · 스타일 대시보드</span>
+          <h1 class="mt-4 text-3xl font-black leading-tight text-bcave-dark md:text-4xl">26FW 추가 구성 스타일 검토 보고</h1>
+          <p class="mt-2 text-base font-semibold text-bcave-medium">추가 구성 스타일의 수량·금액·품목군 집중도와 실행 리스크를 한 화면에서 점검합니다.</p>
+        </div>
+        <div class="flex items-center gap-5">
+          <div class="hidden h-16 w-px bg-bcave-light md:block"></div>
+          <img src="assets/bcave_logo.png" alt="B.CAVE Logo" class="h-10 w-auto" />
+        </div>
+      </div>
+      <div class="mt-6 grid gap-3 border-t border-bcave-light pt-4 text-sm font-bold text-bcave-medium md:grid-cols-4">
+        <div>Source <span class="block pt-1 text-bcave-dark">추가 데이터/26FW 추가 구성 스타일.xlsx</span></div>
+        <div>Sheet <span class="block pt-1 text-bcave-dark">26FW 추가 스타일</span></div>
+        <div>Target Delivery <span class="block pt-1 text-bcave-dark">9월 말</span></div>
+        <div>Generated <span class="block pt-1 text-bcave-dark">2026-07-15</span></div>
+      </div>
+    </header>
+
+    <section class="grid grid-cols-1 gap-4 md:grid-cols-5">
+      <div class="card border-l-4 border-l-bcave-dark"><p class="text-xs font-black uppercase text-gray-500">상단 표기 스타일</p><p class="mt-2 text-2xl font-black text-bcave-dark">11개</p><p class="mt-1 text-sm font-semibold text-gray-400">세부 확정품번 13개</p></div>
+      <div class="card border-l-4 border-l-bcave-medium"><p class="text-xs font-black uppercase text-gray-500">컬러 수</p><p class="mt-2 text-2xl font-black text-bcave-dark">33개</p><p class="mt-1 text-sm font-semibold text-gray-400">세부 행 33개</p></div>
+      <div class="card border-l-4 border-l-bcave-green"><p class="text-xs font-black uppercase text-gray-500">총 수량</p><p class="mt-2 text-2xl font-black text-bcave-dark">49,400장</p><p class="mt-1 text-sm font-semibold text-gray-400">컬러별 수량 합계</p></div>
+      <div class="card border-l-4 border-l-bcave-amber"><p class="text-xs font-black uppercase text-gray-500">총 금액</p><p class="mt-2 text-2xl font-black text-bcave-dark">40.7억</p><p class="mt-1 text-sm font-semibold text-gray-400">4,066,600,000원</p></div>
+      <div class="card border-l-4 border-l-bcave-red bg-red-50"><p class="text-xs font-black uppercase text-bcave-red">체크 필요</p><p class="mt-2 text-2xl font-black text-bcave-red">36건</p><p class="mt-1 text-sm font-bold text-red-500">색상명 누락 5 · 수식 오류 31</p></div>
+    </section>
+
+    <section class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div class="card lg:col-span-2"><div class="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between"><h2 class="text-lg font-black text-bcave-dark">품목군별 금액·수량 집중도</h2><span class="pill bg-bcave-light text-bcave-medium">HZ/CR/STE 중심 구성</span></div><div class="chart-box"><canvas id="categoryChart"></canvas></div></div>
+      <aside class="card bg-bcave-dark text-white">
+        <h2 class="border-b border-white/20 pb-3 text-xl font-black text-bcave-light">Executive Summary</h2>
+        <ul class="mt-5 space-y-4 text-sm leading-6">
+          <li><strong class="block text-base text-white">1. 총 규모는 49,400장 / 40.7억</strong><span class="text-white/70">26FW 추가 구성은 수량 기준 STE와 CR/HZ가 볼륨을 만들고, 금액 기준 HZ·CR·STE가 핵심 축입니다.</span></li>
+          <li><strong class="block text-base text-white">2. 9월 말 납기 일괄 관리 필요</strong><span class="text-white/70">모든 세부 행의 목표납기가 9월 말로 입력되어 있어 발주·원단·작업지시서 병목 관리가 중요합니다.</span></li>
+          <li><strong class="block text-base text-white">3. 데이터 정합성 체크 필요</strong><span class="text-white/70">상단 총계는 11스타일이나 확정품번 기준은 13개입니다. 우먼스 일부 컬러명과 레퍼런스 수식 오류도 확인이 필요합니다.</span></li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div class="card lg:col-span-2"><div class="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between"><h2 class="text-lg font-black text-bcave-dark">스타일별 금액 Top</h2><span class="pill bg-bcave-light text-bcave-medium">Tooltip: 수량·금액 동시 표기</span></div><div class="chart-box"><canvas id="styleChart"></canvas></div></div>
+      <div class="card"><h2 class="text-lg font-black text-bcave-dark">시즌 구분 비중</h2><p class="mt-1 text-sm font-semibold text-bcave-medium">엑셀의 시즌 열 F/W 기준</p><div class="mt-4 h-64"><canvas id="seasonChart"></canvas></div><div class="mt-4 grid grid-cols-2 gap-3 text-center text-sm">
+          <div class="rounded bg-bcave-bg p-3">
+            <div class="font-black text-bcave-dark">F</div>
+            <div class="text-xs font-bold text-gray-500">32,900장 · 25.4억</div>
+          </div>
+        
+          <div class="rounded bg-bcave-bg p-3">
+            <div class="font-black text-bcave-dark">W</div>
+            <div class="text-xs font-bold text-gray-500">16,500장 · 15.2억</div>
+          </div>
+        </div></div>
+    </section>
+
+    <section class="space-y-4">
+      <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+        <h2 class="section-title text-2xl">상품 이미지 레퍼런스</h2>
+        <p class="text-sm font-semibold text-bcave-medium">공개몰에서 확인 가능한 리오더/캐리오버/아트웍 참고 이미지입니다. 26FW 신규 확정 컷은 별도 확인이 필요합니다.</p>
+      </div>
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <article class="overflow-hidden rounded-lg border border-bcave-light bg-white">
+            <div class="bg-bcave-bg p-3">
+              <img src="assets/ref_2pack_signature.jpg" alt="2PACK 시그니처 반팔 티셔츠" class="product-img" />
+            </div>
+            <div class="p-4">
+              <div class="text-xs font-black text-bcave-medium">REFERENCE FOR WA2603STE1</div>
+              <h3 class="mt-1 text-base font-black text-bcave-dark">2PACK 시그니처 반팔 티셔츠</h3>
+              <p class="mt-2 text-xs font-semibold leading-5 text-gray-500">26FW 2PACK 리오더/상시 아이템 참고</p>
+              <a href="https://wackywilly.co.kr/product/detail.html?product_no=16036" target="_blank" rel="noreferrer" class="mt-3 inline-flex text-xs font-black text-bcave-red">Wacky Willy 공식몰</a>
+            </div>
+          </article>
+        
+          <article class="overflow-hidden rounded-lg border border-bcave-light bg-white">
+            <div class="bg-bcave-bg p-3">
+              <img src="assets/ref_3pack_signature.jpg" alt="3PACK 시그니처 반팔 티셔츠" class="product-img" />
+            </div>
+            <div class="p-4">
+              <div class="text-xs font-black text-bcave-medium">REFERENCE FOR WA2603STE3</div>
+              <h3 class="mt-1 text-base font-black text-bcave-dark">3PACK 시그니처 반팔 티셔츠</h3>
+              <p class="mt-2 text-xs font-semibold leading-5 text-gray-500">26FW 3PACK 리오더/상시 아이템 참고</p>
+              <a href="https://wackywilly.co.kr/product/26ss-3pack-%EC%8B%9C%EA%B7%B8%EB%8B%88%EC%B2%98-%EB%B0%98%ED%8C%94-%ED%8B%B0%EC%85%94%EC%B8%A0-%EB%B8%94%EB%9E%99%ED%99%94%EC%9D%B4%ED%8A%B8%EA%B7%B8%EB%A0%88%EC%9D%B4/12905/" target="_blank" rel="noreferrer" class="mt-3 inline-flex text-xs font-black text-bcave-red">Wacky Willy 공식몰</a>
+            </div>
+          </article>
+        
+          <article class="overflow-hidden rounded-lg border border-bcave-light bg-white">
+            <div class="bg-bcave-bg p-3">
+              <img src="assets/ref_wa2504pt01.jpg" alt="기모 스웻 팬츠" class="product-img" />
+            </div>
+            <div class="p-4">
+              <div class="text-xs font-black text-bcave-medium">REFERENCE FOR WA2604PT01</div>
+              <h3 class="mt-1 text-base font-black text-bcave-dark">기모 스웻 팬츠</h3>
+              <p class="mt-2 text-xs font-semibold leading-5 text-gray-500">WA2504PT01 캐리오버 기반, 핏/디테일 변경 예정</p>
+              <a href="https://wackywilly.co.kr/product/detail.html?product_no=13048" target="_blank" rel="noreferrer" class="mt-3 inline-flex text-xs font-black text-bcave-red">Wacky Willy 공식몰</a>
+            </div>
+          </article>
+        
+          <article class="overflow-hidden rounded-lg border border-bcave-light bg-white">
+            <div class="bg-bcave-bg p-3">
+              <img src="assets/ref_wa2504cr01.jpg" alt="기모 키키로고 맨투맨" class="product-img" />
+            </div>
+            <div class="p-4">
+              <div class="text-xs font-black text-bcave-medium">REFERENCE FOR WA2604CR01</div>
+              <h3 class="mt-1 text-base font-black text-bcave-dark">기모 키키로고 맨투맨</h3>
+              <p class="mt-2 text-xs font-semibold leading-5 text-gray-500">WA2504CR01 캐리오버 기반, 로고/핏 변경 예정</p>
+              <a href="https://www.musinsa.com/products/5367005" target="_blank" rel="noreferrer" class="mt-3 inline-flex text-xs font-black text-bcave-red">Wacky Willy 공식몰 / 무신사</a>
+            </div>
+          </article>
+        
+          <article class="overflow-hidden rounded-lg border border-bcave-light bg-white">
+            <div class="bg-bcave-bg p-3">
+              <img src="assets/ref_wa2504hd11.jpg" alt="기모 타이포 그래픽 후드" class="product-img" />
+            </div>
+            <div class="p-4">
+              <div class="text-xs font-black text-bcave-medium">REFERENCE FOR WA2604HD02</div>
+              <h3 class="mt-1 text-base font-black text-bcave-dark">기모 타이포 그래픽 후드</h3>
+              <p class="mt-2 text-xs font-semibold leading-5 text-gray-500">WA2504HD11 캐리오버 기반, 원단 컬러 변경</p>
+              <a href="https://wackywilly.co.kr/product/detail.html?product_no=12962" target="_blank" rel="noreferrer" class="mt-3 inline-flex text-xs font-black text-bcave-red">Wacky Willy 공식몰</a>
+            </div>
+          </article>
+        
+          <article class="overflow-hidden rounded-lg border border-bcave-light bg-white">
+            <div class="bg-bcave-bg p-3">
+              <img src="assets/ref_wa2503hd11.jpg" alt="스케치 그래픽 후드 스웻" class="product-img" />
+            </div>
+            <div class="p-4">
+              <div class="text-xs font-black text-bcave-medium">REFERENCE FOR WA2603HZ15</div>
+              <h3 class="mt-1 text-base font-black text-bcave-dark">스케치 그래픽 후드 스웻</h3>
+              <p class="mt-2 text-xs font-semibold leading-5 text-gray-500">WA2503HD11 그래픽을 후드집업으로 전환하는 참고 아트웍</p>
+              <a href="https://wackywilly.co.kr/product/detail.html?product_no=12428" target="_blank" rel="noreferrer" class="mt-3 inline-flex text-xs font-black text-bcave-red">Wacky Willy 공식몰</a>
+            </div>
+          </article>
+        </div>
+    </section>
+
+    <section class="space-y-4"><h2 class="section-title text-2xl">구성 그룹별 해석</h2><div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+          <div class="card border-l-4 border-l-bcave-dark">
+            <div class="text-xs font-black uppercase text-bcave-medium">Group 1</div>
+            <h3 class="mt-2 text-lg font-black text-bcave-dark">리오더/팩 티셔츠</h3>
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="rounded bg-bcave-bg p-2"><div class="text-xs font-bold text-gray-400">STYLE</div><div class="font-black text-bcave-dark">2</div></div>
+              <div class="rounded bg-bcave-bg p-2"><div class="text-xs font-bold text-gray-400">QTY</div><div class="font-black text-bcave-dark">16,000</div></div>
+              <div class="rounded bg-bcave-bg p-2"><div class="text-xs font-bold text-gray-400">AMT</div><div class="font-black text-bcave-dark">8.6억</div></div>
+            </div>
+            <p class="mt-3 text-xs font-semibold leading-5 text-gray-500">전체 금액 비중 21.2%, 컬러 4개 기준</p>
+          </div>
+        
+          <div class="card border-l-4 border-l-bcave-amber">
+            <div class="text-xs font-black uppercase text-bcave-medium">Group 2</div>
+            <h3 class="mt-2 text-lg font-black text-bcave-dark">컬리지 그래픽 스웻</h3>
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="rounded bg-bcave-bg p-2"><div class="text-xs font-bold text-gray-400">STYLE</div><div class="font-black text-bcave-dark">4</div></div>
+              <div class="rounded bg-bcave-bg p-2"><div class="text-xs font-bold text-gray-400">QTY</div><div class="font-black text-bcave-dark">15,500</div></div>
+              <div class="rounded bg-bcave-bg p-2"><div class="text-xs font-bold text-gray-400">AMT</div><div class="font-black text-bcave-dark">15.5억</div></div>
+            </div>
+            <p class="mt-3 text-xs font-semibold leading-5 text-gray-500">전체 금액 비중 38.2%, 컬러 13개 기준</p>
+          </div>
+        
+          <div class="card border-l-4 border-l-bcave-green">
+            <div class="text-xs font-black uppercase text-bcave-medium">Group 3</div>
+            <h3 class="mt-2 text-lg font-black text-bcave-dark">기모 코어 구성</h3>
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="rounded bg-bcave-bg p-2"><div class="text-xs font-bold text-gray-400">STYLE</div><div class="font-black text-bcave-dark">4</div></div>
+              <div class="rounded bg-bcave-bg p-2"><div class="text-xs font-bold text-gray-400">QTY</div><div class="font-black text-bcave-dark">14,500</div></div>
+              <div class="rounded bg-bcave-bg p-2"><div class="text-xs font-bold text-gray-400">AMT</div><div class="font-black text-bcave-dark">13.1억</div></div>
+            </div>
+            <p class="mt-3 text-xs font-semibold leading-5 text-gray-500">전체 금액 비중 32.2%, 컬러 10개 기준</p>
+          </div>
+        
+          <div class="card border-l-4 border-l-bcave-medium">
+            <div class="text-xs font-black uppercase text-bcave-medium">Group 4</div>
+            <h3 class="mt-2 text-lg font-black text-bcave-dark">우먼스 보완</h3>
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="rounded bg-bcave-bg p-2"><div class="text-xs font-bold text-gray-400">STYLE</div><div class="font-black text-bcave-dark">3</div></div>
+              <div class="rounded bg-bcave-bg p-2"><div class="text-xs font-bold text-gray-400">QTY</div><div class="font-black text-bcave-dark">3,400</div></div>
+              <div class="rounded bg-bcave-bg p-2"><div class="text-xs font-bold text-gray-400">AMT</div><div class="font-black text-bcave-dark">3.4억</div></div>
+            </div>
+            <p class="mt-3 text-xs font-semibold leading-5 text-gray-500">전체 금액 비중 8.3%, 컬러 6개 기준</p>
+          </div>
+        </div></section>
+
+    <section class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div class="card"><h2 class="text-lg font-black text-bcave-dark">품목군 요약</h2><div class="mt-4 overflow-x-auto"><table class="w-full min-w-[640px] text-sm"><thead class="bg-bcave-light text-xs font-black uppercase text-bcave-dark"><tr><th class="px-4 py-3 text-left">품목군</th><th class="px-4 py-3 text-right">스타일</th><th class="px-4 py-3 text-right">컬러</th><th class="px-4 py-3 text-right">수량</th><th class="px-4 py-3 text-right">금액</th><th class="px-4 py-3 text-right">비중</th></tr></thead><tbody>
+          <tr class="border-b border-bcave-light/80">
+            <td class="px-4 py-3 font-black text-bcave-dark">HZ</td>
+            <td class="px-4 py-3 text-right font-bold">4개</td>
+            <td class="px-4 py-3 text-right font-bold">11개</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">11,500장</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">1,226,500,000원</td>
+            <td class="px-4 py-3 text-right font-bold text-bcave-medium">30.2%</td>
+          </tr>
+        
+          <tr class="border-b border-bcave-light/80">
+            <td class="px-4 py-3 font-black text-bcave-dark">CR</td>
+            <td class="px-4 py-3 text-right font-bold">4개</td>
+            <td class="px-4 py-3 text-right font-bold">11개</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">11,900장</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">1,031,100,000원</td>
+            <td class="px-4 py-3 text-right font-bold text-bcave-medium">25.4%</td>
+          </tr>
+        
+          <tr class="border-b border-bcave-light/80">
+            <td class="px-4 py-3 font-black text-bcave-dark">STE</td>
+            <td class="px-4 py-3 text-right font-bold">2개</td>
+            <td class="px-4 py-3 text-right font-bold">4개</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">16,000장</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">864,000,000원</td>
+            <td class="px-4 py-3 text-right font-bold text-bcave-medium">21.2%</td>
+          </tr>
+        
+          <tr class="border-b border-bcave-light/80">
+            <td class="px-4 py-3 font-black text-bcave-dark">HD</td>
+            <td class="px-4 py-3 text-right font-bold">2개</td>
+            <td class="px-4 py-3 text-right font-bold">5개</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">5,500장</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">544,500,000원</td>
+            <td class="px-4 py-3 text-right font-bold text-bcave-medium">13.4%</td>
+          </tr>
+        
+          <tr class="border-b border-bcave-light/80">
+            <td class="px-4 py-3 font-black text-bcave-dark">PT</td>
+            <td class="px-4 py-3 text-right font-bold">1개</td>
+            <td class="px-4 py-3 text-right font-bold">2개</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">4,500장</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">400,500,000원</td>
+            <td class="px-4 py-3 text-right font-bold text-bcave-medium">9.8%</td>
+          </tr>
+        </tbody></table></div></div>
+      <div class="card border-2 border-bcave-dark"><h2 class="text-lg font-black text-bcave-dark">실행 우선순위</h2><div class="mt-4 space-y-3"><div class="rounded bg-bcave-bg p-4"><div class="text-xs font-black text-bcave-medium">P1 · 납기/생산</div><p class="mt-1 text-sm font-semibold leading-6 text-gray-700">전 스타일 목표납기가 9월 말입니다. 발주 확정, 원단 수급, 작업지시서, 생산 가능 수량을 한 번에 묶어 관리해야 합니다.</p></div><div class="rounded bg-bcave-bg p-4"><div class="text-xs font-black text-bcave-medium">P2 · 볼륨 검증</div><p class="mt-1 text-sm font-semibold leading-6 text-gray-700">STE 2PACK/3PACK은 16,000장으로 전체 수량의 32.4%입니다. 리오더/상시 수요 성격으로 별도 판매 속도 기준이 필요합니다.</p></div><div class="rounded bg-red-50 p-4"><div class="text-xs font-black text-bcave-red">P3 · 데이터 정합성</div><p class="mt-1 text-sm font-bold leading-6 text-gray-700">상단 11스타일과 확정품번 13개 차이, 우먼스 일부 컬러명 누락, #VALUE! 레퍼런스는 공유 전 원본 확인이 필요합니다.</p></div></div></div>
+    </section>
+
+    <section class="card print-break"><div class="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between"><h2 class="text-xl font-black text-bcave-dark">스타일별 상세 리스트</h2><span class="pill bg-bcave-light text-bcave-medium">확정품번 기준 13개 · 금액순</span></div><div class="overflow-x-auto"><table class="w-full min-w-[1080px] text-sm"><thead class="bg-bcave-light text-xs font-black uppercase text-bcave-dark"><tr><th class="px-4 py-3 text-left">Priority</th><th class="px-4 py-3 text-left">Style</th><th class="px-4 py-3 text-left">상품명</th><th class="px-4 py-3 text-right">수량</th><th class="px-4 py-3 text-right">금액</th><th class="px-4 py-3 text-left">컬러</th></tr></thead><tbody>
+          <tr class="border-b border-bcave-light/80 align-top hover:bg-bcave-bg">
+            <td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs font-black bg-bcave-dark text-white">P1</span></td>
+            <td class="px-4 py-3 font-black text-bcave-dark">WA2603HZ06<div class="mt-1 text-xs font-semibold text-bcave-medium">HZ · F · 9월 말</div></td>
+            <td class="px-4 py-3 font-semibold text-gray-700">컬러 아치 로고 그래픽 후드 집업</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">4,700장<div class="mt-1 text-xs font-semibold text-gray-400">4 colors</div></td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">512,300,000원<div class="mt-1 text-xs font-semibold text-gray-400">12.6%</div></td>
+            <td class="px-4 py-3 text-sm text-gray-600">GRAY, GRAYISH PURPLE, MAGENTA, BLACK WASHED</td>
+          </tr>
+        
+          <tr class="border-b border-bcave-light/80 align-top hover:bg-bcave-bg">
+            <td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs font-black bg-bcave-dark text-white">P1</span></td>
+            <td class="px-4 py-3 font-black text-bcave-dark">WA2603STE3<div class="mt-1 text-xs font-semibold text-bcave-medium">STE · F · 9월 말</div></td>
+            <td class="px-4 py-3 font-semibold text-gray-700">와키윌리 3pac 반팔 티셔츠</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">8,000장<div class="mt-1 text-xs font-semibold text-gray-400">1 colors</div></td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">472,000,000원<div class="mt-1 text-xs font-semibold text-gray-400">11.6%</div></td>
+            <td class="px-4 py-3 text-sm text-gray-600">BLACK</td>
+          </tr>
+        
+          <tr class="border-b border-bcave-light/80 align-top hover:bg-bcave-bg">
+            <td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs font-black bg-bcave-dark text-white">P1</span></td>
+            <td class="px-4 py-3 font-black text-bcave-dark">WA2603CR06<div class="mt-1 text-xs font-semibold text-bcave-medium">CR · F · 9월 말</div></td>
+            <td class="px-4 py-3 font-semibold text-gray-700">컬러 아치 로고 그래픽 맨투맨</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">5,300장<div class="mt-1 text-xs font-semibold text-gray-400">4 colors</div></td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">471,700,000원<div class="mt-1 text-xs font-semibold text-gray-400">11.6%</div></td>
+            <td class="px-4 py-3 text-sm text-gray-600">GRAY, BROWN, YELLOW, DEEP GREEN</td>
+          </tr>
+        
+          <tr class="border-b border-bcave-light/80 align-top hover:bg-bcave-bg">
+            <td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs font-black bg-bcave-dark text-white">P1</span></td>
+            <td class="px-4 py-3 font-black text-bcave-dark">WA2604PT01<div class="mt-1 text-xs font-semibold text-bcave-medium">PT · W · 9월 말</div></td>
+            <td class="px-4 py-3 font-semibold text-gray-700">기모 워드 로고 와이드 스웻 팬츠</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">4,500장<div class="mt-1 text-xs font-semibold text-gray-400">2 colors</div></td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">400,500,000원<div class="mt-1 text-xs font-semibold text-gray-400">9.8%</div></td>
+            <td class="px-4 py-3 text-sm text-gray-600">GRAY, BLACK</td>
+          </tr>
+        
+          <tr class="border-b border-bcave-light/80 align-top hover:bg-bcave-bg">
+            <td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs font-black bg-bcave-amber/15 text-bcave-dark">P2</span></td>
+            <td class="px-4 py-3 font-black text-bcave-dark">WA2603STE1<div class="mt-1 text-xs font-semibold text-bcave-medium">STE · F · 9월 말</div></td>
+            <td class="px-4 py-3 font-semibold text-gray-700">와키윌리 2pac 반팔 티셔츠</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">8,000장<div class="mt-1 text-xs font-semibold text-gray-400">3 colors</div></td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">392,000,000원<div class="mt-1 text-xs font-semibold text-gray-400">9.6%</div></td>
+            <td class="px-4 py-3 text-sm text-gray-600">BLACK, WHITE, ETC</td>
+          </tr>
+        
+          <tr class="border-b border-bcave-light/80 align-top hover:bg-bcave-bg">
+            <td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs font-black bg-bcave-amber/15 text-bcave-dark">P2</span></td>
+            <td class="px-4 py-3 font-black text-bcave-dark">WA2604HZ01<div class="mt-1 text-xs font-semibold text-bcave-medium">HZ · W · 9월 말</div></td>
+            <td class="px-4 py-3 font-semibold text-gray-700">기모 워드 로고 후드 집업</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">3,500장<div class="mt-1 text-xs font-semibold text-gray-400">3 colors</div></td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">346,500,000원<div class="mt-1 text-xs font-semibold text-gray-400">8.5%</div></td>
+            <td class="px-4 py-3 text-sm text-gray-600">BLACK, GRAY, OATMEAL</td>
+          </tr>
+        
+          <tr class="border-b border-bcave-light/80 align-top hover:bg-bcave-bg">
+            <td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs font-black bg-bcave-amber/15 text-bcave-dark">P2</span></td>
+            <td class="px-4 py-3 font-black text-bcave-dark">WA2604CR01<div class="mt-1 text-xs font-semibold text-bcave-medium">CR · W · 9월 말</div></td>
+            <td class="px-4 py-3 font-semibold text-gray-700">기모 스몰 로고 맨투맨</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">4,000장<div class="mt-1 text-xs font-semibold text-gray-400">3 colors</div></td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">316,000,000원<div class="mt-1 text-xs font-semibold text-gray-400">7.8%</div></td>
+            <td class="px-4 py-3 text-sm text-gray-600">BLACK, GRAY, OATMEAL</td>
+          </tr>
+        
+          <tr class="border-b border-bcave-light/80 align-top hover:bg-bcave-bg">
+            <td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs font-black bg-bcave-amber/15 text-bcave-dark">P2</span></td>
+            <td class="px-4 py-3 font-black text-bcave-dark">WA2603HD06<div class="mt-1 text-xs font-semibold text-bcave-medium">HD · F · 9월 말</div></td>
+            <td class="px-4 py-3 font-semibold text-gray-700">컬러 아치 로고 그래픽 후드</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">3,000장<div class="mt-1 text-xs font-semibold text-gray-400">3 colors</div></td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">297,000,000원<div class="mt-1 text-xs font-semibold text-gray-400">7.3%</div></td>
+            <td class="px-4 py-3 text-sm text-gray-600">BLUE, GREEN, RED</td>
+          </tr>
+        
+          <tr class="border-b border-bcave-light/80 align-top hover:bg-bcave-bg">
+            <td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs font-black bg-bcave-amber/15 text-bcave-dark">P2</span></td>
+            <td class="px-4 py-3 font-black text-bcave-dark">WA2603HZ15<div class="mt-1 text-xs font-semibold text-bcave-medium">HZ · F · 9월 말</div></td>
+            <td class="px-4 py-3 font-semibold text-gray-700">백 프린팅 레터링 후드 집업</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">2,500장<div class="mt-1 text-xs font-semibold text-gray-400">2 colors</div></td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">272,500,000원<div class="mt-1 text-xs font-semibold text-gray-400">6.7%</div></td>
+            <td class="px-4 py-3 text-sm text-gray-600">BLACK, GRAY</td>
+          </tr>
+        
+          <tr class="border-b border-bcave-light/80 align-top hover:bg-bcave-bg">
+            <td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs font-black bg-bcave-light text-bcave-medium">P3</span></td>
+            <td class="px-4 py-3 font-black text-bcave-dark">WA2604HD02<div class="mt-1 text-xs font-semibold text-bcave-medium">HD · W · 9월 말</div></td>
+            <td class="px-4 py-3 font-semibold text-gray-700">기모 타이포 그래픽 후드</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">2,500장<div class="mt-1 text-xs font-semibold text-gray-400">2 colors</div></td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">247,500,000원<div class="mt-1 text-xs font-semibold text-gray-400">6.1%</div></td>
+            <td class="px-4 py-3 text-sm text-gray-600">NAVY, BROWN</td>
+          </tr>
+        
+          <tr class="border-b border-bcave-light/80 align-top hover:bg-bcave-bg">
+            <td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs font-black bg-bcave-light text-bcave-medium">P3</span></td>
+            <td class="px-4 py-3 font-black text-bcave-dark">WA2603CR67<div class="mt-1 text-xs font-semibold text-bcave-medium">CR · F · 9월 말</div></td>
+            <td class="px-4 py-3 font-semibold text-gray-700">우먼스 릴리써클 그래픽 맨투맨</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">1,400장<div class="mt-1 text-xs font-semibold text-gray-400">2 colors</div></td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">124,600,000원<div class="mt-1 text-xs font-semibold text-gray-400">3.1%</div></td>
+            <td class="px-4 py-3 text-sm text-gray-600">L/GREY</td>
+          </tr>
+        
+          <tr class="border-b border-bcave-light/80 align-top hover:bg-bcave-bg">
+            <td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs font-black bg-bcave-light text-bcave-medium">P3</span></td>
+            <td class="px-4 py-3 font-black text-bcave-dark">WA2604CR68<div class="mt-1 text-xs font-semibold text-bcave-medium">CR · W · 9월 말</div></td>
+            <td class="px-4 py-3 font-semibold text-gray-700">우먼스 부클자수 맨투맨</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">1,200장<div class="mt-1 text-xs font-semibold text-gray-400">2 colors</div></td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">118,800,000원<div class="mt-1 text-xs font-semibold text-gray-400">2.9%</div></td>
+            <td class="px-4 py-3 text-sm text-bcave-red font-extrabold">컬러명 확인 필요</td>
+          </tr>
+        
+          <tr class="border-b border-bcave-light/80 align-top hover:bg-bcave-bg">
+            <td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs font-black bg-bcave-light text-bcave-medium">P3</span></td>
+            <td class="px-4 py-3 font-black text-bcave-dark">WA2604HZ68<div class="mt-1 text-xs font-semibold text-bcave-medium">HZ · W · 9월 말</div></td>
+            <td class="px-4 py-3 font-semibold text-gray-700">우먼스 보아 후드집업</td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">800장<div class="mt-1 text-xs font-semibold text-gray-400">2 colors</div></td>
+            <td class="px-4 py-3 text-right font-black text-bcave-dark">95,200,000원<div class="mt-1 text-xs font-semibold text-gray-400">2.3%</div></td>
+            <td class="px-4 py-3 text-sm text-bcave-red font-extrabold">컬러명 확인 필요</td>
+          </tr>
+        </tbody></table></div></section>
+
+    <section class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div class="card bg-bcave-dark text-white lg:col-span-2"><h2 class="mb-4 text-xl font-black text-bcave-light">최종 보고 문안</h2><p class="text-sm font-medium leading-7 text-white/80 md:text-base">26FW 추가 구성 스타일은 엑셀 상단 총계 기준 <strong class="text-bcave-amber">11스타일 / 33컬러 / 49,400장 / 4,066,600,000원</strong> 규모로 확인됩니다. 세부 확정품번 기준으로는 13개 스타일이 집계되어 상단 총계와 차이가 있으므로, 공유 전 스타일 카운트 기준 확인이 필요합니다. 구성은 HZ·CR·STE 중심이며, 리오더 성격의 2PACK/3PACK과 컬리지 그래픽 스웻, 기모 코어 아이템이 물량과 금액의 핵심입니다. 모든 세부 행의 목표납기가 9월 말로 입력되어 있어 발주 확정, 원단 수급, 작업지시서 반영, 생산 가능 수량을 우선 관리해야 합니다.</p></div>
+      <div class="card"><h2 class="text-lg font-black text-bcave-dark">Data Basis</h2><ul class="mt-4 list-disc space-y-2 pl-5 text-sm font-semibold leading-6 text-gray-600"><li>원천 파일: 추가 데이터/26FW 추가 구성 스타일.xlsx</li><li>시트: 26FW 추가 스타일</li><li>집계 기준: 확정품번, 컬러별 수량, 컬러별 금액</li><li>제품 이미지는 원본에 검증 가능한 고해상도 파일이 없어 사용하지 않았습니다.</li><li>Teams 맥락: 26FW 추가 스타일 업데이트 및 9월 입고 목표 관리 항목과 연결해 해석했습니다.</li></ul></div>
+    </section>
+  </div>
+
+  <script>
+    const bcave = { dark: '#264148', medium: '#718790', light: '#DEE2E3', red: '#B94735', amber: '#D4A64F', green: '#3D7465' };
+    const fmtQty = (value) => new Intl.NumberFormat('ko-KR').format(value) + '장';
+    const fmtAmt = (value) => value.toFixed(1) + '억';
+    new Chart(document.getElementById('categoryChart'), { type: 'bar', data: { labels: ["HZ", "CR", "STE", "HD", "PT"], datasets: [{ label: '금액(억원)', data: [12.27, 10.31, 8.64, 5.45, 4.0], backgroundColor: [bcave.dark, bcave.medium, bcave.amber, bcave.green, bcave.light], borderRadius: 6, yAxisID: 'y' }, { label: '수량(장)', data: [11500, 11900, 16000, 5500, 4500], type: 'line', borderColor: bcave.red, backgroundColor: bcave.red, tension: .35, pointRadius: 4, yAxisID: 'y1' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: { backgroundColor: bcave.dark, padding: 12 } }, scales: { y: { beginAtZero: true, title: { display: true, text: '금액(억원)' }, grid: { color: '#E5E7EB' } }, y1: { beginAtZero: true, position: 'right', title: { display: true, text: '수량(장)' }, grid: { drawOnChartArea: false } }, x: { grid: { display: false } } } } });
+    new Chart(document.getElementById('styleChart'), { type: 'bar', data: { labels: ["WA2603HZ06", "WA2603STE3", "WA2603CR06", "WA2604PT01", "WA2603STE1", "WA2604HZ01", "WA2604CR01", "WA2603HD06", "WA2603HZ15", "WA2604HD02", "WA2603CR67", "WA2604CR68", "WA2604HZ68"], datasets: [{ label: '금액(억원)', data: [5.12, 4.72, 4.72, 4.0, 3.92, 3.46, 3.16, 2.97, 2.73, 2.48, 1.25, 1.19, 0.95], backgroundColor: '#264148', borderRadius: 6, barThickness: 18 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: bcave.dark, padding: 12, callbacks: { afterLabel(context) { const quantities = [4700, 8000, 5300, 4500, 8000, 3500, 4000, 3000, 2500, 2500, 1400, 1200, 800]; return '수량: ' + fmtQty(quantities[context.dataIndex]); } } } }, scales: { x: { beginAtZero: true, grid: { color: '#E5E7EB' } }, y: { grid: { display: false }, ticks: { font: { weight: '800' }, color: bcave.dark } } } } });
+    new Chart(document.getElementById('seasonChart'), { type: 'doughnut', data: { labels: ["F", "W"], datasets: [{ data: [25.42, 15.24], backgroundColor: [bcave.dark, bcave.amber], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '62%', plugins: { legend: { position: 'bottom', labels: { font: { family: 'Pretendard', weight: '800' } } }, tooltip: { backgroundColor: bcave.dark, padding: 12, callbacks: { label(context) { const quantities = [32900, 16500]; return context.label + ': ' + fmtAmt(context.raw) + ' / ' + fmtQty(quantities[context.dataIndex]); } } } } } });
+  </script>
+</body>
+</html>

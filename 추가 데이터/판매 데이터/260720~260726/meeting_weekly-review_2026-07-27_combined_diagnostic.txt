@@ -1,0 +1,26 @@
+﻿Wacky Willy weekly review merge diagnostic
+Output: C:\Users\bcave\OneDrive - (주)비케이브\open-design-main-1\추가 데이터\판매 데이터\260720~260726\meeting_weekly-review_2026-07-27_combined.html
+Format 1: sections=12, tables=4, imgs=19
+Format 2: sections=10, tables=5, imgs=14
+Output: sections=12, tables=5, imgs=20
+
+Merged section sequence:
+1. [ 1 / 12 ] 전체 KPI 요약 | 전체 KPI | tables=0 imgs=0
+2. [ 2 / 12 ] 주간 BEST 10 + 주목 상품 | 주간 BEST 10 | tables=1 imgs=14
+3. [ 3 / 12 ] BEST10 매장형태별 판매 | BEST10 매장형태별 판매 | tables=1 imgs=0
+4. [ 4 / 12 ] 6월말~7월초 입고 재개 vs 이번 주 반등 | 6월말~7월초 입고 재개 vs 이번 주 반등 — 인과관계 확인 | tables=0 imgs=0
+5. [ 5 / 12 ] 유니섹스 복종별 상세 | UNISEX | tables=1 imgs=0
+6. [ 6 / 12 ] 유니섹스 — ST 반팔티셔츠 매출 구성 |  | tables=0 imgs=0
+7. [ 7 / 12 ] 유니섹스 — 전주대비 올라온 상품 |  | tables=0 imgs=2
+8. [ 8 / 12 ] 우먼스 복종별 상세 | WOMENS | tables=1 imgs=0
+9. [ 9 / 12 ] 우먼스 — ST 반팔티셔츠 B/T/A |  | tables=0 imgs=0
+10. [ 10 / 12 ] 우먼스 전주대비 올라온 상품 | WOMENS 상승 후보 (ST 제외) | tables=0 imgs=4
+11. [ 11 / 12 ] 전시즌 실적 요약 (25FW / 25SS) |  | tables=1 imgs=0
+12. [ 12 / 12 ] 회의 아젠다 & 다음 액션 | 결정 필요 이슈 | tables=0 imgs=0
+
+Imported format 2 layout classes present: store-row, bar, mini, note, rise-card, bta-card
+Source selection: format 1 master sections 1,2,4,6,7,9,11,12; format 2 compact sections 3,5,8,10.
+Product name correction:
+- Applied Product Name Matching Rules added to wacky-weekly-review-html/SKILL.md.
+- Official Wacky Willy / Musinsa web matches used where available; exact ERP/order-list style-code matches used as fallback for codes not exposed on official/Musinsa search.
+- Corrected generic item names in BEST/focus/rise card text for WA2602ST01, WA2602ST02, WA2602ST12, WA2602ST47, WA2602ST51, WA2602ST55, WA2602STE1, WA2602STE3, WA2602SO01, WA2602SO04, WA2602PT11, WA2602PT71, WA2601CD51, WA2601HZ64, WA2601KT75, WA2601PT51.

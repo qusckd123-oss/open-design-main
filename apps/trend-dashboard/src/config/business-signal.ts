@@ -1,0 +1,23 @@
+export const businessSignalConfig = {
+  bestSellerSalesQty: 120,
+  strongSellThrough: 65,
+  stockRiskStockQty: 35,
+  overstockStockQty: 250,
+  overstockSellThrough: 25,
+  risingSalesChange1w: 25,
+  slowSalesQty: 20,
+  marketHotRank: 30,
+  marketRisingChange1w: 15,
+  marketFastRisingChange2w: 28,
+  marketRisingChange4w: 30,
+  marketCoolingChange1w: -15,
+  marketDroppingChange4w: -30,
+  opportunityMarketChange4w: 25,
+  opportunityStyleCountLow: 8,
+  trendConfirmedSourceCount: 3,
+  saturatedStyleCount: 35,
+  staleDays: 7,
+  coolingMarketChange: -20,
+  earlyDataSnapshotDays: 2,
+  activeSignalSnapshotDays: 4
+};

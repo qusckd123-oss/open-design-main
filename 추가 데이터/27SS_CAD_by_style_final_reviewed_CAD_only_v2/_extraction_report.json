@@ -1,0 +1,14 @@
+{
+  "target_pdf": "C:\\Users\\bcave\\OneDrive - (주)비케이브\\open-design-main-1\\추가 데이터\\27SS 와키윌리 디자인실 캐드보고 _유니(카테고리) 최종.pdf",
+  "output_dir": "C:\\Users\\bcave\\OneDrive - (주)비케이브\\open-design-main-1\\추가 데이터\\27SS_CAD_by_style_final_reviewed_CAD_only_v2",
+  "expected_pdf_style_instances": 94,
+  "saved_png_files": 94,
+  "missing_files": [],
+  "extra_files": [],
+  "duplicate_style_files": [
+    "SWA2701CD003_2.png"
+  ],
+  "qa_issue_count": 0,
+  "qa_issues": [],
+  "failures": []
+}

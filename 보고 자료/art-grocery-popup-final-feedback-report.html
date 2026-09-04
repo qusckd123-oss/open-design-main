@@ -1,0 +1,792 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>아트그로서리 팝업 최종 피드백 보고</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+  <style>
+    :root {
+      --bcave-dark: #264148;
+      --bcave-medium: #718790;
+      --bcave-light: #DEE2E3;
+      --ink: #17272b;
+      --paper: #f7f8f7;
+      --line: rgba(38, 65, 72, 0.16);
+      --muted: #63777e;
+      --warning: #c35b37;
+      --success: #3d7465;
+      --yellow: #d3a64f;
+      --white: #ffffff;
+      --shadow: 0 18px 60px rgba(22, 38, 42, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(135deg, rgba(222, 226, 227, 0.88), rgba(247, 248, 247, 0.95)),
+        radial-gradient(circle at 8% 12%, rgba(195, 91, 55, 0.16), transparent 28%),
+        radial-gradient(circle at 92% 4%, rgba(61, 116, 101, 0.18), transparent 30%);
+      color: var(--ink);
+      font-family: Pretendard, sans-serif;
+      letter-spacing: 0;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 36px));
+      margin: 28px auto 52px;
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      box-shadow: var(--shadow);
+    }
+
+    header {
+      position: relative;
+      min-height: 440px;
+      padding: 42px 46px;
+      overflow: hidden;
+      background:
+        linear-gradient(110deg, rgba(38, 65, 72, 0.98) 0%, rgba(38, 65, 72, 0.92) 46%, rgba(38, 65, 72, 0.68) 100%),
+        url("https://www.bcave.co.kr/img/bcave_logo.png");
+      background-repeat: no-repeat;
+      background-position: right 46px top 38px;
+      background-size: auto, 168px auto;
+      color: var(--white);
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      inset: auto -90px -170px auto;
+      width: 420px;
+      height: 420px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      transform: rotate(18deg);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 30px;
+      padding: 0 12px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      background: var(--yellow);
+    }
+
+    h1 {
+      width: min(720px, 100%);
+      margin: 42px 0 18px;
+      font-size: clamp(42px, 6vw, 76px);
+      line-height: 0.98;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      width: min(700px, 100%);
+      margin: 0;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 20px;
+      line-height: 1.62;
+      font-weight: 500;
+    }
+
+    .meta-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      margin-top: 54px;
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .meta-item {
+      min-height: 82px;
+      padding: 16px 18px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .meta-item span {
+      display: block;
+      color: rgba(255, 255, 255, 0.56);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .meta-item strong {
+      display: block;
+      margin-top: 8px;
+      color: var(--white);
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    main {
+      padding: 38px 46px 48px;
+    }
+
+    section {
+      padding: 34px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    section:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 30px;
+      margin-bottom: 22px;
+    }
+
+    .section-kicker {
+      color: var(--bcave-medium);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0;
+      color: var(--bcave-dark);
+      font-size: 28px;
+      line-height: 1.25;
+      font-weight: 900;
+    }
+
+    .summary-panel {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .verdict {
+      padding: 30px;
+      background: var(--bcave-dark);
+      color: var(--white);
+    }
+
+    .verdict b {
+      color: #f2c46b;
+      font-weight: 900;
+    }
+
+    .verdict p {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.55;
+      font-weight: 750;
+    }
+
+    .reason {
+      padding: 28px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(222, 226, 227, 0.62), rgba(255, 255, 255, 0.92));
+    }
+
+    .reason h3,
+    .feedback h3,
+    .priority h3,
+    .action-card h3 {
+      margin: 0 0 14px;
+      color: var(--bcave-dark);
+      font-size: 18px;
+      font-weight: 850;
+    }
+
+    .reason p,
+    .action-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.72;
+      font-weight: 500;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .kpi {
+      min-height: 150px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .kpi span {
+      display: block;
+      color: var(--bcave-medium);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .kpi strong {
+      display: block;
+      margin-top: 14px;
+      color: var(--bcave-dark);
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1.05;
+    }
+
+    .kpi small {
+      display: block;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 600;
+    }
+
+    .negative strong {
+      color: var(--warning);
+    }
+
+    .positive strong {
+      color: var(--success);
+    }
+
+    .sales-wrap {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--white);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    th,
+    td {
+      padding: 17px 18px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      font-size: 15px;
+    }
+
+    th {
+      background: var(--bcave-light);
+      color: var(--bcave-dark);
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    td {
+      color: var(--ink);
+      font-weight: 650;
+    }
+
+    td:last-child,
+    th:last-child {
+      text-align: right;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .mix-card {
+      padding: 24px;
+      background: var(--bcave-dark);
+      color: var(--white);
+    }
+
+    .mix-card h3 {
+      margin: 0 0 18px;
+      font-size: 18px;
+      font-weight: 850;
+    }
+
+    .bar-row {
+      margin-top: 16px;
+    }
+
+    .bar-row span {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .bar {
+      height: 10px;
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .bar i {
+      display: block;
+      height: 100%;
+      background: #f2c46b;
+    }
+
+    .note {
+      margin-top: 16px;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 13px;
+      line-height: 1.5;
+      font-weight: 600;
+    }
+
+    .feedback-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .feedback {
+      min-height: 210px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .feedback ul,
+    .priority ol,
+    .action-card ul {
+      margin: 0;
+      padding-left: 19px;
+    }
+
+    .feedback li,
+    .priority li,
+    .action-card li {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.55;
+      font-weight: 550;
+    }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .action-card {
+      min-height: 210px;
+      padding: 22px;
+      border-top: 4px solid var(--bcave-dark);
+      background: linear-gradient(180deg, var(--white), rgba(222, 226, 227, 0.42));
+    }
+
+    .priority-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .priority {
+      padding: 28px;
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .final-copy {
+      padding: 34px;
+      background: var(--bcave-dark);
+      color: var(--white);
+    }
+
+    .final-copy p {
+      margin: 0 0 18px;
+      color: rgba(255, 255, 255, 0.84);
+      font-size: 18px;
+      line-height: 1.72;
+      font-weight: 550;
+    }
+
+    .final-copy p:last-child {
+      margin-bottom: 0;
+    }
+
+    .final-copy strong {
+      color: #f2c46b;
+      font-weight: 900;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 22px 46px 34px;
+      color: var(--bcave-medium);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 900px) {
+      .page {
+        width: 100%;
+        margin: 0;
+      }
+
+      header,
+      main,
+      .footer {
+        padding-left: 22px;
+        padding-right: 22px;
+      }
+
+      .meta-strip,
+      .summary-panel,
+      .kpi-grid,
+      .sales-wrap,
+      .feedback-grid,
+      .action-grid,
+      .priority-wrap,
+      .section-head {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        min-height: auto;
+        background-size: auto, 118px auto;
+        background-position: right 22px top 28px;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .page {
+        width: 100%;
+        margin: 0;
+        border: 0;
+        box-shadow: none;
+      }
+
+      section,
+      .feedback,
+      .action-card,
+      .priority,
+      .kpi {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <article class="page">
+    <header>
+      <div class="eyebrow">FINAL FEEDBACK REPORT</div>
+      <h1>아트그로서리 팝업 최종 피드백</h1>
+      <p class="lead">
+        SNS 및 인플루언서 콘텐츠를 통한 브랜드 노출은 확보했으나,
+        현장 구매 이유와 팝업 컨셉 전달 부족으로 판매 전환은 목표 대비 부진했습니다.
+      </p>
+      <div class="meta-strip">
+        <div class="meta-item">
+          <span>Period</span>
+          <strong>2026.07.09 - 07.12</strong>
+        </div>
+        <div class="meta-item">
+          <span>Location</span>
+          <strong>성수 FSS</strong>
+        </div>
+        <div class="meta-item">
+          <span>Prepared by</span>
+          <strong>어패럴 기획팀 변창현</strong>
+        </div>
+        <div class="meta-item">
+          <span>Action</span>
+          <strong>플래그십 50% 할인 전환</strong>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <div class="section-head">
+          <div class="section-kicker">01 / Executive Summary</div>
+          <h2>노출 지표는 확보했지만, 매출 전환 구조는 작동하지 않았습니다.</h2>
+        </div>
+        <div class="summary-panel">
+          <div class="verdict">
+            <p>
+              총 조회수 <b>64,506회</b>, 인플루언서 현장 방문 콘텐츠 <b>9건</b>을 확보했으나
+              실제 판매는 <b>27장 / 1,127,000원</b>에 그쳤습니다.
+            </p>
+          </div>
+          <div class="reason">
+            <h3>핵심 원인</h3>
+            <p>
+              단순 집객 부족보다 고객이 현장에서 "왜 이 상품을 사야 하는지"를 직관적으로 이해할 수 있는
+              상품 구매 이유, 팝업 스토리, 키비주얼, 체험형 후킹 장치가 부족했습니다.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <div class="section-kicker">02 / Performance</div>
+          <h2>주요 실적</h2>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi positive">
+            <span>마케팅 노출</span>
+            <strong>64,506회</strong>
+            <small>총 조회수 기준</small>
+          </div>
+          <div class="kpi positive">
+            <span>콘텐츠 확보</span>
+            <strong>9건</strong>
+            <small>인플루언서 현장 방문 콘텐츠</small>
+          </div>
+          <div class="kpi negative">
+            <span>실제 판매</span>
+            <strong>27장</strong>
+            <small>총 실판매금액 1,127,000원</small>
+          </div>
+          <div class="kpi negative">
+            <span>비용 대비 매출</span>
+            <strong>7.3%</strong>
+            <small>총 비용 15,450,000원 대비</small>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <div class="section-kicker">03 / Sales Result</div>
+          <h2>판매 결과 및 상품 반응</h2>
+        </div>
+        <div class="sales-wrap">
+          <table aria-label="아트그로서리 팝업 판매 결과">
+            <thead>
+              <tr>
+                <th>상품</th>
+                <th>판매수량</th>
+                <th>실판매금액</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>체리 아트 반팔티셔츠</td>
+                <td>10장</td>
+                <td>401,800원</td>
+              </tr>
+              <tr>
+                <td>아보카도 아트 반팔티셔츠</td>
+                <td>5장</td>
+                <td>205,800원</td>
+              </tr>
+              <tr>
+                <td>어셈블 아트 반팔티셔츠</td>
+                <td>5장</td>
+                <td>220,500원</td>
+              </tr>
+              <tr>
+                <td>그레이프 아트 반팔티셔츠</td>
+                <td>4장</td>
+                <td>171,500원</td>
+              </tr>
+              <tr>
+                <td>캐럿 아트 반팔티셔츠</td>
+                <td>3장</td>
+                <td>127,400원</td>
+              </tr>
+            </tbody>
+          </table>
+          <aside class="mix-card">
+            <h3>판매 비중</h3>
+            <div class="bar-row">
+              <span><b>체리</b><b>37.0%</b></span>
+              <div class="bar"><i style="width: 37%"></i></div>
+            </div>
+            <div class="bar-row">
+              <span><b>아보카도</b><b>18.5%</b></span>
+              <div class="bar"><i style="width: 18.5%"></i></div>
+            </div>
+            <div class="bar-row">
+              <span><b>어셈블</b><b>18.5%</b></span>
+              <div class="bar"><i style="width: 18.5%"></i></div>
+            </div>
+            <div class="bar-row">
+              <span><b>그레이프</b><b>14.8%</b></span>
+              <div class="bar"><i style="width: 14.8%"></i></div>
+            </div>
+            <div class="bar-row">
+              <span><b>캐럿</b><b>11.1%</b></span>
+              <div class="bar"><i style="width: 11.1%"></i></div>
+            </div>
+            <p class="note">체리 판매 비중 최상위. 그레이프·체리 반응은 양호하나 전체 판매 수량이 낮아 추가 검증이 필요합니다.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <div class="section-kicker">04 / Department Feedback</div>
+          <h2>부서별 피드백</h2>
+        </div>
+        <div class="feedback-grid">
+          <div class="feedback">
+            <h3>마케팅</h3>
+            <ul>
+              <li>방문 후기 중심 콘텐츠 비중이 높아 상품 구매 이유 전달력이 부족했습니다.</li>
+              <li>사전 티징, 상품별 소구 포인트, 착장/스타일링 콘텐츠가 부족했습니다.</li>
+              <li>현장 방문을 유도할 포토존 및 SNS 인증 포인트가 약했습니다.</li>
+            </ul>
+          </div>
+          <div class="feedback">
+            <h3>영업/현장</h3>
+            <ul>
+              <li>우천 영향으로 구매 목적 고객 입객이 제한됐습니다.</li>
+              <li>매장 전면 연출의 시선 유도 효과는 확인했습니다.</li>
+              <li>상품 터치 이후 피팅 및 구매 전환이 저조했습니다.</li>
+              <li>컬러풀한 엽서류, 그레이프/체리 아트 상품 반응이 상대적으로 양호했습니다.</li>
+            </ul>
+          </div>
+          <div class="feedback">
+            <h3>VM</h3>
+            <ul>
+              <li>팝업 컨셉을 한눈에 이해할 수 있는 키비주얼과 공간 설명이 부족했습니다.</li>
+              <li>포토존, 룰렛, 뽑기, 럭키드로우 등 체험형 요소가 부족했습니다.</li>
+              <li>세미오버핏에 대한 아쉬움과 크롭핏 등 트렌디한 핏 부족 의견이 있었습니다.</li>
+            </ul>
+          </div>
+          <div class="feedback">
+            <h3>상품/기획</h3>
+            <ul>
+              <li>의도한 팝업 스토리와 상품의 연결성이 부족했습니다.</li>
+              <li>대표 그래픽 선별 없이 균등 운영되어 대표 상품 집중도가 약화됐습니다.</li>
+              <li>기존 타겟은 성수 내국인 20대 초중반이었으나 실제 입객은 외국인 비중이 우세했습니다.</li>
+              <li>아트그로서리 상품 1장 구매 시 정상가 운영으로 가격 접근성이 열위였습니다.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <div class="section-kicker">05 / Improvement Direction</div>
+          <h2>개선 방향</h2>
+        </div>
+        <div class="action-grid">
+          <div class="action-card">
+            <h3>Product</h3>
+            <ul>
+              <li>대표 그래픽 집중 운영</li>
+              <li>크롭핏/여성 타겟 핏 검토</li>
+              <li>XL 이상 사이즈 수요 검토</li>
+            </ul>
+          </div>
+          <div class="action-card">
+            <h3>VM</h3>
+            <ul>
+              <li>입구 키비주얼 및 그래픽 설명 POP 추가</li>
+              <li>포토존과 체험형 장치 강화</li>
+              <li>공간에서 구매 이유를 즉시 전달</li>
+            </ul>
+          </div>
+          <div class="action-card">
+            <h3>Marketing</h3>
+            <ul>
+              <li>방문 후기 중심에서 상품 구매 이유 중심으로 전환</li>
+              <li>상품별 소구 포인트와 스타일링 콘텐츠 선행</li>
+              <li>SNS 인증 구조 설계</li>
+            </ul>
+          </div>
+          <div class="action-card">
+            <h3>Sales/Channel</h3>
+            <ul>
+              <li>50% 할인 기준 판매 속도 확보</li>
+              <li>온라인/추가 채널 소진 계획 연계</li>
+              <li>선물 패키지 소구 강화</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <div class="section-kicker">06 / Planning Priority</div>
+          <h2>상품 기획 우선순위</h2>
+        </div>
+        <div class="priority-wrap">
+          <div class="priority">
+            <h3>우선순위</h3>
+            <ol>
+              <li>상품 매력도</li>
+              <li>타겟 고객층 및 판매채널 설정</li>
+              <li>발주 수량: 신규 테스트 상품은 SKU당 200장 이하 운영 후 반응에 따라 리오더 진행</li>
+            </ol>
+          </div>
+          <div class="priority">
+            <h3>자산화 원칙</h3>
+            <p>
+              실패하더라도 피드백을 반드시 자산화해야 합니다. 이번 팝업의 학습 포인트는
+              향후 상품 기획, VM, 콘텐츠, 채널 운영 기준으로 전환합니다.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <div class="section-kicker">07 / Final Copy</div>
+          <h2>최종 보고 문안</h2>
+        </div>
+        <div class="final-copy">
+          <p>
+            아트그로서리 팝업은 SNS 및 인플루언서 콘텐츠를 통한 브랜드 노출은 확보했으나,
+            실제 판매는 <strong>27장 / 1,127,000원</strong>으로 목표 대비 부진했습니다.
+          </p>
+          <p>
+            주요 원인은 상품 구매 이유와 팝업 컨셉이 현장에서 직관적으로 전달되지 못한 점입니다.
+            상품 스토리, 키비주얼, 체험형 콘텐츠, 프로모션 후킹 부족과 실제 입객 고객의 타겟 미스매치로
+            구매 전환 한계를 확인했습니다.
+          </p>
+          <p>
+            잔여 상품은 플래그십 및 온라인 채널에서 최대 50% 할인 기준으로 판매 속도를 우선 확보합니다.
+            향후 유사 팝업은 상품 매력도, 명확한 타겟/채널 설정, SKU당 200장 이하 테스트 발주를 기준으로
+            기획 단계부터 보완이 필요합니다.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>B.CAVE Apparel Planning Team</span>
+      <span>Art Grocery Popup Final Feedback Report</span>
+    </footer>
+  </article>
+</body>
+</html>

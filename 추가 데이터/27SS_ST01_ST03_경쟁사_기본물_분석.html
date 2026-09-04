@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>와키윌리 27SS ST01-ST03 경쟁사 기본물 분석</title>
+<style>
+  :root {
+    --navy:#2D4A5C;
+    --teal:#4A9E8E;
+    --red:#C0392B;
+    --amber:#B7770D;
+    --ink:#1a1a1a;
+    --muted:#777;
+    --line:#e7eaee;
+    --bg:#e9ecef;
+    --soft:#f7f8fa;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0;
+    padding:32px 0 48px;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    letter-spacing:0;
+  }
+  .section-wrap { width:800px; max-width:calc(100% - 28px); margin:0 auto 24px; }
+  .section-label { font-size:11px; color:#9ca3af; margin:0 0 6px 2px; }
+  .card {
+    background:#fff;
+    border-radius:10px;
+    padding:30px 36px;
+    box-shadow:0 2px 12px rgba(0,0,0,.08);
+  }
+  h1 { margin:0 0 4px; font-size:22px; line-height:1.28; color:var(--ink); }
+  h2 { margin:0 0 3px; font-size:18px; line-height:1.35; }
+  h3 { margin:0 0 8px; font-size:14px; line-height:1.35; }
+  p { margin:0; }
+  .sub { font-size:12px; color:#888; margin-bottom:20px; }
+  .section-title {
+    display:inline-block;
+    margin:20px 0 12px;
+    padding:3px 10px;
+    border-radius:3px;
+    color:#fff;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.8px;
+  }
+  .dark { background:var(--navy); }
+  .teal { background:var(--teal); }
+  .amber { background:var(--amber); }
+  .hero-grid { display:grid; grid-template-columns:1fr 240px; gap:22px; align-items:stretch; }
+  .one-line {
+    padding:15px 18px;
+    border-radius:8px;
+    background:#f0f4f7;
+    border-left:4px solid var(--navy);
+    font-size:15px;
+    line-height:1.65;
+    font-weight:700;
+  }
+  .one-line b { color:var(--red); }
+  .hero-image { display:grid; grid-template-columns:1fr 1fr; gap:8px; min-height:210px; }
+  .hero-image img {
+    width:100%;
+    height:100%;
+    min-height:100px;
+    object-fit:cover;
+    border-radius:8px;
+    background:#f5f5f5;
+  }
+  .kpi-row { display:flex; gap:14px; margin-top:18px; }
+  .kpi { flex:1; min-width:0; background:var(--soft); border-radius:8px; padding:14px 18px; }
+  .kpi .num { font-size:22px; font-weight:800; color:var(--navy); line-height:1.1; }
+  .kpi .lbl { margin-top:4px; font-size:11px; color:#888; line-height:1.45; }
+  .judge-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .judge {
+    min-height:138px;
+    padding:14px 15px;
+    border-radius:8px;
+    background:#fff;
+    border:1px solid var(--line);
+  }
+  .judge strong { display:block; font-size:20px; color:var(--navy); margin-bottom:5px; }
+  .judge .tag { display:inline-block; padding:2px 7px; border-radius:3px; color:#fff; font-size:10px; font-weight:800; margin-bottom:9px; }
+  .judge p { font-size:12.5px; color:#444; line-height:1.65; }
+  .price-ladder { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .price {
+    border-radius:8px;
+    padding:14px 15px;
+    background:var(--soft);
+    border-left:4px solid var(--navy);
+  }
+  .price:nth-child(2) { border-left-color:var(--teal); }
+  .price:nth-child(3) { border-left-color:var(--amber); }
+  .price b { display:block; font-size:18px; margin-bottom:5px; color:var(--ink); }
+  .price span { display:block; color:#555; font-size:12px; line-height:1.55; }
+  .action-box {
+    margin-top:14px;
+    padding:12px 16px;
+    border-radius:7px;
+    background:#fff8f0;
+    border-left:4px solid var(--amber);
+    font-size:13px;
+    line-height:1.65;
+    color:#333;
+  }
+  .image-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .img-card { min-width:0; }
+  .img-card img {
+    width:100%;
+    aspect-ratio:3/4;
+    object-fit:cover;
+    display:block;
+    border-radius:8px;
+    background:#f5f5f5;
+  }
+  .ic-code { margin-top:6px; font-size:10px; color:#888; }
+  .ic-name { margin-top:2px; font-size:12px; font-weight:800; color:#222; line-height:1.35; }
+  .ic-stat { margin-top:2px; font-size:11px; color:#555; }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  thead th {
+    background:var(--navy);
+    color:#fff;
+    padding:7px 9px;
+    text-align:left;
+    font-weight:700;
+    font-size:11px;
+  }
+  tbody td { padding:8px 9px; border-bottom:1px solid #f0f0f0; line-height:1.45; vertical-align:top; }
+  tbody tr:nth-child(even) { background:#fafafa; }
+  tbody td:first-child { font-weight:800; color:var(--navy); white-space:nowrap; }
+  .num { text-align:right; font-weight:800; white-space:nowrap; }
+  .note {
+    margin-top:10px;
+    padding:10px 12px;
+    border-radius:6px;
+    background:var(--soft);
+    color:#666;
+    font-size:11px;
+    line-height:1.6;
+  }
+  @media (max-width:760px) {
+    body { padding-top:18px; }
+    .card { padding:22px 18px; }
+    .hero-grid, .kpi-row, .judge-grid, .price-ladder, .image-grid { grid-template-columns:1fr; display:grid; }
+    .hero-image { grid-template-columns:repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+  <section class="section-wrap">
+    <div class="section-label">27SS ST BASIC COMPETITOR REVIEW</div>
+    <div class="card">
+      <div class="hero-grid">
+        <div>
+          <h1>ST01-ST03 가격/역할 재정리</h1>
+          <div class="sub">Source: 27SS 경쟁사 기본물 분석.xlsx · TOTAL 시트 ST 품목</div>
+          <div class="one-line">
+            결론은 하나입니다. <b>ST01은 49,000원 진입, ST02는 55,000~59,000원 주력, ST03은 59,000원 이상 차별 사양</b>으로 나눠야 합니다.
+          </div>
+          <div class="kpi-row">
+            <div class="kpi"><div class="num">10 SKU</div><div class="lbl">ST 경쟁 샘플<br>Teket 2 · BB 3 · TINT 5</div></div>
+            <div class="kpi"><div class="num">53,000원</div><div class="lbl">기본 ST 평균가<br>39,000~59,000원</div></div>
+            <div class="kpi"><div class="num">+6천원</div><div class="lbl">포켓/2PACK/오버다잉<br>상위 가격 근거</div></div>
+          </div>
+        </div>
+        <div class="hero-image" aria-label="대표 경쟁사 티셔츠 이미지">
+          <img src="27ss_st_competitor_assets/teket_symbol.png" alt="Teket Symbol Tee">
+          <img src="27ss_st_competitor_assets/bb_tag_og.png" alt="Brownbreath TAG OG TEE">
+          <img src="27ss_st_competitor_assets/tint_t_logo.png" alt="THISISNEVERTHAT T-Logo Tee">
+          <img src="27ss_st_competitor_assets/tint_overdyed.png" alt="THISISNEVERTHAT Overdyed Reverse Tee">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-wrap">
+    <div class="section-label">DECISION MAP</div>
+    <div class="card">
+      <h2>핵심 판단</h2>
+      <div class="sub">상품 수를 늘리는 문제가 아니라, 같은 ST 안에서 역할을 분리하는 문제입니다.</div>
+      <div class="judge-grid">
+        <article class="judge">
+          <strong>ST01</strong><span class="tag dark">ENTRY</span>
+          <h3>49,000원 입문 기본물</h3>
+          <p>작은 로고, 기본 컬러, 반복 구매용. 물량을 받되 그래픽 욕심은 줄입니다.</p>
+        </article>
+        <article class="judge">
+          <strong>ST02</strong><span class="tag teal">MAIN</span>
+          <h3>55,000~59,000원 주력</h3>
+          <p>시즌 캐릭터/그래픽을 가장 명확하게 보여주는 메인 매출형입니다.</p>
+        </article>
+        <article class="judge">
+          <strong>ST03</strong><span class="tag amber">UPPER</span>
+          <h3>59,000~65,000원 상위형</h3>
+          <p>포켓, 2PACK, 오버다잉, 리버스 봉제처럼 소비자가 바로 느끼는 사양이 필요합니다.</p>
+        </article>
+      </div>
+
+      <div class="section-title dark">PRICE LADDER</div>
+      <div class="price-ladder">
+        <div class="price"><b>39,000~49,000원</b><span>Brownbreath 구간. ST01 또는 온라인 기본 로고형에 적합.</span></div>
+        <div class="price"><b>55,000~59,000원</b><span>Teket/TINT 주력 구간. ST02의 기준 가격.</span></div>
+        <div class="price"><b>59,000~65,000원</b><span>2PACK, 포켓, 오버다잉 등 명확한 사양이 있어야 설득 가능.</span></div>
+      </div>
+      <div class="action-box">
+        회의 제안: 27SS ST는 가격을 먼저 정하고 그래픽을 붙이는 방식보다, <b>ST01=물량, ST02=시즌 얼굴, ST03=객단가 상승</b>으로 역할을 고정한 뒤 디자인 수를 배분하는 쪽이 선명합니다.
+      </div>
+    </div>
+  </section>
+
+  <section class="section-wrap">
+    <div class="section-label">REFERENCE IMAGES</div>
+    <div class="card">
+      <h2>대표 이미지</h2>
+      <div class="sub">보고서에는 판단에 필요한 컷만 남겼습니다.</div>
+      <div class="image-grid">
+        <div class="img-card"><img src="27ss_st_competitor_assets/teket_symbol.png" alt="Teket Symbol Tee"><div class="ic-code">Teket</div><div class="ic-name">Symbol Tee White</div><div class="ic-stat">55,000원 · 기본 로고</div></div>
+        <div class="img-card"><img src="27ss_st_competitor_assets/bb_tag_og.png" alt="Brownbreath TAG OG TEE"><div class="ic-code">Brownbreath</div><div class="ic-name">TAG OG TEE</div><div class="ic-stat">49,000원 · 진입 가격</div></div>
+        <div class="img-card"><img src="27ss_st_competitor_assets/tint_t_logo.png" alt="TINT T-Logo Tee"><div class="ic-code">THISISNEVERTHAT</div><div class="ic-name">T-Logo Tee</div><div class="ic-stat">55,000원 · 주력 가격</div></div>
+        <div class="img-card"><img src="27ss_st_competitor_assets/tint_sp_2pack.png" alt="TINT SP-Logo Cooling Performance Tee"><div class="ic-code">THISISNEVERTHAT</div><div class="ic-name">SP-Logo 2PACK</div><div class="ic-stat">59,000원 · 패키지 근거</div></div>
+      </div>
+
+      <div class="section-title teal">ST EVIDENCE</div>
+      <table>
+        <thead>
+          <tr><th>브랜드</th><th>상품</th><th>가격</th><th>읽을 포인트</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Teket</td><td>Symbol Tee / Plan Tee</td><td class="num">55,000</td><td>로고 기본물도 5만원대 중반까지 유지됩니다.</td></tr>
+          <tr><td>Brownbreath</td><td>TAG OG / TAG TEE / CROP TAG</td><td class="num">39,000~49,000</td><td>입문 가격은 낮지만 상품 차이가 약하면 소비자 이해가 떨어집니다.</td></tr>
+          <tr><td>THISISNEVERTHAT</td><td>T-Logo / Arch / INTL.</td><td class="num">55,000~59,000</td><td>그래픽과 브랜드 로고 강도로 59,000원까지 갑니다.</td></tr>
+          <tr><td>THISISNEVERTHAT</td><td>2PACK / Pocket / Overdyed Reverse</td><td class="num">59,000~65,000</td><td>상위 가격은 사양 차이가 보여야 합니다.</td></tr>
+        </tbody>
+      </table>
+      <div class="note">원본: 추가 데이터/27SS 경쟁사 기본물 분석.xlsx. 이미지 파일은 같은 폴더의 27ss_st_competitor_assets에 추출했습니다.</div>
+    </div>
+  </section>
+</body>
+</html>

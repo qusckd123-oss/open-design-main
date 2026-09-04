@@ -1,0 +1,52 @@
+{
+  "name": "@open-design/trend-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "typecheck": "tsc -b --noEmit",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:setup": "prisma generate && prisma db push",
+    "db:seed": "tsx scripts/seed.ts",
+    "db:migrate-market-scope": "tsx scripts/migrate-market-ranking-scope.ts",
+    "data:reclassify-market": "tsx scripts/reclassify-market-data.ts",
+    "collect:musinsa": "tsx scripts/collect-musinsa.ts",
+    "collect:market": "tsx scripts/collect-market.ts",
+    "collect:verified-market": "tsx scripts/collect-market.ts --verified-only --all-categories --limit=50",
+    "collect:assortment-market": "tsx scripts/collect-market.ts --assortment-only --all-categories --limit=50",
+    "collect:korea-editorial": "tsx scripts/collect-korea-editorial.ts --limit=30",
+    "backfill:korea-editorial": "tsx scripts/collect-korea-editorial.ts --days=90 --limit-per-source=100",
+    "collect:naver": "tsx scripts/collect-naver-trends.ts",
+    "backfill:naver": "tsx scripts/backfill-naver.ts",
+    "test:naver-real": "tsx scripts/test-naver-real.ts",
+    "data:reset-sample": "tsx scripts/reset-sample-data.ts",
+    "templates:generate": "tsx scripts/generate-templates.ts",
+    "audit:specific-item-phrases": "tsx scripts/audit-specific-item-phrases.ts",
+    "reparse:editorial-mentions": "tsx scripts/reparse-editorial-mentions.ts",
+    "test": "tsx scripts/smoke-test.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.15.0",
+    "next": "^16.2.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "prisma": "^6.15.0",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": "~24"
+  }
+}

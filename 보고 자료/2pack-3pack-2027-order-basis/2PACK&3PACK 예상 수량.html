@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>27년 2PACK · 3PACK 연간 운영 발주 근거</title>
+  <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bcave: {
+              dark: '#264148',
+              medium: '#718790',
+              light: '#DEE2E3',
+              bg: '#F8F9FA',
+              red: '#B94735',
+              amber: '#D4A64F',
+              green: '#3D7465'
+            }
+          },
+          fontFamily: { sans: ['Pretendard', 'sans-serif'] }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --bcave-dark: #264148;
+      --bcave-medium: #718790;
+      --bcave-light: #DEE2E3;
+      --bcave-bg: #F8F9FA;
+    }
+    body {
+      font-family: Pretendard, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      background: #F8F9FA;
+      color: #1f2f34;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid rgba(113,135,144,.26);
+      border-radius: 8px;
+    }
+    .kpi-label { color: #718790; font-size: 13px; font-weight: 700; }
+    .kpi-value { color: #264148; font-size: 28px; line-height: 1; font-weight: 900; letter-spacing: 0; }
+    .chart-box { height: 300px; }
+    @media print {
+      body { background: #fff; }
+      .card { box-shadow: none; break-inside: avoid; }
+      .no-print { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="max-w-7xl mx-auto px-5 py-6 md:px-8 md:py-8 space-y-6">
+    <header class="flex flex-col md:flex-row md:items-end md:justify-between gap-5 border-b border-bcave-light pb-5">
+      <div class="space-y-2">
+        <div class="inline-flex items-center gap-2 text-xs font-bold text-bcave-dark bg-white border border-bcave-light rounded px-2.5 py-1">
+          WACKY WILLY · 27년 연간 운영 PACK 발주
+        </div>
+        <h1 class="text-3xl md:text-4xl font-black text-bcave-dark tracking-normal">2PACK · 3PACK 판매/재고 흐름 기반 발주 근거</h1>
+        <p class="text-bcave-medium font-medium">입고 목표 2027년 1월 첫째주 · 운영 품번 WA2700STE1 / WA2700STE3</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="text-right">
+          <div class="text-sm text-bcave-medium font-bold">최종 발주안</div>
+          <div class="text-2xl font-black text-bcave-dark">2PACK 30,000SET + 버퍼 6,000SET</div>
+          <div class="text-2xl font-black text-bcave-dark">3PACK 15,000SET + 버퍼 3,000SET</div>
+        </div>
+        <img src="assets/bcave_logo.png" alt="B.CAVE" class="h-9 object-contain hidden sm:block" />
+      </div>
+    </header>
+
+    <section class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="card p-4 border-l-4 border-l-bcave-green">
+        <div class="kpi-label">WA2700STE1 확정 발주</div>
+        <div class="kpi-value mt-2">30,000SET</div>
+        <div class="text-sm text-bcave-medium mt-2">확정 30,000SET · 버퍼 6,000SET 별도 확보</div>
+      </div>
+      <div class="card p-4 border-l-4 border-l-bcave-green">
+        <div class="kpi-label">WA2700STE3 확정 발주</div>
+        <div class="kpi-value mt-2">15,000SET</div>
+        <div class="text-sm text-bcave-medium mt-2">확정 15,000SET · 버퍼 3,000SET 별도 확보</div>
+      </div>
+      <div class="card p-4">
+        <div class="kpi-label">2PACK 기준 판매/입고</div>
+        <div class="kpi-value mt-2">35,473</div>
+        <div class="text-sm text-bcave-medium mt-2">판매 35,473장 · 입고 53,119장</div>
+      </div>
+      <div class="card p-4">
+        <div class="kpi-label">3PACK 기준 판매/입고</div>
+        <div class="kpi-value mt-2">14,830</div>
+        <div class="text-sm text-bcave-medium mt-2">판매 14,830장 · 입고 20,014장</div>
+      </div>
+    </section>
+
+    <section class="card p-5">
+      <h2 class="text-xl font-black text-bcave-dark">85% 가정 근거</h2>
+      <div class="mt-4 grid gap-3 md:grid-cols-3">
+        <div class="rounded bg-bcave-bg p-4">
+          <div class="text-xs font-bold text-bcave-medium">왜 100%가 아닌가</div>
+          <div class="mt-1 font-black text-bcave-dark">재고 공백이 있었음</div>
+          <div class="mt-1 text-sm text-slate-700">판매 LOSS 일부 발생.</div>
+        </div>
+        <div class="rounded bg-bcave-bg p-4">
+          <div class="text-xs font-bold text-bcave-medium">왜 85%인가</div>
+          <div class="mt-1 font-black text-bcave-dark">미포착 수요 15% 반영</div>
+          <div class="mt-1 text-sm text-slate-700">전 기간 확대는 배제.</div>
+        </div>
+        <div class="rounded bg-bcave-bg p-4">
+          <div class="text-xs font-bold text-bcave-medium">적용 방식</div>
+          <div class="mt-1 font-black text-bcave-dark">확정 발주 아님</div>
+          <div class="mt-1 text-sm text-slate-700">버퍼 확보용 기준.</div>
+        </div>
+        <div class="rounded bg-bcave-bg p-4">
+          <div class="text-xs font-bold text-bcave-medium">기준</div>
+          <div class="mt-1 font-black text-bcave-dark">실판매 = 확보 수요 85%</div>
+          <div class="mt-1 text-sm text-slate-700">재고 공백분은 미포함.</div>
+        </div>
+        <div class="rounded bg-bcave-bg p-4">
+          <div class="text-xs font-bold text-bcave-medium">2PACK 환산</div>
+          <div class="mt-1 font-black text-bcave-dark">35,473 ÷ 85% = 약 41,700</div>
+          <div class="mt-1 text-sm text-slate-700">확정 30,000 + 버퍼 6,000.</div>
+        </div>
+        <div class="rounded bg-bcave-bg p-4">
+          <div class="text-xs font-bold text-bcave-medium">3PACK 환산</div>
+          <div class="mt-1 font-black text-bcave-dark">14,830 ÷ 85% = 약 17,400</div>
+          <div class="mt-1 text-sm text-slate-700">확정 15,000 + 버퍼 3,000.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid lg:grid-cols-5 gap-5">
+      <div class="card p-5 lg:col-span-3">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-black text-bcave-dark">2PACK 월별 입고·판매·잔여 흐름</h2>
+            <p class="text-sm text-bcave-medium mt-1">분석 기간: 2025.01.01~2025.12.31 · 기준 품번: WA2502STE1, WA2503STE1</p>
+          </div>
+          <span class="text-xs font-bold text-bcave-green bg-bcave-green/10 px-2.5 py-1 rounded">최종 산정 기준</span>
+        </div>
+        <div class="chart-box mt-5"><canvas id="pack2Chart"></canvas></div>
+      </div>
+      <div class="card p-5 lg:col-span-2">
+        <h2 class="text-xl font-black text-bcave-dark">2PACK 판단</h2>
+        <div class="mt-4 space-y-3 text-sm leading-6">
+          <p><b>판매:</b> 25년 실판매 35,473SET.</p>
+          <p><b>확정:</b> 30,000SET로 보수 발주.</p>
+          <p><b>버퍼:</b> 6,000SET 별도 확보.</p>
+          <p><b>이유:</b> 85% 환산 수요 약 41,700SET.</p>
+        </div>
+        <div class="mt-5 rounded bg-bcave-bg p-4">
+          <div class="text-xs font-bold text-bcave-medium">결론</div>
+          <div class="text-lg font-black text-bcave-dark mt-1">WA2700STE1 30,000SET + 버퍼 6,000SET</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid lg:grid-cols-5 gap-5">
+      <div class="card p-5 lg:col-span-3">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-black text-bcave-dark">3PACK 월별 입고·판매·잔여 흐름</h2>
+            <p class="text-sm text-bcave-medium mt-1">분석 기간: 2025.09.01~2026.08.10 · 기준 품번: WA2503STE3, WA2602STE3</p>
+          </div>
+          <span class="text-xs font-bold text-bcave-amber bg-bcave-amber/10 px-2.5 py-1 rounded">참고 검토</span>
+        </div>
+        <div class="chart-box mt-5"><canvas id="pack3Chart"></canvas></div>
+      </div>
+      <div class="card p-5 lg:col-span-2">
+        <h2 class="text-xl font-black text-bcave-dark">3PACK 판단</h2>
+        <div class="mt-4 space-y-3 text-sm leading-6">
+          <p><b>판매:</b> 실판매 14,830SET.</p>
+          <p><b>확정:</b> 15,000SET로 발주.</p>
+          <p><b>버퍼:</b> 3,000SET 별도 확보.</p>
+          <p><b>이유:</b> 85% 환산 수요 약 17,400SET.</p>
+          <p><b>보정:</b> 3~4월 리오더 부족 LOSS 반영.</p>
+        </div>
+        <div class="mt-5 rounded bg-bcave-bg p-4">
+          <div class="text-xs font-bold text-bcave-medium">최종 발주안</div>
+          <div class="text-lg font-black text-bcave-dark mt-1">WA2700STE3 15,000SET + 버퍼 3,000SET</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid lg:grid-cols-2 gap-5">
+      <div class="card p-5 overflow-hidden">
+        <h2 class="text-xl font-black text-bcave-dark">2PACK 월별 상세</h2>
+        <div class="overflow-x-auto mt-4">
+          <table class="w-full text-sm">
+            <thead class="bg-bcave-bg text-bcave-medium">
+              <tr>
+                <th class="px-3 py-2 text-left">월</th>
+                <th class="px-3 py-2 text-right">입고</th>
+                <th class="px-3 py-2 text-right">판매</th>
+                <th class="px-3 py-2 text-right">잔여</th>
+              </tr>
+            </thead>
+            <tbody>
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2025-01</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right font-bold">0</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2025-02</td>
+          <td class="px-3 py-2 text-right">20,000</td>
+          <td class="px-3 py-2 text-right">40</td>
+          <td class="px-3 py-2 text-right font-bold">19,960</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2025-03</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right">4,021</td>
+          <td class="px-3 py-2 text-right font-bold">15,939</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2025-04</td>
+          <td class="px-3 py-2 text-right">20,022</td>
+          <td class="px-3 py-2 text-right">6,969</td>
+          <td class="px-3 py-2 text-right font-bold">28,992</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2025-05</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right">5,897</td>
+          <td class="px-3 py-2 text-right font-bold">23,095</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2025-06</td>
+          <td class="px-3 py-2 text-right">13,097</td>
+          <td class="px-3 py-2 text-right">5,664</td>
+          <td class="px-3 py-2 text-right font-bold">30,528</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2025-07</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right">4,229</td>
+          <td class="px-3 py-2 text-right font-bold">26,299</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2025-08</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right">2,725</td>
+          <td class="px-3 py-2 text-right font-bold">23,574</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2025-09</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right">2,485</td>
+          <td class="px-3 py-2 text-right font-bold">21,089</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2025-10</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right">1,440</td>
+          <td class="px-3 py-2 text-right font-bold">19,649</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2025-11</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right">1,021</td>
+          <td class="px-3 py-2 text-right font-bold">18,628</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2025-12</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right">982</td>
+          <td class="px-3 py-2 text-right font-bold">17,646</td>
+        </tr>
+        </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card p-5 overflow-hidden">
+        <h2 class="text-xl font-black text-bcave-dark">3PACK 월별 상세</h2>
+        <div class="overflow-x-auto mt-4">
+          <table class="w-full text-sm">
+            <thead class="bg-bcave-bg text-bcave-medium">
+              <tr>
+                <th class="px-3 py-2 text-left">월</th>
+                <th class="px-3 py-2 text-right">입고</th>
+                <th class="px-3 py-2 text-right">판매</th>
+                <th class="px-3 py-2 text-right">잔여</th>
+              </tr>
+            </thead>
+            <tbody>
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2025-09</td>
+          <td class="px-3 py-2 text-right">9,382</td>
+          <td class="px-3 py-2 text-right">496</td>
+          <td class="px-3 py-2 text-right font-bold">8,886</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2025-10</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right">1,623</td>
+          <td class="px-3 py-2 text-right font-bold">7,263</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2025-11</td>
+          <td class="px-3 py-2 text-right">632</td>
+          <td class="px-3 py-2 text-right">814</td>
+          <td class="px-3 py-2 text-right font-bold">7,081</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2025-12</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right">459</td>
+          <td class="px-3 py-2 text-right font-bold">6,622</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2026-01</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right">536</td>
+          <td class="px-3 py-2 text-right font-bold">6,086</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2026-02</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right">672</td>
+          <td class="px-3 py-2 text-right font-bold">5,414</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2026-03</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right">3,098</td>
+          <td class="px-3 py-2 text-right font-bold">2,316</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2026-04</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right">711</td>
+          <td class="px-3 py-2 text-right font-bold">1,605</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2026-05</td>
+          <td class="px-3 py-2 text-right">5,000</td>
+          <td class="px-3 py-2 text-right">1,969</td>
+          <td class="px-3 py-2 text-right font-bold">4,636</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2026-06</td>
+          <td class="px-3 py-2 text-right">5,000</td>
+          <td class="px-3 py-2 text-right">1,734</td>
+          <td class="px-3 py-2 text-right font-bold">7,902</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2026-07</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right">2,063</td>
+          <td class="px-3 py-2 text-right font-bold">5,839</td>
+        </tr>
+        
+
+        <tr class="border-b border-bcave-light/70">
+          <td class="px-3 py-2 font-semibold text-bcave-dark">2026-08</td>
+          <td class="px-3 py-2 text-right">0</td>
+          <td class="px-3 py-2 text-right">655</td>
+          <td class="px-3 py-2 text-right font-bold">5,184</td>
+        </tr>
+        </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="card p-5 overflow-hidden">
+      <h2 class="text-xl font-black text-bcave-dark">전체 컬러 아소트</h2>
+      <p class="text-sm text-bcave-medium mt-1">확정 발주 45,000SET 기준 · TC는 2PACK BK+WH와 3PACK TC 합산</p>
+      <div class="overflow-x-auto mt-4">
+        <table class="w-full text-sm">
+          <thead class="bg-bcave-bg text-bcave-medium">
+            <tr>
+              <th class="px-3 py-2 text-left">품번</th>
+              <th class="px-3 py-2 text-left">컬러</th>
+              <th class="px-3 py-2 text-left">구성</th>
+              <th class="px-3 py-2 text-right">확정 발주</th>
+              <th class="px-3 py-2 text-right">전체 비중</th>
+              <th class="px-3 py-2 text-right">버퍼 포함</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-bcave-light/70">
+              <td class="px-3 py-2 font-bold text-bcave-dark">WA2700STE1</td>
+              <td class="px-3 py-2 font-bold text-bcave-dark">TC</td>
+              <td class="px-3 py-2">BK+WH</td>
+              <td class="px-3 py-2 text-right font-bold">18,000</td>
+              <td class="px-3 py-2 text-right">40.0%</td>
+              <td class="px-3 py-2 text-right">21,600</td>
+            </tr>
+            <tr class="border-b border-bcave-light/70">
+              <td class="px-3 py-2 font-bold text-bcave-dark">WA2700STE1</td>
+              <td class="px-3 py-2 font-bold text-bcave-dark">BK</td>
+              <td class="px-3 py-2">BK+BK</td>
+              <td class="px-3 py-2 text-right font-bold">7,500</td>
+              <td class="px-3 py-2 text-right">16.7%</td>
+              <td class="px-3 py-2 text-right">9,000</td>
+            </tr>
+            <tr class="border-b border-bcave-light/70">
+              <td class="px-3 py-2 font-bold text-bcave-dark">WA2700STE1</td>
+              <td class="px-3 py-2 font-bold text-bcave-dark">WH</td>
+              <td class="px-3 py-2">WH+WH</td>
+              <td class="px-3 py-2 text-right font-bold">4,500</td>
+              <td class="px-3 py-2 text-right">10.0%</td>
+              <td class="px-3 py-2 text-right">5,400</td>
+            </tr>
+            <tr class="border-b border-bcave-light/70">
+              <td class="px-3 py-2 font-bold text-bcave-dark">WA2700STE3</td>
+              <td class="px-3 py-2 font-bold text-bcave-dark">TC</td>
+              <td class="px-3 py-2">3PACK</td>
+              <td class="px-3 py-2 text-right font-bold">15,000</td>
+              <td class="px-3 py-2 text-right">33.3%</td>
+              <td class="px-3 py-2 text-right">18,000</td>
+            </tr>
+            <tr class="bg-bcave-bg">
+              <td class="px-3 py-2 font-black text-bcave-dark" colspan="3">합계</td>
+              <td class="px-3 py-2 text-right font-black">45,000</td>
+              <td class="px-3 py-2 text-right font-black">100.0%</td>
+              <td class="px-3 py-2 text-right font-black">54,000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-4 grid gap-3 text-sm md:grid-cols-3">
+        <div class="rounded bg-bcave-bg p-3">
+          <div class="font-black text-bcave-dark">TC 총비중</div>
+          <div class="mt-1">33,000SET · 73.3%</div>
+        </div>
+        <div class="rounded bg-bcave-bg p-3">
+          <div class="font-black text-bcave-dark">BK 총비중</div>
+          <div class="mt-1">7,500SET · 16.7%</div>
+        </div>
+        <div class="rounded bg-bcave-bg p-3">
+          <div class="font-black text-bcave-dark">WH 총비중</div>
+          <div class="mt-1">4,500SET · 10.0%</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid lg:grid-cols-2 gap-5">
+      <div class="card p-5 overflow-hidden">
+        <h2 class="text-xl font-black text-bcave-dark">2PACK 컬러별 사이즈 아소트</h2>
+        <p class="text-sm text-bcave-medium mt-1">WH+WH는 신규 테스트 구성이라 총량은 낮게, 사이즈 곡선은 WH 포함 기존 구성 기준 적용</p>
+        <div class="overflow-x-auto mt-4">
+          <table class="w-full text-sm">
+            <thead class="bg-bcave-bg text-bcave-medium">
+              <tr>
+                <th class="px-3 py-2 text-left">구성</th>
+                <th class="px-3 py-2 text-right">총량</th>
+                <th class="px-3 py-2 text-right">XS</th>
+                <th class="px-3 py-2 text-right">S</th>
+                <th class="px-3 py-2 text-right">M</th>
+                <th class="px-3 py-2 text-right">L</th>
+                <th class="px-3 py-2 text-right">XL</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-bcave-light/70">
+                <td class="px-3 py-2 font-bold text-bcave-dark">TC · BK+WH</td>
+                <td class="px-3 py-2 text-right font-bold">18,000</td>
+                <td class="px-3 py-2 text-right">1,080<br><span class="text-xs text-bcave-medium">6%</span></td>
+                <td class="px-3 py-2 text-right">3,960<br><span class="text-xs text-bcave-medium">22%</span></td>
+                <td class="px-3 py-2 text-right font-bold">4,500<br><span class="text-xs text-bcave-medium">25%</span></td>
+                <td class="px-3 py-2 text-right">4,860<br><span class="text-xs text-bcave-medium">27%</span></td>
+                <td class="px-3 py-2 text-right">3,600<br><span class="text-xs text-bcave-medium">20%</span></td>
+              </tr>
+              <tr class="border-b border-bcave-light/70">
+                <td class="px-3 py-2 font-bold text-bcave-dark">BK · BK+BK</td>
+                <td class="px-3 py-2 text-right font-bold">7,500</td>
+                <td class="px-3 py-2 text-right">375<br><span class="text-xs text-bcave-medium">5%</span></td>
+                <td class="px-3 py-2 text-right">975<br><span class="text-xs text-bcave-medium">13%</span></td>
+                <td class="px-3 py-2 text-right">1,650<br><span class="text-xs text-bcave-medium">22%</span></td>
+                <td class="px-3 py-2 text-right font-bold">2,175<br><span class="text-xs text-bcave-medium">29%</span></td>
+                <td class="px-3 py-2 text-right">2,325<br><span class="text-xs text-bcave-medium">31%</span></td>
+              </tr>
+              <tr class="border-b border-bcave-light/70">
+                <td class="px-3 py-2 font-bold text-bcave-dark">WH · WH+WH</td>
+                <td class="px-3 py-2 text-right font-bold">4,500</td>
+                <td class="px-3 py-2 text-right">270<br><span class="text-xs text-bcave-medium">6%</span></td>
+                <td class="px-3 py-2 text-right">990<br><span class="text-xs text-bcave-medium">22%</span></td>
+                <td class="px-3 py-2 text-right font-bold">1,125<br><span class="text-xs text-bcave-medium">25%</span></td>
+                <td class="px-3 py-2 text-right">1,215<br><span class="text-xs text-bcave-medium">27%</span></td>
+                <td class="px-3 py-2 text-right">900<br><span class="text-xs text-bcave-medium">20%</span></td>
+              </tr>
+              <tr class="bg-bcave-bg">
+                <td class="px-3 py-2 font-black text-bcave-dark">2PACK 합계</td>
+                <td class="px-3 py-2 text-right font-black">30,000</td>
+                <td class="px-3 py-2 text-right font-bold">1,725<br><span class="text-xs text-bcave-medium">5.8%</span></td>
+                <td class="px-3 py-2 text-right font-bold">5,925<br><span class="text-xs text-bcave-medium">19.8%</span></td>
+                <td class="px-3 py-2 text-right font-bold">7,275<br><span class="text-xs text-bcave-medium">24.3%</span></td>
+                <td class="px-3 py-2 text-right font-bold">8,250<br><span class="text-xs text-bcave-medium">27.5%</span></td>
+                <td class="px-3 py-2 text-right font-bold">6,825<br><span class="text-xs text-bcave-medium">22.8%</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card p-5">
+        <h2 class="text-xl font-black text-bcave-dark">컬러별 사이즈 근거</h2>
+        <div class="mt-4 space-y-4 text-sm leading-6">
+          <p><b>BK+BK:</b> BK 판매는 L/XL 강세.</p>
+          <p><b>BK+WH:</b> 40% 시점 XS 6% 근거 반영.</p>
+          <p><b>WH+WH:</b> 신규 테스트. 총량은 4,500SET로 제한.</p>
+          <p><b>적용:</b> WH 포함 구성은 XS 6% 적용.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid lg:grid-cols-2 gap-5">
+      <div class="card p-5 overflow-hidden">
+        <h2 class="text-xl font-black text-bcave-dark">3PACK 사이즈 아소트</h2>
+        <p class="text-sm text-bcave-medium mt-1">3PACK 확정 발주 15,000SET 기준 · L/XL 소진율 우위 반영</p>
+        <div class="overflow-x-auto mt-4">
+          <table class="w-full text-sm">
+            <thead class="bg-bcave-bg text-bcave-medium">
+              <tr>
+                <th class="px-3 py-2 text-left">구분</th>
+                <th class="px-3 py-2 text-right">총량</th>
+                <th class="px-3 py-2 text-right">XS</th>
+                <th class="px-3 py-2 text-right">S</th>
+                <th class="px-3 py-2 text-right">M</th>
+                <th class="px-3 py-2 text-right">L</th>
+                <th class="px-3 py-2 text-right">XL</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="px-3 py-2 font-bold text-bcave-dark">3PACK</td>
+                <td class="px-3 py-2 text-right font-bold">15,000</td>
+                <td class="px-3 py-2 text-right">600<br><span class="text-xs text-bcave-medium">4%</span></td>
+                <td class="px-3 py-2 text-right">3,000<br><span class="text-xs text-bcave-medium">20%</span></td>
+                <td class="px-3 py-2 text-right">3,750<br><span class="text-xs text-bcave-medium">25%</span></td>
+                <td class="px-3 py-2 text-right font-bold">4,200<br><span class="text-xs text-bcave-medium">28%</span></td>
+                <td class="px-3 py-2 text-right">3,450<br><span class="text-xs text-bcave-medium">23%</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card p-5">
+        <h2 class="text-xl font-black text-bcave-dark">3PACK 사이즈 근거</h2>
+        <div class="mt-4 space-y-4 text-sm leading-6">
+          <p><b>실제 판매비중:</b> XS 3.5%, S 20.5%, M 25.4%, L 28.0%, XL 22.6%.</p>
+          <p><b>입고 대비 소진율:</b> L 79.6%, XL 78.9%로 큰 사이즈 판매 효율이 높음.</p>
+          <p><b>발주 적용:</b> 확정 15,000SET는 XS 4%, S 20%, M 25%, L 28%, XL 23%.</p>
+          <p><b>버퍼:</b> 3,000SET는 판매 속도 확인 후 집행.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card p-5">
+      <h2 class="text-xl font-black text-bcave-dark">요약</h2>
+      <div class="mt-4 grid gap-3 text-sm md:grid-cols-2">
+        <div class="rounded bg-bcave-bg p-4">
+          <div class="font-black text-bcave-dark">2PACK</div>
+          <div class="mt-1">확정 30,000SET</div>
+          <div>버퍼 6,000SET</div>
+          <div class="mt-2 text-bcave-medium">BK+WH 중심 · WH+WH 테스트</div>
+        </div>
+        <div class="rounded bg-bcave-bg p-4">
+          <div class="font-black text-bcave-dark">3PACK</div>
+          <div class="mt-1">확정 15,000SET</div>
+          <div>버퍼 3,000SET</div>
+          <div class="mt-2 text-bcave-medium">3~4월 리오더 부족 LOSS 반영</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="text-xs text-bcave-medium pb-8">
+      데이터 기준: 추가 데이터/2PACK, 3PACK 판매/입고현황 2PACK, 3PACK.xlsx · 판매집계현황 2PACK, 3PACK.xlsx. 2PACK 최종 산정에서 MG2403STE1은 과시즌으로 제외.
+    </section>
+  </main>
+
+  <script>
+    const pack2Monthly = [{"month": "2025-01", "receipt": 0, "sales": 0, "ending": 0}, {"month": "2025-02", "receipt": 20000, "sales": 40, "ending": 19960}, {"month": "2025-03", "receipt": 0, "sales": 4021, "ending": 15939}, {"month": "2025-04", "receipt": 20022, "sales": 6969, "ending": 28992}, {"month": "2025-05", "receipt": 0, "sales": 5897, "ending": 23095}, {"month": "2025-06", "receipt": 13097, "sales": 5664, "ending": 30528}, {"month": "2025-07", "receipt": 0, "sales": 4229, "ending": 26299}, {"month": "2025-08", "receipt": 0, "sales": 2725, "ending": 23574}, {"month": "2025-09", "receipt": 0, "sales": 2485, "ending": 21089}, {"month": "2025-10", "receipt": 0, "sales": 1440, "ending": 19649}, {"month": "2025-11", "receipt": 0, "sales": 1021, "ending": 18628}, {"month": "2025-12", "receipt": 0, "sales": 982, "ending": 17646}];
+    const pack3Monthly = [{"month": "2025-09", "receipt": 9382, "sales": 496, "ending": 8886}, {"month": "2025-10", "receipt": 0, "sales": 1623, "ending": 7263}, {"month": "2025-11", "receipt": 632, "sales": 814, "ending": 7081}, {"month": "2025-12", "receipt": 0, "sales": 459, "ending": 6622}, {"month": "2026-01", "receipt": 0, "sales": 536, "ending": 6086}, {"month": "2026-02", "receipt": 0, "sales": 672, "ending": 5414}, {"month": "2026-03", "receipt": 0, "sales": 3098, "ending": 2316}, {"month": "2026-04", "receipt": 0, "sales": 711, "ending": 1605}, {"month": "2026-05", "receipt": 5000, "sales": 1969, "ending": 4636}, {"month": "2026-06", "receipt": 5000, "sales": 1734, "ending": 7902}, {"month": "2026-07", "receipt": 0, "sales": 2063, "ending": 5839}, {"month": "2026-08", "receipt": 0, "sales": 655, "ending": 5184}];
+
+    function makeFlowChart(id, rows) {
+      const labels = rows.map(r => r.month.replace('2025-', '25.').replace('2026-', '26.'));
+      new Chart(document.getElementById(id), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            {
+              type: 'bar',
+              label: '입고',
+              data: rows.map(r => r.receipt),
+              backgroundColor: '#718790',
+              borderRadius: 4,
+              stack: 'volume'
+            },
+            {
+              type: 'bar',
+              label: '판매',
+              data: rows.map(r => r.sales),
+              backgroundColor: '#3D7465',
+              borderRadius: 4,
+              stack: 'volume'
+            },
+            {
+              type: 'line',
+              label: '잔여',
+              data: rows.map(r => r.ending),
+              borderColor: '#B94735',
+              backgroundColor: '#B94735',
+              tension: .25,
+              yAxisID: 'y',
+              pointRadius: 3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 10, boxHeight: 10 } },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `${ctx.dataset.label}: ${Number(ctx.raw).toLocaleString()}장`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: {
+              beginAtZero: true,
+              ticks: { callback: v => Number(v).toLocaleString() + '장' },
+              grid: { color: '#DEE2E3' }
+            }
+          }
+        }
+      });
+    }
+    makeFlowChart('pack2Chart', pack2Monthly);
+    makeFlowChart('pack3Chart', pack3Monthly);
+  </script>
+</body>
+</html>
