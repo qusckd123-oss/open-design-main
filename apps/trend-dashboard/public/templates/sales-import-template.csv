@@ -1,0 +1,2 @@
+productCode,productName,periodDate,brand,category,season,gender,itemType,subItemType,fit,mainColor,graphicType,detail,salesQty,salesAmount,stockQty,orderQty,sellThroughRate,normalSalesRate,discountRate,onlineSalesQty,storeSalesQty
+OD0001,Graphic T-Shirt Ringer Charcoal,2026-08-23,WACKY WILLY,TOP,26SS,UNISEX,T_SHIRT,RINGER_TEE,Semi Oversized,Charcoal,Lettering,Ringer,181,7059000,42,220,82.3,88,0,118,63
