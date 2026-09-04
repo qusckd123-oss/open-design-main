@@ -21,7 +21,7 @@ import {
 import { specificItemKoreanLabel } from "@/lib/korean-labels";
 import { buildFilterHref, parseGenderParam, parseScopeParam } from "@/lib/planning-filters";
 import { getAttributeBundles } from "@/services/attribute-bundle-service";
-import { getPlanningDashboardData, type PlanningInsight } from "@/services/planning-dashboard-service";
+import { getPlanningDashboardData } from "@/services/planning-dashboard-service";
 import type { EditorialTrendRow } from "@/services/editorial-analytics-service";
 import type { MarketRow } from "@/types/business";
 
@@ -57,7 +57,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
 
   return (
     <div>
-      <section className="flex flex-col gap-6 border-b border-line pb-10 lg:flex-row lg:items-end lg:justify-between">
+      <section className="flex flex-col gap-6 border-b border-line pb-8 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-signal">Planning Dashboard</p>
           <h1 className="mt-2 text-4xl font-semibold leading-tight text-ink md:text-5xl">상품기획 트렌드 대시보드</h1>
@@ -73,7 +73,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
         top insight box is gone; the hero itself carries that role now.
       */}
       {bundles.length > 0 ? (
-        <section className="mt-14 border-t border-line pt-14">
+        <section className="mt-10 border-t border-line pt-10">
           {repeatedBundle ? (
             <div className="grid gap-10 lg:grid-cols-[1.6fr_1fr] lg:items-start">
               <CurrentSignalHero bundle={repeatedBundle} />
@@ -113,15 +113,6 @@ export default async function DashboardPage({ searchParams }: PageProps) {
         <div className="mt-6 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
           {editorialRows.slice(0, 6).map((row) => <EditorialTrendCard key={`${row.type}:${row.value}`} row={row} sourceTotal={data.summary.editorialSources} />)}
           {editorialRows.length === 0 ? <EmptyState title="현재 필터에서 매거진 트렌드 근거가 부족합니다." /> : null}
-        </div>
-      </section>
-
-      <section className="mt-14 border-t border-line pt-14">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">Specific Items</p>
-        <h2 className="mt-1 text-2xl font-semibold text-ink md:text-3xl">세부 아이템 신호</h2>
-        <div className="mt-6 grid gap-8 lg:grid-cols-3">
-          {data.planningInsights.slice(0, 3).map((insight) => <PlanningInsightCard key={insight.key} insight={insight} />)}
-          {data.planningInsights.length === 0 ? <EmptyState title="현재 필터에서 표시할 상품기획 인사이트가 없습니다." /> : null}
         </div>
       </section>
 
@@ -232,37 +223,16 @@ function DomesticStoreEmptyState({ currentParams }: { currentParams: Record<stri
   );
 }
 
-function PlanningInsightCard({ insight }: { insight: PlanningInsight }) {
-  const label = insight.dimension === "SUB_ITEM" ? specificItemKoreanLabel(insight.label) ?? trendValueLabel(insight.label) : trendValueLabel(insight.label);
-  const body = (
-    <>
-      <div className="text-xs font-semibold uppercase tracking-[0.1em] text-muted">{trendTypeLabel(insight.dimension)}</div>
-      <div className="mt-1 text-xl font-semibold text-ink">{label}</div>
-      <div className="mt-2 text-sm text-muted">
-        {insight.articlePresence}기사 · {insight.sourceSpread}/{insight.sourceTotal}매체
-        {insight.usesOverseasReference ? ` · 해외 참고 TOP50 ${insight.top50Presence}` : ""}
-      </div>
-      <div className="mt-1 text-xs font-semibold text-signal">{evidenceStrengthLabel(insight)} · {insight.decision}</div>
-    </>
-  );
-  return (
-    <article className="border-t-2 border-ink pt-3">
-      {insight.dimension === "SUB_ITEM" ? (
-        <Link href={`/items/${encodeURIComponent(insight.label)}`} className="block hover:opacity-70">
-          {body}
-        </Link>
-      ) : (
-        body
-      )}
-    </article>
-  );
-}
-
 function EditorialTrendCard({ row, sourceTotal }: { row: EditorialTrendRow; sourceTotal: number }) {
+  // Korean-first title when this row IS a specific item (SUB_ITEM dimension)
+  // - the same established mapping used everywhere else (TOTE_BAG -> 토트백).
+  // Other dimensions (DETAIL/MATERIAL/COLOR/STYLE) are left as-is; this is not
+  // a general localization pass.
+  const label = row.type === "SUB_ITEM" ? specificItemKoreanLabel(row.value) ?? trendValueLabel(row.value) : trendValueLabel(row.value);
   return (
     <article className="border-t-2 border-ink pt-3">
       <div className="text-xs font-semibold uppercase tracking-[0.1em] text-muted">{trendTypeLabel(row.type)}</div>
-      <div className="mt-1 text-xl font-semibold text-ink">{trendValueLabel(row.value)}</div>
+      <div className="mt-1 text-xl font-semibold text-ink">{label}</div>
       <div className="mt-2 text-sm text-muted">
         {formatNumber(row.articlePresence)}기사 · {row.sourceSpread}/{sourceTotal}매체 · 최근 7일 {formatRankChange(row.change7dArticlePresence)}
       </div>

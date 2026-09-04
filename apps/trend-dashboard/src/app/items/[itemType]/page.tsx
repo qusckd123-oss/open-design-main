@@ -57,34 +57,48 @@ export default async function ItemDetailPage({ params }: PageProps) {
       ) : null}
 
       {/*
-        수요 검증 (NAVER Demand) block intentionally removed here - NAVER
-        Shopping Insight is not in use for now. demand-signal-service.ts and
-        its schema/tests are preserved unchanged for future reactivation.
+        Usage flow: "어떤 조합?" (CURRENT COMBINATION, above) -> "어떤 직접
+        속성?" (DIRECT ATTRIBUTES) -> "왜?" (WHY THIS ITEM) -> "근거 기사?"
+        (EVIDENCE) -> "외부 검증?" (TREND/STORE VALIDATION, de-emphasized
+        below since no domestic store data exists yet) -> co-occurrence
+        (weakest evidence, always last, collapsed).
       */}
-      <div className="mt-14 grid gap-8 border-t border-line pt-10 md:grid-cols-2">
-        <DetailBlock title="트렌드 검증 (매거진 근거)">
-          {editorialMatch ? (
-            <>
-              <div className="text-lg font-semibold text-ink">{evidenceStrengthLabel(editorialMatch)}</div>
-              <div className="mt-1 text-sm text-muted">등장 기사 {editorialMatch.articlePresence}개 · 등장 매체 {editorialMatch.sourceSpread}개</div>
-              <div className="mt-1 text-xs text-muted">등장 매체 수를 함께 고려해 해석합니다.</div>
-            </>
-          ) : (
-            <div className="text-sm text-muted">국내 매거진 근거 없음</div>
-          )}
-        </DetailBlock>
-        <DetailBlock title="스토어 반응 (국내)">
-          <div className="text-sm text-muted">현재 연결된 국내 스토어 랭킹 데이터가 없습니다. 국내 데이터 소스를 준비 중입니다.</div>
-        </DetailBlock>
-      </div>
-
       <DirectAttributeSection
         directAttributes={directAttributes}
         specificItem={specificItem}
         totalArticlePresence={editorialMatch?.articlePresence ?? 0}
       />
 
-      {editorialMatch ? <EditorialEvidenceSection item={editorialMatch} cooccurrence={editorialDetail.cooccurrence} /> : null}
+      {editorialMatch ? <WhyThisItemSection item={editorialMatch} /> : null}
+
+      {editorialMatch ? <EvidenceSection item={editorialMatch} /> : null}
+
+      {/*
+        수요 검증 (NAVER Demand) block intentionally removed here - NAVER
+        Shopping Insight is not in use for now. demand-signal-service.ts and
+        its schema/tests are preserved unchanged for future reactivation.
+      */}
+      <section className="mt-14 border-t border-line pt-10">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">Trend / Store Validation</p>
+        <div className="mt-4 grid gap-8 md:grid-cols-2">
+          <DetailBlock title="트렌드 검증 (매거진 근거)">
+            {editorialMatch ? (
+              <>
+                <div className="text-lg font-semibold text-ink">{evidenceStrengthLabel(editorialMatch)}</div>
+                <div className="mt-1 text-sm text-muted">등장 기사 {editorialMatch.articlePresence}개 · 등장 매체 {editorialMatch.sourceSpread}개</div>
+                <div className="mt-1 text-xs text-muted">등장 매체 수를 함께 고려해 해석합니다.</div>
+              </>
+            ) : (
+              <div className="text-sm text-muted">국내 매거진 근거 없음</div>
+            )}
+          </DetailBlock>
+          <DetailBlock title="스토어 반응 (국내)">
+            <div className="text-sm text-muted">현재 연결된 국내 스토어 랭킹 데이터가 없습니다. 국내 데이터 소스를 준비 중입니다.</div>
+          </DetailBlock>
+        </div>
+      </section>
+
+      {editorialMatch ? <CoOccurrenceSection item={editorialMatch} cooccurrence={editorialDetail.cooccurrence} /> : null}
 
       {detail && showLegacyMarketBlock ? (
         <section className="mt-14 border-t border-line pt-10">
@@ -223,9 +237,59 @@ const COOCCURRENCE_DIMENSIONS = [
   { key: "brands", title: "브랜드" }
 ] as const;
 
-function EditorialEvidenceSection({ item, cooccurrence }: { item: EditorialTrendRow; cooccurrence: SpecificItemEditorialDetail["cooccurrence"] }) {
+function WhyThisItemSection({ item }: { item: EditorialTrendRow }) {
   const genderEntries = Object.entries(item.genderSplit).filter(([, count]) => count > 0);
+  return (
+    <section className="mt-14 border-t border-line pt-10">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">Why This Item</p>
+      <div className="mt-4 grid grid-cols-3 divide-x divide-line border-t border-line pt-4">
+        <WhyStat label="최근 14일" value={`${formatNumber(item.current14dArticlePresence ?? 0)}개 기사`} />
+        <WhyStat label="등장 매체" value={`${formatNumber(item.sourceSpread)}개`} />
+        <WhyStat label="최근 7일" value={`${formatNumber(item.current7dArticlePresence ?? 0)}개`} />
+      </div>
+      {genderEntries.length > 0 ? (
+        <div className="mt-4 text-xs text-muted">
+          기사 성별 근거: {genderEntries.map(([gender, count]) => `${mentionGenderKoreanLabel(gender)} ${count}`).join(" · ")}
+          <div className="mt-0.5">상품 자체의 성별이 아니라 기사 문맥의 명시 근거 기준입니다.</div>
+        </div>
+      ) : null}
+    </section>
+  );
+}
 
+function EvidenceSection({ item }: { item: EditorialTrendRow }) {
+  return (
+    <section className="mt-14 border-t border-line pt-10">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">Evidence</p>
+      <div className="mt-4 space-y-4">
+        {item.evidenceArticles.map((article) => (
+          <div key={`${article.source}:${article.url || article.title}`} className="flex items-start gap-3 border-t border-line pt-4 first:border-t-0 first:pt-0">
+            <ProductImage src={article.imageUrl} alt={article.title || sourceLabel(article.source)} size="md" />
+            <div className="min-w-0 flex-1">
+              <div className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
+                {sourceLabel(article.source)} · {article.publishedAt ? new Date(article.publishedAt).toISOString().slice(0, 10) : "-"}
+              </div>
+              <div className="mt-1 text-sm font-medium text-ink">{article.title}</div>
+            </div>
+            {article.url ? (
+              <a className="shrink-0 text-xs font-semibold text-signal" href={article.url} target="_blank" rel="noopener noreferrer">
+                기사 보기 ↗
+              </a>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Article co-occurrence - the weakest evidence, so it always sits last and
+ * collapsed, below TREND/STORE VALIDATION rather than being promoted to
+ * direct-attribute hierarchy. Returns null when there is nothing to show,
+ * never an empty collapsed shell.
+ */
+function CoOccurrenceSection({ item, cooccurrence }: { item: EditorialTrendRow; cooccurrence: SpecificItemEditorialDetail["cooccurrence"] }) {
   const repeatedByDimension = COOCCURRENCE_DIMENSIONS.map((dimension) => ({
     dimension,
     rows: partitionCoOccurrence(cooccurrence[dimension.key]).repeated
@@ -234,84 +298,40 @@ function EditorialEvidenceSection({ item, cooccurrence }: { item: EditorialTrend
     partitionCoOccurrence(cooccurrence[dimension.key]).oneOff.map((row) => ({ ...row, dimensionTitle: dimension.title }))
   );
   const hasAnyCoOccurrence = repeatedByDimension.length > 0 || oneOffEntries.length > 0;
+  if (!hasAnyCoOccurrence) return null;
   const repeatedCoOccurrenceCount = repeatedByDimension.reduce((sum, entry) => sum + entry.rows.length, 0);
 
   return (
-    <>
-      <section className="mt-14 border-t border-line pt-10">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">Why This Item</p>
-        <div className="mt-4 grid grid-cols-3 divide-x divide-line border-t border-line pt-4">
-          <WhyStat label="최근 14일" value={`${formatNumber(item.current14dArticlePresence ?? 0)}개 기사`} />
-          <WhyStat label="등장 매체" value={`${formatNumber(item.sourceSpread)}개`} />
-          <WhyStat label="최근 7일" value={`${formatNumber(item.current7dArticlePresence ?? 0)}개`} />
-        </div>
-        {genderEntries.length > 0 ? (
-          <div className="mt-4 text-xs text-muted">
-            기사 성별 근거: {genderEntries.map(([gender, count]) => `${mentionGenderKoreanLabel(gender)} ${count}`).join(" · ")}
-            <div className="mt-0.5">상품 자체의 성별이 아니라 기사 문맥의 명시 근거 기준입니다.</div>
+    <details className="mt-14 border-t border-line pt-10">
+      <summary className="cursor-pointer text-xs font-semibold uppercase tracking-[0.2em] text-muted">
+        기사 동반 요소 보기 · 반복 {repeatedCoOccurrenceCount}개 · 1회 {oneOffEntries.length}개
+      </summary>
+      <p className="mt-3 text-xs text-muted">같은 기사에서 함께 언급된 요소입니다. 해당 아이템의 직접 속성을 의미하지 않을 수 있습니다.</p>
+
+      {repeatedByDimension.length > 0 ? (
+        <div className="mt-4">
+          <div className="text-xs font-semibold text-ink">반복 동반 요소</div>
+          <div className="mt-3 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            {repeatedByDimension.map(({ dimension, rows }) => (
+              <CoOccurrenceCard key={dimension.key} title={dimension.title} rows={rows} totalArticlePresence={item.articlePresence} sourceContextNote={item.sourceSpread === 1} />
+            ))}
           </div>
-        ) : null}
-      </section>
-
-      {/*
-        직접 속성 근거 -> 근거 기사 -> 기사 동반 요소 순서 (co-occurrence는
-        가장 약한 근거이므로 항상 마지막에 둔다).
-      */}
-      <section className="mt-14 border-t border-line pt-10">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">Evidence</p>
-        <div className="mt-4 space-y-4">
-          {item.evidenceArticles.map((article) => (
-            <div key={`${article.source}:${article.url || article.title}`} className="flex items-start gap-3 border-t border-line pt-4 first:border-t-0 first:pt-0">
-              <ProductImage src={article.imageUrl} alt={article.title || sourceLabel(article.source)} size="md" />
-              <div className="min-w-0 flex-1">
-                <div className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
-                  {sourceLabel(article.source)} · {article.publishedAt ? new Date(article.publishedAt).toISOString().slice(0, 10) : "-"}
-                </div>
-                <div className="mt-1 text-sm font-medium text-ink">{article.title}</div>
-              </div>
-              {article.url ? (
-                <a className="shrink-0 text-xs font-semibold text-signal" href={article.url} target="_blank" rel="noopener noreferrer">
-                  기사 보기 ↗
-                </a>
-              ) : null}
-            </div>
-          ))}
         </div>
-      </section>
-
-      {hasAnyCoOccurrence ? (
-        <details className="mt-14 border-t border-line pt-10">
-          <summary className="cursor-pointer text-xs font-semibold uppercase tracking-[0.2em] text-muted">
-            기사 동반 요소 보기 · 반복 {repeatedCoOccurrenceCount}개 · 1회 {oneOffEntries.length}개
-          </summary>
-          <p className="mt-3 text-xs text-muted">같은 기사에서 함께 언급된 요소입니다. 해당 아이템의 직접 속성을 의미하지 않을 수 있습니다.</p>
-
-          {repeatedByDimension.length > 0 ? (
-            <div className="mt-4">
-              <div className="text-xs font-semibold text-ink">반복 동반 요소</div>
-              <div className="mt-3 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-                {repeatedByDimension.map(({ dimension, rows }) => (
-                  <CoOccurrenceCard key={dimension.key} title={dimension.title} rows={rows} totalArticlePresence={item.articlePresence} sourceContextNote={item.sourceSpread === 1} />
-                ))}
-              </div>
-            </div>
-          ) : null}
-
-          {oneOffEntries.length > 0 ? (
-            <div className="mt-4">
-              <div className="text-xs font-semibold text-muted">1회 동반 언급</div>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {oneOffEntries.map((row) => (
-                  <span key={`${row.dimensionTitle}:${row.value}`} className="rounded-full border border-line px-2.5 py-1 text-xs text-muted">
-                    {attributeKoreanLabel(row.value)} <span className="text-[10px] text-muted/80">· {row.dimensionTitle}</span>
-                  </span>
-                ))}
-              </div>
-            </div>
-          ) : null}
-        </details>
       ) : null}
-    </>
+
+      {oneOffEntries.length > 0 ? (
+        <div className="mt-4">
+          <div className="text-xs font-semibold text-muted">1회 동반 언급</div>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {oneOffEntries.map((row) => (
+              <span key={`${row.dimensionTitle}:${row.value}`} className="rounded-full border border-line px-2.5 py-1 text-xs text-muted">
+                {attributeKoreanLabel(row.value)} <span className="text-[10px] text-muted/80">· {row.dimensionTitle}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </details>
   );
 }
 

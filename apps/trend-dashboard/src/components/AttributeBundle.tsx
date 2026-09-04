@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ProductImage } from "@/components/ProductImage";
 import { attributeBarWidthPercent } from "@/lib/attribute-visual";
-import { attributeKoreanLabel, attributeTypeKoreanLabel, specificItemKoreanLabel } from "@/lib/korean-labels";
+import { attributeKoreanLabel, attributeTypeKoreanLabel } from "@/lib/korean-labels";
 import { bundleEvidenceStrength, type AttributeBundle, type BundleAttribute, type BundleEvidenceArticle } from "@/services/attribute-bundle-service";
 
 /**
@@ -88,37 +88,29 @@ export function AttributeChip({ attribute }: { attribute: BundleAttribute }) {
  * signal that this is the strongest thing on the page. Only rendered for a
  * genuinely REPEATED bundle (bundleArticlePresence >= 2 - the same threshold
  * bundleEvidenceStrength already uses for "반복 관측").
+ *
+ * The composed name (bundle.displayName, "재활용 원단 토트백") is the ONE
+ * dominant headline - a planner's actual final answer to "어떤 속성의 어떤
+ * 아이템인가?". It must not be preceded by a giant MATERIAL/ITEM typographic
+ * breakdown that restates the same two facts as separate headlines before
+ * the reader even reaches the combined name.
  */
 export function CurrentSignalHero({ bundle }: { bundle: AttributeBundle }) {
   const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread });
   const heroArticle = findHeroArticle(bundle);
-  const itemLabel = specificItemKoreanLabel(bundle.specificItem) ?? bundle.specificItem.replaceAll("_", " ");
 
   return (
     <div>
       <p className="text-xs font-semibold uppercase tracking-[0.22em] text-signal">Current Signal</p>
 
       {heroArticle?.evidenceImageUrl ? (
-        <div className="mt-6 flex justify-center sm:justify-start">
+        <div className="mt-5 flex justify-center sm:justify-start">
           <BundleHeroImage heroArticle={heroArticle} alt={bundle.displayName} size="lg" />
         </div>
-      ) : (
-        <div className="mt-6 grid gap-x-10 gap-y-6 sm:grid-cols-2">
-          {bundle.directAttributes.map((attribute) => (
-            <div key={`${attribute.type}:${attribute.value}`}>
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">{attribute.type}</div>
-              <div className="mt-1 text-4xl font-bold leading-[1.05] text-ink md:text-5xl">{attributeKoreanLabel(attribute.value)}</div>
-            </div>
-          ))}
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">Item</div>
-            <div className="mt-1 text-4xl font-bold leading-[1.05] text-ink md:text-5xl">{itemLabel}</div>
-          </div>
-        </div>
-      )}
+      ) : null}
 
-      <h2 className="mt-8 text-3xl font-semibold leading-tight text-ink md:text-4xl">{bundle.displayName}</h2>
-      <p className="mt-1 text-xs font-medium uppercase tracking-[0.14em] text-muted">{englishSubtitle(bundle)}</p>
+      <h2 className="mt-4 text-4xl font-bold leading-[1.05] text-ink md:text-6xl">{bundle.displayName}</h2>
+      <p className="mt-2 text-xs font-medium uppercase tracking-[0.14em] text-muted">{englishSubtitle(bundle)}</p>
 
       <div className="mt-5">
         <EvidenceDots sourceSpread={bundle.bundleSourceSpread} articlePresence={bundle.bundleArticlePresence} label={strength} />
