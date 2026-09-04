@@ -150,6 +150,31 @@ export function evidenceStrengthLabel(row: {
   return "관찰 시작";
 }
 
+// No domestic verified STORE source exists yet, so a specific-item detail
+// page must never show the legacy market ranking/assortment block as if it
+// were domestic evidence. It may only render when at least one row actually
+// carries real overseas verified-ranking evidence (END/RAKUTEN_FASHION); an
+// empty or assortment-only product list must hide the block entirely rather
+// than showing placeholder values like STABLE/INSUFFICIENT_DATA/0.
+export function hasVerifiedMarketEvidence(rows: Array<{ rankingVerified: boolean }>): boolean {
+  return rows.some((row) => row.rankingVerified);
+}
+
+// Editorial mention-level gender evidence copy for user-facing UI. This is
+// deliberately separate from planningGenderLabel (used for the UNI/WOMEN
+// filter tabs and demand rows) so that changing this wording never touches
+// the filter bar or /demand page copy.
+export function mentionGenderKoreanLabel(value: string) {
+  const labels: Record<string, string> = {
+    UNKNOWN: "미상",
+    WOMEN: "우먼",
+    MEN: "맨",
+    MIXED: "혼합",
+    UNISEX: "유니섹스"
+  };
+  return labels[value] ?? value;
+}
+
 // Plain-language "왜 이 아이템" evidence lines for a specific-item detail page.
 // Every line must be traceable to real EditorialTrendRow fields - no inferred
 // or aspirational trend language (see evidenceStrengthLabel above).

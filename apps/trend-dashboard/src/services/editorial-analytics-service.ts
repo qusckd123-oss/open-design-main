@@ -31,7 +31,7 @@ export type EditorialTrendRow = {
   signal: "BASELINE" | "EARLY_DATA";
 };
 
-export type EditorialCoOccurrence = { value: string; articlePresence: number };
+export type EditorialCoOccurrence = { value: string; articlePresence: number; sourceSpread: number };
 
 export type SpecificItemEditorialDetail = {
   specificItem: string;
@@ -91,14 +91,23 @@ export async function getSpecificItemEditorialDetail(specificItem: string, dataM
 
   const coMentions = await prisma.editorialMention.findMany({
     where: { postId: { in: postIds }, type: { in: ["DETAIL", "MATERIAL", "COLOR", "STYLE", "BRAND"] } },
-    select: { type: true, value: true }
+    select: { type: true, value: true, post: { select: { source: true } } }
   });
 
-  const buckets: Record<string, Map<string, number>> = { DETAIL: new Map(), MATERIAL: new Map(), COLOR: new Map(), STYLE: new Map(), BRAND: new Map() };
+  const buckets: Record<string, Map<string, { articlePresence: number; sources: Set<string> }>> = {
+    DETAIL: new Map(),
+    MATERIAL: new Map(),
+    COLOR: new Map(),
+    STYLE: new Map(),
+    BRAND: new Map()
+  };
   for (const mention of coMentions) {
     const bucket = buckets[mention.type];
     if (!bucket) continue;
-    bucket.set(mention.value, (bucket.get(mention.value) ?? 0) + 1);
+    const entry = bucket.get(mention.value) ?? { articlePresence: 0, sources: new Set<string>() };
+    entry.articlePresence += 1;
+    entry.sources.add(mention.post.source);
+    bucket.set(mention.value, entry);
   }
 
   return {
@@ -114,10 +123,24 @@ export async function getSpecificItemEditorialDetail(specificItem: string, dataM
   };
 }
 
-function sortCoOccurrence(counts: Map<string, number>): EditorialCoOccurrence[] {
+function sortCoOccurrence(counts: Map<string, { articlePresence: number; sources: Set<string> }>): EditorialCoOccurrence[] {
   return [...counts.entries()]
-    .map(([value, articlePresence]) => ({ value, articlePresence }))
+    .map(([value, entry]) => ({ value, articlePresence: entry.articlePresence, sourceSpread: entry.sources.size }))
     .sort((a, b) => b.articlePresence - a.articlePresence || a.value.localeCompare(b.value));
+}
+
+/**
+ * Splits co-occurrence rows into "repeated" (>= threshold distinct articles -
+ * a real recurring pattern) vs "one-off" (a single-article sighting). One-off
+ * rows must never be presented with the same visual weight as repeated ones,
+ * since a single co-mention does not establish that the attribute belongs to
+ * the specific item itself - only that it appeared in the same article.
+ */
+export function partitionCoOccurrence(rows: EditorialCoOccurrence[], threshold = 2): { repeated: EditorialCoOccurrence[]; oneOff: EditorialCoOccurrence[] } {
+  return {
+    repeated: rows.filter((row) => row.articlePresence >= threshold),
+    oneOff: rows.filter((row) => row.articlePresence < threshold)
+  };
 }
 
 export function aggregateEditorialMentions(

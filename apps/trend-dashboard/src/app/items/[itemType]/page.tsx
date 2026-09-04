@@ -2,12 +2,37 @@ import Link from "next/link";
 import { ProductImage } from "@/components/ProductImage";
 import { ProductLinkButton } from "@/components/ProductLinkButton";
 import { formatCurrency, formatNumber } from "@/lib/format";
-import { editorialWhyThisItemLines, evidenceStrengthLabel, planningGenderLabel, sourceLabel, trendValueLabel } from "@/lib/market-ui";
+import { editorialWhyThisItemLines, evidenceStrengthLabel, hasVerifiedMarketEvidence, mentionGenderKoreanLabel, sourceLabel, trendValueLabel } from "@/lib/market-ui";
 import { getItemTrendDetail } from "@/services/business-analytics-service";
 import type { EditorialCoOccurrence, EditorialTrendRow, SpecificItemEditorialDetail } from "@/services/editorial-analytics-service";
-import { getSpecificItemEditorialDetail } from "@/services/editorial-analytics-service";
+import { getSpecificItemEditorialDetail, partitionCoOccurrence } from "@/services/editorial-analytics-service";
 
 type PageProps = { params: Promise<{ itemType: string }> };
+
+// Korean display titles for known specific items (SUB_ITEM taxonomy values
+// only, see src/collectors/editorial/mentions.ts). Broad item-type pages
+// (e.g. /items/JACKET) keep their existing label - this map intentionally
+// does not attempt to translate the broader ItemType vocabulary, which uses
+// a different, only partially-overlapping set of category names. Taxonomy
+// keys themselves are never changed; this is display-only.
+const specificItemKoreanTitles: Record<string, string> = {
+  BODY_BAG: "보디백",
+  BACKPACK: "백팩",
+  SHOULDER_BAG: "숄더백",
+  TOTE_BAG: "토트백",
+  TRACK_JACKET: "트랙 재킷",
+  COACH_JACKET: "코치 재킷",
+  WORK_JACKET: "워크 재킷",
+  RINGER_TEE: "링거 티셔츠",
+  LONG_SLEEVE_TEE: "긴팔 티셔츠",
+  RUGBY_SHIRT: "럭비 셔츠",
+  WIDE_DENIM: "와이드 데님",
+  WIDE_PANTS: "와이드 팬츠",
+  KNIT_BEANIE: "니트 비니",
+  CAMP_CAP: "캠프 캡",
+  BALL_CAP: "볼캡",
+  BUCKET_HAT: "버킷햇"
+};
 
 export default async function ItemDetailPage({ params }: PageProps) {
   const { itemType } = await params;
@@ -21,13 +46,17 @@ export default async function ItemDetailPage({ params }: PageProps) {
     );
   }
   const editorialMatch = editorialDetail.trend;
+  const koreanTitle = detail.item.subItemType ? specificItemKoreanTitles[detail.item.subItemType] : undefined;
+  const showLegacyMarketBlock = hasVerifiedMarketEvidence(detail.products);
 
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-signal">세부 아이템 근거</p>
-        <h1 className="mt-2 text-3xl font-semibold">{detail.item.label}</h1>
-        <p className="mt-2 text-sm text-muted">랭킹 신호와 어소트먼트 노출, 매거진 근거를 구분해서 보여줍니다.</p>
+        <Link className="text-xs font-semibold text-signal" href="/items">← 세부 아이템 트렌드</Link>
+        <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-signal">세부 아이템 근거</p>
+        <h1 className="mt-2 text-3xl font-semibold">{koreanTitle ?? detail.item.label}</h1>
+        {koreanTitle ? <p className="mt-1 text-xs uppercase tracking-[0.1em] text-muted">{detail.item.label}</p> : null}
+        <p className="mt-2 text-sm text-muted">매거진 근거를 우선으로 보여주고, 실제 검증된 해외 참고 랭킹 데이터가 있을 때만 별도로 표시합니다.</p>
       </div>
 
       {/*
@@ -54,54 +83,61 @@ export default async function ItemDetailPage({ params }: PageProps) {
 
       {editorialMatch ? <EditorialEvidenceSection item={editorialMatch} cooccurrence={editorialDetail.cooccurrence} /> : null}
 
-      <section className="grid gap-4 md:grid-cols-5">
-        <Metric label="Ranking Signal" value={detail.item.rankingSignal} />
-        <Metric label="Assortment Signal" value={detail.item.assortmentSignal} />
-        <Metric label="TOP10 Presence" value={formatNumber(detail.item.top10Presence)} />
-        <Metric label="TOP20 Presence" value={formatNumber(detail.item.top20Presence)} />
-        <Metric label="TOP50 Presence" value={formatNumber(detail.item.top50Presence)} />
-      </section>
-      <section className="grid gap-6 xl:grid-cols-3">
-        <Summary title="Sources" rows={detail.sourceSummary} />
-        <Summary title="Brands" rows={detail.brandSummary} />
-        <Summary title="Colors" rows={detail.colorSummary} />
-        <Summary title="Fits" rows={detail.fitSummary} />
-        <Summary title="Graphics" rows={detail.graphicSummary} />
-        <Summary title="Details" rows={detail.detailSummary} />
-      </section>
-      <section className="rounded border border-line bg-white p-5 shadow-subtle">
-        <div className="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-muted">Product Presence</div>
-        <div className="overflow-auto">
-          <table className="w-full min-w-[980px] text-sm">
-            <thead className="bg-slate-50 text-xs uppercase tracking-[0.08em] text-muted">
-              <tr>{["Product", "Source", "Metric", "Scope Rank", "Category", "Presence", "Price", "Signal"].map((head) => <th key={head} className="border-b border-line px-3 py-2 text-left">{head}</th>)}</tr>
-            </thead>
-            <tbody>
-              {detail.products.map((row) => (
-                <tr key={row.id} className="border-b border-line last:border-b-0">
-                  <td className="px-3 py-3">
-                    <div className="flex items-center gap-3">
-                      <ProductImage src={row.imageUrl} alt={row.name} size="sm" />
-                      <div>
-                        <div className="text-xs font-semibold text-muted">{row.brand}</div>
-                        <div className="font-semibold">{row.name}</div>
-                        <div className="mt-1"><ProductLinkButton url={row.url} /></div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-3 py-3">{row.source}</td>
-                  <td className="px-3 py-3">{row.metricType}</td>
-                  <td className="px-3 py-3">{row.rankingVerified ? scopeRankLabel(row) : row.sourcePosition ?? "-"}</td>
-                  <td className="px-3 py-3">{row.observedCategory ?? row.category ?? "-"}</td>
-                  <td className="px-3 py-3">{row.presenceStatus}</td>
-                  <td className="px-3 py-3">{formatCurrency(row.salePrice)}</td>
-                  <td className="px-3 py-3 font-semibold">{row.signal}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
+      {showLegacyMarketBlock ? (
+        <section className="space-y-4">
+          <div className="rounded border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+            아래는 <strong>해외 참고</strong> 데이터입니다 (END/Rakuten 등 검증된 해외 랭킹 소스 기준). 국내 판매/재고 데이터가 아니며, 위 &quot;스토어 반응 (국내)&quot;와는 별개 축입니다.
+          </div>
+          <div className="grid gap-4 md:grid-cols-5">
+            <Metric label="Ranking Signal (해외 참고)" value={detail.item.rankingSignal} />
+            <Metric label="Assortment Signal (해외 참고)" value={detail.item.assortmentSignal} />
+            <Metric label="TOP10 Presence" value={formatNumber(detail.item.top10Presence)} />
+            <Metric label="TOP20 Presence" value={formatNumber(detail.item.top20Presence)} />
+            <Metric label="TOP50 Presence" value={formatNumber(detail.item.top50Presence)} />
+          </div>
+          <div className="grid gap-6 xl:grid-cols-3">
+            <Summary title="Sources" rows={detail.sourceSummary} />
+            <Summary title="Brands" rows={detail.brandSummary} />
+            <Summary title="Colors" rows={detail.colorSummary} />
+            <Summary title="Fits" rows={detail.fitSummary} />
+            <Summary title="Graphics" rows={detail.graphicSummary} />
+            <Summary title="Details" rows={detail.detailSummary} />
+          </div>
+          <div className="rounded border border-line bg-white p-5 shadow-subtle">
+            <div className="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-muted">Product Presence (해외 참고)</div>
+            <div className="overflow-auto">
+              <table className="w-full min-w-[980px] text-sm">
+                <thead className="bg-slate-50 text-xs uppercase tracking-[0.08em] text-muted">
+                  <tr>{["Product", "Source", "Metric", "Scope Rank", "Category", "Presence", "Price", "Signal"].map((head) => <th key={head} className="border-b border-line px-3 py-2 text-left">{head}</th>)}</tr>
+                </thead>
+                <tbody>
+                  {detail.products.map((row) => (
+                    <tr key={row.id} className="border-b border-line last:border-b-0">
+                      <td className="px-3 py-3">
+                        <div className="flex items-center gap-3">
+                          <ProductImage src={row.imageUrl} alt={row.name} size="sm" />
+                          <div>
+                            <div className="text-xs font-semibold text-muted">{row.brand}</div>
+                            <div className="font-semibold">{row.name}</div>
+                            <div className="mt-1"><ProductLinkButton url={row.url} /></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-3 py-3">{row.source}</td>
+                      <td className="px-3 py-3">{row.metricType}</td>
+                      <td className="px-3 py-3">{row.rankingVerified ? scopeRankLabel(row) : row.sourcePosition ?? "-"}</td>
+                      <td className="px-3 py-3">{row.observedCategory ?? row.category ?? "-"}</td>
+                      <td className="px-3 py-3">{row.presenceStatus}</td>
+                      <td className="px-3 py-3">{formatCurrency(row.salePrice)}</td>
+                      <td className="px-3 py-3 font-semibold">{row.signal}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }
@@ -130,9 +166,27 @@ function Summary({ title, rows }: { title: string; rows: Array<{ name: string; c
   );
 }
 
+const COOCCURRENCE_DIMENSIONS = [
+  { key: "details", title: "디테일" },
+  { key: "materials", title: "소재" },
+  { key: "colors", title: "컬러" },
+  { key: "styles", title: "스타일" },
+  { key: "brands", title: "브랜드" }
+] as const;
+
 function EditorialEvidenceSection({ item, cooccurrence }: { item: EditorialTrendRow; cooccurrence: SpecificItemEditorialDetail["cooccurrence"] }) {
   const genderEntries = Object.entries(item.genderSplit).filter(([, count]) => count > 0);
   const whyLines = editorialWhyThisItemLines(item);
+
+  const repeatedByDimension = COOCCURRENCE_DIMENSIONS.map((dimension) => ({
+    dimension,
+    rows: partitionCoOccurrence(cooccurrence[dimension.key]).repeated
+  })).filter((entry) => entry.rows.length > 0);
+  const oneOffEntries = COOCCURRENCE_DIMENSIONS.flatMap((dimension) =>
+    partitionCoOccurrence(cooccurrence[dimension.key]).oneOff.map((row) => ({ ...row, dimensionTitle: dimension.title }))
+  );
+  const hasAnyCoOccurrence = repeatedByDimension.length > 0 || oneOffEntries.length > 0;
+
   return (
     <section className="space-y-4">
       <div className="rounded border border-line bg-white p-5 shadow-subtle">
@@ -144,20 +198,40 @@ function EditorialEvidenceSection({ item, cooccurrence }: { item: EditorialTrend
         </ul>
         {genderEntries.length > 0 ? (
           <div className="mt-3 text-xs text-muted">
-            성별 근거(명시적 evidence 기준): {genderEntries.map(([gender, count]) => `${planningGenderLabel(gender)} ${count}`).join(" · ")}
+            기사 성별 근거: {genderEntries.map(([gender, count]) => `${mentionGenderKoreanLabel(gender)} ${count}`).join(" · ")}
+            <div className="mt-0.5">상품 자체의 성별이 아니라 기사 문맥의 명시 근거 기준입니다.</div>
           </div>
         ) : null}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <CoOccurrenceCard title="같이 등장한 디테일" rows={cooccurrence.details} />
-        <CoOccurrenceCard title="같이 등장한 소재" rows={cooccurrence.materials} />
-        <CoOccurrenceCard title="같이 등장한 컬러" rows={cooccurrence.colors} />
-        <CoOccurrenceCard title="같이 등장한 스타일" rows={cooccurrence.styles} />
-      </div>
-      {cooccurrence.brands.length > 0 ? (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <CoOccurrenceCard title="언급된 브랜드" rows={cooccurrence.brands} />
+      {hasAnyCoOccurrence ? (
+        <div className="rounded border border-line bg-white p-5 shadow-subtle">
+          <div className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">함께 언급된 요소</div>
+          <p className="mt-1 text-xs text-muted">같은 기사에서 함께 언급된 요소입니다. 해당 아이템의 직접 속성을 의미하지 않을 수 있습니다.</p>
+
+          {repeatedByDimension.length > 0 ? (
+            <div className="mt-4">
+              <div className="text-xs font-semibold text-ink">반복 동반 요소</div>
+              <div className="mt-2 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                {repeatedByDimension.map(({ dimension, rows }) => (
+                  <CoOccurrenceCard key={dimension.key} title={dimension.title} rows={rows} totalArticlePresence={item.articlePresence} sourceContextNote={item.sourceSpread === 1} />
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {oneOffEntries.length > 0 ? (
+            <div className="mt-4">
+              <div className="text-xs font-semibold text-muted">1회 동반 언급</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {oneOffEntries.map((row) => (
+                  <span key={`${row.dimensionTitle}:${row.value}`} className="rounded-full border border-line bg-slate-50 px-2.5 py-1 text-xs text-muted">
+                    {trendValueLabel(row.value)} <span className="text-[10px] text-muted/80">· {row.dimensionTitle}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
       ) : null}
 
@@ -185,22 +259,23 @@ function EditorialEvidenceSection({ item, cooccurrence }: { item: EditorialTrend
   );
 }
 
-function CoOccurrenceCard({ title, rows }: { title: string; rows: EditorialCoOccurrence[] }) {
+function CoOccurrenceCard({ title, rows, totalArticlePresence, sourceContextNote }: { title: string; rows: EditorialCoOccurrence[]; totalArticlePresence: number; sourceContextNote: boolean }) {
   return (
     <div className="rounded border border-line bg-white p-4 shadow-subtle">
       <div className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">{title}</div>
-      {rows.length === 0 ? (
-        <div className="mt-2 text-xs text-muted">같이 등장한 근거 없음</div>
-      ) : (
-        <div className="mt-2 space-y-1.5">
-          {rows.slice(0, 5).map((row) => (
-            <div key={row.value} className="flex items-center justify-between text-sm">
+      <div className="mt-2 space-y-2">
+        {rows.slice(0, 5).map((row) => (
+          <div key={row.value} className="text-sm">
+            <div className="flex items-center justify-between">
               <span className="font-medium">{trendValueLabel(row.value)}</span>
-              <span className="text-xs text-muted">{row.articlePresence}개 기사</span>
+              <span className="text-xs text-muted">
+                {row.articlePresence}/{totalArticlePresence}개 기사{row.sourceSpread > 0 ? ` · ${row.sourceSpread}개 매체` : ""}
+              </span>
             </div>
-          ))}
-        </div>
-      )}
+            {sourceContextNote && row.sourceSpread <= 1 ? <div className="text-[11px] text-muted">특정 매체 집중 - 다수 매체 공통 아님</div> : null}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

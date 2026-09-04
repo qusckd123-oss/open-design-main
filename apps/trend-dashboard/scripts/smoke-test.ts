@@ -6,13 +6,13 @@ import { inferEditorialGender } from "../src/collectors/editorial/gender";
 import { extractEditorialMentions } from "../src/collectors/editorial/mentions";
 import { classifyFashionRelevance, parseArticlePage, parseGenericSitemap, parseNewsSitemap, parseRssItems, parseSitemapIndex } from "../src/collectors/editorial/rss";
 import { editorialSourceConfigs } from "../src/config/editorial-sources";
-import { aggregateEditorialMentions, auditUnmatchedFashionPhrases, getSpecificItemEditorialDetail } from "../src/services/editorial-analytics-service";
+import { aggregateEditorialMentions, auditUnmatchedFashionPhrases, getSpecificItemEditorialDetail, partitionCoOccurrence } from "../src/services/editorial-analytics-service";
 import { classifyDomesticTrendDemandInsight, classifyPlanningInsight, getPlanningDashboardData, matchesPlanningGender, planningItemKey } from "../src/services/planning-dashboard-service";
 import { getDemandSignalRows, getNaverCredentialStatus } from "../src/services/demand-signal-service";
 import { fashionKeywordSeeds } from "../src/collectors/naver/keywords";
 import { categoryOfItemType, categoryOfSpecificItem, isKnownSpecificItem, matchesCategoryFilter } from "../src/config/taxonomy";
 import { matchesGenderFilterValue } from "../src/lib/planning-filters";
-import { evidenceStrengthLabel } from "../src/lib/market-ui";
+import { evidenceStrengthLabel, hasVerifiedMarketEvidence } from "../src/lib/market-ui";
 import { extractEndHits, inferRankingCategory, normalizeEndHit, verifyBestsellerSemantic } from "../src/collectors/market/end";
 import { normalizeShopifyProduct } from "../src/collectors/market/normalize";
 import { extractRakutenRankingItems, inferRakutenRankingCategory, normalizeRakutenRankingItem, parseRakutenItemDetails, verifyRakutenRankingSemantic } from "../src/collectors/market/rakuten-fashion";
@@ -44,6 +44,7 @@ async function main() {
   await verifyRakutenFashionCollectorHelpers();
   verifyEditorialHelpers();
   await verifySpecificItemEditorialCoOccurrence();
+  verifyLegacyMarketBlockVisibility();
   verifyPlanningDashboardHelpers();
   verifyDomesticFirstTaxonomy();
   verifyEvidenceStrengthLabels();
@@ -562,28 +563,66 @@ async function verifySpecificItemEditorialCoOccurrence() {
       dataMode: "real"
     }
   });
+  // Same source as postA - repeated STYLE co-occurrence must still count as
+  // sourceSpread=1 for that value (both mentions come from source1), never
+  // "다수 매체 공통".
+  const postC = await prisma.editorialPost.create({
+    data: {
+      source: source1,
+      externalPostId: "cooccur-c",
+      url: "https://example.com/cooccur-c",
+      canonicalUrl: "https://example.com/cooccur-c",
+      title: "Test cooccur item styled sporty",
+      publishedAt: new Date(),
+      fashionRelevance: "FASHION_RELEVANT",
+      dataMode: "real"
+    }
+  });
   await prisma.editorialMention.createMany({
     data: [
       { postId: postA.id, type: "SUB_ITEM", value: "TEST_COOCCUR_ITEM", audienceGender: "UNKNOWN" },
       { postId: postA.id, type: "DETAIL", value: "STRIPE", audienceGender: "UNKNOWN" },
+      { postId: postA.id, type: "STYLE", value: "SPORTY", audienceGender: "UNKNOWN" },
       { postId: postB.id, type: "SUB_ITEM", value: "TEST_COOCCUR_ITEM", audienceGender: "UNKNOWN" },
-      { postId: postB.id, type: "MATERIAL", value: "DENIM", audienceGender: "UNKNOWN" }
+      { postId: postB.id, type: "MATERIAL", value: "DENIM", audienceGender: "UNKNOWN" },
+      { postId: postC.id, type: "SUB_ITEM", value: "TEST_COOCCUR_ITEM", audienceGender: "UNKNOWN" },
+      { postId: postC.id, type: "STYLE", value: "SPORTY", audienceGender: "UNKNOWN" }
     ]
   });
 
   const detail = await getSpecificItemEditorialDetail("TEST_COOCCUR_ITEM", "real");
   assert.ok(detail.trend, "A specific item with real evidence must resolve a trend row.");
-  assert.equal(detail.trend?.articlePresence, 2, "Co-occurrence detail must reuse the same article-presence math as the trend row (2 distinct posts).");
-  assert.equal(detail.trend?.sourceSpread, 2, "Two distinct sources must be counted as sourceSpread=2.");
+  assert.equal(detail.trend?.articlePresence, 3, "Co-occurrence detail must reuse the same article-presence math as the trend row (3 distinct posts).");
+  assert.equal(detail.trend?.sourceSpread, 2, "Two distinct sources (source1 used twice, source2 once) must be counted as sourceSpread=2.");
   const stripe = detail.cooccurrence.details.find((row) => row.value === "STRIPE");
-  assert.equal(stripe?.articlePresence, 1, "STRIPE co-occurs in exactly one of the two articles - must not be inflated by duplicate mention rows.");
+  assert.equal(stripe?.articlePresence, 1, "STRIPE co-occurs in exactly one article - must not be inflated by duplicate mention rows.");
   const denim = detail.cooccurrence.materials.find((row) => row.value === "DENIM");
   assert.equal(denim?.articlePresence, 1, "DENIM must appear as a MATERIAL co-occurrence, not mixed into DETAIL.");
   assert.equal(detail.cooccurrence.details.some((row) => row.value === "DENIM"), false, "DENIM (a MATERIAL) must never leak into the DETAIL co-occurrence bucket.");
   assert.equal(detail.cooccurrence.colors.length, 0, "No COLOR mentions were seeded, so the colors bucket must stay empty rather than fabricate evidence.");
 
+  const sporty = detail.cooccurrence.styles.find((row) => row.value === "SPORTY");
+  assert.equal(sporty?.articlePresence, 2, "SPORTY co-occurs in 2 distinct articles (postA, postC).");
+  assert.equal(sporty?.sourceSpread, 1, "Both SPORTY-co-occurring articles come from source1, so sourceSpread must stay 1, not 2.");
+
+  const { repeated: repeatedStyles, oneOff: oneOffStyles } = partitionCoOccurrence(detail.cooccurrence.styles);
+  assert.ok(repeatedStyles.some((row) => row.value === "SPORTY"), "SPORTY (articlePresence=2) must land in the repeated bucket.");
+  assert.equal(oneOffStyles.length, 0, "No one-off STYLE co-occurrence was seeded in this fixture.");
+  const { repeated: repeatedDetails, oneOff: oneOffDetails } = partitionCoOccurrence(detail.cooccurrence.details);
+  assert.equal(repeatedDetails.length, 0, "STRIPE (articlePresence=1) must not land in the repeated bucket.");
+  assert.ok(oneOffDetails.some((row) => row.value === "STRIPE"), "STRIPE (articlePresence=1) must land in the one-off bucket.");
+  const { repeated: repeatedMaterials, oneOff: oneOffMaterials } = partitionCoOccurrence(detail.cooccurrence.materials);
+  assert.equal(repeatedMaterials.length, 0, "DENIM (articlePresence=1) must not land in the repeated bucket.");
+  assert.ok(oneOffMaterials.some((row) => row.value === "DENIM"), "DENIM (articlePresence=1) must land in the one-off bucket.");
+
   await prisma.editorialMention.deleteMany({ where: { post: { source: { in: [source1, source2] } } } });
   await prisma.editorialPost.deleteMany({ where: { source: { in: [source1, source2] } } });
+}
+
+function verifyLegacyMarketBlockVisibility() {
+  assert.equal(hasVerifiedMarketEvidence([]), false, "An item with zero market rows must hide the legacy ranking/assortment block.");
+  assert.equal(hasVerifiedMarketEvidence([{ rankingVerified: false }]), false, "Assortment-only rows (SLAM_JAM/STUSSY, rankingVerified=false) must not unlock the legacy block - it is not verified ranking evidence.");
+  assert.equal(hasVerifiedMarketEvidence([{ rankingVerified: false }, { rankingVerified: true }]), true, "At least one real overseas verified-ranking row (END/RAKUTEN_FASHION) must unlock the legacy block.");
 }
 
 function verifyPlanningDashboardHelpers() {
