@@ -25,6 +25,7 @@ export async function collectEditorialFeed(source: EditorialSource, limit = 30, 
   const config = editorialSourceConfigs[source];
   if (source === "EYESMAG") return collectEyesmag(limit, options);
   if (source === "NONLABEL") return collectNonlabel(limit);
+  if (source === "VISLA") return collectVisla(limit, options);
   const response = await fetch(config.feedUrl, {
     headers: {
       "User-Agent": "TrendSignalDashboard/0.1 (+editorial source audit)",
@@ -41,7 +42,9 @@ export async function collectEditorialFeed(source: EditorialSource, limit = 30, 
     const title = decodeEntities(stripHtml(item.title));
     const url = canonicalizeUrl(item.link || item.guid || "");
     const imageUrl = extractImage(item.content || item.description || "");
-    const sourceCategory = source === "VISLA" || source === "HYPEBEAST_KR" ? "fashion" : null;
+    // VISLA is handled by collectVisla above; this generic path now only
+    // ever runs for HYPEBEAST_KR.
+    const sourceCategory = source === "HYPEBEAST_KR" ? "fashion" : null;
     const audienceGender = inferEditorialGender({ sourceCategory, title, text });
     const mentions = extractEditorialMentions({ title, text, postGender: audienceGender });
     const fashionRelevance = classifyFashionRelevance({ sourceCategory, title, text, mentionCount: mentions.length });
@@ -72,7 +75,13 @@ async function collectEyesmag(limit: number, options: EditorialCollectOptions): 
       const html = await fetchText(entry.url);
       const article = parseArticlePage(html, entry.url);
       const title = article.title || entry.title;
-      const text = article.text || "";
+      // parseArticlePage's `text` is the SEO meta description (a one-line
+      // tagline, ~15 chars median on EYESMAG) - not the article body. The
+      // real body is publicly embedded as a TipTap editor document in the
+      // page's own Next.js hydration payload (__NEXT_DATA__), which every
+      // browser loading the page already receives. Prefer it when present.
+      const richBody = parseEyesmagRichBody(html);
+      const text = (richBody && richBody.length > article.text.length ? richBody : article.text) || "";
       const audienceGender = inferEditorialGender({ title, text });
       const mentions = extractEditorialMentions({ title, text, postGender: audienceGender });
       const fashionRelevance = classifyFashionRelevance({ title, text, mentionCount: mentions.length });
@@ -193,6 +202,147 @@ export function parseGenericSitemap(xml: string) {
   return [...xml.matchAll(/<url>[\s\S]*?<loc>(.*?)<\/loc>[\s\S]*?(?:<lastmod>(.*?)<\/lastmod>)?[\s\S]*?<\/url>/g)]
     .map((match) => ({ url: decodeEntities(match[1] ?? ""), publishedAt: match[2] ?? "", title: "" }))
     .filter((entry) => entry.url);
+}
+
+/**
+ * EYESMAG's article pages are Next.js (`getStaticProps`), and the page's own
+ * `__NEXT_DATA__` hydration script - sent to every browser that loads the
+ * page, not a private/undocumented endpoint - embeds the full post under
+ * `props.pageProps.initialPost`. Its `content` field is a TipTap/ProseMirror
+ * JSON document (`contentFormat: "TIPTAP"`): `{ type: "doc", content: [...] }`
+ * with node types such as `paragraph`, `heading`, `text`, `slider` (image
+ * gallery, no body text), and `embed` (social embed, no body text). Walking
+ * only `text` nodes and skipping unknown node types naturally excludes nav,
+ * footer, related-article, and share-widget chrome, since none of that is
+ * part of the article's own content document.
+ */
+export function parseEyesmagRichBody(html: string): string | null {
+  const match = html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/);
+  if (!match?.[1]) return null;
+  let data: unknown;
+  try {
+    data = JSON.parse(match[1]);
+  } catch {
+    return null;
+  }
+  const content = (data as { props?: { pageProps?: { initialPost?: { content?: unknown } } } })?.props?.pageProps?.initialPost?.content;
+  if (typeof content !== "string" || !content.trim()) return null;
+  let doc: unknown;
+  try {
+    doc = JSON.parse(content);
+  } catch {
+    return null;
+  }
+  const parts: string[] = [];
+  walkTipTapNode(doc, parts);
+  const text = parts.join("").replace(/\s+/g, " ").trim();
+  return text || null;
+}
+
+const TIPTAP_BLOCK_TYPES = new Set(["paragraph", "heading", "listItem", "blockquote"]);
+
+function walkTipTapNode(node: unknown, out: string[]): void {
+  if (!node || typeof node !== "object") return;
+  const record = node as { type?: unknown; text?: unknown; content?: unknown };
+  if (record.type === "text" && typeof record.text === "string") out.push(record.text);
+  if (Array.isArray(record.content)) {
+    for (const child of record.content) walkTipTapNode(child, out);
+    if (typeof record.type === "string" && TIPTAP_BLOCK_TYPES.has(record.type)) out.push(" ");
+  }
+}
+
+/**
+ * VISLA is standard WordPress: the full body is plain, publicly visible HTML
+ * inside `<div class="entry-content ...">`. There is no JSON-LD `articleBody`
+ * and no `content:encoded` in the RSS feed (confirmed by direct feed
+ * inspection), so this source needs its own article-page fetch, mirroring
+ * how EYESMAG/NONLABEL already work.
+ *
+ * The region is cut at the first of a fixed set of trailing boilerplate
+ * markers (hashtag run, "VISLA Magazine" byline block, "SHARE THIS ARTICLE"
+ * widget) rather than trying to find the div's true closing tag - VISLA's
+ * markup nests multiple `<div>` blocks (image sliders) inside entry-content,
+ * so a naive first-closing-`</div>` match would truncate the article, and a
+ * full HTML parser is out of scope here. The stop markers are searched only
+ * in the trailing portion of the region so they can never cut a legitimate
+ * early mention of, say, a brand hashtag inside the actual article body.
+ */
+/** Public og:image lookup, exposed for the safe-refresh script (VISLA's RSS feed carries no image at all; the article page's own og:image is a real quality improvement, not a fabricated one). */
+export function extractOgImage(html: string): string | null {
+  return stringMeta(html, "og:image") || null;
+}
+
+export function parseVislaRichBody(html: string): string | null {
+  const classMatch = html.match(/<div[^>]+class="[^"]*\bentry-content\b[^"]*"[^>]*>/);
+  if (!classMatch || classMatch.index === undefined) return null;
+  const startMarker = classMatch.index + classMatch[0].length;
+  // Cap the window generously (an unusually long feature article) but the
+  // real cut almost always comes from a stop marker well before this.
+  const regionEnd = Math.min(html.length, startMarker + 60000);
+  // Strip tags BEFORE looking for stop markers: the tag list ("#HYUNHXEE
+  // #visla ...") is rendered as separate <a> elements per tag, so the raw
+  // markup has HTML between hashtags that breaks a whitespace-only pattern.
+  // Once flattened to plain text, the tag run becomes contiguous and the
+  // FIRST occurrence of any marker reliably lands right after the real
+  // article content, before any "more articles" teaser section further down
+  // the page.
+  const plain = stripHtml(html.slice(startMarker, regionEnd));
+  // "# HYUNHXEE # visla department store ..." - the site renders a space
+  // between "#" and the tag word, so the pattern must allow for it.
+  const stopPatterns = [/(?:#\s*\S+\s+){2,}/, /VISLA Magazine/, /SHARE THIS ARTICLE/i];
+  let cutAt = plain.length;
+  for (const pattern of stopPatterns) {
+    const found = plain.match(pattern);
+    if (found?.index !== undefined) cutAt = Math.min(cutAt, found.index);
+  }
+  const text = plain.slice(0, cutAt).trim();
+  return text || null;
+}
+
+async function collectVisla(limit: number, options: EditorialCollectOptions): Promise<EditorialCollectedPost[]> {
+  const config = editorialSourceConfigs.VISLA;
+  const response = await fetch(config.feedUrl, {
+    headers: { "User-Agent": "TrendSignalDashboard/0.1 (+editorial source audit)", Accept: "application/rss+xml, application/xml, text/xml, */*" }
+  });
+  if (!response.ok) throw new Error(`VISLA feed request failed: HTTP ${response.status}`);
+  const xml = await response.text();
+  const items = parseRssItems(xml)
+    .filter((item) => isInsideDays(item.pubDate, options.days))
+    .slice(0, limit);
+
+  const posts: EditorialCollectedPost[] = [];
+  for (const item of items) {
+    const url = canonicalizeUrl(item.link || item.guid || "");
+    if (!url) continue;
+    const title = decodeEntities(stripHtml(item.title));
+    const feedExcerpt = stripHtml(item.description || "");
+    try {
+      const html = await fetchText(url);
+      const richBody = parseVislaRichBody(html);
+      const text = (richBody && richBody.length > feedExcerpt.length ? richBody : feedExcerpt) || "";
+      const imageUrl = extractOgImage(html) || extractImage(item.description || "");
+      const audienceGender = inferEditorialGender({ title, text });
+      const mentions = extractEditorialMentions({ title, text, postGender: audienceGender });
+      const fashionRelevance = classifyFashionRelevance({ sourceCategory: "fashion", title, text, mentionCount: mentions.length });
+      posts.push({
+        source: "VISLA",
+        externalPostId: item.guid || url || title,
+        url,
+        canonicalUrl: url,
+        title,
+        publishedAt: item.pubDate ? new Date(item.pubDate) : null,
+        imageUrl: imageUrl || null,
+        excerpt: text.slice(0, 280) || null,
+        text: text || null,
+        audienceGender,
+        fashionRelevance,
+        mentions
+      });
+    } catch {
+      continue;
+    }
+  }
+  return posts.filter((post) => post.url && post.title && post.fashionRelevance !== "NON_FASHION");
 }
 
 export function parseArticlePage(html: string, fallbackUrl: string) {

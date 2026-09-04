@@ -26,6 +26,7 @@
     "templates:generate": "tsx scripts/generate-templates.ts",
     "audit:specific-item-phrases": "tsx scripts/audit-specific-item-phrases.ts",
     "audit:attribute-relations": "tsx scripts/audit-attribute-relations.ts",
+    "refresh:editorial-body": "tsx scripts/refresh-editorial-body.ts",
     "reparse:editorial-mentions": "tsx scripts/reparse-editorial-mentions.ts",
     "test": "tsx scripts/smoke-test.ts"
   },

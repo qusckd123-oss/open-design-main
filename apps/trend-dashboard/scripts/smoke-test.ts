@@ -7,7 +7,7 @@ import { extractEditorialMentions } from "../src/collectors/editorial/mentions";
 import { extractDirectAttributeRelations } from "../src/collectors/editorial/attribute-relations";
 import { bundleEvidenceStrength, getAttributeBundles, getSpecificItemDirectAttributes } from "../src/services/attribute-bundle-service";
 import { composeBundleName } from "../src/lib/korean-labels";
-import { classifyFashionRelevance, parseArticlePage, parseGenericSitemap, parseNewsSitemap, parseRssItems, parseSitemapIndex } from "../src/collectors/editorial/rss";
+import { classifyFashionRelevance, parseArticlePage, parseEyesmagRichBody, parseGenericSitemap, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
 import { editorialSourceConfigs } from "../src/config/editorial-sources";
 import { aggregateEditorialMentions, auditUnmatchedFashionPhrases, getSpecificItemEditorialDetail, partitionCoOccurrence } from "../src/services/editorial-analytics-service";
 import { classifyDomesticTrendDemandInsight, classifyPlanningInsight, getPlanningDashboardData, matchesPlanningGender, planningItemKey } from "../src/services/planning-dashboard-service";
@@ -46,6 +46,7 @@ async function main() {
   await verifyEndBestsellerCollectorHelpers();
   await verifyRakutenFashionCollectorHelpers();
   verifyEditorialHelpers();
+  verifyEditorialBodyParsers();
   await verifySpecificItemEditorialCoOccurrence();
   verifyLegacyMarketBlockVisibility();
   verifyDirectAttributeRelations();
@@ -536,6 +537,60 @@ function verifyEditorialHelpers() {
     { source: "EYESMAG", title: "Football jersey", text: "A football jersey collaboration.", mentions: [] }
   ]);
   assert.equal(unmatched.find((row) => row.suggestedNormalizedValue === "FOOTBALL_JERSEY")?.articles, 2, "Unmatched phrase audit should count distinct articles.");
+}
+
+function verifyEditorialBodyParsers() {
+  // EYESMAG: the page's own __NEXT_DATA__ hydration script (sent to every
+  // browser, not a private endpoint) embeds the full post as a TipTap JSON
+  // document under props.pageProps.initialPost.content. parseArticlePage's
+  // meta-description-based `text` is a ~15-char tagline on this source;
+  // parseEyesmagRichBody must recover the real body instead.
+  const eyesmagDoc = {
+    type: "doc",
+    content: [
+      { type: "slider", attrs: { images: [{ url: "https://cdn.eyesmag.com/a.jpg" }] } },
+      { type: "paragraph", content: [{ type: "text", text: "완벽한 핏 하나로 완성되는 자신감" }] },
+      { type: "paragraph", content: [{ type: "text", text: "캘빈클라인이 세이디 싱크와 함께한 26 가을 데님 캠페인을 공개했다." }] },
+      { type: "embed", attrs: { url: "https://instagram.com/p/xyz" } }
+    ]
+  };
+  const eyesmagHtml = `<html><body><script id="__NEXT_DATA__" type="application/json">${JSON.stringify({
+    props: { pageProps: { initialPost: { content: JSON.stringify(eyesmagDoc) } } }
+  })}</script></body></html>`;
+  const eyesmagBody = parseEyesmagRichBody(eyesmagHtml);
+  assert.ok(eyesmagBody, "EYESMAG rich body must be extracted from __NEXT_DATA__.");
+  assert.ok(eyesmagBody!.includes("캘빈클라인이 세이디 싱크와 함께한"), "EYESMAG rich body must contain the real paragraph text.");
+  assert.ok(eyesmagBody!.length > 20, "EYESMAG rich body must be longer than a bare meta-description tagline.");
+  assert.equal(parseEyesmagRichBody("<html><body>no next data here</body></html>"), null, "Missing __NEXT_DATA__ must return null, not throw or fabricate text.");
+  assert.equal(
+    parseEyesmagRichBody(`<script id="__NEXT_DATA__">${JSON.stringify({ props: { pageProps: { initialPost: { content: "not json" } } } })}</script>`),
+    null,
+    "A non-JSON content field must return null rather than crash the collector."
+  );
+
+  // VISLA: full body is plain public HTML inside <div class="entry-content">.
+  // The region must be cut at the first tag-list/byline/share marker so
+  // hashtag lists, the "VISLA Magazine" byline block, the share widget, and
+  // any further-down "related articles" teaser section are all excluded -
+  // while a real product line containing a brand/material phrase survives.
+  const vislaHtml = `<html><body>
+    <div class="entry-content visla-single-content">
+      <p>DJ 현희의 맥시멀리스트 개러지를 소개한다.</p>
+      <p>Vintage Stüssy Jacket(XL) / ₩80,000 나일론 소재의 빈티지 스투시 재킷, 가슴팍의 커다란 로고가 포인트.</p>
+      <p># HYUNHXEE # visla department store # VISLA GARAGE</p>
+      <p>VISLA Magazine visla.kr https://www.instagram.com/vislamag</p>
+      <p>SHARE THIS ARTICLE</p>
+    </div>
+    <div class="related-articles"><p>ARTICLE 다른 기사 제목 - 이 텍스트는 절대 포함되면 안 됨</p></div>
+  </body></html>`;
+  const vislaBody = parseVislaRichBody(vislaHtml);
+  assert.ok(vislaBody, "VISLA rich body must be extracted from entry-content.");
+  assert.ok(vislaBody!.includes("나일론 소재의 빈티지 스투시 재킷"), "VISLA rich body must preserve real product/material text.");
+  assert.equal(vislaBody!.includes("HYUNHXEE"), false, "VISLA rich body must exclude the trailing hashtag/tag-list block.");
+  assert.equal(vislaBody!.includes("VISLA Magazine"), false, "VISLA rich body must exclude the publisher byline/social block.");
+  assert.equal(vislaBody!.includes("SHARE THIS"), false, "VISLA rich body must exclude the share widget text.");
+  assert.equal(vislaBody!.includes("다른 기사 제목"), false, "VISLA rich body must exclude a related-articles teaser section beyond the cut point.");
+  assert.equal(parseVislaRichBody("<html><body>no entry-content here</body></html>"), null, "Missing entry-content must return null, not fabricate text.");
 }
 
 async function verifySpecificItemEditorialCoOccurrence() {

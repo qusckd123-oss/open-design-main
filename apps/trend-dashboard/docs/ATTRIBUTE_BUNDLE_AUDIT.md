@@ -1,8 +1,54 @@
 # Item Attribute Bundle Audit
 
-Checked date: 2026-09-04
+Checked date: 2026-09-04 (architecture pass), updated 2026-09-04 (editorial body coverage pass)
 
 Goal: move the analysis from "토트백이 많이 보인다" to "어떤 속성의 어떤 아이템이 보이는가" - but only where an attribute is genuinely attached to the item, never by promoting article co-occurrence into a product attribute.
+
+## 2026-09-04 update: editorial body coverage pass
+
+The architecture below was unchanged. What changed is the input: EYESMAG and VISLA article bodies were mostly unavailable (see "Corpus reality" below, now historical), which is why the first pass found only one bundle. A collector/parser fix recovered the real public article body for both sources, and the same 148 posts were then re-audited - no new posts were collected.
+
+**Root cause:** the shared `parseArticlePage()` body field was the SEO `<meta name="description">` tag (a one-line tagline), not the article body, for EYESMAG. VISLA's RSS feed carries no `content:encoded` at all. Both sources' real bodies exist as **public data already sent to any browser** loading the article page:
+
+- **EYESMAG** (Next.js `getStaticProps`): the page's own `__NEXT_DATA__` hydration script embeds `props.pageProps.initialPost.content`, a TipTap/ProseMirror JSON document. `parseEyesmagRichBody()` (`src/collectors/editorial/rss.ts`) walks `text` nodes and skips `slider`/`embed` nodes, which naturally excludes surrounding chrome without needing to identify a "content div".
+- **VISLA** (WordPress): the body is plain HTML inside `<div class="entry-content ...">`. `parseVislaRichBody()` locates that div by its `class` attribute (not a bare substring match - an earlier version matched literal text containing the words "entry-content", caught by a smoke-test fixture) and cuts at the first of three trailing markers (hashtag-tag-list run, `VISLA Magazine` byline block, `SHARE THIS ARTICLE`), found by scanning the *whole* flattened region rather than a fixed-offset tail slice - the boundary position varies with article length.
+
+No undocumented API, login, or anti-bot bypass was used; both are the standard public page response. `robots.txt` for both hosts was reconfirmed to allow the article routes (`eyesmag.com`: only `/admin/` disallowed; `visla.kr`: only `/wp/wp-admin/` disallowed).
+
+**Safe refresh (`npm run refresh:editorial-body`):** re-fetches only the 108 existing EYESMAG+VISLA posts by their own stored `canonicalUrl` (never a fresh sitemap/listing crawl, so it cannot discover a new post), and calls `prisma.editorialPost.update` - never `upsert`/`create` - only replacing `text`/`excerpt` when the newly parsed body is strictly longer than what was stored, and `imageUrl` only when it was previously null. Result: **105 updated, 3 unchanged, 0 failed, EditorialPost count 148 -> 148.**
+
+| Source | Coverage Before | Coverage After | Median Before | Median After |
+|---|---:|---:|---:|---:|
+| EYESMAG | 0% | 97% (99/102) | 15 chars | 706 chars |
+| VISLA | 0% | 100% (6/6) | 29 chars | 2,511 chars |
+| HYPEBEAST_KR | 100% | 100% (untouched) | 1,215 chars | 1,215 chars |
+| NONLABEL | 100% | 100% (untouched) | 434 chars | 434 chars |
+
+3 EYESMAG posts stayed near-title-only after refresh (the `[아이참]` interview series, e.g. `aicharm-anita-pallenberg-interview`) - their TipTap documents are almost entirely `embed` video blocks with a one-line text intro. This is an honest reflection of the source article (video-centric), not a parser gap.
+
+`npm run reparse:editorial-mentions` was then run once, after the refresh was confirmed (never mixed into the same step, per the project's own sequencing rule) - `EditorialMention` moved from 179 to 489 as the richer bodies matched more existing taxonomy phrases. `EditorialPost` (148) and `MarketRankingSnapshot` (667) did not move; both are asserted in the smoke test's `verifyDomesticFirstFiltering`.
+
+**Direct-attribute result, before -> after this pass:**
+
+| | Before | After |
+|---|---:|---:|
+| Direct relations (post-level) | 2 | 6 |
+| Distinct (item, attrType, attrValue) | 1 | 5 |
+| Items with direct attributes | 1 (TOTE_BAG) | 2 (TOTE_BAG, BACKPACK) |
+| Attribute bundles | 1 | 4 |
+
+New bundles found in the richer HYPEBEAST_KR/EYESMAG text (all single-article, single-source - `단일 관측` per the conservative evidence-strength rule, except the original recycled-fabric tote which stays `반복 관측 · 특정 매체 집중`):
+
+| Bundle | Attribute | Evidence |
+|---|---|---|
+| 재활용 원단 토트백 (unchanged) | MATERIAL:RECYCLED_FABRIC | 2 articles / 1 source |
+| 나일론 체크 백팩 | DETAIL:CHECK, MATERIAL:NYLON | "나일론 소재에 체크를 직조한 홀스슈 백팩" |
+| 체크 토트백 | DETAIL:CHECK | "…방식으로 체크 패턴을 구현한 마게이트 토트백" |
+| 데님 토트백 | MATERIAL:DENIM | "…담은 까나쥬는 스폰지 질감의 데님 토트백" |
+
+**TRACK_JACKET re-audit:** article presence rose 2 -> 4 with the richer bodies (co-occurrence SPORTY now 3 articles/2 sources, DENIM 3/2), but **direct attributes are still 0**. The extractor's enumeration guard continued to correctly reject every candidate even with twice the evidence volume - this is the exact behavior §15/§16 of the task asked to protect, now confirmed under real conditions rather than just the original 2-article case.
+
+The "Corpus reality" table and the single-bundle results below are kept as a historical record of the state before this pass; see the numbers above for current state.
 
 Re-run this audit at any time (read-only, no network):
 
@@ -96,13 +142,14 @@ Revisit if the corpus grows to where per-request extraction stops being cheap.
 
 ## Known limitations
 
-- Coverage is capped by body-text availability, not by the extractor. EYESMAG (69% of posts) stores title-only records.
-- Every current direct relation comes from a single outlet (HYPEBEAST_KR), so no bundle can legitimately reach "여러 매체 동시 관찰" yet.
+- ~~Coverage is capped by body-text availability~~ - resolved for EYESMAG (97%) and VISLA (100%) by the 2026-09-04 body coverage pass. 3 EYESMAG `[아이참]` video-interview posts remain near-title-only because their real content is video, not text - an honest source limitation, not a parser gap.
+- Every current direct relation comes from a single outlet each (HYPEBEAST_KR or EYESMAG), so most bundles are still `단일 관측`; none has yet reached "여러 매체 동시 관찰" (needs 2+ distinct sources on the same item+attribute pair).
 - Only Korean head-final modifier order and simple English adjacency ("red track jacket") are handled. No POS tagging, so long relative clauses are rejected rather than parsed.
 - Bundle images are article hero images (`EditorialPost.imageUrl`), i.e. editorial visuals, not product cutouts. They illustrate the source article and must not be read as the product itself.
+- `parseVislaRichBody`'s stop-marker cut is heuristic (three known trailing patterns), not a real HTML parser; a future VISLA template change could require re-tuning it.
 
 ## Recommended next work
 
-- Improve body capture for EYESMAG (or accept it as a title-only signal source) — this is the highest-leverage change for direct-attribute coverage.
 - Re-run `audit:attribute-relations` after any editorial backfill; promote SEQUIN/RAGLAN or a SILHOUETTE dimension only if they cross the ≥2 article / ≥2 source threshold.
 - Revisit the `fashionRelevance=UNKNOWN` classification for the côte&ciel article, which currently hides a valid BACKPACK + BLACK relation.
+- HYPEBEAST_KR and NONLABEL already had full bodies before this pass and were intentionally left untouched; if either source's RSS/parser changes upstream, re-run the body-quality audit to confirm they are still FULL_BODY.
