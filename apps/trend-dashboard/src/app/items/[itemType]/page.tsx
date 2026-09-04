@@ -5,7 +5,7 @@ import { ProductLinkButton } from "@/components/ProductLinkButton";
 import { attributeKoreanLabel, specificItemKoreanLabel } from "@/lib/korean-labels";
 import { getPrimaryBundleForItem, getSpecificItemDirectAttributes, type BundleAttribute } from "@/services/attribute-bundle-service";
 import { formatCurrency, formatNumber } from "@/lib/format";
-import { editorialWhyThisItemLines, evidenceStrengthLabel, hasVerifiedMarketEvidence, mentionGenderKoreanLabel, sourceLabel } from "@/lib/market-ui";
+import { evidenceStrengthLabel, hasVerifiedMarketEvidence, mentionGenderKoreanLabel, sourceLabel } from "@/lib/market-ui";
 import { getItemTrendDetail } from "@/services/business-analytics-service";
 import type { EditorialCoOccurrence, EditorialTrendRow, SpecificItemEditorialDetail } from "@/services/editorial-analytics-service";
 import { getSpecificItemEditorialDetail, partitionCoOccurrence } from "@/services/editorial-analytics-service";
@@ -216,7 +216,6 @@ const COOCCURRENCE_DIMENSIONS = [
 
 function EditorialEvidenceSection({ item, cooccurrence }: { item: EditorialTrendRow; cooccurrence: SpecificItemEditorialDetail["cooccurrence"] }) {
   const genderEntries = Object.entries(item.genderSplit).filter(([, count]) => count > 0);
-  const whyLines = editorialWhyThisItemLines(item);
 
   const repeatedByDimension = COOCCURRENCE_DIMENSIONS.map((dimension) => ({
     dimension,
@@ -232,11 +231,11 @@ function EditorialEvidenceSection({ item, cooccurrence }: { item: EditorialTrend
     <section className="space-y-4">
       <div className="rounded border border-line bg-white p-5 shadow-subtle">
         <div className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-muted">왜 이 아이템인가</div>
-        <ul className="space-y-1 text-sm text-ink">
-          {whyLines.map((line) => (
-            <li key={line}>· {line}</li>
-          ))}
-        </ul>
+        <div className="grid grid-cols-3 gap-3">
+          <Metric label="최근 14일" value={`${formatNumber(item.current14dArticlePresence ?? 0)}개 기사`} />
+          <Metric label="등장 매체" value={`${formatNumber(item.sourceSpread)}개`} />
+          <Metric label="최근 7일" value={`${formatNumber(item.current7dArticlePresence ?? 0)}개`} />
+        </div>
         {genderEntries.length > 0 ? (
           <div className="mt-3 text-xs text-muted">
             기사 성별 근거: {genderEntries.map(([gender, count]) => `${mentionGenderKoreanLabel(gender)} ${count}`).join(" · ")}
@@ -254,7 +253,7 @@ function EditorialEvidenceSection({ item, cooccurrence }: { item: EditorialTrend
         <div className="space-y-3">
           {item.evidenceArticles.map((article) => (
             <div key={`${article.source}:${article.url || article.title}`} className="flex items-start gap-3 border-b border-line pb-3 last:border-b-0 last:pb-0">
-              <ProductImage src={article.imageUrl} alt={article.title || sourceLabel(article.source)} size="sm" />
+              <ProductImage src={article.imageUrl} alt={article.title || sourceLabel(article.source)} size="md" />
               <div className="min-w-0 flex-1">
                 <div className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
                   {sourceLabel(article.source)} · {article.publishedAt ? new Date(article.publishedAt).toISOString().slice(0, 10) : "-"}

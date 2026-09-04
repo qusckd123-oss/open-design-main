@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AttributeBundleCard } from "@/components/AttributeBundle";
+import { AttributeBundleCard, PrimaryBundleCard, SecondaryBundleCard } from "@/components/AttributeBundle";
 import { GlobalFilterBar } from "@/components/GlobalFilterBar";
 import { ProductImage } from "@/components/ProductImage";
 import { ProductLinkButton } from "@/components/ProductLinkButton";
@@ -18,6 +18,7 @@ import {
   trendTypeLabel,
   trendValueLabel
 } from "@/lib/market-ui";
+import { specificItemKoreanLabel } from "@/lib/korean-labels";
 import { buildFilterHref, parseGenderParam, parseScopeParam } from "@/lib/planning-filters";
 import { bundleEvidenceStrength, getAttributeBundles, selectPrimaryPlanningBundle, type AttributeBundle } from "@/services/attribute-bundle-service";
 import { getPlanningDashboardData, type PlanningInsight } from "@/services/planning-dashboard-service";
@@ -46,6 +47,13 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   const [data, bundles] = await Promise.all([getPlanningDashboardData(gender, scope), getAttributeBundles("real")]);
   const editorialRows = data.editorialByType[editorialType] ?? data.editorialByType.SUB_ITEM ?? [];
   const isOverseas = scope === "overseas";
+  // Same threshold bundleEvidenceStrength already uses for "반복 관측": only a
+  // genuinely repeated bundle (>=2 articles) earns a larger primary card. With
+  // no repeated bundle, every bundle is an equally single observation, so the
+  // uniform card grid below is used instead - never an arbitrary "biggest of
+  // equals" promotion.
+  const repeatedBundle = bundles.find((bundle) => bundle.bundleArticlePresence >= 2) ?? null;
+  const secondaryBundles = repeatedBundle ? bundles.filter((bundle) => bundle.key !== repeatedBundle.key).slice(0, 4) : [];
 
   return (
     <div className="space-y-8">
@@ -68,7 +76,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           </div>
           <div className="shrink-0 rounded bg-canvas px-4 py-3 text-sm text-muted">
             <div className="font-semibold text-ink">{confidenceLabel(data.businessSummary.summary.signalConfidence)}</div>
-            <div className="mt-1">매거진 {formatNumber(data.summary.fashionPosts)}개 기사{isOverseas ? ` · 해외 참고 스토어 ${formatNumber(data.summary.verifiedStoreProducts)}개 상품` : ""}</div>
+            <div className="mt-1">매거진 {formatNumber(data.summary.editorialPosts)}개 기사{isOverseas ? ` · 해외 참고 스토어 ${formatNumber(data.summary.verifiedStoreProducts)}개 상품` : ""}</div>
             {gender !== "all" ? <div className="mt-1">{planningGenderLabel(gender)} 명시 근거 {formatNumber(data.summary.explicitGenderMentions)}건</div> : null}
           </div>
         </div>
@@ -87,9 +95,18 @@ export default async function DashboardPage({ searchParams }: PageProps) {
             description="기사에서 아이템을 직접 수식한 속성만 조합했습니다. 같은 기사에 함께 등장한 것만으로는 조합하지 않습니다."
             href="/items"
           />
-          <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {bundles.slice(0, 3).map((bundle) => <AttributeBundleCard key={bundle.key} bundle={bundle} />)}
-          </div>
+          {repeatedBundle ? (
+            <div className="mt-4 grid gap-4 lg:grid-cols-[1.5fr_1fr]">
+              <PrimaryBundleCard bundle={repeatedBundle} />
+              <div className="space-y-3">
+                {secondaryBundles.map((bundle) => <SecondaryBundleCard key={bundle.key} bundle={bundle} />)}
+              </div>
+            </div>
+          ) : (
+            <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {bundles.slice(0, 3).map((bundle) => <AttributeBundleCard key={bundle.key} bundle={bundle} />)}
+            </div>
+          )}
         </section>
       ) : null}
 
@@ -192,9 +209,9 @@ export default async function DashboardPage({ searchParams }: PageProps) {
       <section className="rounded border border-line bg-white p-5 shadow-subtle">
         <p className="text-sm font-semibold text-ink">데이터 상태</p>
         <div className="mt-4 grid gap-4 text-sm md:grid-cols-4">
-          <Meta label="매거진 (국내)" value={`${formatNumber(data.summary.editorialPosts)} posts · ${formatNumber(data.summary.editorialSources)} sources`} />
-          <Meta label="스토어 (해외 참고)" value={`END / Rakuten · ${formatNumber(data.summary.marketSnapshots)} snapshots`} />
-          <Meta label="어소트 (해외 참고)" value={`SLAM JAM / STUSSY · ${formatNumber(data.summary.assortmentProducts)} products`} />
+          <Meta label="매거진 (국내)" value={`${formatNumber(data.summary.editorialPosts)}개 기사 · ${formatNumber(data.summary.editorialSources)}개 매체`} />
+          <Meta label="스토어 (해외 참고)" value={`END / Rakuten · ${formatNumber(data.summary.marketSnapshots)}개 관측`} />
+          <Meta label="어소트 (해외 참고)" value={`SLAM JAM / STUSSY · ${formatNumber(data.summary.assortmentProducts)}개 상품`} />
           <Meta label="최근 업데이트" value={`매거진 ${formatDateKo(data.summary.latestEditorialDate)} · 스토어 ${formatDateKo(data.summary.latestMarketDate)}`} />
         </div>
       </section>
@@ -229,7 +246,7 @@ function PlanningInsightCard({ insight }: { insight: PlanningInsight }) {
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="text-xs font-semibold text-muted">{trendTypeLabel(insight.dimension)}</div>
-          <div className="text-2xl font-semibold text-ink">{trendValueLabel(insight.label)}</div>
+          <div className="text-2xl font-semibold text-ink">{insight.dimension === "SUB_ITEM" ? specificItemKoreanLabel(insight.label) ?? trendValueLabel(insight.label) : trendValueLabel(insight.label)}</div>
           <div className="mt-1 text-sm font-semibold text-signal">{insight.decision}</div>
         </div>
         <Badge>{evidenceStrengthLabel(insight)}</Badge>
@@ -379,7 +396,7 @@ function EmptyState({ title }: { title: string }) {
  * line can never overclaim (e.g. never "다수 매체 공통" from one source).
  */
 function buildTodaySummary(data: Awaited<ReturnType<typeof getPlanningDashboardData>>, bundles: AttributeBundle[]) {
-  const lines = [`현재 ${formatNumber(data.summary.fashionPosts)}개 매거진 기사${data.scope === "overseas" ? `와 ${formatNumber(data.summary.verifiedStoreProducts)}개 해외 참고 스토어 상품을 기준으로 봅니다.` : "를 기준으로 봅니다. 국내 스토어 랭킹 데이터는 아직 없습니다."}`];
+  const lines = [`현재 ${formatNumber(data.summary.editorialPosts)}개 매거진 기사${data.scope === "overseas" ? `와 ${formatNumber(data.summary.verifiedStoreProducts)}개 해외 참고 스토어 상품을 기준으로 봅니다.` : "를 기준으로 봅니다. 국내 스토어 랭킹 데이터는 아직 없습니다."}`];
 
   const primaryBundle = selectPrimaryPlanningBundle(bundles);
   if (primaryBundle) {
@@ -389,10 +406,11 @@ function buildTodaySummary(data: Awaited<ReturnType<typeof getPlanningDashboardD
   } else {
     const firstInsight = data.planningInsights[0];
     if (firstInsight) {
+      const insightLabel = firstInsight.dimension === "SUB_ITEM" ? specificItemKoreanLabel(firstInsight.label) ?? trendValueLabel(firstInsight.label) : trendValueLabel(firstInsight.label);
       if (firstInsight.usesOverseasReference) {
-        lines.push(`${trendValueLabel(firstInsight.label)}은 매거진 ${firstInsight.sourceSpread}/${firstInsight.sourceTotal}개 매체와 해외 참고 스토어 TOP50 ${firstInsight.top50Presence}개 상품에서 함께 확인됩니다.`);
+        lines.push(`${insightLabel}은 매거진 ${firstInsight.sourceSpread}/${firstInsight.sourceTotal}개 매체와 해외 참고 스토어 TOP50 ${firstInsight.top50Presence}개 상품에서 함께 확인됩니다.`);
       } else {
-        lines.push(`${trendValueLabel(firstInsight.label)}은 매거진 ${firstInsight.sourceSpread}/${firstInsight.sourceTotal}개 매체에서 반복 등장하는 ${firstInsight.decision} 신호입니다.`);
+        lines.push(`${insightLabel}은 매거진 ${firstInsight.sourceSpread}/${firstInsight.sourceTotal}개 매체에서 반복 등장하는 ${firstInsight.decision} 신호입니다.`);
       }
     }
   }
