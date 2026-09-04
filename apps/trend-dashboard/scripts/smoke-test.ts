@@ -5,7 +5,9 @@ import { classifyMarketAttributes, validateSubItemForCategory } from "../src/col
 import { inferEditorialGender } from "../src/collectors/editorial/gender";
 import { extractEditorialMentions } from "../src/collectors/editorial/mentions";
 import { extractDirectAttributeRelations } from "../src/collectors/editorial/attribute-relations";
-import { bundleEvidenceStrength, getAttributeBundles, getPrimaryBundleForItem, getSpecificItemDirectAttributes, selectBundleHeroImage } from "../src/services/attribute-bundle-service";
+import { bundleEvidenceStrength, getAttributeBundles, getPrimaryBundleForItem, getSpecificItemDirectAttributes, selectBundleHeroImage, selectPrimaryPlanningBundle } from "../src/services/attribute-bundle-service";
+import { contentBlocksFromStoredText, resolveEvidenceImage, type ContentBlock } from "../src/collectors/editorial/image-relation";
+import { attributeBarWidthPercent } from "../src/lib/attribute-visual";
 import { composeBundleName } from "../src/lib/korean-labels";
 import { classifyFashionRelevance, parseArticlePage, parseEyesmagRichBody, parseGenericSitemap, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
 import { editorialSourceConfigs } from "../src/config/editorial-sources";
@@ -50,6 +52,8 @@ async function main() {
   await verifySpecificItemEditorialCoOccurrence();
   verifyLegacyMarketBlockVisibility();
   verifyDirectAttributeRelations();
+  verifyEvidenceImageResolution();
+  verifyAttributeBarWidth();
   await verifyAttributeBundles();
   verifyPlanningDashboardHelpers();
   verifyDomesticFirstTaxonomy();
@@ -767,19 +771,32 @@ async function verifyAttributeBundles() {
     assert.ok(bundle.directAttributes.length > 0, "A bundle must be backed by at least one direct attribute relation.");
     assert.ok(bundle.bundleArticlePresence >= 1 && bundle.bundleSourceSpread >= 1, "Bundle counts must come from real articles/sources.");
     assert.ok(bundle.bundleSourceSpread <= bundle.bundleArticlePresence, "Source spread can never exceed article presence.");
+    // Regression guard for the "blue t-shirt on the tote bag card" bug: no
+    // REAL post currently stores block-level image position (see
+    // src/collectors/editorial/image-relation.ts), so today NO bundle may
+    // resolve a hero image - every evidence article's imageUrl (article
+    // hero) must never leak into evidenceImageUrl/selectBundleHeroImage.
+    for (const article of bundle.evidenceArticles) {
+      assert.equal(article.evidenceImageUrl, null, `${bundle.displayName}: no REAL evidence article has document-position image data yet, so evidenceImageUrl must stay null.`);
+      assert.notEqual(article.imageRelation, "DIRECT_BLOCK", `${bundle.displayName}: DIRECT_BLOCK is not achievable from current REAL storage.`);
+      assert.notEqual(article.imageRelation, "ADJACENT_BLOCK", `${bundle.displayName}: ADJACENT_BLOCK is not achievable from current REAL storage.`);
+    }
+    assert.equal(selectBundleHeroImage(bundle.evidenceArticles), null, `${bundle.displayName}: bundle hero must be null today, never an article's unrelated hero image.`);
   }
 
   // Hero image selection: reuse the first evidence article that actually has
-  // an image, stay null (never fabricated) when none do, and never suppress
-  // an image just because another bundle also cites the same article.
-  const articleWithImage = { source: "TEST", title: "t1", url: "https://example.com/1", publishedAt: null, imageUrl: "https://example.com/hero.jpg", evidenceText: "", sourceField: "BODY" as const };
-  const articleNoImage = { source: "TEST", title: "t2", url: "https://example.com/2", publishedAt: null, imageUrl: null, evidenceText: "", sourceField: "BODY" as const };
-  assert.equal(selectBundleHeroImage([articleNoImage, articleWithImage]), "https://example.com/hero.jpg", "Hero image must be the first evidence article that actually carries one.");
-  assert.equal(selectBundleHeroImage([articleNoImage]), null, "No evidence article has an image - hero must stay null, never fabricated.");
+  // a document-position-confident image (evidenceImageUrl), stay null (never
+  // fabricated, and never fall back to the article-hero imageUrl) when none
+  // do, and never suppress an image just because another bundle also cites
+  // the same evidence article.
+  const withEvidenceImage = { source: "TEST", title: "t1", url: "https://example.com/1", publishedAt: null, imageUrl: "https://example.com/article-hero.jpg", evidenceImageUrl: "https://example.com/evidence.jpg", imageRelation: "DIRECT_BLOCK" as const, evidenceText: "", sourceField: "BODY" as const };
+  const heroOnlyNoEvidence = { source: "TEST", title: "t2", url: "https://example.com/2", publishedAt: null, imageUrl: "https://example.com/article-hero-2.jpg", evidenceImageUrl: null, imageRelation: "ARTICLE_HERO" as const, evidenceText: "", sourceField: "BODY" as const };
+  assert.equal(selectBundleHeroImage([heroOnlyNoEvidence, withEvidenceImage]), "https://example.com/evidence.jpg", "Hero image must be the first evidence article with a document-position-confident image, never the article's overall hero.");
+  assert.equal(selectBundleHeroImage([heroOnlyNoEvidence]), null, "An ARTICLE_HERO-only article must never become the bundle hero - hero must stay null, never fabricated.");
   assert.equal(
-    selectBundleHeroImage([articleWithImage]),
-    selectBundleHeroImage([articleWithImage]),
-    "The same evidence-article image may legitimately be reused across bundles that cite it - selection must not dedupe it away."
+    selectBundleHeroImage([withEvidenceImage]),
+    selectBundleHeroImage([withEvidenceImage]),
+    "The same evidence-bound image may legitimately be reused across bundles that cite it - selection must not dedupe it away."
   );
 
   // Primary bundle highlight: TOTE_BAG's strongest evidence (2 articles / 1
@@ -791,6 +808,79 @@ async function verifyAttributeBundles() {
   assert.equal(totePrimary?.displayName, "재활용 원단 토트백", "TOTE_BAG's strongest bundle (2 articles/1 source) must be the recycled-fabric one.");
   const trackPrimary = await getPrimaryBundleForItem("TRACK_JACKET", "real");
   assert.equal(trackPrimary, null, "TRACK_JACKET has zero direct attributes, so it must have no primary bundle to highlight.");
+
+  // Dashboard insight priority (§8): a repeated bundle beats a single-
+  // observation bundle, which beats an empty list (caller falls back to the
+  // specific-item insight only then - never fabricated here).
+  const repeated = { key: "r", specificItem: "X", displayName: "반복", directAttributes: [], bundleArticlePresence: 3, bundleSourceSpread: 1, latestObservedAt: null, evidenceArticles: [] };
+  const single = { key: "s", specificItem: "Y", displayName: "단일", directAttributes: [], bundleArticlePresence: 1, bundleSourceSpread: 1, latestObservedAt: null, evidenceArticles: [] };
+  assert.equal(selectPrimaryPlanningBundle([single, repeated])?.displayName, "반복", "A repeated bundle (>=2 articles) must be preferred over a single-observation bundle regardless of list order.");
+  assert.equal(selectPrimaryPlanningBundle([single])?.displayName, "단일", "With no repeated bundle, the single-observation bundle must still be preferred over the specific-item fallback.");
+  assert.equal(selectPrimaryPlanningBundle([]), null, "With zero bundles, the caller must fall back to the specific-item insight rather than fabricating one.");
+  const realPrimary = selectPrimaryPlanningBundle(bundles);
+  assert.equal(realPrimary?.displayName, "재활용 원단 토트백", "Against REAL data, 재활용 원단 토트백 (the only repeated bundle) must be the dashboard's primary planning bundle.");
+}
+
+/**
+ * Evidence-bound image resolution (src/collectors/editorial/image-relation.ts):
+ * an image may only back a bundle when it sits in the evidence text's own
+ * content block, or a block immediately adjacent to it - never a distant or
+ * article-wide image. Tested against synthetic block fixtures because no
+ * REAL post currently stores block-level image position (see the module's
+ * own doc comment and docs/ATTRIBUTE_BUNDLE_AUDIT.md).
+ */
+function verifyEvidenceImageResolution() {
+  const evidence = "재활용 패브릭을 활용한 토트백";
+
+  // Article-hero-only: no block carries an image at all.
+  const heroOnly: ContentBlock[] = [{ text: `앞부분 문단. ${evidence}을 선보인다.`, imageUrl: null }];
+  assert.deepEqual(resolveEvidenceImage(heroOnly, evidence), { kind: "NONE", imageUrl: null }, "An article with only a hero image (no block-level image) must resolve to NONE, not fabricate a bundle hero.");
+
+  // Direct block: the same block as the evidence text carries an image.
+  const directBlock: ContentBlock[] = [{ text: `앞부분 문단. ${evidence}을 선보인다.`, imageUrl: "https://example.com/direct.jpg" }];
+  assert.deepEqual(resolveEvidenceImage(directBlock, evidence), { kind: "DIRECT_BLOCK", imageUrl: "https://example.com/direct.jpg" }, "An image in the SAME block as the evidence text must resolve as DIRECT_BLOCK.");
+
+  // Adjacent block (before): the immediately preceding block carries the image.
+  const adjacentBefore: ContentBlock[] = [
+    { text: "표지 이미지 문단.", imageUrl: "https://example.com/before.jpg" },
+    { text: `${evidence}을 선보인다.`, imageUrl: null }
+  ];
+  assert.deepEqual(resolveEvidenceImage(adjacentBefore, evidence), { kind: "ADJACENT_BLOCK", imageUrl: "https://example.com/before.jpg" }, "An image in the block immediately BEFORE the evidence block must resolve as ADJACENT_BLOCK.");
+
+  // Adjacent block (after): the immediately following block carries the image.
+  const adjacentAfter: ContentBlock[] = [
+    { text: `${evidence}을 선보인다.`, imageUrl: null },
+    { text: "다음 문단.", imageUrl: "https://example.com/after.jpg" }
+  ];
+  assert.deepEqual(resolveEvidenceImage(adjacentAfter, evidence), { kind: "ADJACENT_BLOCK", imageUrl: "https://example.com/after.jpg" }, "An image in the block immediately AFTER the evidence block must resolve as ADJACENT_BLOCK.");
+
+  // Unrelated distant image: two blocks away must never count.
+  const distant: ContentBlock[] = [
+    { text: "완전히 다른 문단.", imageUrl: "https://example.com/distant.jpg" },
+    { text: "중간 문단, 이미지 없음.", imageUrl: null },
+    { text: `${evidence}을 선보인다.`, imageUrl: null }
+  ];
+  assert.deepEqual(resolveEvidenceImage(distant, evidence), { kind: "NONE", imageUrl: null }, "An image two blocks away must never be treated as evidence-bound - only the same or an immediately adjacent block counts.");
+
+  // Evidence text not found in any block at all.
+  assert.deepEqual(resolveEvidenceImage(directBlock, "완전히 다른 텍스트"), { kind: "NONE", imageUrl: null }, "Evidence text absent from every block must resolve to NONE.");
+
+  // Honest adapter: real stored text has no preserved paragraph/image
+  // structure, so it must always collapse to at most one imageless block.
+  assert.deepEqual(contentBlocksFromStoredText("아무 본문 텍스트"), [{ text: "아무 본문 텍스트", imageUrl: null }], "Stored text with no structure must become exactly one block with no image.");
+  assert.deepEqual(contentBlocksFromStoredText(null), [], "Null/empty stored text must yield zero blocks, never a fabricated one.");
+  assert.deepEqual(contentBlocksFromStoredText("  "), [], "Whitespace-only stored text must yield zero blocks.");
+}
+
+function verifyAttributeBarWidth() {
+  // Bar width is a real ratio against the item's strongest attribute, with a
+  // 6% legibility floor for genuinely small-but-nonzero counts - it must
+  // never invent a score or reorder attributes relative to their real counts.
+  assert.equal(attributeBarWidthPercent(2, 2), 100, "The strongest attribute must render at full width.");
+  assert.equal(attributeBarWidthPercent(1, 2), 50, "Half the max articlePresence must render at half width.");
+  assert.equal(attributeBarWidthPercent(1, 50), 6, "A real but tiny ratio must still render at the visibility floor, not disappear.");
+  assert.equal(attributeBarWidthPercent(0, 5), 0, "Zero articlePresence must render as zero width, never floored up.");
+  assert.ok(attributeBarWidthPercent(2, 3) > attributeBarWidthPercent(1, 3), "A larger real count must always render wider than a smaller one.");
 }
 
 function verifyLegacyMarketBlockVisibility() {

@@ -2,10 +2,10 @@ import Link from "next/link";
 import { AttributeChip, AttributeMatrix, BundleHighlight } from "@/components/AttributeBundle";
 import { ProductImage } from "@/components/ProductImage";
 import { ProductLinkButton } from "@/components/ProductLinkButton";
-import { specificItemKoreanLabel } from "@/lib/korean-labels";
+import { attributeKoreanLabel, specificItemKoreanLabel } from "@/lib/korean-labels";
 import { getPrimaryBundleForItem, getSpecificItemDirectAttributes, type BundleAttribute } from "@/services/attribute-bundle-service";
 import { formatCurrency, formatNumber } from "@/lib/format";
-import { editorialWhyThisItemLines, evidenceStrengthLabel, hasVerifiedMarketEvidence, mentionGenderKoreanLabel, sourceLabel, trendValueLabel } from "@/lib/market-ui";
+import { editorialWhyThisItemLines, evidenceStrengthLabel, hasVerifiedMarketEvidence, mentionGenderKoreanLabel, sourceLabel } from "@/lib/market-ui";
 import { getItemTrendDetail } from "@/services/business-analytics-service";
 import type { EditorialCoOccurrence, EditorialTrendRow, SpecificItemEditorialDetail } from "@/services/editorial-analytics-service";
 import { getSpecificItemEditorialDetail, partitionCoOccurrence } from "@/services/editorial-analytics-service";
@@ -226,6 +226,7 @@ function EditorialEvidenceSection({ item, cooccurrence }: { item: EditorialTrend
     partitionCoOccurrence(cooccurrence[dimension.key]).oneOff.map((row) => ({ ...row, dimensionTitle: dimension.title }))
   );
   const hasAnyCoOccurrence = repeatedByDimension.length > 0 || oneOffEntries.length > 0;
+  const repeatedCoOccurrenceCount = repeatedByDimension.reduce((sum, entry) => sum + entry.rows.length, 0);
 
   return (
     <section className="space-y-4">
@@ -271,9 +272,11 @@ function EditorialEvidenceSection({ item, cooccurrence }: { item: EditorialTrend
       </div>
 
       {hasAnyCoOccurrence ? (
-        <div className="rounded border border-line bg-white p-5 shadow-subtle">
-          <div className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">함께 언급된 요소</div>
-          <p className="mt-1 text-xs text-muted">같은 기사에서 함께 언급된 요소입니다. 해당 아이템의 직접 속성을 의미하지 않을 수 있습니다.</p>
+        <details className="rounded border border-line bg-white p-5 shadow-subtle">
+          <summary className="cursor-pointer text-xs font-semibold uppercase tracking-[0.14em] text-muted">
+            기사 동반 요소 보기 · 반복 {repeatedCoOccurrenceCount}개 · 1회 {oneOffEntries.length}개
+          </summary>
+          <p className="mt-2 text-xs text-muted">같은 기사에서 함께 언급된 요소입니다. 해당 아이템의 직접 속성을 의미하지 않을 수 있습니다.</p>
 
           {repeatedByDimension.length > 0 ? (
             <div className="mt-4">
@@ -292,13 +295,13 @@ function EditorialEvidenceSection({ item, cooccurrence }: { item: EditorialTrend
               <div className="mt-2 flex flex-wrap gap-2">
                 {oneOffEntries.map((row) => (
                   <span key={`${row.dimensionTitle}:${row.value}`} className="rounded-full border border-line bg-slate-50 px-2.5 py-1 text-xs text-muted">
-                    {trendValueLabel(row.value)} <span className="text-[10px] text-muted/80">· {row.dimensionTitle}</span>
+                    {attributeKoreanLabel(row.value)} <span className="text-[10px] text-muted/80">· {row.dimensionTitle}</span>
                   </span>
                 ))}
               </div>
             </div>
           ) : null}
-        </div>
+        </details>
       ) : null}
     </section>
   );
@@ -312,7 +315,7 @@ function CoOccurrenceCard({ title, rows, totalArticlePresence, sourceContextNote
         {rows.slice(0, 5).map((row) => (
           <div key={row.value} className="text-sm">
             <div className="flex items-center justify-between">
-              <span className="font-medium">{trendValueLabel(row.value)}</span>
+              <span className="font-medium">{attributeKoreanLabel(row.value)}</span>
               <span className="text-xs text-muted">
                 {row.articlePresence}/{totalArticlePresence}개 기사{row.sourceSpread > 0 ? ` · ${row.sourceSpread}개 매체` : ""}
               </span>

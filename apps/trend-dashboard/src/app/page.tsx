@@ -19,7 +19,7 @@ import {
   trendValueLabel
 } from "@/lib/market-ui";
 import { buildFilterHref, parseGenderParam, parseScopeParam } from "@/lib/planning-filters";
-import { getAttributeBundles } from "@/services/attribute-bundle-service";
+import { bundleEvidenceStrength, getAttributeBundles, selectPrimaryPlanningBundle, type AttributeBundle } from "@/services/attribute-bundle-service";
 import { getPlanningDashboardData, type PlanningInsight } from "@/services/planning-dashboard-service";
 import type { EditorialTrendRow } from "@/services/editorial-analytics-service";
 import type { MarketRow } from "@/types/business";
@@ -63,7 +63,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           <div>
             <p className="text-sm font-semibold text-signal">오늘의 상품기획 인사이트</p>
             <div className="mt-3 space-y-2 text-base font-semibold leading-7 text-ink">
-              {buildTodaySummary(data).map((line) => <p key={line}>{line}</p>)}
+              {buildTodaySummary(data, bundles).map((line) => <p key={line}>{line}</p>)}
             </div>
           </div>
           <div className="shrink-0 rounded bg-canvas px-4 py-3 text-sm text-muted">
@@ -370,14 +370,30 @@ function EmptyState({ title }: { title: string }) {
   return <div className="rounded border border-dashed border-line bg-white px-4 py-8 text-center text-sm font-semibold text-muted">{title}</div>;
 }
 
-function buildTodaySummary(data: Awaited<ReturnType<typeof getPlanningDashboardData>>) {
+/**
+ * Bundle-first priority (§8): a repeated attribute bundle (>=2 articles) is
+ * the most concrete planning signal, a single-observation bundle is still
+ * stronger than a bare specific-item mention with no proven attribute, and
+ * the older specific-item insight is only used when the REAL corpus has no
+ * bundle at all. Reuses bundleEvidenceStrength's existing vocabulary so this
+ * line can never overclaim (e.g. never "다수 매체 공통" from one source).
+ */
+function buildTodaySummary(data: Awaited<ReturnType<typeof getPlanningDashboardData>>, bundles: AttributeBundle[]) {
   const lines = [`현재 ${formatNumber(data.summary.fashionPosts)}개 매거진 기사${data.scope === "overseas" ? `와 ${formatNumber(data.summary.verifiedStoreProducts)}개 해외 참고 스토어 상품을 기준으로 봅니다.` : "를 기준으로 봅니다. 국내 스토어 랭킹 데이터는 아직 없습니다."}`];
-  const firstInsight = data.planningInsights[0];
-  if (firstInsight) {
-    if (firstInsight.usesOverseasReference) {
-      lines.push(`${trendValueLabel(firstInsight.label)}은 매거진 ${firstInsight.sourceSpread}/${firstInsight.sourceTotal}개 매체와 해외 참고 스토어 TOP50 ${firstInsight.top50Presence}개 상품에서 함께 확인됩니다.`);
-    } else {
-      lines.push(`${trendValueLabel(firstInsight.label)}은 매거진 ${firstInsight.sourceSpread}/${firstInsight.sourceTotal}개 매체에서 반복 등장하는 ${firstInsight.decision} 신호입니다.`);
+
+  const primaryBundle = selectPrimaryPlanningBundle(bundles);
+  if (primaryBundle) {
+    const strength = bundleEvidenceStrength({ articlePresence: primaryBundle.bundleArticlePresence, sourceSpread: primaryBundle.bundleSourceSpread });
+    const prefix = primaryBundle.bundleArticlePresence >= 2 ? "현재 가장 구체적으로 반복 확인된 상품 조합은" : "현재 확인되는 상품 조합은";
+    lines.push(`${prefix} ${primaryBundle.displayName}입니다 (${primaryBundle.bundleArticlePresence}개 기사 · ${primaryBundle.bundleSourceSpread}개 매체, ${strength}).`);
+  } else {
+    const firstInsight = data.planningInsights[0];
+    if (firstInsight) {
+      if (firstInsight.usesOverseasReference) {
+        lines.push(`${trendValueLabel(firstInsight.label)}은 매거진 ${firstInsight.sourceSpread}/${firstInsight.sourceTotal}개 매체와 해외 참고 스토어 TOP50 ${firstInsight.top50Presence}개 상품에서 함께 확인됩니다.`);
+      } else {
+        lines.push(`${trendValueLabel(firstInsight.label)}은 매거진 ${firstInsight.sourceSpread}/${firstInsight.sourceTotal}개 매체에서 반복 등장하는 ${firstInsight.decision} 신호입니다.`);
+      }
     }
   }
   const topRiser = data.storeRisers[0];

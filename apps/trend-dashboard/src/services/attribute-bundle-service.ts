@@ -1,4 +1,5 @@
 import { extractDirectAttributeRelations, type AttributeSourceField } from "@/collectors/editorial/attribute-relations";
+import { contentBlocksFromStoredText, resolveEvidenceImage, type ImageRelationKind } from "@/collectors/editorial/image-relation";
 import { prisma } from "@/db/client";
 import { composeBundleName } from "@/lib/korean-labels";
 
@@ -33,7 +34,11 @@ export type BundleEvidenceArticle = {
   title: string;
   url: string;
   publishedAt: Date | null;
+  /** Article hero image (EditorialPost.imageUrl) - a picture of the ARTICLE, never the item. Safe for an evidence-article thumbnail, never a bundle hero. */
   imageUrl: string | null;
+  /** Set only when resolveEvidenceImage found DIRECT_BLOCK/ADJACENT_BLOCK evidence - the only image safe to use as a bundle hero. */
+  evidenceImageUrl: string | null;
+  imageRelation: ImageRelationKind;
   evidenceText: string;
   sourceField: AttributeSourceField;
 };
@@ -58,6 +63,7 @@ type PostRelations = {
   url: string;
   publishedAt: Date | null;
   imageUrl: string | null;
+  blocks: ReturnType<typeof contentBlocksFromStoredText>;
   byItem: Map<string, Array<{ type: string; value: string; evidenceText: string; sourceField: AttributeSourceField }>>;
 };
 
@@ -92,7 +98,16 @@ async function loadPostRelations(dataMode: string): Promise<PostRelations[]> {
         { type: relation.attributeType, value: relation.attributeValue, evidenceText: relation.evidenceText, sourceField: relation.sourceField }
       ]);
     }
-    rows.push({ postId: post.id, source: post.source, title: post.title, url: post.url, publishedAt: post.publishedAt, imageUrl: post.imageUrl, byItem });
+    rows.push({
+      postId: post.id,
+      source: post.source,
+      title: post.title,
+      url: post.url,
+      publishedAt: post.publishedAt,
+      imageUrl: post.imageUrl,
+      blocks: contentBlocksFromStoredText(post.text),
+      byItem
+    });
   }
   return rows;
 }
@@ -135,12 +150,16 @@ export async function getAttributeBundles(dataMode = "real"): Promise<AttributeB
       acc.sources.add(post.source);
       if (post.publishedAt && (!acc.latest || post.publishedAt > acc.latest)) acc.latest = post.publishedAt;
       const primary = unique[0];
+      const resolved = primary ? resolveEvidenceImage(post.blocks, primary.evidenceText) : { kind: "NONE" as const, imageUrl: null };
+      const imageRelation: ImageRelationKind = resolved.kind !== "NONE" ? resolved.kind : post.imageUrl ? "ARTICLE_HERO" : "NONE";
       acc.evidence.push({
         source: post.source,
         title: post.title,
         url: post.url,
         publishedAt: post.publishedAt,
         imageUrl: post.imageUrl,
+        evidenceImageUrl: resolved.imageUrl,
+        imageRelation,
         evidenceText: primary?.evidenceText ?? "",
         sourceField: primary?.sourceField ?? "BODY"
       });
@@ -219,16 +238,33 @@ export async function getPrimaryBundleForItem(specificItem: string, dataMode = "
 }
 
 /**
- * The bundle image is an article hero image, never a product cutout (see
- * docs/ATTRIBUTE_BUNDLE_AUDIT.md). It is picked deterministically - the
- * first evidence article (already sorted newest-first) that has one - and
- * the same image may legitimately be reused across bundles that share an
- * evidence article. Returns null (never a guessed image) when no evidence
- * article carries one, so the UI can fall back to an attribute-chip panel
- * instead of an empty image box.
+ * The bundle hero image must be document-position evidence (DIRECT_BLOCK or
+ * ADJACENT_BLOCK to the attribute's evidence text), never the article's
+ * overall hero image (imageUrl/ARTICLE_HERO) used as a stand-in product
+ * photo - that is exactly how an unrelated article's hero photo ends up
+ * looking like "the" recycled-fabric tote bag. Picked deterministically -
+ * the first evidence article (already sorted newest-first) that has one -
+ * and the same image may legitimately be reused across bundles that share
+ * an evidence article. Returns null (never a guessed image, never a hero
+ * fallback) when no evidence article has a position-confident image, so the
+ * UI falls back to an attribute-centric panel instead.
  */
 export function selectBundleHeroImage(evidenceArticles: BundleEvidenceArticle[]): string | null {
-  return evidenceArticles.find((article) => article.imageUrl)?.imageUrl ?? null;
+  return evidenceArticles.find((article) => article.evidenceImageUrl)?.evidenceImageUrl ?? null;
+}
+
+/**
+ * Bundle-first planning-insight priority: a repeated bundle (>=2 articles,
+ * even from one source) is the most concrete signal available, a
+ * single-observation bundle is still stronger than a bare specific-item
+ * mention with no proven attribute, and neither is fabricated when the
+ * REAL corpus has none - callers must fall back to the older specific-item
+ * insight only when this returns null. `bundles` is expected pre-sorted
+ * (as getAttributeBundles already returns), so the first >=2-article bundle
+ * encountered is also the strongest one.
+ */
+export function selectPrimaryPlanningBundle(bundles: AttributeBundle[]): AttributeBundle | null {
+  return bundles.find((bundle) => bundle.bundleArticlePresence >= 2) ?? bundles[0] ?? null;
 }
 
 function dedupeAttributes<T extends { type: string; value: string }>(attributes: T[]): T[] {
