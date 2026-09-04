@@ -2,6 +2,13 @@
 
 Checked date: 2026-09-04 (architecture pass), updated 2026-09-04 (editorial body coverage pass)
 
+> **Counts below are superseded.** The overnight editorial expansion run (corpus
+> 148 → 223 posts, relations 6 → 11, bundles 4 → 7, plus three taxonomy additions
+> and a HYPEBEAST_KR post-identity fix) is recorded in
+> [`EDITORIAL_EXPANSION_NIGHT_RUN.md`](./EDITORIAL_EXPANSION_NIGHT_RUN.md).
+> The architecture, the direct-vs-co-occurrence rule, and the extraction rule
+> described in this document remain accurate.
+
 Goal: move the analysis from "토트백이 많이 보인다" to "어떤 속성의 어떤 아이템이 보이는가" - but only where an attribute is genuinely attached to the item, never by promoting article co-occurrence into a product attribute.
 
 ## 2026-09-04 update: editorial body coverage pass
