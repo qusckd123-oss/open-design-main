@@ -1,5 +1,6 @@
 import { editorialSources, type EditorialSource } from "../src/config/editorial-sources";
 import { collectEditorialFeed } from "../src/collectors/editorial/rss";
+import { extractEditorialMentions } from "../src/collectors/editorial/mentions";
 import { prisma } from "../src/db/client";
 
 function argValue(name: string) {
@@ -22,6 +23,25 @@ async function main() {
       const posts = await collectEditorialFeed(source, limitPerSource, { days });
       let mentions = 0;
       for (const post of posts) {
+        // Never shrink a stored body. The same article can legitimately be seen
+        // through two discovery paths with different richness - a Hypebeast
+        // multi-product roundup, for example, carries every product in the RSS
+        // content:encoded but not in the article page's post-body-content. The
+        // longer body is always the better evidence, so a re-collection may add
+        // text but must never delete it. Mirrors the rule refresh-editorial-body
+        // already applies. imageUrl is likewise only filled in, never cleared.
+        const existing = await prisma.editorialPost.findUnique({
+          where: { source_externalPostId: { source: post.source, externalPostId: post.externalPostId } },
+          select: { text: true, excerpt: true, imageUrl: true }
+        });
+        const keepExistingBody = (existing?.text?.length ?? 0) > (post.text?.length ?? 0);
+        const finalText = keepExistingBody ? existing?.text ?? post.text : post.text;
+        const finalExcerpt = keepExistingBody ? existing?.excerpt ?? post.excerpt : post.excerpt;
+        // Mentions must describe the body that is actually stored.
+        const finalMentions = keepExistingBody
+          ? extractEditorialMentions({ title: post.title, text: finalText ?? "", postGender: post.audienceGender })
+          : post.mentions;
+
         const saved = await prisma.editorialPost.upsert({
           where: { source_externalPostId: { source: post.source, externalPostId: post.externalPostId } },
           update: {
@@ -29,9 +49,9 @@ async function main() {
             canonicalUrl: post.canonicalUrl,
             title: post.title,
             publishedAt: post.publishedAt,
-            imageUrl: post.imageUrl,
-            excerpt: post.excerpt,
-            text: post.text,
+            imageUrl: post.imageUrl ?? existing?.imageUrl ?? null,
+            excerpt: finalExcerpt,
+            text: finalText,
             audienceGender: post.audienceGender,
             fashionRelevance: post.fashionRelevance,
             dataMode: "real",
@@ -54,9 +74,9 @@ async function main() {
           }
         });
         await prisma.editorialMention.deleteMany({ where: { postId: saved.id } });
-        if (post.mentions.length > 0) {
+        if (finalMentions.length > 0) {
           await prisma.editorialMention.createMany({
-            data: post.mentions.map((mention) => ({
+            data: finalMentions.map((mention) => ({
               postId: saved.id,
               type: mention.type,
               value: mention.value,
@@ -65,7 +85,7 @@ async function main() {
               evidence: mention.evidence
             }))
           });
-          mentions += post.mentions.length;
+          mentions += finalMentions.length;
         }
       }
       summary.push({ source, status: "SUCCESS", posts: posts.length, mentions });

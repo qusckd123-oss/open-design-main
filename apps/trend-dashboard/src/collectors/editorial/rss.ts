@@ -54,9 +54,15 @@ export async function collectEditorialFeed(source: EditorialSource, limit = 30, 
     const audienceGender = inferEditorialGender({ sourceCategory, title, text });
     const mentions = extractEditorialMentions({ title, text, postGender: audienceGender });
     const fashionRelevance = classifyFashionRelevance({ sourceCategory, title, text, mentionCount: mentions.length });
+    // HYPEBEAST_KR's RSS guid is a permalink on a DIFFERENT host
+    // (kr.hypebeast.com/?post=NNN) than the canonical article URL, so keying
+    // identity on the guid stores the same article twice once historical
+    // sitemap collection also runs. The canonical URL is the one identity both
+    // discovery paths agree on, so it wins for this source.
+    const externalPostId = source === "HYPEBEAST_KR" ? url || item.guid || title : item.guid || url || title;
     return {
       source,
-      externalPostId: item.guid || url || title,
+      externalPostId,
       url,
       canonicalUrl: url,
       title,

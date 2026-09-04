@@ -852,7 +852,19 @@ async function verifyAttributeBundles() {
   // item detail page's empty state, not a fabricated bundle, must show.
   const totePrimary = await getPrimaryBundleForItem("TOTE_BAG", "real");
   assert.ok(totePrimary, "TOTE_BAG must resolve a primary bundle from real direct-attribute evidence.");
-  assert.equal(totePrimary?.displayName, "재활용 원단 토트백", "TOTE_BAG's strongest bundle (2 articles/1 source) must be the recycled-fabric one.");
+  assert.equal(totePrimary?.specificItem, "TOTE_BAG", "TOTE_BAG's primary bundle must belong to TOTE_BAG.");
+  // Assert the SELECTION RULE rather than a hard-coded winner: the corpus is
+  // re-collected over a rolling window, so which tote bundle is strongest can
+  // legitimately change - but the primary must always be the strongest one.
+  const toteBundles = bundles.filter((bundle) => bundle.specificItem === "TOTE_BAG");
+  assert.ok(toteBundles.length > 0, "TOTE_BAG must have at least one bundle.");
+  for (const bundle of toteBundles) {
+    assert.ok(
+      (totePrimary?.bundleSourceSpread ?? 0) > bundle.bundleSourceSpread ||
+        ((totePrimary?.bundleSourceSpread ?? 0) === bundle.bundleSourceSpread && (totePrimary?.bundleArticlePresence ?? 0) >= bundle.bundleArticlePresence),
+      `TOTE_BAG primary "${totePrimary?.displayName}" must not be weaker than "${bundle.displayName}".`
+    );
+  }
   const trackPrimary = await getPrimaryBundleForItem("TRACK_JACKET", "real");
   assert.equal(trackPrimary?.displayName, "셔링 트랙 재킷", "TRACK_JACKET's primary bundle must be its one real direct phrase.");
   assert.equal(trackPrimary?.bundleArticlePresence, 1, "셔링 트랙 재킷 is a single observation and must stay one article.");
@@ -868,8 +880,19 @@ async function verifyAttributeBundles() {
   assert.equal(selectPrimaryPlanningBundle([single, repeated])?.displayName, "반복", "A repeated bundle (>=2 articles) must be preferred over a single-observation bundle regardless of list order.");
   assert.equal(selectPrimaryPlanningBundle([single])?.displayName, "단일", "With no repeated bundle, the single-observation bundle must still be preferred over the specific-item fallback.");
   assert.equal(selectPrimaryPlanningBundle([]), null, "With zero bundles, the caller must fall back to the specific-item insight rather than fabricating one.");
+  // Against REAL data: whenever ANY repeated bundle exists, the dashboard's
+  // primary planning bundle must be a repeated one. Asserted structurally
+  // because the corpus is re-collected over a rolling window - which specific
+  // bundle is repeated changes, the priority rule must not.
   const realPrimary = selectPrimaryPlanningBundle(bundles);
-  assert.equal(realPrimary?.displayName, "재활용 원단 토트백", "Against REAL data, 재활용 원단 토트백 (the only repeated bundle) must be the dashboard's primary planning bundle.");
+  const realRepeated = bundles.filter((bundle) => bundle.bundleArticlePresence >= 2);
+  assert.ok(realPrimary, "With REAL bundles present, a primary planning bundle must be selected.");
+  if (realRepeated.length > 0) {
+    assert.ok(
+      (realPrimary?.bundleArticlePresence ?? 0) >= 2,
+      `A repeated bundle exists (${realRepeated.map((bundle) => bundle.displayName).join(", ")}), so the primary planning bundle must be repeated, got "${realPrimary?.displayName}".`
+    );
+  }
 }
 
 /**
