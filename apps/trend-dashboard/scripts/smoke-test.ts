@@ -756,15 +756,32 @@ async function verifyAttributeBundles() {
     "Attributes compose in a fixed dimension order (MATERIAL before COLOR), so the same evidence always yields the same name."
   );
 
-  // Against REAL data: TRACK_JACKET has article co-occurrence but no direct
-  // attribute evidence, and that separation must hold.
+  // Against REAL data: TRACK_JACKET is the worked example of the direct vs
+  // co-occurrence split. After the 2026-09-04 missed-vocabulary audit it has
+  // exactly ONE direct attribute, from the real phrase "셔링 디테일의 트랙
+  // 재킷" - and its many co-occurring values (SPORTY/RED/NYLON/DENIM/...) must
+  // still never be promoted. Asserting the exact set is strictly stronger than
+  // the previous "must be empty" assertion.
   const trackDirect = await getSpecificItemDirectAttributes("TRACK_JACKET", "real");
-  assert.equal(trackDirect.length, 0, "TRACK_JACKET co-occurrence (SPORTY/RED/NYLON...) must never be promoted into direct attributes.");
+  assert.deepEqual(
+    trackDirect.map((attribute) => `${attribute.type}:${attribute.value}`),
+    ["DETAIL:SHIRRING"],
+    "TRACK_JACKET must expose exactly its one real direct phrase (셔링), never a promoted co-occurrence value."
+  );
   const trackCoOccurrence = await getSpecificItemEditorialDetail("TRACK_JACKET", "real");
   assert.ok(
     (trackCoOccurrence.cooccurrence.styles.length + trackCoOccurrence.cooccurrence.colors.length) > 0,
     "TRACK_JACKET must still keep its article co-occurrence evidence after the direct/indirect split."
   );
+  const trackDirectValues = new Set(trackDirect.map((attribute) => attribute.value));
+  for (const coOccurring of [...trackCoOccurrence.cooccurrence.styles, ...trackCoOccurrence.cooccurrence.colors]) {
+    assert.equal(trackDirectValues.has(coOccurring.value), false, `TRACK_JACKET co-occurrence ${coOccurring.value} must never appear as a direct attribute.`);
+  }
+
+  // An item with article presence but no direct modifier phrase must still
+  // resolve zero direct attributes - the honest empty state the UI relies on.
+  const beanieDirect = await getSpecificItemDirectAttributes("KNIT_BEANIE", "real");
+  assert.equal(beanieDirect.length, 0, "KNIT_BEANIE is mentioned but never directly modified in the REAL corpus, so it must have no direct attributes.");
 
   const bundles = await getAttributeBundles("real");
   for (const bundle of bundles) {
@@ -807,7 +824,11 @@ async function verifyAttributeBundles() {
   assert.ok(totePrimary, "TOTE_BAG must resolve a primary bundle from real direct-attribute evidence.");
   assert.equal(totePrimary?.displayName, "재활용 원단 토트백", "TOTE_BAG's strongest bundle (2 articles/1 source) must be the recycled-fabric one.");
   const trackPrimary = await getPrimaryBundleForItem("TRACK_JACKET", "real");
-  assert.equal(trackPrimary, null, "TRACK_JACKET has zero direct attributes, so it must have no primary bundle to highlight.");
+  assert.equal(trackPrimary?.displayName, "셔링 트랙 재킷", "TRACK_JACKET's primary bundle must be its one real direct phrase.");
+  assert.equal(trackPrimary?.bundleArticlePresence, 1, "셔링 트랙 재킷 is a single observation and must stay one article.");
+  // An item with zero direct attributes must still have NO primary bundle -
+  // the item detail page's honest empty state.
+  assert.equal(await getPrimaryBundleForItem("KNIT_BEANIE", "real"), null, "KNIT_BEANIE has no direct attribute, so it must have no primary bundle to highlight.");
 
   // Dashboard insight priority (§8): a repeated bundle beats a single-
   // observation bundle, which beats an empty list (caller falls back to the

@@ -42,6 +42,9 @@ const attributeLabels: Record<string, string> = {
   BIG_POCKET: "빅 포켓",
   STRIPE: "스트라이프",
   CHECK: "체크",
+  SHIRRING: "셔링",
+  RAGLAN: "라글란",
+  SEQUIN: "시퀸",
   // COLOR
   BLACK: "블랙",
   WHITE: "화이트",

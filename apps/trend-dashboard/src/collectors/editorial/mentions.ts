@@ -51,7 +51,21 @@ const rules: Rule[] = [
   { type: "DETAIL", value: "WASHED", patterns: [rx("\\bwashed\\b|\\uC6CC\\uC2F1|\\uD53C\\uADF8\\uBA3C\\uD2B8")] },
   { type: "DETAIL", value: "BIG_POCKET", patterns: [rx("\\bbig pocket\\b|\\uBE45 \\uD3EC\\uCF13|\\uCE74\\uACE0 \\uD3EC\\uCF13")] },
   { type: "DETAIL", value: "STRIPE", patterns: [rx("\\bstripe\\b|\\bstriped\\b|\\uC2A4\\uD2B8\\uB77C\\uC774\\uD504")] },
-  { type: "DETAIL", value: "CHECK", patterns: [rx("\\bcheck\\b|\\bplaid\\b|\\uCCB4\\uD06C")] },
+  // 플래드 is simply the Korean spelling of "plaid", which this rule already
+  // matched in English - a normalization fix, not a new concept (1 REAL
+  // article: "플래드 패턴의 돌먼 슬리브 해링턴과 코치 재킷").
+  { type: "DETAIL", value: "CHECK", patterns: [rx("\\bcheck\\b|\\bplaid\\b|\\uCCB4\\uD06C|\\uD50C\\uB798\\uB4DC")] },
+  // Added after the 2026-09-04 missed-vocabulary audit. Each of these three is
+  // a construction/decoration DETAIL that appears as a DIRECT pre-item
+  // modifier inside the extractor's real 20-character window, and each fills
+  // an obvious gap next to the PIPING/EMBROIDERY/STRIPE/CHECK set:
+  //   셔링   "셔링 디테일의 트랙 재킷"        (EYESMAG)
+  //   라글란  "시퀸 라글란 롱슬리브 톱"        (HYPEBEAST_KR, 라글란 in 2 articles)
+  //   시퀸   "시퀸 라글란 롱슬리브 톱"        (HYPEBEAST_KR, 시퀸 in 3 articles)
+  // "시퀀" is deliberately NOT matched: it would fire on 시퀀스(sequence).
+  { type: "DETAIL", value: "SHIRRING", patterns: [rx("\\bshirring\\b|셔링")] },
+  { type: "DETAIL", value: "RAGLAN", patterns: [rx("\\braglan\\b|라글란|래글런")] },
+  { type: "DETAIL", value: "SEQUIN", patterns: [rx("\\bsequin\\b|시퀸|스팽글")] },
   { type: "MATERIAL", value: "DENIM", patterns: [rx("\\bdenim\\b|\\uB370\\uB2D8")] },
   { type: "MATERIAL", value: "NYLON", patterns: [rx("\\bnylon\\b|\\uB098\\uC77C\\uB860")] },
   { type: "MATERIAL", value: "SUEDE", patterns: [rx("\\bsuede\\b|\\uC2A4\\uC6E8\\uC774\\uB4DC")] },

@@ -87,6 +87,76 @@ export function extractDirectAttributeRelations(input: AttributeRelationInput): 
   return relations;
 }
 
+/**
+ * AUDIT-ONLY introspection. Reports, for every specific-item occurrence, what
+ * the extractor actually saw and why it did or did not emit a relation. It
+ * reuses the very same segmentation/window/guard code paths below, so an audit
+ * can never drift from extraction behaviour. Nothing here changes extraction:
+ * `extractDirectAttributeRelations` is untouched by this function existing.
+ *
+ * `wideContext` deliberately reaches further back than MODIFIER_WINDOW so an
+ * audit can distinguish the two very different failure modes:
+ *   1. a real modifier exists but sits outside the strict window, versus
+ *   2. the sentence simply never describes the product at all.
+ */
+export type ItemContextOutcome = "RELATION" | "NO_WINDOW" | "ENUMERATION" | "NO_ATTRIBUTE_IN_WINDOW";
+
+export type ItemContext = {
+  specificItem: string;
+  matchedText: string;
+  sourceField: AttributeSourceField;
+  window: string;
+  wideContext: string;
+  outcome: ItemContextOutcome;
+  matchedAttributes: Array<{ type: string; value: string }>;
+};
+
+const WIDE_CONTEXT_WINDOW = 70;
+
+export function describeItemContexts(input: AttributeRelationInput): ItemContext[] {
+  const fields: Array<[AttributeSourceField, string]> = [
+    ["TITLE", input.title ?? ""],
+    ["SUMMARY", input.excerpt ?? ""],
+    ["BODY", input.text ?? ""]
+  ];
+
+  const contexts: ItemContext[] = [];
+  for (const [sourceField, raw] of fields) {
+    if (!raw.trim()) continue;
+    const segments = sourceField === "TITLE" ? [normalize(raw)] : splitSentences(raw);
+    for (const segment of segments) {
+      for (const itemRule of specificItemRules()) {
+        for (const match of matchAll(segment, itemRule.patterns)) {
+          const wideContext = segment.slice(Math.max(0, match.index - WIDE_CONTEXT_WINDOW), match.index + match.text.length);
+          const window = modifierWindow(segment, match.index);
+          if (!window) {
+            contexts.push({ specificItem: itemRule.value, matchedText: match.text, sourceField, window: "", wideContext, outcome: "NO_WINDOW", matchedAttributes: [] });
+            continue;
+          }
+          if (containsOtherSpecificItem(window, itemRule.value)) {
+            contexts.push({ specificItem: itemRule.value, matchedText: match.text, sourceField, window, wideContext, outcome: "ENUMERATION", matchedAttributes: [] });
+            continue;
+          }
+          const matchedAttributes: Array<{ type: string; value: string }> = [];
+          for (const attributeRule of attributeRules()) {
+            if (firstMatch(window, attributeRule.patterns)) matchedAttributes.push({ type: attributeRule.type, value: attributeRule.value });
+          }
+          contexts.push({
+            specificItem: itemRule.value,
+            matchedText: match.text,
+            sourceField,
+            window,
+            wideContext,
+            outcome: matchedAttributes.length > 0 ? "RELATION" : "NO_ATTRIBUTE_IN_WINDOW",
+            matchedAttributes
+          });
+        }
+      }
+    }
+  }
+  return contexts;
+}
+
 function relationsInSegment(segment: string, sourceField: AttributeSourceField): DirectAttributeRelation[] {
   const found: DirectAttributeRelation[] = [];
   for (const itemRule of specificItemRules()) {
