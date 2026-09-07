@@ -19,6 +19,8 @@ export type EditorialCollectedPost = {
 
 export type EditorialCollectOptions = {
   days?: number;
+  /** Canonical URLs already stored; discovery still lists them but they are not re-fetched. */
+  skipUrls?: Set<string>;
 };
 
 export async function collectEditorialFeed(source: EditorialSource, limit = 30, options: EditorialCollectOptions = {}): Promise<EditorialCollectedPost[]> {
@@ -31,7 +33,7 @@ export async function collectEditorialFeed(source: EditorialSource, limit = 30, 
   // the single highest attribute-density source. When a window IS requested we
   // switch to the site's own public monthly sitemaps, exactly as EYESMAG
   // already does. The default (no `days`) path stays on RSS, unchanged.
-  if (source === "HYPEBEAST_KR" && options.days) return collectHypebeastHistorical(limit, options.days);
+  if (source === "HYPEBEAST_KR" && options.days) return collectHypebeastHistorical(limit, options.days, options.skipUrls);
   const response = await fetch(config.feedUrl, {
     headers: {
       "User-Agent": "TrendSignalDashboard/0.1 (+editorial source audit)",
@@ -188,6 +190,14 @@ function extractImage(value: string) {
   return value.match(/<img[^>]+src=["']([^"']+)["']/i)?.[1] ?? null;
 }
 
+/**
+ * Raised when a host signals it is refusing automated traffic. It is thrown -
+ * not swallowed like an ordinary per-article failure - so a collection stops
+ * on the FIRST refusal instead of hammering through hundreds of them. Never
+ * bypassed, never retried under a different identity.
+ */
+export class EditorialRateLimitedError extends Error {}
+
 async function fetchText(url: string) {
   const response = await fetch(url, {
     headers: {
@@ -195,8 +205,17 @@ async function fetchText(url: string) {
       Accept: "text/html,application/xml,application/rss+xml,*/*"
     }
   });
+  // hypebeast.kr answers heavy automated traffic with 202 + an empty body.
+  // Together with 429 that means "stop asking", not "try again".
+  if (response.status === 429 || response.status === 202) {
+    throw new EditorialRateLimitedError(`${url} refused automated request: HTTP ${response.status}`);
+  }
   if (!response.ok) throw new Error(`${url} request failed: HTTP ${response.status}`);
-  return response.text();
+  const body = await response.text();
+  if (body.trim().length === 0) {
+    throw new EditorialRateLimitedError(`${url} returned an empty body - host is refusing automated requests`);
+  }
+  return body;
 }
 
 export function parseNewsSitemap(xml: string) {
@@ -324,8 +343,25 @@ export function parseHypebeastRichBody(html: string): string | null {
   const match = html.match(/<div[^>]+class="[^"]*\bpost-body-content\b[^"]*"[^>]*>/);
   if (!match || match.index === undefined) return null;
   const start = match.index + match[0].length;
-  const region = html.slice(start, Math.min(html.length, start + 120000));
-  const stopPatterns = [/<div[^>]+class="[^"]*\bpost-body-content-tags\b/, /<section[^>]+class="[^"]*related/i, /Read Full Article/i];
+  // The region must run to the real trailing-chrome marker, NOT to a fixed
+  // offset. A weekly roundup ("이번 주 놓치지 말아야 할 8가지 드롭") carries
+  // eight products across ~650,000 characters of markup; an earlier 120,000
+  // char cap silently truncated it and dropped genuine product evidence
+  // (a "Zantan 토트백" sentence sitting ~541,000 chars into the body). The cut
+  // is therefore driven purely by the stop markers, with only a generous
+  // sanity bound so a pathological page cannot pin memory.
+  const region = html.slice(start, Math.min(html.length, start + 2_000_000));
+  // Trailing chrome sits inside the same container, so it is cut by content
+  // markers too. Both Korean strings are fixed site furniture (a machine
+  // translation disclaimer and the newsletter CTA), long enough that they
+  // cannot plausibly occur inside real article prose.
+  const stopPatterns = [
+    /<div[^>]+class="[^"]*\bpost-body-content-tags\b/,
+    /<section[^>]+class="[^"]*related/i,
+    /Read Full Article/i,
+    /영어에서 자동으로 번역되었습니다/,
+    /뉴스레터를 구독해 최신 뉴스를 놓치지 마세요/
+  ];
   let cutAt = region.length;
   for (const pattern of stopPatterns) {
     const found = region.match(pattern);
@@ -335,11 +371,95 @@ export function parseHypebeastRichBody(html: string): string | null {
   return text || null;
 }
 
+export type HypebeastListingEntry = { url: string; publishedAt: string; category: string };
+
+/**
+ * Parses the public /fashion listing. Every post box carries three things we
+ * need before deciding to fetch anything: the article URL, an explicit
+ * machine-readable category class (`category fashion-category`), and an ISO
+ * `datetime`. Discovering all three from the listing means the active window
+ * and the category filter are both applied BEFORE any article body is
+ * requested - which is what keeps the request count (and the risk of tripping
+ * the host's bot mitigation) low.
+ */
+export function parseHypebeastListing(html: string): HypebeastListingEntry[] {
+  const entries: HypebeastListingEntry[] = [];
+  const blocks = html.split('class="post-box-content-container"');
+  for (const block of blocks.slice(1)) {
+    // One post box is comfortably inside this bound; slicing keeps a very long
+    // listing page from being re-scanned in full for every block.
+    const scope = block.slice(0, 4000);
+    const category = scope.match(/class="category\s+([a-z0-9-]+)-category"/)?.[1] ?? "";
+    const titleIndex = scope.indexOf("post-box-content-title");
+    const urlScope = titleIndex >= 0 ? scope.slice(titleIndex, titleIndex + 900) : scope;
+    const url = urlScope.match(/href="(https:\/\/hypebeast\.kr\/20\d{2}\/\d{1,2}\/[A-Za-z0-9-]+)"/)?.[1] ?? "";
+    // Only the newest few boxes carry a machine-readable <time datetime=...>;
+    // the rest render relative time ("2 Days ago") client-side. An entry
+    // without a listing date is therefore kept, not dropped - requiring one
+    // silently limited discovery to a single day. The article's own
+    // datePublished is checked against the window after fetching.
+    const publishedAt = scope.match(/datetime="([^"]+)"/)?.[1] ?? "";
+    if (url) entries.push({ url, publishedAt, category });
+  }
+  return entries;
+}
+
+/**
+ * Fashion-scoped historical discovery. Walks /fashion, then /fashion/page/N -
+ * a pagination link the listing itself publishes - keeping only entries the
+ * site labels `fashion-category` and that fall inside the active window.
+ * Stops as soon as a page contains no in-window entry, so it reads only as far
+ * back as the window actually needs.
+ */
+export async function getHypebeastFashionEntries(days: number, maxPages = 40): Promise<HypebeastListingEntry[]> {
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  const base = editorialSourceConfigs.HYPEBEAST_KR.targetUrl;
+  const collected: HypebeastListingEntry[] = [];
+  const seen = new Set<string>();
+
+  for (let page = 1; page <= maxPages; page += 1) {
+    const url = page === 1 ? base : `${base}/page/${page}`;
+    const html = await fetchText(url);
+    const entries = parseHypebeastListing(html);
+    if (entries.length === 0) break;
+
+    let datedEntries = 0;
+    let datedInWindow = 0;
+    for (const entry of entries) {
+      const time = entry.publishedAt ? new Date(entry.publishedAt).getTime() : Number.NaN;
+      if (!Number.isNaN(time)) {
+        datedEntries += 1;
+        if (time >= cutoff) datedInWindow += 1;
+        else continue; // dated and demonstrably older than the window
+      }
+      // Route membership alone is not treated as proof an article is about a
+      // product - it only decides what is worth reading. The article's own
+      // text still has to earn FASHION_RELEVANT downstream, and its real
+      // datePublished is re-checked against the window after fetching.
+      if (entry.category !== "fashion") continue;
+      if (seen.has(entry.url)) continue;
+      seen.add(entry.url);
+      collected.push(entry);
+    }
+    // Stop only on evidence: this page carried dates and every one of them
+    // predates the window, so older pages will too. Pages whose boxes render
+    // relative time client-side carry no such evidence and must not stop the
+    // walk.
+    if (datedEntries > 0 && datedInWindow === 0) break;
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+  }
+  return collected;
+}
+
 /**
  * Public monthly sitemaps (declared in hypebeast.kr/robots.txt, which allows
  * every article route and only disallows /api, /account, /wp-admin and the
  * like). Returns article URLs whose month could still fall inside the window;
  * the per-article publish date is checked again after parsing.
+ *
+ * NOTE: this spans EVERY Hypebeast section (gaming, music, film), so it is no
+ * longer the primary discovery path for trend collection - it is kept only as
+ * a fallback for when the fashion listing yields nothing.
  */
 async function getHypebeastEntries(days: number): Promise<string[]> {
   const index = await fetchText("https://hypebeast.kr/sitemap.xml");
@@ -366,13 +486,19 @@ async function getHypebeastEntries(days: number): Promise<string[]> {
   return [...new Set(urls)];
 }
 
-async function collectHypebeastHistorical(limit: number, days: number): Promise<EditorialCollectedPost[]> {
-  const urls = await getHypebeastEntries(days);
+async function collectHypebeastHistorical(limit: number, days: number, skipUrls: Set<string> = new Set()): Promise<EditorialCollectedPost[]> {
+  // Fashion-scoped listing is the primary path; the all-section sitemap is only
+  // a fallback, because it mixes gaming/music/film into a trend corpus.
+  const fashionEntries = await getHypebeastFashionEntries(days);
+  const urls = fashionEntries.length > 0 ? fashionEntries.map((entry) => entry.url) : await getHypebeastEntries(days);
   const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
   const posts: EditorialCollectedPost[] = [];
 
   for (const url of urls) {
     if (posts.length >= limit) break;
+    // Already stored: discovery still lists it, but there is no reason to spend
+    // a request re-reading it.
+    if (skipUrls.has(url)) continue;
     try {
       const html = await fetchText(url);
       const article = parseArticlePage(html, url);
@@ -405,11 +531,22 @@ async function collectHypebeastHistorical(limit: number, days: number): Promise<
         fashionRelevance,
         mentions
       });
-    } catch {
+    } catch (error) {
+      // A single bad article is skipped. A refusal stops the walk immediately -
+      // but everything already fetched is RETURNED rather than thrown away, so
+      // an interrupted run still makes progress and the next run simply
+      // continues from what is missing (see `skipUrls`). Retrying into a block
+      // is never attempted.
+      if (error instanceof EditorialRateLimitedError) {
+        console.warn(`HYPEBEAST_KR collection stopped early: ${error.message}`);
+        console.warn(`Returning ${posts.length} article(s) fetched before the refusal; re-run later to continue.`);
+        break;
+      }
       continue;
     }
-    // Be a polite client on a site that publishes Crawl-delay for several bots.
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+    // Be a polite client on a site that publishes Crawl-delay for several bots,
+    // and that has previously answered a large crawl with bot mitigation.
+    await new Promise((resolve) => setTimeout(resolve, 2500));
   }
   return posts;
 }

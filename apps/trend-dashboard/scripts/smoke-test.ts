@@ -9,7 +9,7 @@ import { bundleEvidenceStrength, getAttributeBundles, getPrimaryBundleForItem, g
 import { contentBlocksFromStoredText, resolveEvidenceImage, type ContentBlock } from "../src/collectors/editorial/image-relation";
 import { attributeBarWidthPercent } from "../src/lib/attribute-visual";
 import { composeBundleName } from "../src/lib/korean-labels";
-import { classifyFashionRelevance, parseArticlePage, parseEyesmagRichBody, parseGenericSitemap, parseHypebeastRichBody, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
+import { classifyFashionRelevance, EditorialRateLimitedError, parseArticlePage, parseEyesmagRichBody, parseGenericSitemap, parseHypebeastListing, parseHypebeastRichBody, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
 import { editorialSourceConfigs } from "../src/config/editorial-sources";
 import { aggregateEditorialMentions, auditUnmatchedFashionPhrases, getSpecificItemEditorialDetail, partitionCoOccurrence } from "../src/services/editorial-analytics-service";
 import { classifyDomesticTrendDemandInsight, classifyPlanningInsight, getPlanningDashboardData, matchesPlanningGender, planningItemKey } from "../src/services/planning-dashboard-service";
@@ -617,6 +617,71 @@ function verifyEditorialBodyParsers() {
   assert.equal(hypebeastBody!.includes("KidSuper</a>"), false, "HYPEBEAST_KR body must not keep raw markup.");
   assert.equal(hypebeastBody!.includes("다른 기사 제목"), false, "HYPEBEAST_KR body must stop before the related-articles section.");
   assert.equal(parseHypebeastRichBody("<html><body>no post body here</body></html>"), null, "Missing post-body-content must return null, not fabricate text.");
+
+  // REGRESSION: a weekly roundup ("이번 주 …8가지 드롭") carries eight products
+  // across ~650,000 characters of markup. An earlier fixed 120,000-char slice
+  // silently truncated the body and dropped a real "Zantan 토트백" product
+  // sentence sitting far past that offset - which is exactly how the
+  // 재활용 원단 토트백 bundle lost one of its two articles. The cut must be
+  // driven by the trailing-chrome marker, never by a fixed offset.
+  const longFiller = "<p>필러 문단입니다. 컬렉션 소개가 이어진다.</p>".repeat(8000);
+  const roundupHtml = `<html><body><div class="post-body-content">${longFiller}<p>아카이브 원단을 재활용해 만든 Zantan 토트백을 선보인다.</p><div class="post-body-content-tags"><a href="#">tag</a></div></div></body></html>`;
+  assert.ok(roundupHtml.length > 200000, "Fixture must exceed the old 120,000-char cap to be a meaningful regression test.");
+  const roundupBody = parseHypebeastRichBody(roundupHtml);
+  assert.ok(roundupBody, "A very long roundup must still parse.");
+  assert.ok(roundupBody!.includes("재활용해 만든 Zantan 토트백"), "Product evidence far past the old fixed cap must survive - this is the bug that cost 재활용 원단 토트백 an article.");
+  assert.equal(roundupBody!.includes("tag"), false, "The tag-list chrome must still be cut.");
+
+  // HYPEBEAST_KR fashion listing: the route is what makes collection
+  // fashion-scoped instead of pulling gaming/music/film out of the
+  // all-section sitemap. Each post box publishes a machine-readable category
+  // class; only the newest few also publish <time datetime=...>, so an entry
+  // WITHOUT a listing date must still be returned (requiring one silently
+  // limited discovery to a single day and 5 articles).
+  const listingHtml = `<html><body>
+    <div class="post-box"><div class="post-box-content-container">
+      <div class="post-box-content-categories-title"><a href="https://hypebeast.kr/fashion" class="category fashion-category" title="패션">패션</a></div>
+      <div class="post-box-content-title"><a href="https://hypebeast.kr/2026/9/dated-fashion-article" class="title"><h2>제목</h2></a></div>
+      <span class="time"><time class="timeago" datetime="2026-09-06T14:26:23Z">10 Hrs ago</time></span>
+    </div></div>
+    <div class="post-box"><div class="post-box-content-container">
+      <div class="post-box-content-categories-title"><a href="https://hypebeast.kr/fashion" class="category fashion-category" title="패션">패션</a></div>
+      <div class="post-box-content-title"><a href="https://hypebeast.kr/2026/9/undated-fashion-article" class="title"><h2>제목</h2></a></div>
+      <span class="time">2 Days ago</span>
+    </div></div>
+    <div class="post-box"><div class="post-box-content-container">
+      <div class="post-box-content-categories-title"><a href="https://hypebeast.kr/footwear" class="category footwear-category" title="신발">신발</a></div>
+      <div class="post-box-content-title"><a href="https://hypebeast.kr/2026/9/a-footwear-article" class="title"><h2>제목</h2></a></div>
+      <span class="time"><time class="timeago" datetime="2026-09-05T10:00:00Z">1 Day ago</time></span>
+    </div></div>
+  </body></html>`;
+  const listing = parseHypebeastListing(listingHtml);
+  assert.equal(listing.length, 3, "Every post box must be parsed, including ones the listing renders without a datetime.");
+  assert.deepEqual(
+    listing.map((entry) => entry.category),
+    ["fashion", "fashion", "footwear"],
+    "The machine-readable category class must be read per post box - it is what scopes collection to fashion."
+  );
+  assert.equal(listing[0]?.url, "https://hypebeast.kr/2026/9/dated-fashion-article");
+  assert.equal(listing[0]?.publishedAt, "2026-09-06T14:26:23Z", "A dated box must expose its ISO datetime for window filtering.");
+  assert.equal(listing[1]?.publishedAt, "", "An undated box must still be returned, with an empty date, not dropped.");
+  assert.equal(listing[1]?.url, "https://hypebeast.kr/2026/9/undated-fashion-article");
+  assert.ok(
+    listing.some((entry) => entry.category !== "fashion"),
+    "The parser must surface non-fashion categories too, so the caller can exclude them explicitly."
+  );
+  assert.equal(parseHypebeastListing("<html><body>nothing here</body></html>").length, 0, "A page with no post boxes must yield no entries.");
+
+  // A refusal must be its own error type so a collection can stop on the first
+  // one instead of grinding through hundreds of blocked requests.
+  assert.ok(new EditorialRateLimitedError("x") instanceof Error, "Rate-limit refusal must be a distinguishable Error type.");
+
+  // Fixed trailing site chrome (machine-translation disclaimer, newsletter CTA)
+  // must be cut, without touching preceding article prose.
+  const chromeHtml = `<html><body><div class="post-body-content"><p>나일론 소재의 트랙 재킷이 포함된다.</p><p>이 문서는 영어에서 자동으로 번역되었습니다.</p><p>뉴스레터를 구독해 최신 뉴스를 놓치지 마세요 구독하기</p></div></body></html>`;
+  const chromeBody = parseHypebeastRichBody(chromeHtml);
+  assert.ok(chromeBody!.includes("나일론 소재의 트랙 재킷"), "Real prose before the chrome must be kept.");
+  assert.equal(chromeBody!.includes("구독하기"), false, "Newsletter CTA chrome must be cut from the body.");
 
   // HYPEBEAST_KR encodes Korean titles as hex numeric entities; without numeric
   // entity decoding the stored title would be unreadable AND unmatchable by the

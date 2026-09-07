@@ -195,7 +195,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
       <section className="mt-14 border-t border-line pt-8">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">Data Status</p>
         <div className="mt-4 grid gap-6 text-sm md:grid-cols-4">
-          <Meta label="매거진 (국내)" value={`${formatNumber(data.summary.editorialPosts)}개 기사 · ${formatNumber(data.summary.editorialSources)}개 매체`} />
+          <Meta label="매거진 (국내)" value={`수집 ${formatNumber(data.summary.editorialPosts)}개 · 분석 ${formatNumber(data.summary.fashionPosts)}개 · ${formatNumber(data.summary.editorialSources)}개 매체`} />
           <Meta label="스토어 (해외 참고)" value={`END / Rakuten · ${formatNumber(data.summary.marketSnapshots)}개 관측`} />
           <Meta label="어소트 (해외 참고)" value={`SLAM JAM / STUSSY · ${formatNumber(data.summary.assortmentProducts)}개 상품`} />
           <Meta label="최근 업데이트" value={`매거진 ${formatDateKo(data.summary.latestEditorialDate)} · 스토어 ${formatDateKo(data.summary.latestMarketDate)}`} />
@@ -325,9 +325,12 @@ function EmptyState({ title }: { title: string }) {
  * carries the actual insight; this line only orients the reader in the data.
  */
 function buildIntroLine(data: Awaited<ReturnType<typeof getPlanningDashboardData>>) {
+  // Two different numbers that must never be presented as one: everything
+  // collected, versus the fashion-relevant subset the analysis actually runs
+  // on. Saying "223개 기사를 기준으로" while analysing 214 overstates the basis.
   const scopeText = data.scope === "overseas"
-    ? `와 해외 참고 스토어 ${formatNumber(data.summary.verifiedStoreProducts)}개 상품을 기준으로 봅니다.`
-    : "를 기준으로 봅니다. 국내 스토어 랭킹 데이터는 아직 없습니다.";
+    ? ` 해외 참고 스토어 ${formatNumber(data.summary.verifiedStoreProducts)}개 상품도 함께 봅니다.`
+    : " 국내 스토어 랭킹 데이터는 아직 없습니다.";
   const genderText = data.gender !== "all" ? ` ${planningGenderLabel(data.gender)} 필터는 명시적 성별 근거만 사용합니다.` : "";
-  return `현재 ${formatNumber(data.summary.editorialPosts)}개 매거진 기사${scopeText}${genderText} ${confidenceLabel(data.businessSummary.summary.signalConfidence)}.`;
+  return `현재 패션 관련 기사 ${formatNumber(data.summary.fashionPosts)}개를 기준으로 분석합니다 (전체 수집 ${formatNumber(data.summary.editorialPosts)}개).${scopeText}${genderText} ${confidenceLabel(data.businessSummary.summary.signalConfidence)}.`;
 }

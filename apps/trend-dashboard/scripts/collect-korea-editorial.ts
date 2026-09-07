@@ -20,7 +20,12 @@ async function main() {
   for (const source of sources) {
     try {
       if (!editorialSources.includes(source)) throw new Error(`Unsupported editorial source: ${source}`);
-      const posts = await collectEditorialFeed(source, limitPerSource, { days });
+      // Skip re-fetching articles we already store: discovery still lists them,
+      // but spending a request on a known URL only adds load to a host that has
+      // previously answered heavy traffic with bot mitigation.
+      const known = await prisma.editorialPost.findMany({ where: { dataMode: "real", source }, select: { canonicalUrl: true, url: true } });
+      const skipUrls = new Set(known.flatMap((row) => [row.canonicalUrl, row.url].filter((value): value is string => Boolean(value))));
+      const posts = await collectEditorialFeed(source, limitPerSource, { days, skipUrls });
       let mentions = 0;
       for (const post of posts) {
         // Never shrink a stored body. The same article can legitimately be seen
