@@ -10,6 +10,7 @@ import { contentBlocksFromStoredText, resolveEvidenceImage, type ContentBlock } 
 import { attributeBarWidthPercent } from "../src/lib/attribute-visual";
 import { composeBundleName } from "../src/lib/korean-labels";
 import { classifyFashionRelevance, EditorialRateLimitedError, getHypebeastFashionEntries, parseArticlePage, parseEsquireKrArticlePage, parseEsquireKrBody, parseEsquireKrSitemap, parseEyesmagRichBody, parseGenericSitemap, parseHypebeastListing, parseHypebeastRichBody, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
+import { extractProductNameColorRelations, findDescriptionCandidates } from "../src/collectors/product-reference/attributes";
 import { editorialSourceConfigs } from "../src/config/editorial-sources";
 import { aggregateEditorialMentions, auditUnmatchedFashionPhrases, getSpecificItemEditorialDetail, partitionCoOccurrence } from "../src/services/editorial-analytics-service";
 import { classifyDomesticTrendDemandInsight, classifyPlanningInsight, getPlanningDashboardData, matchesPlanningGender, planningItemKey } from "../src/services/planning-dashboard-service";
@@ -53,6 +54,7 @@ async function main() {
   await verifySpecificItemEditorialCoOccurrence();
   verifyLegacyMarketBlockVisibility();
   verifyDirectAttributeRelations();
+  verifyProductReferenceAttributes();
   verifyEvidenceImageResolution();
   verifyAttributeBarWidth();
   await verifyAttributeBundles();
@@ -942,6 +944,72 @@ function verifyDirectAttributeRelations() {
   // article, ESQUIRE_KR: "에이티즈 산: 카모 볼캡").
   const camoSentence = extractDirectAttributeRelations({ title: "", text: "에이티즈 산: 카모 볼캡을 착용했다." });
   assert.ok(find(camoSentence, "BALL_CAP", "DETAIL", "CAMO"), '"카모 볼캡" must yield BALL_CAP + DETAIL:CAMO.');
+}
+
+/**
+ * PRODUCT REFERENCE (2026-09-07): a deliberately separate module from the
+ * Editorial extractor above, built after a Covernat product-detail probe
+ * found real product names put COLOR after the item as a trailing
+ * SKU-variant suffix ("루베라 백팩 블랙"), which the Editorial extractor's
+ * prefix-only window cannot see and must not be widened to see (that would
+ * risk exactly the cross-item bleed the Editorial tests above guard
+ * against). This suite proves: (1) the new PRODUCT NAME COLOR rule works
+ * both directions, (2) it stays conservative on the same kind of ambiguous
+ * case Editorial guards against, and (3) it changes nothing about Editorial
+ * behavior - every existing Editorial regression fixture in
+ * verifyDirectAttributeRelations must still pass untouched.
+ */
+function verifyProductReferenceAttributes() {
+  const findProduct = (relations: ReturnType<typeof extractProductNameColorRelations>, item: string, color: string) =>
+    relations.find((relation) => relation.specificItem === item && relation.attributeValue === color);
+
+  // Real Covernat product names, suffix-COLOR convention.
+  const rubera = extractProductNameColorRelations("루베라 백팩 블랙");
+  assert.ok(findProduct(rubera, "BACKPACK", "BLACK"), '"루베라 백팩 블랙" must yield BACKPACK + COLOR:BLACK via the suffix rule.');
+  assert.equal(findProduct(rubera, "BACKPACK", "BLACK")?.relationKind, "NAME_COLOR_SUFFIX");
+
+  const clover = extractProductNameColorRelations("클로버하트 플러피 토트백 브라운");
+  assert.ok(findProduct(clover, "TOTE_BAG", "BROWN"), '"클로버하트 플러피 토트백 브라운" must yield TOTE_BAG + COLOR:BROWN via the suffix rule.');
+
+  // Prefix direction (ordinary Korean adnominal order) must also work - this
+  // is not a suffix-only rule, it is genuinely bidirectional for COLOR.
+  const blackBackpack = extractProductNameColorRelations("블랙 백팩");
+  assert.ok(findProduct(blackBackpack, "BACKPACK", "BLACK"), '"블랙 백팩" must yield BACKPACK + COLOR:BLACK via the prefix rule.');
+  assert.equal(findProduct(blackBackpack, "BACKPACK", "BLACK")?.relationKind, "NAME_COLOR_PREFIX");
+
+  // Same guard concern as Editorial, applied to product names: an
+  // intervening word between the color and the item - even one that is only
+  // a generic `ITEM`-type mention like "후드", not a tracked `SUB_ITEM` -
+  // must block the relation. Requiring a whitespace-only gap rejects this
+  // by construction, without needing an explicit other-item lookup.
+  const ambiguous = extractProductNameColorRelations("블랙 후드 백팩");
+  assert.equal(findProduct(ambiguous, "BACKPACK", "BLACK"), undefined, '"블랙 후드 백팩" must NOT promote to BACKPACK + COLOR:BLACK - 후드 sitting between them is ambiguous.');
+
+  // A description-candidate linkage is reported only when the caller
+  // supplies the exact surface form - this function must never invent or
+  // grow the taxonomy on its own.
+  const candidates = findDescriptionCandidates(
+    "우먼 핫픽스 로고 티셔츠 라이트 블루",
+    "디자인- 소프트한 터치감의 코튼 소재 사용- 짧은 기장의 크롭핏",
+    ["크롭핏", "존재하지-않는-표현"]
+  );
+  assert.equal(candidates.length, 1, "Only surface forms actually present in the description must be reported.");
+  assert.equal(candidates[0]?.surfaceForm, "크롭핏");
+  assert.ok(candidates[0]?.evidenceText.includes("크롭핏"), "The evidence text must contain the matched surface form.");
+
+  // REGRESSION GUARD: every Editorial fixture from verifyDirectAttributeRelations
+  // must still hold - this module must not have changed Editorial behavior.
+  const editorialStillGuarded = extractDirectAttributeRelations({
+    title: "",
+    text: "이번 캡슐은 오버사이즈 축구 셔츠와 트랙 재킷, 트레이닝 기어가 관중석을 벗어난다."
+  });
+  assert.equal(
+    editorialStillGuarded.some((relation) => relation.specificItem === "TRACK_JACKET"),
+    false,
+    "Adding the Product Reference module must not affect the Editorial enumeration guard."
+  );
+  const editorialCoordination = extractDirectAttributeRelations({ title: "블랙 후드와 백팩", excerpt: null, text: "" });
+  assert.equal(editorialCoordination.length, 0, "Editorial's own coordination guard (와/과) must remain unaffected by the new module.");
 }
 
 async function verifyAttributeBundles() {

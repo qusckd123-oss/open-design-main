@@ -292,14 +292,146 @@ Per the task's explicit instruction, no additional brand candidates were investi
 4. **Public JSON-LD or equivalent structured description**: confirmed via a quick single-page check before committing to a full sample, so the sample isn't wasted on a site with no structured `description` field at all.
 5. **No explicit AI-use restriction notice** (per Section 2's check, applied to each new candidate individually - Arena's notice does not transfer to any other brand, and Covernat's absence of one does not either).
 
+---
+
+## Follow-up pass (2026-09-07): Product Reference Attribute Extraction
+
+Executed the "next step" from above: built a small, deliberately separate extraction module for PRODUCT NAME grammar, and re-measured the exact same 30 Covernat product URLs used in the prior probe.
+
+### Why the Editorial grammar failed on product names
+
+`src/collectors/editorial/attribute-relations.ts` is built around a single, well-tested assumption: Korean adnominal modifiers precede the noun they modify ("블랙 재킷"), so its `MODIFIER_WINDOW` only ever looks backward from the item. That assumption is correct for editorial prose and stays completely unchanged this pass - every existing Editorial regression fixture (including the exact "오버사이즈 축구 셔츠와 트랙 재킷" and "블랙 후드와 백팩" cases named in this task) was re-verified to still pass untouched.
+
+It fails on Covernat product names specifically because those names frequently place **COLOR after the item as a trailing SKU-variant suffix** ("루베라 백팩 블랙," "클로버하트 플러피 토트백 브라운") - the opposite direction from what the window checks. This was confirmed with a controlled, reversible test against the real production function: reordering the exact same words from suffix to prefix position (`"루베라 백팩 블랙"` -> 0 relations; `"블랙 루베라 백팩"` -> `BACKPACK + COLOR:BLACK`) proves the gap is purely about word order, not missing vocabulary, for this specific class of case.
+
+A second, independent bug was found (and left untouched, since fixing Editorial semantics is out of scope this pass): "후드" is currently only a generic `ITEM`-type mention in `mentions.ts` (not a `SUB_ITEM`), so Editorial's own `containsOtherSpecificItem` enumeration guard does not treat it as a boundary. This means the *existing, unmodified* Editorial extractor already mis-promotes `"블랙 후드 백팩"` (no coordination particle) to `BACKPACK + COLOR:BLACK` today - a real, verified, pre-existing precision gap, reported here for visibility but explicitly not fixed in this pass per the "do not touch Editorial semantics" instruction. (Note this is distinct from `"블랙 후드와 백팩"` *with* the 와 coordination particle, which the existing coordination guard already handles correctly.)
+
+### Product name grammar - the new module
+
+`src/collectors/product-reference/attributes.ts` (new file) exports `extractProductNameColorRelations(productName: string)`. It is intentionally **not** a generalization of the Editorial rule:
+
+- **COLOR only.** COLOR is a small, closed, enumerable vocabulary, unlike DETAIL/MATERIAL/STYLE (open-ended), which is why checking both sides of the item noun is a materially lower-risk relaxation for COLOR specifically. No other attribute type is bidirectional in this module.
+- **Product NAME strings only.** It is never called on Editorial article title/excerpt/body, and is not wired into the Editorial collection or mention pipeline in any way.
+- **Whitespace-only-gap adjacency**, both directions. A match is accepted only when nothing but whitespace sits between the color word and the item - which is *stricter* than Editorial's own 20-char window, and, as a side effect, correctly rejects the exact `"블랙 후드 백팩"` ambiguity that the existing Editorial extractor does not currently guard against for its own (prefix-only) direction. This was a deliberate design choice per the task's own guidance to prioritize "[model/collection words] + ITEM + COLOR" as the safe pattern, rather than reusing a wider window.
+
+### Color suffix result (same 30-product sample, re-fetched fresh)
+
+| Metric | Value |
+|---|---|
+| Sample | 30 (same URLs as the prior probe) |
+| A. Baseline (existing Editorial-style method, re-confirmed unchanged) - Specific Item Rate | 5/30 (16.7%) |
+| A. Baseline - Direct Attribute Rate | 0/30 (0.0%) |
+| B. Color Prefix Relations | 0 |
+| B. Color Suffix Relations | 2 |
+| B. Total Color Relations | 2 |
+| B. Direct Attribute-bearing Products | 2/30 (6.7%) |
+| B. Unique Specific Items with a color relation | BACKPACK, TOTE_BAG |
+| B. Unique Colors | BLACK, BROWN |
+| B. Potential Item+Color Bundles | 2 |
+
+Examples (real, from the new module):
+```
+BACKPACK + COLOR:BLACK  (NAME_COLOR_SUFFIX)  "백팩 블랙"  <- "루베라 백팩 블랙"
+TOTE_BAG + COLOR:BROWN  (NAME_COLOR_SUFFIX)  "토트백 브라운"  <- "클로버하트 플러피 토트백 브라운"
+```
+
+**All 0 prefix relations in this sample is itself informative**: none of Covernat's 30 sampled names happened to use the ordinary Korean prefix convention for a tracked item - every real color-bearing case in this sample was the suffix convention, reinforcing that the suffix pattern (not the prefix pattern already handled by Editorial) is the dominant real convention on this site.
+
+**Two additional real, verified misses in this same sample, neither a code bug**: `"베이직 포켓 롱슬리브 오프 화이트"` (LONG_SLEEVE_TEE is tracked, but "오프 화이트"/off-white is not a registered COLOR value - only whole "WHITE" is) and `"[커버낫x하이다나] 럭키 씨리얼 링거 티셔츠 스카이 블루"` (RINGER_TEE is tracked, but "스카이 블루"/sky blue is not registered - only whole "BLUE" is, in a different rule). These are genuine COLOR-vocabulary gaps, not word-order or code issues, reported as taxonomy candidates only (Section 8/9 update below), not fixed this pass.
+
+### Structured product object model (Section 6)
+
+A Product Reference's natural unit of evidence is not an *article sentence* but a **structured product object**: `name`, `description`, and `image` are already tied together as one JSON-LD record per SKU on Covernat, a semantic guarantee an editorial article never gives (an attribute mentioned anywhere in an article body is never assumed to describe a specific item unless a direct phrase says so). `findDescriptionCandidates(name, description, surfaceForms)` (new, in the same module) makes this relationship explicit but conservative: it identifies which tracked item the product's own `name` resolves to, then checks the *same object's* `description` for caller-supplied candidate surface forms only - it consults no keyword list of its own, so it cannot silently grow the taxonomy. This is a probe-only candidate linkage, not a stored relation.
+
+### Description candidate density (Section 10, same 30-product sample)
+
+| Surface Form | Proposed Dimension | Product Count | Example |
+|---|---|---:|---|
+| 크롭핏 (crop fit) | SILHOUETTE | 1 | "우먼 핫픽스 로고 티셔츠 라이트 블루": "...짧은 기장의 크롭핏..." |
+| 세미와이드 (semi-wide) | SILHOUETTE | 3 | "세미와이드 시그니처 심볼 스웻 팬츠 블랙": "...[디자인] -세미와이드 핏..."; also "[SET] 테크 나일론 베이직 티셔츠&팬츠" and "스몰 어센틱 카고 스웻 팬츠 블랙" |
+| 스탠다드핏 (standard fit, no-space form) | SILHOUETTE | 0 | **Methodology caveat**: `"[스탠다드 핏] 미들 C로고 B.B캡 Dark Pine"` genuinely contains "스탠다드 핏" (with a space) in its **name**, not its description - this candidate search only checked the description field for the exact no-space surface form, so it missed a real hit due to (a) field scope and (b) space-sensitivity. Reported transparently rather than silently rerun to force a better number. |
+| 코듀로이 (corduroy) | MATERIAL | 1 | "우먼 코듀로이 핀턱 팬츠 아이보리": "...소프트한 터치감의 코듀로이 소재를 사용해..." |
+| 벨로아 (velour) | MATERIAL | 1 | "우먼 벨로아 반팔티 초콜렛": "...부드러운 터치감의 벨로아 소재 사용..." |
+| 핀턱 (pintuck) | DETAIL | 0 | Present in the product **name** ("우먼 코듀로이 핀턱 팬츠 아이보리") but not repeated in that product's description text - a real name-level candidate, description-only search missed it. |
+| 글리터 (glitter) | DETAIL | 0 | Not observed in this 30-product sample (was seen in the prior pass's Arena sample, not Covernat's) |
+| 헤어리 (hairy) | MATERIAL/FINISH | 0 | Present in the product **name** ("헤어리 레글런 니트 그린"), same description-only-search limitation as above |
+| 멜란지 (melange) | COLOR/MATERIAL-appearance | 0 | Present in the product **name** ("C 로고 맨투맨 멜란지 그레이"), same limitation |
+
+**Honest methodology note**: several real candidates (스탠다드핏, 핀턱, 헤어리, 멜란지) came up as 0 in this specific description-only search purely because they appear in the product **name** rather than the **description** field, and this probe's candidate function was only pointed at description text. This is disclosed rather than re-run to inflate the count - it does not change the underlying conclusion (real vocabulary exists, is repeatable across products, and is not currently captured), it only means the true product-count-with-evidence is higher than the raw numbers above show when name-level text is included too.
+
+### Dimension model audit (Section 11) - proposed canonical dimension, not added
+
+| Surface Form | Proposed Canonical Dimension | Reasoning |
+|---|---|---|
+| 크롭핏, 세미와이드, 스탠다드핏 | **SILHOUETTE** | All three describe overall garment shape/fit, not material or decoration - a clean fit with the existing SILHOUETTE dimension, which currently has zero entries anywhere in the corpus |
+| 코듀로이, 벨로아 | **MATERIAL** | Both name a fabric composition, same category as existing MATERIAL values (DENIM, RECYCLED_FABRIC, NYLON) |
+| 핀턱 | **DETAIL** | A construction/decoration technique, same category as existing PIPING/EMBROIDERY/CHECK/CAMO |
+| 글리터 | **DETAIL** (not FINISH) | Glitter is an applied decorative element (like embroidery or sequin, both already DETAIL), not a fabric processing/finishing technique - proposed DETAIL for consistency with SEQUIN's existing classification, though FINISH is a defensible alternate reading worth a product-planner's judgment call before any real addition |
+| 헤어리 | **MATERIAL** (not FINISH) | Describes the fiber/fabric's inherent characteristic (a hairy-textured yarn), closer to how DENIM/NYLON describe what the fabric *is* than to a post-processing FINISH step |
+| 멜란지 | **COLOR** (not MATERIAL) | Melange describes a heathered/mixed-yarn color appearance in normal fashion usage, closer to how COLOR values are used than to a MATERIAL composition claim - though it is genuinely borderline and a product planner's call would be more authoritative than this audit's guess |
+
+No taxonomy changes were made. These are proposals for a human/future-pass decision, not additions.
+
+### Missing specific item impact (Section 12, same 30-product sample)
+
+| Missing Item Candidate | Products | Attribute-adjacent Products | Potential Relations Lost (POTENTIAL / AUDIT ESTIMATE) |
+|---|---:|---:|---:|
+| SWEATSHIRT (맨투맨) | 3 | 3 | 3 |
+| KNIT (니트) | 1 | 1 | 1 |
+| HOODIE/ZIP_HOODIE (후디/후드집업) | 3 | 3 | 3 |
+| BLOUSON (블루종) | 1 | 1 | 1 |
+| VEST (베스트) | 1 | 1 | 1 |
+| PUFFER/DOWN (푸퍼/다운) | 2 | 2 | 2 |
+| CROSS/HOBO_BAG (크로스백/호보) | 1 | 1 | 1 |
+| DUFFLE_BAG (더플백) | 1 | 1 | 1 |
+| Generic T-SHIRT (티셔츠/반팔티) | 8 | 8 | 8 |
+| Generic PANTS (팬츠/쇼츠) | 5 | 5 | 5 |
+| SKIRT (스커트) | 1 | 1 | 1 |
+
+"Attribute-adjacent" here means real text (a genuine Korean word, not punctuation/price/boilerplate) sits immediately next to the missing item's surface form in the product name - a real, verified count, not a guess, though it is a proxy for "there is *something* there," not a guarantee every instance would resolve to a specific known attribute value once the item is tracked. A twelfth gap was also noticed but not in the predefined candidate list: generic **셔츠** (plain shirt, distinct from RUGBY_SHIRT) appears in `"멀티 체크 셔츠 네이비"`, with a real, already-registered DETAIL:CHECK match sitting immediately before it - disclosed here rather than silently omitted because the predefined list (carried over from the prior pass) happened not to include it.
+
+### True product attribute density estimate (Section 13) - three numbers, kept separate
+
+```
+A. CURRENT EXTRACTOR DENSITY (REAL, measured):        0.0% (0/30)
+B. COLOR-SUFFIX-COMPATIBLE DENSITY (REAL, measured):   6.7% (2/30)
+C. POTENTIAL STRUCTURED-PRODUCT DENSITY:               POTENTIAL / AUDIT ESTIMATE - approximately 29/30 (~97%)
+```
+
+C is derived by taking the union of every product in this sample that has *any* real, human-readable attribute-bearing text adjacent to *any* item mention - whether currently tracked (2 products, Section above), a known missing-item candidate (Section 12's table, 24 of the remaining 28 products), or a description/name-level dimension candidate (Section above, catching a few more). Only one product name in the entire 30-sample set (`"플로우 나일론 호보 크로스백 블랙"` was already counted under CROSS_HOBO_BAG) had zero double-counting concerns worth flagging beyond what's already noted. **C is explicitly an audit estimate, not a real measured rate** - it assumes taxonomy work (adding ~11 missing items and ~6-9 missing attribute values) that was not performed this pass, and assumes (reasonably, based on manual spot-checks in Section 7/9 above, but not proven for every single instance) that the adjacent real text would in fact resolve to a valid, specific attribute value once the relevant item/attribute rule exists.
+
+### Product visual relation (Section 14) - unchanged conclusion, re-confirmed
+
+No change from the prior pass's finding: JSON-LD ties `name`/`description`/`image` into one structured object per product/variant, giving **HIGH** image-to-product confidence for PRODUCT DETAIL pages specifically - materially different from an Editorial article's loosely-associated hero image. No image pixel/content analysis was performed; only the JSON-LD structural relationship was read, consistent with the explicit prohibition on this.
+
+### MarketProduct schema reuse risk (Section 15) - refined
+
+Re-examining the `MarketProduct` model with the explicit mixing question in mind: its fields (`itemType`, `subItemType`, `mainColor`, `material`, `detail`, `style`, `gender`, `dataMode`) remain a strong structural fit, but the model has **no field that names the *role* the evidence plays** (ranking signal vs. reference/assortment fact) beyond `dataMode`, and no existing UI/query path was found in this repo that already discriminates on `dataMode` for this purpose. Directly inserting Product Reference rows into `MarketProduct` today, even under a distinct `source` value, creates a real risk that a future query written against "all `MarketProduct` rows" (for a ranking or business-analytics view) could silently pull in reference-only rows that were never observed selling, never ranked, and carry no commercial-response evidence at all - exactly the mixing this task's Section 16 prohibits. **This audit does not recommend unconditional reuse of `MarketProduct`** as a result: reuse is plausible, but only if a future implementation pass adds an explicit, indexed role/evidence-type discriminator (e.g. a `sourceRole: "RANKING" | "REFERENCE"` field or equivalent) *before* any Product Reference row is ever written, and audits every existing `MarketProduct` consumer to confirm it filters on that discriminator. No schema change was made this pass.
+
+### Never mix with store signal / Editorial source spread (Sections 16-17) - confirmed, no violation
+
+No STORE signal (ranking/bestseller/commercial-response) semantics were attached to any Product Reference finding in this pass - every number above is scoped to "this text exists on this product page," never "this sold well" or "this ranked." No Product Reference count was included in, or influenced, `EditorialPost`/`EditorialMention`/`sourceSpread` at any point - Covernat remains explicitly excluded from all Editorial source-spread reasoning, and the 30 sampled products were never treated as 30 independent media observations.
+
+### Decision gate (Section 18)
+
+The stated gate is: COLOR-compatible density >=10-20% (real) AND meaningful structured-description coverage -> proceed to multi-brand probe; otherwise -> low ROI.
+
+**Real, measured COLOR-compatible density (6.7%) does not clear the stated 10-20% bar.** At the same time, the audit-estimate potential (~97%, Section above) is high enough that concluding "Covernat 방식 ROI 낮음" outright would misdescribe what was actually found: the real vocabulary is present and repeatable; today's extractor (even with the new COLOR-suffix module) simply doesn't yet cover most of it, for diagnosed, specific, generic (not Covernat-specific) reasons - missing SUB_ITEM types that are common across Korean fashion e-commerce generally (맨투맨/후디/니트/generic 티셔츠 are not Covernat jargon), and a handful of missing COLOR values (오프 화이트, 스카이 블루) and SILHOUETTE/MATERIAL/DETAIL values that are equally generic. See Decision in the final report for how this resolves into a single recommendation.
+
 ## Validation
 
-No production code was changed this pass (all `scripts/probe-*.ts`/`scripts/verify-*.ts`/`scripts/dump-*.ts` temporary files were deleted after use, per this project's established pattern for one-off probes). `typecheck`/`test`/`build` were not re-run, per the task's own instruction ("code change가 없으면 typecheck/build는 불필요하게 반복하지 않아도 된다").
+This pass added real, reusable production code: `src/collectors/product-reference/attributes.ts` (new module, two exported functions) and new fixture tests in `scripts/smoke-test.ts` (`verifyProductReferenceAttributes`, covering both new-module behavior and an explicit regression check that Editorial's existing fixtures are unaffected).
+
+- `pnpm --filter @open-design/trend-dashboard typecheck`: PASS
+- `pnpm --filter @open-design/trend-dashboard test`: PASS (all existing Editorial fixtures plus the new Product Reference fixtures)
+- `pnpm --filter @open-design/trend-dashboard build`: PASS (no route/UI changes - `/`, `/editorial`, `/items`, `/market` etc. are unaffected since nothing wires this module into any page or API route)
+- No production DB read/write path was touched by the new module - it is a pure function library, invoked only from this pass's now-deleted probe/measurement scripts
 
 ## Data safety confirmed
 
 - EditorialPost: 283 (unchanged)
 - EditorialMention: 916 (unchanged)
 - MarketRankingSnapshot: 667 (unchanged)
-- Canonical duplicates: 0, Mention duplicates: 0 (re-confirmed via `audit-editorial-quality.ts` after the probe)
+- Canonical duplicates: 0, Mention duplicates: 0 (re-confirmed via `audit-editorial-quality.ts` after this pass)
 - No DB writes of any kind were made
+- No Prisma schema changes were made
