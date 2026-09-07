@@ -9,7 +9,7 @@ import { bundleEvidenceStrength, getAttributeBundles, getPrimaryBundleForItem, g
 import { contentBlocksFromStoredText, resolveEvidenceImage, type ContentBlock } from "../src/collectors/editorial/image-relation";
 import { attributeBarWidthPercent } from "../src/lib/attribute-visual";
 import { composeBundleName } from "../src/lib/korean-labels";
-import { classifyFashionRelevance, EditorialRateLimitedError, getHypebeastFashionEntries, parseArticlePage, parseEyesmagRichBody, parseGenericSitemap, parseHypebeastListing, parseHypebeastRichBody, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
+import { classifyFashionRelevance, EditorialRateLimitedError, getHypebeastFashionEntries, parseArticlePage, parseEsquireKrArticlePage, parseEsquireKrBody, parseEsquireKrSitemap, parseEyesmagRichBody, parseGenericSitemap, parseHypebeastListing, parseHypebeastRichBody, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
 import { editorialSourceConfigs } from "../src/config/editorial-sources";
 import { aggregateEditorialMentions, auditUnmatchedFashionPhrases, getSpecificItemEditorialDetail, partitionCoOccurrence } from "../src/services/editorial-analytics-service";
 import { classifyDomesticTrendDemandInsight, classifyPlanningInsight, getPlanningDashboardData, matchesPlanningGender, planningItemKey } from "../src/services/planning-dashboard-service";
@@ -693,6 +693,66 @@ function verifyEditorialBodyParsers() {
   );
   assert.equal(entityArticle.title, "버퍼, ‘리지몬트’", "Hex numeric entities in a title must decode to real Korean text.");
   assert.ok(entityArticle.text.includes("버퍼"), "Decimal numeric entities must decode too.");
+
+  // ESQUIRE_KR sitemap: a single flat file mixing dated /article/<id> entries
+  // with static section pages (no /article/ path, no lastmod at all). Only
+  // the article entries carry real content, so static pages must never be
+  // returned as if they were articles.
+  const esquireSitemapXml = `<?xml version="1.0" encoding="UTF-8"?><urlset>
+    <url><loc>https://www.esquirekorea.co.kr/article/12345</loc><lastmod>2026-09-01T10:00:00+09:00</lastmod></url>
+    <url><loc>https://www.esquirekorea.co.kr/article/9999</loc><lastmod>2021-11-02T10:00:00+09:00</lastmod></url>
+    <url><loc>https://www.esquirekorea.co.kr/fashion</loc></url>
+  </urlset>`;
+  const esquireSitemap = parseEsquireKrSitemap(esquireSitemapXml);
+  assert.equal(esquireSitemap.length, 2, "Only /article/<id> entries must be returned; the static /fashion page must be excluded.");
+  assert.equal(esquireSitemap[0]?.url, "https://www.esquirekorea.co.kr/article/12345");
+  assert.equal(esquireSitemap[0]?.lastmod, "2026-09-01T10:00:00+09:00", "lastmod must be exposed for the caller's own window filtering.");
+  assert.equal(esquireSitemap[1]?.url, "https://www.esquirekorea.co.kr/article/9999", "An old entry is still parsed here - date-window filtering is the caller's job, not the parser's.");
+  assert.equal(parseEsquireKrSitemap("<urlset></urlset>").length, 0, "An empty sitemap must yield no entries.");
+
+  // ESQUIRE_KR body: plain public HTML inside class="atc_body_cont", cut at
+  // the first of two trailing markers, with a leading "로그인" UI banner
+  // stripped from the front (confirmed by sampling to be chrome shown
+  // regardless of login state, not an actual paywall gate).
+  const esquireHtml = `<html><body>
+    <div class="atc_body_cont">전체 페이지를 읽으시려면 회원가입 및 로그인을 해주세요! LOGIN <p>@ald1.official 스포티한 트랙 재킷과 레드 볼캡을 매치했다.</p>
+    <p>관련기사</p><p>다른 기사 제목 - 절대 포함되면 안 됨</p></div>
+  </body></html>`;
+  const esquireBody = parseEsquireKrBody(esquireHtml);
+  assert.ok(esquireBody, "ESQUIRE_KR body must be extracted from atc_body_cont.");
+  assert.ok(esquireBody!.includes("스포티한 트랙 재킷"), "ESQUIRE_KR body must keep the real product/style phrasing - the whole point of the source.");
+  assert.equal(esquireBody!.startsWith("전체 페이지를"), false, "The leading login-banner chrome must be stripped from the front.");
+  assert.equal(esquireBody!.includes("LOGIN"), false, "The login-banner chrome must not survive into the stored body.");
+  assert.equal(esquireBody!.includes("다른 기사 제목"), false, "ESQUIRE_KR body must stop before the related-articles marker.");
+  assert.equal(parseEsquireKrBody("<html><body>no atc body here</body></html>"), null, "Missing atc_body_cont must return null, not fabricate text.");
+
+  const esquireKeywordHtml = `<html><body><div class="atc_body_cont">실제 기사 본문입니다.<p>이 기사엔 이런 키워드</p><p>태그1 태그2</p></div></body></html>`;
+  assert.equal(parseEsquireKrBody(esquireKeywordHtml), "실제 기사 본문입니다.", "The keyword-tag-list marker must also cut the body, not only the related-articles marker.");
+
+  // ESQUIRE_KR article page: canonical/date/image come from public <link
+  // rel="canonical">, JSON-LD datePublished, and og:image - no login required.
+  const esquireArticleHtml = `<html><head>
+    <meta property="og:title" content="ALD와 나이키의 새로운 협업">
+    <meta property="og:image" content="https://www.esquirekorea.co.kr/hero.jpg">
+    <link rel="canonical" href="https://www.esquirekorea.co.kr/article/12345">
+    <script type="application/ld+json">{"datePublished":"2026-09-01T10:00:00+09:00"}</script>
+  </head></html>`;
+  const esquireArticle = parseEsquireKrArticlePage(esquireArticleHtml, "https://www.esquirekorea.co.kr/article/12345?utm_source=x");
+  assert.equal(esquireArticle.title, "ALD와 나이키의 새로운 협업");
+  assert.equal(esquireArticle.canonicalUrl, "https://www.esquirekorea.co.kr/article/12345", "The public <link rel=canonical> must win over the fetched (possibly tracking-tagged) URL.");
+  assert.equal(esquireArticle.imageUrl, "https://www.esquirekorea.co.kr/hero.jpg");
+  assert.equal(esquireArticle.publishedAt?.toISOString(), new Date("2026-09-01T10:00:00+09:00").toISOString(), "JSON-LD datePublished must be parsed.");
+
+  const esquireArticleFallback = parseEsquireKrArticlePage(
+    `<html><head><meta property="article:published_time" content="2026-08-15T00:00:00+09:00"></head></html>`,
+    "https://www.esquirekorea.co.kr/article/999"
+  );
+  assert.equal(esquireArticleFallback.canonicalUrl, "https://www.esquirekorea.co.kr/article/999", "Without a canonical link, the fetched URL must be used as a fallback.");
+  assert.equal(
+    esquireArticleFallback.publishedAt?.toISOString(),
+    new Date("2026-08-15T00:00:00+09:00").toISOString(),
+    "Without JSON-LD, the article:published_time meta tag must be used as a fallback date source."
+  );
 }
 
 /**
@@ -866,6 +926,22 @@ function verifyDirectAttributeRelations() {
     1,
     "A phrase repeated within one article must collapse to a single relation (no article-presence inflation)."
   );
+
+  // ESQUIRE_KR sample sentence: the corpus's first-ever direct STYLE relation
+  // and only its second-ever direct COLOR relation, which is why this source
+  // was selected despite falling short of the numeric acceptance bars.
+  const esquireSentence = extractDirectAttributeRelations({
+    title: "",
+    text: "@ald1.official 스포티한 트랙 재킷과 레드 볼캡을 매치했다."
+  });
+  assert.ok(find(esquireSentence, "TRACK_JACKET", "STYLE", "SPORTY"), "The real ESQUIRE_KR sample sentence must yield TRACK_JACKET + STYLE:SPORTY.");
+  assert.ok(find(esquireSentence, "BALL_CAP", "COLOR", "RED"), "The real ESQUIRE_KR sample sentence must yield BALL_CAP + COLOR:RED.");
+
+  // CAMO: added after the 2026-09-07 missed-vocabulary audit found a real,
+  // crystal-clear direct modifier the taxonomy had no rule for (1 REAL
+  // article, ESQUIRE_KR: "에이티즈 산: 카모 볼캡").
+  const camoSentence = extractDirectAttributeRelations({ title: "", text: "에이티즈 산: 카모 볼캡을 착용했다." });
+  assert.ok(find(camoSentence, "BALL_CAP", "DETAIL", "CAMO"), '"카모 볼캡" must yield BALL_CAP + DETAIL:CAMO.');
 }
 
 async function verifyAttributeBundles() {

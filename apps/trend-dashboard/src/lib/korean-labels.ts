@@ -45,6 +45,7 @@ const attributeLabels: Record<string, string> = {
   SHIRRING: "셔링",
   RAGLAN: "라글란",
   SEQUIN: "시퀸",
+  CAMO: "카모",
   // COLOR
   BLACK: "블랙",
   WHITE: "화이트",

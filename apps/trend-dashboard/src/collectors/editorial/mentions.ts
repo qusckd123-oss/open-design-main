@@ -66,6 +66,11 @@ const rules: Rule[] = [
   { type: "DETAIL", value: "SHIRRING", patterns: [rx("\\bshirring\\b|셔링")] },
   { type: "DETAIL", value: "RAGLAN", patterns: [rx("\\braglan\\b|라글란|래글런")] },
   { type: "DETAIL", value: "SEQUIN", patterns: [rx("\\bsequin\\b|시퀸|스팽글")] },
+  // Added after the 2026-09-07 high-density source pass missed-vocabulary
+  // audit (1 REAL article, ESQUIRE_KR: "에이티즈 산: 카모 볼캡" - a direct
+  // pre-item modifier in the extractor's real window). A print/pattern DETAIL
+  // alongside CHECK/STRIPE, same category, not a new dimension.
+  { type: "DETAIL", value: "CAMO", patterns: [rx("\\bcamo\\b|\\bcamouflage\\b|카모|카모플라주")] },
   { type: "MATERIAL", value: "DENIM", patterns: [rx("\\bdenim\\b|\\uB370\\uB2D8")] },
   { type: "MATERIAL", value: "NYLON", patterns: [rx("\\bnylon\\b|\\uB098\\uC77C\\uB860")] },
   { type: "MATERIAL", value: "SUEDE", patterns: [rx("\\bsuede\\b|\\uC2A4\\uC6E8\\uC774\\uB4DC")] },

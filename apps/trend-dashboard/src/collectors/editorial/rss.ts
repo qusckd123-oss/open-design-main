@@ -34,6 +34,10 @@ export async function collectEditorialFeed(source: EditorialSource, limit = 30, 
   // switch to the site's own public monthly sitemaps, exactly as EYESMAG
   // already does. The default (no `days`) path stays on RSS, unchanged.
   if (source === "HYPEBEAST_KR" && options.days) return collectHypebeastHistorical(limit, options.days, options.skipUrls);
+  // ESQUIRE_KR has no RSS at all - its only public discovery path is the
+  // sitemap, so (unlike HYPEBEAST_KR) it always uses it, with the same
+  // 90-day active window applied whether or not --days was passed.
+  if (source === "ESQUIRE_KR") return collectEsquireKr(limit, options.days ?? 90, options.skipUrls);
   const response = await fetch(config.feedUrl, {
     headers: {
       "User-Agent": "TrendSignalDashboard/0.1 (+editorial source audit)",
@@ -562,6 +566,116 @@ async function collectHypebeastHistorical(limit: number, days: number, skipUrls:
     // Be a polite client on a site that publishes Crawl-delay for several bots,
     // and that has previously answered a large crawl with bot mitigation.
     await new Promise((resolve) => setTimeout(resolve, 2500));
+  }
+  return posts;
+}
+
+export type EsquireKrSitemapEntry = { url: string; lastmod: string };
+
+/**
+ * ESQUIRE_KR's public sitemap.xml is a single flat file (not a monthly index
+ * like EYESMAG/HYPEBEAST_KR) with ~10,000 dated URLs spanning 2021-10-08
+ * through today, mixed with a handful of static section pages at the top.
+ * Only /article/<id> entries carry real content; everything else is filtered
+ * out here so callers never see a static page as if it were an article.
+ */
+export function parseEsquireKrSitemap(xml: string): EsquireKrSitemapEntry[] {
+  return [...xml.matchAll(/<url>\s*<loc>(https:\/\/www\.esquirekorea\.co\.kr\/article\/\d+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)]
+    .map((match) => ({ url: match[1] ?? "", lastmod: match[2] ?? "" }))
+    .filter((entry) => entry.url);
+}
+
+/**
+ * ESQUIRE_KR article body. The page has no JSON-LD `articleBody`, but the
+ * full text is plain public HTML inside `<... class="atc_body_cont">`. The
+ * region is cut at the first of two trailing markers ("관련기사" - related
+ * articles, or the keyword-tag-list intro "이 기사엔 이런 키워드") rather than
+ * by counting closing tags, mirroring VISLA/HYPEBEAST_KR's approach. A
+ * leading "회원가입 및 로그인을 해주세요" banner is real UI chrome embedded in
+ * the same container (NOT a paywall - the full article text follows it
+ * regardless of login state, confirmed by sampling), so it is stripped from
+ * the front rather than treated as a stop marker.
+ */
+export function parseEsquireKrBody(html: string): string | null {
+  const match = html.match(/class="atc_body_cont"[^>]*>/);
+  if (!match || match.index === undefined) return null;
+  const start = match.index + match[0].length;
+  const region = html.slice(start, Math.min(html.length, start + 30000));
+  const stopPatterns = [/관련기사/, /이 기사엔 이런 키워드/];
+  let cutAt = region.length;
+  for (const pattern of stopPatterns) {
+    const found = region.match(pattern);
+    if (found?.index !== undefined) cutAt = Math.min(cutAt, found.index);
+  }
+  const text = stripHtml(region.slice(0, cutAt)).replace(/^전체 페이지를 읽으시려면 회원가입 및 로그인을 해주세요!\s*LOGIN\s*/, "");
+  return text || null;
+}
+
+export function parseEsquireKrArticlePage(html: string, fallbackUrl: string) {
+  const title = decodeEntities(stringMeta(html, "og:title"));
+  const imageUrl = stringMeta(html, "og:image") || null;
+  const canonicalMatch = html.match(/<link[^>]+rel="canonical"[^>]+href="([^"]*)"/);
+  const canonicalUrl = canonicalizeUrl(canonicalMatch?.[1] || fallbackUrl);
+  const dateMatch = html.match(/"datePublished":"([^"]*)"/) ?? html.match(/<meta[^>]+property="article:published_time"[^>]+content="([^"]*)"/);
+  const publishedAt = dateMatch?.[1] ? new Date(dateMatch[1]) : null;
+  return { title, imageUrl, canonicalUrl, publishedAt };
+}
+
+async function collectEsquireKr(limit: number, days: number, skipUrls: Set<string> = new Set()): Promise<EditorialCollectedPost[]> {
+  const config = editorialSourceConfigs.ESQUIRE_KR;
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+
+  const xml = await fetchText(config.feedUrl);
+  const entries = parseEsquireKrSitemap(xml)
+    .filter((entry) => {
+      const time = new Date(entry.lastmod).getTime();
+      return !Number.isNaN(time) && time >= cutoff;
+    })
+    .sort((a, b) => b.lastmod.localeCompare(a.lastmod));
+
+  const posts: EditorialCollectedPost[] = [];
+  for (const entry of entries) {
+    if (posts.length >= limit) break;
+    if (skipUrls.has(entry.url)) continue;
+    try {
+      const html = await fetchText(entry.url);
+      const article = parseEsquireKrArticlePage(html, entry.url);
+      // The listing's own lastmod can drift from the true publish date, so
+      // the article's own datePublished is the real window check.
+      if (!article.publishedAt || Number.isNaN(article.publishedAt.getTime()) || article.publishedAt.getTime() < cutoff) continue;
+      const text = parseEsquireKrBody(html) || "";
+      if (!article.title || !text) continue;
+      // Category membership (/fashion) is not asserted here as a relevance
+      // shortcut: this discovery path (the whole-site sitemap) mixes every
+      // section, so - like the HYPEBEAST_KR fashion listing - fashion
+      // relevance must be earned from the article's own title/body evidence.
+      const audienceGender = inferEditorialGender({ title: article.title, text });
+      const mentions = extractEditorialMentions({ title: article.title, text, postGender: audienceGender });
+      const fashionRelevance = classifyFashionRelevance({ title: article.title, text, mentionCount: mentions.length });
+      if (fashionRelevance === "NON_FASHION") continue;
+      posts.push({
+        source: "ESQUIRE_KR",
+        externalPostId: article.canonicalUrl,
+        url: article.canonicalUrl,
+        canonicalUrl: article.canonicalUrl,
+        title: article.title,
+        publishedAt: article.publishedAt,
+        imageUrl: article.imageUrl,
+        excerpt: text.slice(0, 280) || null,
+        text,
+        audienceGender,
+        fashionRelevance,
+        mentions
+      });
+    } catch (error) {
+      if (error instanceof EditorialRateLimitedError) {
+        console.warn(`ESQUIRE_KR collection stopped early: ${error.message}`);
+        console.warn(`Returning ${posts.length} article(s) fetched before the refusal; re-run later to continue.`);
+        break;
+      }
+      continue;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1500));
   }
   return posts;
 }

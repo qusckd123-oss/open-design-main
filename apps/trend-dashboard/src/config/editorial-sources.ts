@@ -4,7 +4,7 @@ export type EditorialGender = (typeof editorialGenders)[number];
 export const editorialMentionTypes = ["ITEM", "SUB_ITEM", "DETAIL", "MATERIAL", "COLOR", "STYLE", "BRAND", "COLLAB", "IP"] as const;
 export type EditorialMentionType = (typeof editorialMentionTypes)[number];
 
-export const editorialSources = ["VISLA", "HYPEBEAST_KR", "EYESMAG", "NONLABEL"] as const;
+export const editorialSources = ["VISLA", "HYPEBEAST_KR", "EYESMAG", "NONLABEL", "ESQUIRE_KR"] as const;
 export type EditorialSource = (typeof editorialSources)[number];
 
 export type EditorialSourceConfig = {
@@ -68,5 +68,17 @@ export const editorialSourceConfigs: Record<EditorialSource, EditorialSourceConf
     genderAvailable: false,
     role: ["ARCHIVE", "STYLE", "VINTAGE", "SUBCULTURE"],
     description: "Official NONLABEL archive/fashion listing and public article pages. Useful for Korean brand/style archive trend mentions."
+  },
+  ESQUIRE_KR: {
+    source: "ESQUIRE_KR",
+    country: "KOREA",
+    sourceType: "EDITORIAL",
+    signalType: "EDITORIAL",
+    feedUrl: "https://www.esquirekorea.co.kr/sitemap/sitemap.xml",
+    targetUrl: "https://www.esquirekorea.co.kr/fashion",
+    collectionMethod: "PUBLIC_NEWS_SITEMAP",
+    genderAvailable: false,
+    role: ["MENSWEAR", "LIFESTYLE", "FASHION_NEWS"],
+    description: "Official Esquire Korea public sitemap (10,000 dated article URLs, no login) plus public article pages. Selected 2026-09-07 for having the highest direct-attribute density found in a source audit (10% vs ~3-5% for existing sources), from a menswear/lifestyle angle that complements the streetwear-leaning existing corpus."
   }
 };
