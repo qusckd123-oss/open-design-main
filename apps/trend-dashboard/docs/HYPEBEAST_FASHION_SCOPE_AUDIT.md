@@ -210,6 +210,109 @@ bodies <200 chars 3 (1%) · MarketRankingSnapshot **667 (untouched)**.
 
 ---
 
+## Small-batch collection run (2026-09-07, follow-up)
+
+Goal: incrementally collect the 426 discovered fashion articles in small, low-rate batches,
+never more than the host will tolerate. Not a race to 100 — HTTP safety over volume.
+
+| Batch | `--limit-per-source` | Result | Posts | Mentions |
+|---|---:|---|---:|---:|
+| 1 | 15 | SUCCESS | 15 | 40 |
+| 2 | 15 | SUCCESS | 15 | 65 |
+| 3 | 20 | **FAILED — HTTP 202** on `/fashion/page/32` | 0 | 0 |
+
+Integrity confirmed after every successful batch (canonical duplicates 0, `MarketRankingSnapshot`
+667 unchanged) before starting the next one. Batch 3's refusal happened during **listing
+pagination**, before any article was fetched, so it wrote nothing — no partial/corrupt row.
+
+**Stopped after Batch 3, exactly per policy:** no retry, no smaller-batch retry, no further
+requests to hypebeast.kr for the rest of the session. Total collected: **30 of the 100-article
+cap** — HTTP safety took priority over reaching the cap, as instructed.
+
+### A real bug this exposed and fixed
+
+The per-article fetch loop already had partial-return on rate-limit (added in the previous pass),
+but the **listing-pagination loop did not** — `getHypebeastFashionEntries`'s `fetchText(url)` call
+was unguarded. Batch 3 had already read 31 pages of `/fashion` successfully before page 32 was
+refused, and the uncaught throw discarded all of it, reporting `posts=0` for the whole batch.
+
+Fixed: the pagination loop now catches `EditorialRateLimitedError` the same way the article loop
+does — logs a warning, breaks, and returns whatever pages were already read. Verified with a
+`fetch`-mocking regression test (`verifyHypebeastFashionListingPartialReturn` — no live network
+call): page 1 succeeds, page 2 is refused, and page 1's entry is still returned rather than
+thrown away. This fix did not require, and was not verified by, any further request to the real
+host — consistent with "no more requests to this host this session."
+
+### Direct-attribute impact: zero, and that is the honest finding
+
+| | Before batches | After batches |
+|---|---:|---:|
+| Direct relations | 12 | **12** |
+| Attribute bundles | 7 | **7** |
+| Repeated bundles | 2 | **2** |
+
+The 30 new articles raised article *presence* for several items (e.g. BACKPACK 3→8,
+SHOULDER_BAG 2→6, LONG_SLEEVE_TEE 3→6, TRACK_JACKET 3→4) — more articles now mention these
+items — but **none of the 30 contained a phrase that directly modifies a specific item with a
+known attribute**. HYPEBEAST_KR's relation density accordingly reads as *diluted* (0.067 → 0.052)
+purely because the denominator grew while the numerator did not; no relation regressed or was
+lost, and none of this pass's newly collected articles happened to describe a product attribute
+the way the earlier "8가지 드롭" roundup or the côte&ciel piece did.
+
+This is not a code problem: `describeItemContexts` shows the shape is the same one from the
+original coverage audit — most of the fashion-category articles mention an item without ever
+placing a description word directly before it (SHOULDER_BAG: 12 of 13 occurrences land in
+`NO_ATTRIBUTE_IN_WINDOW`).
+
+### Target item review (after batches)
+
+| Item | Article Presence | Source Spread | Direct Attributes | Bundles | Repeated |
+|---|---:|---:|---|---:|---:|
+| TOTE_BAG | 7 | 2 | RECYCLED_FABRIC, CHECK, DENIM | 3 | 1 |
+| TRACK_JACKET | 4 | 2 | SHIRRING | 1 | 0 |
+| LONG_SLEEVE_TEE | 6 | 3 | RAGLAN, SEQUIN | 1 | 1 |
+| BACKPACK | 8 | 2 | BLACK, CHECK, NYLON | 2 | 0 |
+| SHOULDER_BAG | 6 | 2 | *(none)* | 0 | 0 |
+| BALL_CAP | 3 | 2 | *(none)* | 0 | 0 |
+
+### Missed-vocabulary candidates from the expanded corpus (recorded only, NOT added)
+
+None cleared the project's addition threshold (≥2 distinct articles, or one unambiguous
+in-window direct phrase representing an obvious taxonomy gap):
+
+- `LEATHER`, `PLEATS` — "LEATHER PLEATS 숄더백" (IM MEN) — real product phrase, but only 1 article.
+- `MONOCHROME` — "MONOCHROME 백팩" — 1 article.
+- 로고/메인 ("메인 로고를 새롭게 풀어낸 롱슬리브") — generic branding language, not a distinct attribute.
+- Brand/model names inside SHOULDER_BAG/BALL_CAP windows (RENO, DIESEL 1DR, 뉴에라, 999휴머니티) —
+  not attributes; same shape as the original audit.
+
+Left for a dedicated coverage pass, per instruction not to expand taxonomy in this run.
+
+### Dimension coverage (unchanged, confirming no new relations in any dimension)
+
+SILHOUETTE 0 · DETAIL 4 distinct/5 relations · MATERIAL 3/3 · FINISH 0 · COLOR 1/1 · STYLE 0.
+실루엣/가공(FINISH)/컬러 remain the weakest dimensions, exactly as before this run.
+
+### Fashion-scope regression check
+
+HYPEBEAST_KR's excluded (non-eligible) set is **identical** before and after — the same 7 UNKNOWN
+titles (드래곤볼, NBA, F1, 메시 은퇴, VHILS, 태민, 맷 맥코믹). All 30 newly collected articles are
+`FASHION_RELEVANT`. The `/fashion` category filter introduced zero new non-fashion contamination.
+
+### Final counts (after this pass)
+
+EditorialPost **253** · EditorialMention **804** · Fashion-eligible **244** ·
+HYPEBEAST_KR raw **141** / eligible **134** · canonical duplicates **0** · mention duplicates **0** ·
+future-dated 0 · empty titles 0 · bodies <200 chars 3 (1%) · `MarketRankingSnapshot` **667
+(untouched)**. New batch body quality: 30/30 present, median 961 chars, max 15,106 (no
+120,000-char-cap artifact), 30/30 images, 30/30 FASHION_RELEVANT.
+
+Dashboard Current Signal is unchanged: `라글란 시퀸 긴팔 티셔츠` (tie-break by attribute richness,
+sorting rule untouched this pass). `재활용 원단 토트백` correctly appears in New Observations,
+labelled 반복 관측.
+
+---
+
 ## Known limits
 
 1. **The fashion-scoped collection has not run to completion.** 426 in-window fashion articles are

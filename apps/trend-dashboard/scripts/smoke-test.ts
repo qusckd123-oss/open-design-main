@@ -9,7 +9,7 @@ import { bundleEvidenceStrength, getAttributeBundles, getPrimaryBundleForItem, g
 import { contentBlocksFromStoredText, resolveEvidenceImage, type ContentBlock } from "../src/collectors/editorial/image-relation";
 import { attributeBarWidthPercent } from "../src/lib/attribute-visual";
 import { composeBundleName } from "../src/lib/korean-labels";
-import { classifyFashionRelevance, EditorialRateLimitedError, parseArticlePage, parseEyesmagRichBody, parseGenericSitemap, parseHypebeastListing, parseHypebeastRichBody, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
+import { classifyFashionRelevance, EditorialRateLimitedError, getHypebeastFashionEntries, parseArticlePage, parseEyesmagRichBody, parseGenericSitemap, parseHypebeastListing, parseHypebeastRichBody, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
 import { editorialSourceConfigs } from "../src/config/editorial-sources";
 import { aggregateEditorialMentions, auditUnmatchedFashionPhrases, getSpecificItemEditorialDetail, partitionCoOccurrence } from "../src/services/editorial-analytics-service";
 import { classifyDomesticTrendDemandInsight, classifyPlanningInsight, getPlanningDashboardData, matchesPlanningGender, planningItemKey } from "../src/services/planning-dashboard-service";
@@ -49,6 +49,7 @@ async function main() {
   await verifyRakutenFashionCollectorHelpers();
   verifyEditorialHelpers();
   verifyEditorialBodyParsers();
+  await verifyHypebeastFashionListingPartialReturn();
   await verifySpecificItemEditorialCoOccurrence();
   verifyLegacyMarketBlockVisibility();
   verifyDirectAttributeRelations();
@@ -692,6 +693,40 @@ function verifyEditorialBodyParsers() {
   );
   assert.equal(entityArticle.title, "버퍼, ‘리지몬트’", "Hex numeric entities in a title must decode to real Korean text.");
   assert.ok(entityArticle.text.includes("버퍼"), "Decimal numeric entities must decode too.");
+}
+
+/**
+ * REGRESSION (2026-09-07): the fashion listing's pagination loop had no
+ * partial-return, unlike the per-article fetch loop right below it in the
+ * same file. A real run was refused with HTTP 202 on page 32 of
+ * /fashion/page/N - after 31 pages had already been read successfully - and
+ * the uncaught throw discarded every entry already collected, reporting the
+ * whole batch as zero articles. Verified here by mocking `fetch` (no live
+ * network call): page 1 succeeds, page 2 is refused, and page 1's entries
+ * must still come back rather than being thrown away.
+ */
+async function verifyHypebeastFashionListingPartialReturn() {
+  const page1Html = `<html><body><div class="post-box-content-container">
+    <div class="post-box-content-categories-title"><a href="https://hypebeast.kr/fashion" class="category fashion-category" title="패션">패션</a></div>
+    <div class="post-box-content-title"><a href="https://hypebeast.kr/2026/9/page-one-article" class="title"><h2>제목</h2></a></div>
+  </div></body></html>`;
+
+  const originalFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = (async () => {
+    calls += 1;
+    if (calls === 1) return new Response(page1Html, { status: 200 });
+    return new Response("", { status: 202 }); // page 2 refused, mirroring the real host
+  }) as typeof fetch;
+
+  try {
+    const entries = await getHypebeastFashionEntries(90);
+    assert.equal(calls, 2, "The mock must show pagination actually reached the refused second page.");
+    assert.equal(entries.length, 1, "Page 1's entry must be returned, not discarded, when page 2 is rate-limited.");
+    assert.equal(entries[0]?.url, "https://hypebeast.kr/2026/9/page-one-article");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 }
 
 async function verifySpecificItemEditorialCoOccurrence() {

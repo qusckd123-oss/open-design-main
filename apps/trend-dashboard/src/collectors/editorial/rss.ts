@@ -419,7 +419,22 @@ export async function getHypebeastFashionEntries(days: number, maxPages = 40): P
 
   for (let page = 1; page <= maxPages; page += 1) {
     const url = page === 1 ? base : `${base}/page/${page}`;
-    const html = await fetchText(url);
+    let html: string;
+    try {
+      html = await fetchText(url);
+    } catch (error) {
+      // A refusal here must not discard every earlier page's already-collected
+      // entries the way an uncaught throw would (that is exactly what happened
+      // on 2026-09-07: page 32 was refused and the whole batch reported zero
+      // articles despite 31 pages having already been read successfully). Stop
+      // the walk and return what is already collected - the per-article fetch
+      // loop below has the identical partial-return shape.
+      if (error instanceof EditorialRateLimitedError) {
+        console.warn(`HYPEBEAST_KR fashion listing stopped early at page ${page}: ${error.message}`);
+        break;
+      }
+      throw error;
+    }
     const entries = parseHypebeastListing(html);
     if (entries.length === 0) break;
 
