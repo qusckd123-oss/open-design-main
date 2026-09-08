@@ -87,7 +87,17 @@ const specificItemCategoryMap: Record<string, BroadCategory> = {
   CAMP_CAP: "HEADWEAR",
   BUCKET_HAT: "HEADWEAR",
   KEYRING: "OTHER",
-  OTHER: "OTHER"
+  OTHER: "OTHER",
+  // Added with the 2026-09-08 item taxonomy coverage audit
+  // (docs/EDITORIAL_ITEM_TAXONOMY_AUDIT.md). SHIRT/SHORTS/SKIRT/SWEATSHIRT/
+  // CARDIGAN were audited but rejected from the editorial mentions taxonomy
+  // (Product Reference isolation conflict - see the comment in
+  // src/collectors/editorial/mentions.ts) so they are intentionally absent
+  // here too.
+  COAT: "OUTER",
+  VEST: "OUTER",
+  DOWN_JACKET: "OUTER",
+  DENIM_JACKET: "OUTER"
 };
 
 export function categoryOfItemType(itemType: string | null | undefined): BroadCategory {

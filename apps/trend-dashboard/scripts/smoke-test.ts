@@ -3,7 +3,7 @@ import * as XLSX from "xlsx";
 import { assortmentCollectorSources, createMarketCollector, verifiedRankingCollectorSources } from "../src/collectors/market/index";
 import { classifyMarketAttributes, validateSubItemForCategory } from "../src/collectors/market/classification";
 import { inferEditorialGender } from "../src/collectors/editorial/gender";
-import { extractEditorialMentions } from "../src/collectors/editorial/mentions";
+import { editorialRules, extractEditorialMentions } from "../src/collectors/editorial/mentions";
 import { extractDirectAttributeRelations } from "../src/collectors/editorial/attribute-relations";
 import { bundleEvidenceStrength, getAttributeBundles, getPrimaryBundleForItem, getSpecificItemDirectAttributes, selectBundleHeroImage, selectPrimaryPlanningBundle } from "../src/services/attribute-bundle-service";
 import { contentBlocksFromStoredText, resolveEvidenceImage, type ContentBlock } from "../src/collectors/editorial/image-relation";
@@ -1566,6 +1566,42 @@ function verifyDomesticFirstTaxonomy() {
   const stripeMentions = extractEditorialMentions({ title: "스트라이프 패턴 니트", text: "" });
   assert.ok(stripeMentions.some((mention) => mention.type === "DETAIL" && mention.value === "STRIPE"), "STRIPE must be a DETAIL mention.");
   assert.ok(!stripeMentions.some((mention) => mention.type === "SUB_ITEM" && mention.value === "STRIPE"), "STRIPE must never be classified as a SPECIFIC_ITEM (dimension separation).");
+
+  // 2026-09-08 item taxonomy coverage audit (docs/EDITORIAL_ITEM_TAXONOMY_AUDIT.md).
+  // Category mapping for the 5 accepted items.
+  assert.equal(categoryOfSpecificItem("COAT"), "OUTER", "COAT is a specific item under OUTER.");
+  assert.equal(categoryOfSpecificItem("VEST"), "OUTER", "VEST is a specific item under OUTER.");
+  assert.equal(categoryOfSpecificItem("DOWN_JACKET"), "OUTER", "DOWN_JACKET is a specific item under OUTER.");
+  assert.equal(categoryOfSpecificItem("VARSITY_JACKET"), "OUTER", "VARSITY_JACKET is a specific item under OUTER.");
+  assert.equal(categoryOfSpecificItem("DENIM_JACKET"), "OUTER", "DENIM_JACKET is a specific item under OUTER.");
+
+  // Positive extraction, each phrase drawn from the real corpus.
+  assert.ok(extractEditorialMentions({ title: "트렌치코트 스타일링", text: "" }).some((m) => m.type === "SUB_ITEM" && m.value === "COAT"), "트렌치코트 must resolve to COAT (코트 is a true suffix of real coat compounds).");
+  assert.ok(extractEditorialMentions({ title: "다운 베스트 스타일링", text: "" }).some((m) => m.type === "SUB_ITEM" && m.value === "VEST"), "베스트 must resolve to VEST.");
+  assert.ok(extractEditorialMentions({ title: "리버서블 다운 재킷", text: "" }).some((m) => m.value === "DOWN_JACKET"), "다운 재킷 must resolve to DOWN_JACKET.");
+  assert.ok(extractEditorialMentions({ title: "빈티지 무드의 바시티 재킷", text: "" }).some((m) => m.value === "VARSITY_JACKET"), "바시티 재킷 must resolve to VARSITY_JACKET.");
+  assert.ok(extractEditorialMentions({ title: "워싱 데님 재킷", text: "" }).some((m) => m.value === "DENIM_JACKET"), "데님 재킷 must resolve to DENIM_JACKET.");
+
+  // REGRESSION GUARDS: real corpus false positives found and excluded during
+  // this pass. Each must resolve to zero COAT/VEST mentions.
+  assert.ok(!extractEditorialMentions({ title: "코트니 카다시안 인터뷰", text: "" }).some((m) => m.value === "COAT"), "코트니(name) must never resolve to COAT.");
+  assert.ok(!extractEditorialMentions({ title: "테니스 코트에서 포착한 스타일", text: "" }).some((m) => m.value === "COAT"), "테니스 코트 must never resolve to COAT.");
+  assert.ok(!extractEditorialMentions({ title: "라코스테 코트 스니커즈 출시", text: "" }).some((m) => m.value === "COAT"), "코트 스니커즈 must never resolve to COAT.");
+  assert.ok(!extractEditorialMentions({ title: "코트 헤리티지를 담은 신발", text: "" }).some((m) => m.value === "COAT"), "코트 헤리티지 must never resolve to COAT.");
+  assert.ok(!extractEditorialMentions({ title: "탁구 코트화 리뷰", text: "" }).some((m) => m.value === "COAT"), "코트화 must never resolve to COAT.");
+  assert.ok(!extractEditorialMentions({ title: "이번 프로젝트는 농구 코트가 아닌 야구에서 영감받았다", text: "" }).some((m) => m.value === "COAT"), "농구 코트 (basketball court) must never resolve to COAT.");
+  assert.ok(!extractEditorialMentions({ title: "파크를 대표하는 공포 마스코트를 공개했다", text: "" }).some((m) => m.value === "COAT"), "마스코트(mascot) must never resolve to COAT - 코트 is only a substring of the word, not the item.");
+  assert.ok(!extractEditorialMentions({ title: "이 시즌 베스트셀러 아이템", text: "" }).some((m) => m.value === "VEST"), "베스트셀러 must never resolve to VEST.");
+
+  // SHIRT/SHORTS/SKIRT/SWEATSHIRT/CARDIGAN were audited with real corpus
+  // evidence but deliberately NOT added: they collide with Product
+  // Reference's own supplemental item vocabulary (see the rejection comment
+  // in src/collectors/editorial/mentions.ts and verifyMultiBrandPortability).
+  assert.ok(!editorialRules.some((rule) => rule.type === "SUB_ITEM" && rule.value === "SHIRT"), "SHIRT must stay out of editorialRules SUB_ITEM - collides with Product Reference's own SHIRT item.");
+  assert.ok(!editorialRules.some((rule) => rule.type === "SUB_ITEM" && rule.value === "SKIRT"), "SKIRT must stay out of editorialRules SUB_ITEM - collides with Product Reference's own SKIRT item.");
+  assert.ok(!editorialRules.some((rule) => rule.type === "SUB_ITEM" && rule.value === "SHORTS"), "SHORTS must stay out of editorialRules SUB_ITEM - collides with Product Reference's own SHORTS item.");
+  assert.ok(!editorialRules.some((rule) => rule.type === "SUB_ITEM" && rule.value === "SWEATSHIRT"), "SWEATSHIRT must stay out of editorialRules SUB_ITEM - collides with Product Reference's own SWEATSHIRT item.");
+  assert.ok(!editorialRules.some((rule) => rule.type === "SUB_ITEM" && rule.value === "CARDIGAN"), "CARDIGAN must stay out of editorialRules SUB_ITEM - collides with Product Reference's own CARDIGAN item.");
 }
 
 function verifyEvidenceStrengthLabels() {

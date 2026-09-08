@@ -46,6 +46,41 @@ const rules: Rule[] = [
   { type: "SUB_ITEM", value: "BALL_CAP", patterns: [rx("\\bball cap\\b|baseball cap|baseball hat|볼캡")] },
   { type: "SUB_ITEM", value: "BUCKET_HAT", patterns: [rx("\\bbucket hat\\b|버킷햇|버킷 햇")] },
   { type: "SUB_ITEM", value: "TOTE_BAG", patterns: [rx("\\btote bag\\b|\\uD1A0\\uD2B8\\uBC31|\\uD1A0\\uD2B8 \\uBC31")] },
+  // Added after the 2026-09-08 item taxonomy coverage audit
+  // (docs/EDITORIAL_ITEM_TAXONOMY_AUDIT.md). Each entry below cleared the
+  // project's taxonomy-addition threshold (article presence >= 2 OR source
+  // spread >= 2) against the REAL corpus AND produced at least one manually
+  // verified VALID direct-attribute relation (never a promoted co-occurrence)
+  // once wired into `attribute-relations.ts`.
+  //
+  // SHIRT, SHORTS, SKIRT, SWEATSHIRT, and CARDIGAN also cleared evidence in
+  // this same audit but were REJECTED from this round: they collide with
+  // generic item values Product Reference already defines as its own
+  // supplemental Tier-2 vocabulary (`product-reference/taxonomy.ts`), and
+  // `product-reference/object-relations.ts#resolveSpecificItem` gives ANY
+  // `editorialRules` SUB_ITEM match absolute Tier-1 priority over that
+  // supplemental list. Adding those 5 names here silently short-circuited
+  // Product Reference's own cross-item ambiguity check (verified: it broke
+  // `verifyMultiBrandPortability`'s KIRSH "니트 롱 스커트" AMBIGUOUS case).
+  // Product Reference research is closed for this pass, so the fix is to not
+  // introduce the collision from the Editorial side - see
+  // docs/EDITORIAL_ITEM_TAXONOMY_AUDIT.md for the full rejected-item list.
+  // Excludes 코트니(name), 마스코트(mascot), 테니스 코트/농구 코트/코트
+  // 스니커즈/코트 헤리티지/코트화 (tennis/basketball court, court-shoe usage)
+  // - real corpus false positives found during this pass; 트렌치코트/오버코트/
+  // 레인코트 etc. keep matching since "코트" is still a true suffix of those
+  // real coat compounds. A residual, undisclosed-by-pattern risk remains: bare
+  // "코트" meaning "court" with no fixed preceding word (e.g. a pure NBA
+  // article, "...로스터가 코트 위에서...") cannot be excluded this way - see
+  // docs/EDITORIAL_ITEM_TAXONOMY_AUDIT.md, "Known limitations".
+  { type: "SUB_ITEM", value: "COAT", patterns: [rx("\\bcoat\\b|(?<!마스)(?<!테니스 )(?<!농구 )코트(?!니)(?!\\s*스니커즈)(?!\\s*헤리티지)(?!화)")] },
+  // Excludes 베스트셀러 (bestseller) - a real corpus false positive found
+  // during this pass; bare "베스트" as the garment is otherwise unambiguous
+  // in this corpus (군용 니트 베스트, 다운 베스트, 데님 베스트, etc.).
+  { type: "SUB_ITEM", value: "VEST", patterns: [rx("\\bvest\\b|베스트(?!셀러)")] },
+  { type: "SUB_ITEM", value: "DOWN_JACKET", patterns: [rx("down jacket|다운 ?재킷|다운 ?자켓")] },
+  { type: "SUB_ITEM", value: "VARSITY_JACKET", patterns: [rx("varsity jacket|바시티 ?재킷|바시티 ?자켓")] },
+  { type: "SUB_ITEM", value: "DENIM_JACKET", patterns: [rx("denim jacket|데님 ?재킷|데님 ?자켓|청자켓")] },
   { type: "DETAIL", value: "PIPING", patterns: [rx("\\bpiping\\b|\\uD30C\\uC774\\uD551")] },
   { type: "DETAIL", value: "EMBROIDERY", patterns: [rx("\\bembroidery\\b|\\uC790\\uC218")] },
   { type: "DETAIL", value: "WASHED", patterns: [rx("\\bwashed\\b|\\uC6CC\\uC2F1|\\uD53C\\uADF8\\uBA3C\\uD2B8")] },
