@@ -57,6 +57,7 @@ async function main() {
   verifyDirectAttributeRelations();
   verifyProductReferenceAttributes();
   verifyProductReferenceTaxonomy();
+  verifyMultiBrandPortability();
   verifyEvidenceImageResolution();
   verifyAttributeBarWidth();
   await verifyAttributeBundles();
@@ -1112,6 +1113,85 @@ function verifyProductReferenceTaxonomy() {
   // item-priority resolution.
   const stillGuarded = extractDirectAttributeRelations({ title: "", text: "이번 캡슐은 오버사이즈 축구 셔츠와 트랙 재킷, 트레이닝 기어가 관중석을 벗어난다." });
   assert.equal(stillGuarded.some((relation) => relation.specificItem === "TRACK_JACKET"), false, "Adding the taxonomy-closure module must not affect the Editorial enumeration guard.");
+}
+
+/**
+ * MULTI-BRAND PORTABILITY (2026-09-08): fixtures from two brands independent
+ * of both B:CAVE and each other - KIRSH (kirsh.co.kr) and POST ARCHIVE
+ * FACTION (postarchivefaction.com) - both real product name/description text
+ * fetched during the multi-brand validation pass documented in
+ * docs/PRODUCT_REFERENCE_MULTIBRAND_AUDIT.md. These prove two things this
+ * pass added: (1) SKIRT and GRAY generalize to brands Covernat never
+ * informed, and (2) the real KIRSH false-positive this pass found and fixed
+ * (an "available colors" list shared across every color variant of one
+ * design, restated verbatim on every sibling product page) stays fixed.
+ */
+function verifyMultiBrandPortability() {
+  const find = (relations: ReturnType<typeof extractProductObjectRelations>, item: string, type: string, value: string) =>
+    relations.find((r) => r.specificItem === item && r.attributeType === type && r.attributeValue === value);
+
+  // SKIRT: added on real cross-brand evidence (KIRSH + The North Face Korea).
+  const kirshSkirt = extractProductObjectRelations({ name: "텍스쳐 패턴 니트 롱 스커트", description: null });
+  assert.equal(resolveSpecificItem("텍스쳐 패턴 니트 롱 스커트").status, "AMBIGUOUS", 'Both KNIT ("니트") and SKIRT ("스커트") match this real KIRSH name - correctly ambiguous rather than silently guessing the head noun.');
+  assert.deepEqual(kirshSkirt, [], "An ambiguous multi-item name must still yield zero relations after adding SKIRT.");
+
+  const tntSkirt = resolveSpecificItem("걸즈 서프 레깅스 스커트");
+  assert.equal(tntSkirt.status === "RESOLVED" && tntSkirt.item, "SKIRT", "A real The North Face Korea product name must resolve to the new SKIRT item.");
+
+  // GRAY: added on real cross-brand TEXTUAL evidence (KIRSH's "멜란지 그레이",
+  // The North Face Korea's "GRAY"/"MELANGE_GREY"/"CHARCOAL_GREY"), even
+  // though - like NAVY in the Covernat pass - the specific motivating
+  // examples above don't actually produce a captured relation: KIRSH wraps
+  // its suffix color in brackets ("[멜란지 그레이]"), and TNF's compound forms
+  // put another word ("MELANGE_"/"CHARCOAL_") directly before "그레이"/"GREY",
+  // both of which the existing whitespace-only-gap adjacency check correctly
+  // rejects. See docs/PRODUCT_REFERENCE_MULTIBRAND_AUDIT.md ("Parser Grammar
+  // Misses") for the full disclosure. What GRAY *does* correctly capture is
+  // a real The North Face Korea naming convention (confirmed on this exact
+  // sample's own "반팔 티 WHITE" case) with the color word standing alone as
+  // a clean suffix, no bracket/compound-prefix in the way.
+  const grayTee = extractProductObjectRelations({ name: "남성 시티 익스플로어 반팔 티 GRAY", description: null });
+  assert.ok(find(grayTee, "T_SHIRT", "COLOR", "GRAY"), "The new base GRAY color must match a clean, unwrapped suffix in the same real The North Face Korea naming convention as this pass's other TNF fixtures.");
+
+  // The existing Covernat-derived HEATHER_GRAY compound must still match
+  // unaffected by adding the new base GRAY value.
+  const heatherGray = extractProductObjectRelations({ name: "우먼 울 블렌드 크롭 가디건 헤더 그레이", description: null });
+  assert.ok(find(heatherGray, "CARDIGAN", "COLOR", "HEATHER_GRAY"), "The existing HEATHER_GRAY compound must still match after adding the new base GRAY value.");
+
+  // REGRESSION GUARD (the actual bug this pass found and fixed): a real
+  // KIRSH product description restates the full "available colors" list for
+  // the whole design, not just the color of the exact page/SKU it appears
+  // on - this is genuinely different from Covernat's per-exact-SKU
+  // description convention. Before the fix, this fabricated a BEIGE relation
+  // for a product whose own name says [블랙] (black).
+  const colorListDescription =
+    "º디자인- 벨트로 포인트를 줄 수 있는 팬츠º원단겉감 - polyester 100%º제조국 : 중국컬러 : 베이지, 블랙[사이즈]1: 총장 100";
+  const blackPants = extractProductObjectRelations({ name: "컬렉션 벨트 포인트 투턱 팬츠 [블랙]", description: colorListDescription });
+  assert.equal(find(blackPants, "PANTS", "COLOR", "BEIGE"), undefined, "A sibling color variant named in a shared 'available colors' description list must never be attributed to this product.");
+  assert.equal(find(blackPants, "PANTS", "COLOR", "BLACK"), undefined, "COLOR must never be read from the description at all (even a value that happens to be correct) - only from the NAME-anchored bidirectional check.");
+
+  // DETAIL/MATERIAL/SILHOUETTE from the description must be entirely
+  // unaffected by removing COLOR from the same scan.
+  const kirshCardigan = extractProductObjectRelations({
+    name: "체리 브이넥 가디건 셋업 [라이트 레드]",
+    description: "디자인 : 브이넥 가디건, 톤온톤 체리 직자수 포인트, 콘트라스트 컬러를 믹스한 스트라이프 배색"
+  });
+  assert.ok(find(kirshCardigan, "CARDIGAN", "DETAIL", "EMBROIDERY"), "DETAIL from the description must still work after the COLOR-scan fix.");
+  assert.ok(find(kirshCardigan, "CARDIGAN", "DETAIL", "STRIPE"), "A second, distinct DETAIL value in the same description must also still work.");
+
+  // PAF: description-level SILHOUETTE/MATERIAL, real fixture, second
+  // independent brand, confirms these dimensions are not Covernat-only.
+  const pafJacket = extractProductObjectRelations({
+    name: "A 자켓",
+    description: "내구성이 돋보이는 코듀로이 넥 비조 단추 여밈 후면 래글런 소매 구조 버튼 A® 프론트 지퍼 크롭 핏"
+  });
+  assert.ok(find(pafJacket, "JACKET", "MATERIAL", "CORDUROY"), "MATERIAL:CORDUROY (an existing, pre-Covernat editorialRules value) must generalize to a real independent-brand (PAF) description.");
+  assert.ok(find(pafJacket, "JACKET", "SILHOUETTE", "CROP_FIT"), "SILHOUETTE:CROP_FIT (a Covernat-derived value) must generalize to a real independent-brand (PAF) description.");
+
+  // REGRESSION GUARD: Editorial must remain unaffected by any of this pass's
+  // taxonomy additions or the description-scan fix.
+  const editorialStillGuarded = extractDirectAttributeRelations({ title: "", text: "이번 캡슐은 오버사이즈 축구 셔츠와 트랙 재킷, 트레이닝 기어가 관중석을 벗어난다." });
+  assert.equal(editorialStillGuarded.some((relation) => relation.specificItem === "TRACK_JACKET"), false, "The multi-brand pass must not affect the Editorial enumeration guard.");
 }
 
 async function verifyAttributeBundles() {

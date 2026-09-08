@@ -99,6 +99,11 @@ export const productReferenceItemRules: ProductReferenceRule[] = [
   { type: "SUB_ITEM", value: "CARDIGAN", patterns: [rx("가디건")] },
   // "블라우스": 1 of 30 (11880).
   { type: "SUB_ITEM", value: "BLOUSE", patterns: [rx("블라우스")] },
+  // "스커트" (skirt): added in the 2026-09-08 multi-brand portability pass -
+  // real evidence in 2 INDEPENDENT brands (KIRSH: "텍스처 패턴 니트 롱 스커트",
+  // "러플 우븐 스커트"; The North Face Korea: "레깅스 스커트"), clearing the
+  // ">=2 independent brands" bar in docs/PRODUCT_REFERENCE_MULTIBRAND_AUDIT.md.
+  { type: "SUB_ITEM", value: "SKIRT", patterns: [rx("스커트")] },
   // "자켓"/"재킷" (generic, not TRACK_JACKET/COACH_JACKET/WORK_JACKET): 2 of 30
   // (11900, 12092).
   { type: "SUB_ITEM", value: "JACKET", patterns: [rx("재킷|자켓")] },
@@ -155,6 +160,13 @@ export const productReferenceAttributeRules: ProductReferenceRule[] = [
   // guard the project already applies elsewhere for single-syllable terms -
   // without it, "울" would also match inside unrelated words.
   { type: "MATERIAL", value: "WOOL", patterns: [rx("(?:^|\\s)울(?:\\s|$)|\\bwool\\b", "i")] },
+  // NOTE: 코듀로이/corduroy is NOT added here - it already exists as an
+  // editorialRules MATERIAL value (added in an earlier, unrelated pass) and
+  // is already reachable through `object-relations.ts`'s read-only merge of
+  // `editorialRules`. The 2026-09-08 multi-brand pass confirmed it firing
+  // for real on POST ARCHIVE FACTION's own description text - a genuine
+  // cross-brand generalization finding for an EXISTING value, not a new
+  // addition. See docs/PRODUCT_REFERENCE_MULTIBRAND_AUDIT.md.
 
   // COLOR: each a real trailing-suffix color observed in this sample.
   { type: "COLOR", value: "IVORY", patterns: [rx("아이보리")] }, // 10825, 11880, 12158
@@ -167,5 +179,27 @@ export const productReferenceAttributeRules: ProductReferenceRule[] = [
   { type: "COLOR", value: "HEATHER_GRAY", patterns: [rx("헤더\\s?그레이")] }, // 11736, 11757
   { type: "COLOR", value: "LIGHT_PURPLE", patterns: [rx("라이트\\s?퍼플")] }, // 10864
   { type: "COLOR", value: "LIGHT_OLIVE", patterns: [rx("라이트\\s?올리브")] }, // 11991
-  { type: "COLOR", value: "DARK_GRAY", patterns: [rx("다크\\s?그레이")] } // 12011
+  { type: "COLOR", value: "DARK_GRAY", patterns: [rx("다크\\s?그레이")] }, // 12011
+
+  // "그레이"/"gray"/"grey" (bare, standalone base color): added in the
+  // 2026-09-08 multi-brand portability pass on real TEXTUAL evidence from 2
+  // INDEPENDENT brands - KIRSH ("멜란지 그레이") and The North Face Korea
+  // ("... GRAY ...", "MELANGE_GREY", "CHARCOAL_GREY"). Honest disclosure:
+  // neither of those two specific motivating examples actually produces a
+  // captured relation, for reasons unrelated to this value's own vocabulary -
+  // KIRSH wraps its suffix color in brackets ("[멜란지 그레이]"), and TNF's
+  // compound forms put another word directly before "그레이"/"GREY"
+  // ("MELANGE_"/"CHARCOAL_") - both already correctly rejected by the
+  // existing whitespace-only-gap adjacency check, the same class of miss as
+  // NAVY's own motivating example in the Covernat pass. See
+  // docs/PRODUCT_REFERENCE_MULTIBRAND_AUDIT.md ("Parser Grammar Misses") for
+  // the full disclosure and a real case (a clean, unwrapped "반팔 티 GRAY"
+  // suffix) where this value does fire. HEATHER_GRAY/DARK_GRAY (both
+  // Covernat-derived, spaced two-word compounds) are intentionally left as
+  // separate, more specific values: a product whose color is stated as one
+  // of those exact compounds will only match the compound (the compound's
+  // own word, e.g. "헤더", sits directly between the item and "그레이", so
+  // this base value's own adjacency check does not separately fire on it) -
+  // no double-counting, and no regression to the existing compounds.
+  { type: "COLOR", value: "GRAY", patterns: [rx("그레이|\\bgray\\b|\\bgrey\\b", "i")] }
 ];

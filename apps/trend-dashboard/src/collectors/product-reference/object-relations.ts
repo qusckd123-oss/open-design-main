@@ -69,12 +69,12 @@ import { productReferenceAttributeRules, productReferenceItemRules, type Product
  * -------------------------------
  * Per Section 7's structured-product-object license: because `name` and
  * `description` are one JSON-LD record about one SKU (never a multi-topic
- * editorial article), ANY approved attribute keyword found anywhere in the
+ * editorial article), an approved attribute keyword found anywhere in the
  * CLEANED description is attributed to the item resolved from `name` - no
  * adjacency/window requirement, unlike Editorial prose. "Cleaned" matters:
- * two real, verified hazards in this exact site's description convention
- * are stripped first (see `cleanDescriptionForScan`), because leaving them
- * in was measured to produce real false positives during this pass's own
+ * two real, verified hazards in Covernat's own description convention were
+ * stripped first (see `cleanDescriptionForScan`), because leaving them in
+ * was measured to produce real false positives during this pass's own
  * development against the live 30-product sample:
  *   1. The `[SIZE(CM)]...` measurement block and everything after it
  *      (including a `[모델]` section that can name a DIFFERENT color variant
@@ -83,6 +83,23 @@ import { productReferenceAttributeRules, productReferenceItemRules, type Product
  *      (`CO####XX##`, e.g. "-CO2501HZ31(C 로고 후디 집업)와 셋업 연출") - this
  *      describes a DIFFERENT product being suggested as a matching set, not
  *      this product's own attributes.
+ *
+ * COLOR IS DELIBERATELY EXCLUDED FROM THIS DESCRIPTION SCAN. This was found,
+ * not assumed: the 2026-09-08 multi-brand portability pass (see
+ * docs/PRODUCT_REFERENCE_MULTIBRAND_AUDIT.md) measured KIRSH product
+ * descriptions restating an "available colors" list shared across every
+ * color variant of a design (e.g. "컬러 : 베이지, 블랙" appearing verbatim on
+ * both the beige-labeled AND the black-labeled product page for the same
+ * design) - scanning it unconditionally produced 9 real, verified false
+ * positives (a sibling variant's color attached to the wrong page) out of
+ * only 33 KIRSH relations. Unlike DETAIL/MATERIAL/SILHOUETTE/STYLE design
+ * bullets - which describe THIS exact SKU throughout Covernat, KIRSH, and
+ * PAF alike - a "colors this design comes in" list describes the whole
+ * design family, not the one page it happens to render on. Removing COLOR
+ * from this function cost zero real relations on Covernat (every one of its
+ * 26 COLOR relations came from the NAME-anchored bidirectional check below,
+ * never from `descriptionRelations`) while eliminating all 9 KIRSH false
+ * positives - a strictly positive, evidence-driven precision fix.
  *
  * DEDUPLICATION (Section 10)
  * -----------------------------
@@ -113,8 +130,11 @@ export type SpecificItemResolution =
 
 type CombinedRule = { type: ProductReferenceRuleType; value: string; patterns: RegExp[] };
 
-const NAME_PHRASE_DIMENSIONS: ProductReferenceRuleType[] = ["DETAIL", "MATERIAL", "SILHOUETTE", "STYLE"];
-const ALL_ATTRIBUTE_DIMENSIONS: ProductReferenceRuleType[] = ["DETAIL", "MATERIAL", "SILHOUETTE", "STYLE", "COLOR"];
+// COLOR is handled by its own bidirectional NAME-anchored check
+// (`nameColorRelations`) everywhere in this module - never by a
+// whole-text scan. See the module docstring's "COLOR IS DELIBERATELY
+// EXCLUDED" note for why `descriptionRelations` must not include it.
+const SCANNABLE_DIMENSIONS: ProductReferenceRuleType[] = ["DETAIL", "MATERIAL", "SILHOUETTE", "STYLE"];
 
 // Same proven window size as `editorial/attribute-relations.ts`'s
 // MODIFIER_WINDOW - not imported (that file is left untouched by this pass)
@@ -205,7 +225,7 @@ function nameDirectPhraseRelations(name: string, resolved: { item: string; index
   if (otherItemInWindow) return [];
 
   const found: Array<{ type: ProductReferenceRuleType; value: string; evidenceText: string }> = [];
-  for (const rule of combinedAttributeRules(NAME_PHRASE_DIMENSIONS)) {
+  for (const rule of combinedAttributeRules(SCANNABLE_DIMENSIONS)) {
     const hit = ruleMatches(window, [rule])[0];
     if (!hit) continue;
     found.push({ type: rule.type, value: rule.value, evidenceText: window.trim() });
@@ -258,7 +278,7 @@ export function cleanDescriptionForScan(description: string): string {
 function descriptionRelations(description: string) {
   const cleaned = cleanDescriptionForScan(description);
   const found: Array<{ type: ProductReferenceRuleType; value: string; evidenceText: string }> = [];
-  for (const rule of combinedAttributeRules(ALL_ATTRIBUTE_DIMENSIONS)) {
+  for (const rule of combinedAttributeRules(SCANNABLE_DIMENSIONS)) {
     const hit = ruleMatches(cleaned, [rule])[0];
     if (!hit) continue;
     const evidenceText = cleaned.slice(Math.max(0, hit.index - 10), hit.index + hit.text.length + 10).trim();
