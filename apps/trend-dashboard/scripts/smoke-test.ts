@@ -1662,15 +1662,44 @@ function verifyDomesticFirstTaxonomy() {
   assert.ok(!extractEditorialMentions({ title: "파크를 대표하는 공포 마스코트를 공개했다", text: "" }).some((m) => m.value === "COAT"), "마스코트(mascot) must never resolve to COAT - 코트 is only a substring of the word, not the item.");
   assert.ok(!extractEditorialMentions({ title: "이 시즌 베스트셀러 아이템", text: "" }).some((m) => m.value === "VEST"), "베스트셀러 must never resolve to VEST.");
 
-  // SHIRT/SHORTS/SKIRT/SWEATSHIRT/CARDIGAN were audited with real corpus
-  // evidence but deliberately NOT added: they collide with Product
-  // Reference's own supplemental item vocabulary (see the rejection comment
-  // in src/collectors/editorial/mentions.ts and verifyMultiBrandPortability).
-  assert.ok(!editorialRules.some((rule) => rule.type === "SUB_ITEM" && rule.value === "SHIRT"), "SHIRT must stay out of editorialRules SUB_ITEM - collides with Product Reference's own SHIRT item.");
-  assert.ok(!editorialRules.some((rule) => rule.type === "SUB_ITEM" && rule.value === "SKIRT"), "SKIRT must stay out of editorialRules SUB_ITEM - collides with Product Reference's own SKIRT item.");
-  assert.ok(!editorialRules.some((rule) => rule.type === "SUB_ITEM" && rule.value === "SHORTS"), "SHORTS must stay out of editorialRules SUB_ITEM - collides with Product Reference's own SHORTS item.");
-  assert.ok(!editorialRules.some((rule) => rule.type === "SUB_ITEM" && rule.value === "SWEATSHIRT"), "SWEATSHIRT must stay out of editorialRules SUB_ITEM - collides with Product Reference's own SWEATSHIRT item.");
-  assert.ok(!editorialRules.some((rule) => rule.type === "SUB_ITEM" && rule.value === "CARDIGAN"), "CARDIGAN must stay out of editorialRules SUB_ITEM - collides with Product Reference's own CARDIGAN item.");
+  // SHIRT/SHORTS/SKIRT/SWEATSHIRT/CARDIGAN were previously blocked because
+  // they collide with Product Reference's own supplemental item vocabulary
+  // (same value names in ./taxonomy.ts). The 2026-09-08 decoupling pass
+  // fixed the actual coupling (Product Reference now reads a permanently
+  // frozen snapshot - see frozen-editorial-vocabulary.ts and
+  // verifyEditorialProductReferenceScopeIsolation), so all 5 previously
+  // blocked candidates ship in this pass.
+  assert.equal(categoryOfSpecificItem("SHIRT"), "TOP", "SHIRT is a specific item under TOP.");
+  assert.equal(categoryOfSpecificItem("SWEATSHIRT"), "TOP", "SWEATSHIRT is a specific item under TOP.");
+  assert.equal(categoryOfSpecificItem("CARDIGAN"), "TOP", "CARDIGAN is a specific item under TOP.");
+  assert.equal(categoryOfSpecificItem("SHORTS"), "PANTS", "SHORTS is a specific item under PANTS.");
+  assert.equal(categoryOfSpecificItem("SKIRT"), "PANTS", "SKIRT is a specific item under PANTS.");
+
+  // Positive extraction, each phrase drawn from the real corpus.
+  assert.ok(extractEditorialMentions({ title: "워크웨어 셔츠 스타일링", text: "" }).some((m) => m.type === "SUB_ITEM" && m.value === "SHIRT"), "셔츠 must resolve to SHIRT.");
+  assert.ok(extractEditorialMentions({ title: "레더 소재의 데님 쇼츠", text: "" }).some((m) => m.value === "SHORTS"), "쇼츠 must resolve to SHORTS.");
+  assert.ok(extractEditorialMentions({ title: "반바지 스타일링", text: "" }).some((m) => m.value === "SHORTS"), "반바지 must resolve to SHORTS.");
+  assert.ok(extractEditorialMentions({ title: "레드 스커트 스타일링", text: "" }).some((m) => m.value === "SKIRT"), "스커트 must resolve to SKIRT.");
+  assert.ok(extractEditorialMentions({ title: "워싱된 스웨트셔츠", text: "" }).some((m) => m.value === "SWEATSHIRT"), "스웨트셔츠 must resolve to SWEATSHIRT.");
+  assert.ok(extractEditorialMentions({ title: "니트 랩 가디건", text: "" }).some((m) => m.value === "CARDIGAN"), "가디건 must resolve to CARDIGAN.");
+  assert.ok(extractEditorialMentions({ title: "청키한 니트 카디건", text: "" }).some((m) => m.value === "CARDIGAN"), "카디건 (alternate spelling) must also resolve to CARDIGAN.");
+
+  // SHIRT COLLISION GUARDS (step 10 of the decoupling pass): generic SHIRT
+  // must never swallow the more specific items it could textually overlap
+  // with.
+  const tshirtMentions = extractEditorialMentions({ title: "화이트 티셔츠 스타일링", text: "" });
+  assert.ok(tshirtMentions.some((m) => m.value === "T_SHIRT"), "티셔츠 must still resolve to T_SHIRT.");
+  assert.equal(tshirtMentions.some((m) => m.type === "SUB_ITEM" && m.value === "SHIRT"), false, "티셔츠 must NEVER also double-tag as generic SHIRT - a T-shirt is not a dress/collared shirt.");
+  assert.equal(extractEditorialMentions({ title: "이번 컬래버레이션은 총 세 가지 T셔츠로 구성된다", text: "" }).some((m) => m.type === "SUB_ITEM" && m.value === "SHIRT"), false, "T셔츠 (fused Latin-T form, distinct from 티셔츠) must also never double-tag as generic SHIRT - a real corpus false positive found and fixed during this pass.");
+  const sweatshirtMentions = extractEditorialMentions({ title: "워싱된 스웨트셔츠 스타일링", text: "" });
+  assert.ok(sweatshirtMentions.some((m) => m.value === "SWEATSHIRT"), "스웨트셔츠 must still resolve to SWEATSHIRT.");
+  assert.equal(sweatshirtMentions.some((m) => m.type === "SUB_ITEM" && m.value === "SHIRT"), false, "스웨트셔츠 must NEVER also double-tag as generic SHIRT (verified real-corpus regression: this used to double-fire SHIRT+WASHED and SWEATSHIRT+WASHED from identical evidence).");
+  const rugbyMentions = extractEditorialMentions({ title: "rugby shirt styling", text: "" });
+  assert.ok(rugbyMentions.some((m) => m.value === "RUGBY_SHIRT"), "rugby shirt must still resolve to the existing, more specific RUGBY_SHIRT.");
+  assert.equal(rugbyMentions.some((m) => m.type === "SUB_ITEM" && m.value === "SHIRT"), false, "rugby shirt must not double-tag generic SHIRT via the English word 'shirt'.");
+
+  // SHORTS boundary: must not fire on the bare English adjective "short".
+  assert.equal(extractEditorialMentions({ title: "a short trench coat this season", text: "" }).some((m) => m.value === "SHORTS"), false, "The bare adjective 'short' must never resolve to SHORTS - only the plural noun 'shorts' or Korean 쇼츠/반바지.");
 }
 
 function verifyEvidenceStrengthLabels() {

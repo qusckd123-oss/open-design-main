@@ -219,3 +219,179 @@ No new repeated (>=2 article) bundle was created this pass - all 11 new relation
 ## Next step
 
 Scope a follow-up pass that reconciles `editorialRules` and Product Reference's supplemental item list (`product-reference/taxonomy.ts`) - specifically, decide whether `resolveSpecificItem`'s Tier-1-always-wins rule should instead union both tiers before checking for ambiguity - so that `SHIRT`, `SHORTS`, `SKIRT`, `SWEATSHIRT`, and `CARDIGAN` (already evidenced, already precision-verified in this pass) can ship to Editorial without breaking Product Reference's own resolution guarantees.
+
+---
+
+# 2026-09-08 Decoupling Pass: Editorial / Product Reference Scope Separation
+
+Checked date: 2026-09-08 (same day, follow-up pass). This section documents the architectural fix that resolved the "Next step" above and unblocked `SHIRT`, `SHORTS`, `SKIRT`, `SWEATSHIRT`, and `CARDIGAN`.
+
+## Previous coupling (root cause trace)
+
+- **Editorial item rules live in**: `src/collectors/editorial/mentions.ts` (`editorialRules`, exported, grows over time as new evidence-backed items are added).
+- **Product Reference item rules live in**: `src/collectors/product-reference/taxonomy.ts` (`productReferenceItemRules`/`productReferenceAttributeRules`), consumed by `src/collectors/product-reference/object-relations.ts` and the older `src/collectors/product-reference/attributes.ts`.
+- **Shared imports (before this pass)**: both `object-relations.ts` and `attributes.ts` imported `editorialRules` LIVE from `editorial/mentions.ts` and used its SUB_ITEM/attribute rules as an "existing" Tier-1 vocabulary.
+- **Why `verifyMultiBrandPortability` changed**: `resolveSpecificItem()` checks `editorialRules` SUB_ITEM patterns first; if exactly one distinct value matches, it resolves immediately and **never even consults** `productReferenceItemRules` (Tier 2) - even when Tier 2 would have found a second, conflicting value. A KIRSH product name containing both "니트" (Tier-2 KNIT) and "스커트" (previously nowhere in Editorial, so invisible to Tier 1) used to fall through to Tier 2, find both KNIT and SKIRT, and correctly report `AMBIGUOUS`. Once Editorial's own SKIRT rule existed, Tier 1 found exactly one match (SKIRT) and resolved immediately, silently changing the answer to `RESOLVED` and never reaching the Tier-2 ambiguity check at all.
+- **Coupling type**: **D (fallback from Product Reference to editorialRules) combined with C (shared precedence/order)** - not (A) shared canonical definitions and not simply (B) shared surface matching considered in isolation. The two systems maintain independent value dictionaries that happen to sometimes share a literal string; the actual defect is the **tier priority/fallback order** treating one system's live vocabulary as the other's authoritative first pass.
+- **Escalation found while tracing this**: the coupling is broader than literal name collisions. Re-running the persisted 120-product regression sample against current code (before this pass touched anything) found item-bearing had already silently drifted from the documented 58/120 to **61/120** - caused by the *prior* Editorial pass's `COAT`/`VEST`/`DOWN_JACKET` additions, **none of which collide by name** with anything in `product-reference/taxonomy.ts`. Diffing old vs. new `resolveSpecificItem` output across all 120 products pinpointed the exact cause: `VEST` newly resolved KIRSH#7321 ("카라 셔링 우븐 베스트 집업"), `COAT` newly resolved two TNF Korea "...다운 코트..." products, and `DOWN_JACKET` reclassified one TNF Korea product from generic `JACKET` to the more specific `DOWN_JACKET` (net-neutral on the count, but still a changed resolution). 58 + 3 new = 61, exactly matching the drift. This proves avoiding literal name collisions (the previous pass's mitigation) is **not sufficient** - any new Editorial Tier-1 pattern can change Product Reference's output for any product name it happens to match a substring of, regardless of whether the value name itself collides.
+
+## Why it was unsafe
+
+Product Reference is closed, archived research with a decided, documented regression baseline (58/120 item-bearing, 32/120 attribute-bearing, 52 relations, 92.3% conservative precision - see `docs/PRODUCT_REFERENCE_MULTIBRAND_AUDIT.md`). A live import meant that baseline was never actually stable: it silently moved every time Editorial's own, unrelated taxonomy grew, with no test catching it (the existing test suite only pins specific hand-picked fixtures, not the full persisted 120-product sample as an exact count).
+
+## New scope boundary
+
+**Minimum-change shape chosen (option B from the three offered)**: `editorialRules` remains Editorial-only and keeps growing freely. Product Reference no longer imports it at all - it now reads `src/collectors/product-reference/frozen-editorial-vocabulary.ts`, a byte-for-byte, hand-copied, **permanently frozen** snapshot of `editorialRules` exactly as it stood at commit `7f75410` (the last commit before Editorial's item-taxonomy expansion work began - verified by re-running the persisted 120-product sample against that exact commit's `mentions.ts` and confirming it reproduces 58/120 item-bearing precisely). The frozen file has **zero import dependency** on `editorial/mentions.ts` - not a live re-export, not a computed subtraction, a fully independent literal array - so no future Editorial change, however large, can ever move Product Reference's output again. `resolveSpecificItem`'s Tier-1-always-wins priority rule is otherwise **unchanged** - only the *source* of "existing/Tier-1" moved from live to frozen.
+
+A shared canonical enum was considered (option A) and rejected: Editorial and Product Reference already maintain genuinely independent vocabularies for different input shapes (multi-topic editorial prose vs. single-SKU product names) with different grammar rules (prefix-only modifier window vs. bidirectional color adjacency); forcing a shared canonical registry would have coupled two things that only accidentally share some value names, not fixed the actual defect (the fallback/priority mechanism).
+
+## Canonical vs. recognition rules
+
+- **Canonical item identity** can still coincide between the two systems (e.g. both may use the string `"CARDIGAN"`) - that is expected and fine; a cardigan is a cardigan in either domain.
+- **Editorial recognition rules** (`editorial/mentions.ts`) decide what Editorial *article prose* tags as that item - full freedom to expand, refine, or exclude surface forms based on editorial-corpus evidence only.
+- **Product Reference recognition rules** (`product-reference/taxonomy.ts` + the frozen snapshot) decide what a Product Reference *product name* resolves to - permanently pinned to the pre-expansion Editorial snapshot plus Product Reference's own supplemental vocabulary, never affected by Editorial's live rules again.
+- One scope's vocabulary expansion can no longer silently change the other's extraction output - proven by `verifyEditorialProductReferenceScopeIsolation` (`scripts/smoke-test.ts`), using the exact real KIRSH/TNF Korea product names discovered during the coupling trace as regression fixtures.
+
+## Product Reference freeze contract
+
+Re-running the persisted 120-product manifests (`docs/product-reference-samples/*.jsonl`, `productName` only - no description is archived, per that folder's own README) against current, decoupled code:
+
+| Metric | Documented baseline | Reproduced (before this pass, still coupled) | Reproduced (after decoupling) |
+|---|---|---|---|
+| Item-bearing | 58/120 = 48.3% | **61/120** (drifted) | **58/120 = 48.3%** (exact match) |
+| Attribute-bearing | 32/120 = 26.7% | 24/120 | 22/120 (see note below) |
+| Relations | 52 | 29 | 27 (see note below) |
+
+Item-bearing is fully reproducible from the archived `productName`-only data alone, and now matches the documented baseline exactly, confirming the decoupling fix is correct and complete for that metric. Attribute-bearing/relations do **not** reproduce exactly from static data - and this is **not caused by this pass**: re-running the identical check against the pre-expansion commit `7f75410` taxonomy (i.e. with zero Editorial item-taxonomy changes of any kind) still produces only 22/120 attribute-bearing and 27 relations, not 32/120 and 52. Per `docs/product-reference-samples/README.md`, only `productName` is archived; description text was never persisted ("re-fetch each `canonicalUrl` to get current description text"), and the original 32/120 & 52 measurement was made against live-fetched descriptions at audit time. Re-fetching live descriptions now would be new source collection, forbidden for this pass. This gap in reproducibility is a pre-existing, disclosed limitation of the archived sample, independent of and unaffected by this decoupling work - confirmed by the fact that it is identical whether the frozen or the fully-current Editorial taxonomy is used.
+
+**Conclusion**: the reproducible portion of the freeze contract (item-bearing) holds exactly. The non-reproducible portion (attribute-bearing/relations, dependent on undocumented live description text) is unchanged by this pass in either direction and was never something this architecture change could restore.
+
+## Blocked items recovered
+
+Re-audited against the current, unchanged 283-post corpus (272 FASHION_RELEVANT), deterministically, using the same `extractDirectAttributeRelations` pipeline as every other item in this taxonomy:
+
+| Item | Articles | Sources | Valid direct relations |
+|---|---|---|---|
+| SHIRT | 33 | 4 | 7: CHECK, BLACK, STRIPE, SUEDE, DENIM, WORKWEAR, EMBROIDERY |
+| SHORTS | 14 | 4 | 1: DENIM |
+| SKIRT | 5 | 2 | 1: RED |
+| CARDIGAN | 5 | 2 | 2: KNIT, STRIPE |
+| SWEATSHIRT | 2 | 2 | 1: WASHED |
+
+All 5 clear the acceptance bar (real current-corpus usage, >=1 manually verified valid relation, unambiguous semantics, acceptable precision) and ship this pass - no candidates were rejected this round; the max-5 cap (step 14) was exactly met.
+
+### SHIRT deep review
+
+Per-context inspection of all 59 raw SHIRT-pattern occurrences (33 articles) found and fixed three real collisions before shipping:
+
+1. **`스웨트셔츠`/`스웨트 셔츠` (SWEATSHIRT) double-tagging as generic SHIRT** - real regression: "거친 듯 옅게 워싱된 라일락 컬러 스웨트셔츠" used to fire both `SHIRT+WASHED` and `SWEATSHIRT+WASHED` from identical evidence. Fixed with a negative lookbehind, mirroring the existing `티셔츠`/T_SHIRT exclusion.
+2. **`T셔츠` (fused Latin-T form, distinct from `티셔츠`)** - "이번 컬래버레이션은 총 세 가지 T셔츠" was tagging generic SHIRT via a form the T_SHIRT rule itself doesn't recognize either. No attribute was ever attached (item-presence-only inflation, confirmed via `describeItemContexts`: `NO_ATTRIBUTE_IN_WINDOW`), but fixed anyway for correctness.
+3. **`럭비 셔츠`/`rugby shirt` (existing, more-specific RUGBY_SHIRT) double-tagging** - found via an explicit collision test (not real-corpus evidence, since no real RUGBY_SHIRT article happened to also test this path); excluded for consistency with the SWEATSHIRT/T_SHIRT precedent - an item that already has its own dedicated, more-specific SUB_ITEM should not also double-tag the generic parent.
+
+Compound real-corpus SHIRT subtypes with **no dedicated SUB_ITEM of their own** - `폴로 셔츠` (polo shirt), `오버셔츠`/`오버 셔츠` (overshirt), `워크웨어 셔츠` (workwear shirt) - are intentionally left matching generic SHIRT; that is the best available tag for them, and none currently clears its own independent >=2-article/source threshold as a standalone canonical.
+
+No enumeration false positives: 2 of the 59 raw occurrences were correctly rejected by the existing coordination guard (comma/list boundaries), 10 had no preceding text at all (`NO_WINDOW`), and the remaining 39 had a real modifier window but no currently-tracked attribute inside it (candidate future MATERIAL vocabulary - see "Remaining attribute gaps" below).
+
+### SWEATSHIRT
+
+Real corpus forms actually present: `스웨트셔츠` (2 articles) only - bare `맨투맨` has **zero** occurrences in the current corpus (checked directly; the pattern is kept for future evidence but currently inert). `스웻` (the short/ambiguous form the brief specifically warned about, which could collide with sweatpants or generic fabric/style descriptions) does not appear anywhere in the corpus - never added, avoiding that risk entirely.
+
+### CARDIGAN
+
+Both real Korean spellings are present and distinct: `가디건` (2 articles: EYESMAG "아미 키즈", HYPEBEAST_KR "JENNIE x adidas") and `카디건` (3 additional HYPEBEAST_KR articles, found during this pass's audit and added - all genuine cardigan references, e.g. "청키한 풀집 니트 카디건", "돋보이는 도톰한 풀 지퍼 니트 카디건", none a misattributed generic-knit reference).
+
+### SHORTS / SKIRT
+
+`SHORTS` uses `\bshorts\b` (plural, word-bounded) in English - confirmed it never fires on the bare adjective "short" (explicit collision test added). Korean forms `쇼츠`/`반바지` are both real and unambiguous in this corpus - no "YouTube Shorts" or other homonym usage was found. `SKIRT` (`스커트`/`치마`) remains a clean product noun in every real occurrence; no collision found.
+
+## Before / after (Editorial)
+
+| Metric | Before this pass | After this pass |
+|---|---|---|
+| EditorialPost (REAL) | 283 | 283 (unchanged) |
+| EditorialMention (REAL) | 968 | 1,025 |
+| MarketRankingSnapshot (REAL) | 667 | 667 (unchanged) |
+| Direct relations (emitted / distinct) | 26 / 23 | 41 / 35 |
+| Bundles | 18 | 29 |
+| Repeated bundles (>=2 articles) | 2 | 4 |
+| Items with >=1 direct attribute | 10 | 15 |
+| Distinct SUB_ITEM values (real mentions) | 17 | 22 |
+
+New repeated bundles: `체크 SHIRT` (2 articles, **2 sources** - 여러 매체 동시 관찰, the strongest evidence tier of any bundle in the dataset) and `니트 CARDIGAN` (2 articles, 1 source - 반복 관측 · 특정 매체 집중).
+
+## Precision (new relations, this pass)
+
+All 12 distinct new relations (15 emissions) manually inspected against evidence text:
+
+| Item | Attribute | Evidence | Classification |
+|---|---|---|---|
+| SHIRT | DETAIL:CHECK | "하우스 체크 디테일을 더한 폴로 셔츠" (Burberry) | VALID |
+| SHIRT | DETAIL:CHECK | "일본산 코튼 울 체크 오버셔츠" (TDR) | VALID |
+| SHIRT | COLOR:BLACK | "레드와 블랙이 섞인 옴브레 플레이드 셔츠" (VISLA) | VALID |
+| SHIRT | DETAIL:STRIPE | "스트라이프 러닝 셔츠" (EYESMAG) | VALID |
+| SHIRT | MATERIAL:SUEDE | "스웨이드 오버셔츠" (EYESMAG) | VALID |
+| SHIRT | MATERIAL:DENIM | "일본산 데님 셔츠" (EYESMAG) | VALID |
+| SHIRT | STYLE:WORKWEAR | "워크웨어 셔츠" (EYESMAG) | VALID |
+| SHIRT | DETAIL:EMBROIDERY | "자수 장식의 실크 셔츠" (EYESMAG) | VALID |
+| SHORTS | MATERIAL:DENIM | "레더 소재의 데님 쇼츠" (EYESMAG) | VALID |
+| SKIRT | COLOR:RED | "레드 오스트리치 깃털 다발을 장식한 스커트" (EYESMAG) | VALID |
+| SWEATSHIRT | DETAIL:WASHED | "거친 듯 옅게 워싱된 라일락 컬러 스웨트셔츠" (EYESMAG) | VALID |
+| CARDIGAN | MATERIAL:KNIT | 3x: "청키한...니트 카디건", "...니트 카디건", "니트 랩 가디건" (HYPEBEAST_KR) | VALID |
+| CARDIGAN | DETAIL:STRIPE | "범아프리카 스트라이프를 더한...니트 카디건" (HYPEBEAST_KR) | VALID |
+
+**12 VALID, 0 QUESTIONABLE, 0 FALSE POSITIVE. Conservative precision: 100%** (well above the required >=95%). The one false positive found during this pass's exploratory probing (`LEATHER_JACKET+KNIT` from "니트나 가죽 재킷", an enumeration via the Korean "or" particle `나` that the shared `COORDINATION` regex doesn't guard) belonged to an item that was never shipped - `LEATHER_JACKET` was not one of the 5 items in scope for this pass (step 14 capped additions at exactly the 5 previously-blocked candidates) and remains unaddressed, same as before.
+
+## Category coverage (items with direct attributes, after)
+
+| Category | Items |
+|---|---|
+| TOPS | `LONG_SLEEVE_TEE`, `SHIRT`, `SWEATSHIRT`, `CARDIGAN` (4) |
+| OUTERWEAR | `TRACK_JACKET`, `COAT`, `VEST`, `DOWN_JACKET`, `VARSITY_JACKET`, `DENIM_JACKET` (6) |
+| BOTTOMS | `SHORTS`, `SKIRT` (2) |
+| BAGS | `TOTE_BAG`, `BACKPACK` (2) |
+| ACCESSORIES | `BALL_CAP` (1) |
+
+OUTERWEAR is now the single largest category by direct-attribute item count - a direct reversal of the original bag/cap/tee bias this whole taxonomy-coverage effort set out to test.
+
+## Current signal
+
+`selectPrimaryPlanningBundle` now selects **"체크 SHIRT"** (2 articles, 2 independent sources - EYESMAG + HYPEBEAST_KR) as the dashboard's primary planning bundle, replacing the previous single-source repeated bundles (`라글란 시퀸 긴팔 티셔츠` / `재활용 원단 토트백`, both 1 source). This is a genuine evidence-strength improvement (multi-source repeated observation outranks single-source repeated observation under the existing, unchanged `bundleEvidenceStrength` priority rule) - not a sorting-logic change.
+
+## Missed attribute candidates (audit only, not implemented)
+
+| Candidate | Dimension | Item | Articles | Evidence |
+|---|---|---|---|---|
+| 칼라 (collar) | DETAIL-like | SHIRT | 2 | "턱시도에서 영감을 받은 윙 칼라 셔츠"; "밴드 칼라 워크 셔츠" |
+| 버튼업 (button-up/front) | DETAIL | SHIRT | 2 | "숏슬리브 버튼업 셔츠"; "그래픽 버튼업 셔츠" |
+| 실크 (silk) | MATERIAL | SHIRT | 1 | "자수 장식의 실크 셔츠" |
+| 새틴 (satin) | MATERIAL | SHIRT | 1 | "네이비 새틴 셔츠" |
+| 개버딘 (gabardine) | MATERIAL | COAT | 3 | "트로피컬 개버딘 소재의 폭스필드 트렌치코트" |
+| 코튼 (cotton) | MATERIAL | COAT | 2 | "발수 기능을 갖춘 코튼 개버딘 소재의 트렌치코트" |
+
+None individually would unlock enough relations to justify its own pass yet (1-3 articles each); carried forward as the next attribute-vocabulary decision point, per the frozen-attribute-vocabulary rule for this item-scope pass.
+
+## Tests added
+
+`scripts/smoke-test.ts`:
+- `verifyEditorialProductReferenceScopeIsolation` (new function): pins the frozen snapshot's exact rule count (57) and physical distinctness from live `editorialRules`; asserts none of the 10 Editorial-only items (5 from the prior pass + 5 from this pass) ever appear in the frozen snapshot; 3 behavioral proofs using the real KIRSH/TNF Korea product names discovered during the coupling trace (VEST/COAT new-resolution cases, DOWN_JACKET reclassification case) confirming Product Reference's `resolveSpecificItem` output is byte-for-byte unaffected by Editorial's live rules in both directions; symmetric proof that Product-Reference-only items (`BLOUSE`, `ZIP_HOODIE`) never leak into `extractEditorialMentions`.
+- `verifyDomesticFirstTaxonomy` (extended): category-mapping assertions for all 5 new items; positive extraction fixtures for each; SHIRT collision guards (T_SHIRT, T셔츠, SWEATSHIRT, RUGBY_SHIRT all correctly excluded from double-tagging as generic SHIRT); SHORTS boundary guard (bare "short" adjective never resolves).
+
+## Validation
+
+- `npx tsc -b --noEmit`: pass.
+- `npx tsx scripts/smoke-test.ts` (`npm test`): pass, including the new scope-isolation test and all extended fixtures.
+- `npm run build`: pass. Required routes present: `/`, `/editorial`, `/items`, `/items/[itemType]`, `/market`.
+- Editorial quality re-audit (`audit-attribute-relations.ts`): 41 relations / 35 distinct / 29 bundles, matches the table above exactly.
+- Product Reference frozen regression (persisted 120-product sample): item-bearing 58/120, exact match to the documented baseline - confirmed both immediately after the pure architectural decoupling (before any item was added) and again after all 5 items shipped, proving the freeze holds under load, not just at rest.
+- Data safety: `EditorialPost` 283 (unchanged), canonical post duplicates 0, mention duplicates 0, `MarketRankingSnapshot` 667 (unchanged).
+
+## Success criteria
+
+A. Product Reference 120-product item-bearing output is unchanged (58/120, exact) - **met**.
+B. Editorial safely shipped all 5 previously blocked item rules - **met**.
+C. New relation conservative precision >=95% - **met (100%)**.
+D. No semantic regressions - **met**: full existing test suite passes unchanged, including every pre-existing Product Reference and Editorial fixture.
+
+## Next step
+
+None required from this pass specifically - the architectural blocker is resolved and the 5 previously-identified high-value items have shipped. The next natural step for the *taxonomy* track (not required now) is the missed-attribute-vocabulary candidates listed above (칼라, 버튼업, 실크, 새틴, 개버딘, 코튼), each still below its own independent evidence threshold.

@@ -89,15 +89,19 @@ const specificItemCategoryMap: Record<string, BroadCategory> = {
   KEYRING: "OTHER",
   OTHER: "OTHER",
   // Added with the 2026-09-08 item taxonomy coverage audit
-  // (docs/EDITORIAL_ITEM_TAXONOMY_AUDIT.md). SHIRT/SHORTS/SKIRT/SWEATSHIRT/
-  // CARDIGAN were audited but rejected from the editorial mentions taxonomy
-  // (Product Reference isolation conflict - see the comment in
-  // src/collectors/editorial/mentions.ts) so they are intentionally absent
-  // here too.
+  // (docs/EDITORIAL_ITEM_TAXONOMY_AUDIT.md).
   COAT: "OUTER",
   VEST: "OUTER",
   DOWN_JACKET: "OUTER",
-  DENIM_JACKET: "OUTER"
+  DENIM_JACKET: "OUTER",
+  // Added with the 2026-09-08 scope decoupling pass, once Product Reference
+  // isolation was fixed at the architecture level instead of by avoiding
+  // these item names from the Editorial side.
+  SHIRT: "TOP",
+  SWEATSHIRT: "TOP",
+  CARDIGAN: "TOP",
+  SHORTS: "PANTS",
+  SKIRT: "PANTS"
 };
 
 export function categoryOfItemType(itemType: string | null | undefined): BroadCategory {

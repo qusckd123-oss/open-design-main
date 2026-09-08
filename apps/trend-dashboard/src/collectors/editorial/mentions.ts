@@ -54,17 +54,22 @@ const rules: Rule[] = [
   // once wired into `attribute-relations.ts`.
   //
   // SHIRT, SHORTS, SKIRT, SWEATSHIRT, and CARDIGAN also cleared evidence in
-  // this same audit but were REJECTED from this round: they collide with
-  // generic item values Product Reference already defines as its own
-  // supplemental Tier-2 vocabulary (`product-reference/taxonomy.ts`), and
-  // `product-reference/object-relations.ts#resolveSpecificItem` gives ANY
-  // `editorialRules` SUB_ITEM match absolute Tier-1 priority over that
-  // supplemental list. Adding those 5 names here silently short-circuited
-  // Product Reference's own cross-item ambiguity check (verified: it broke
-  // `verifyMultiBrandPortability`'s KIRSH "니트 롱 스커트" AMBIGUOUS case).
-  // Product Reference research is closed for this pass, so the fix is to not
-  // introduce the collision from the Editorial side - see
-  // docs/EDITORIAL_ITEM_TAXONOMY_AUDIT.md for the full rejected-item list.
+  // this same audit but were originally REJECTED: they collide with generic
+  // item values Product Reference already defines as its own supplemental
+  // Tier-2 vocabulary (`product-reference/taxonomy.ts`), and
+  // `product-reference/object-relations.ts#resolveSpecificItem` used to give
+  // ANY `editorialRules` SUB_ITEM match absolute Tier-1 priority over that
+  // supplemental list - so adding those 5 names here silently
+  // short-circuited Product Reference's own cross-item ambiguity check
+  // (broke `verifyMultiBrandPortability`'s KIRSH "니트 롱 스커트" AMBIGUOUS
+  // case). The 2026-09-08 decoupling pass fixed the actual coupling instead
+  // of avoiding it: `object-relations.ts`/`attributes.ts` now read a
+  // permanently frozen, hand-copied snapshot of this file's pre-expansion
+  // state (`product-reference/frozen-editorial-vocabulary.ts`), never the
+  // live array below, so Editorial can add these 5 items - and any future
+  // ones - without ever touching Product Reference's frozen 58/120-product
+  // regression baseline again. See docs/EDITORIAL_ITEM_TAXONOMY_AUDIT.md,
+  // "Previous Coupling" / "New Scope Boundary", for the full trace.
   // Excludes 코트니(name), 마스코트(mascot), 테니스 코트/농구 코트/코트
   // 스니커즈/코트 헤리티지/코트화 (tennis/basketball court, court-shoe usage)
   // - real corpus false positives found during this pass; 트렌치코트/오버코트/
@@ -81,6 +86,27 @@ const rules: Rule[] = [
   { type: "SUB_ITEM", value: "DOWN_JACKET", patterns: [rx("down jacket|다운 ?재킷|다운 ?자켓")] },
   { type: "SUB_ITEM", value: "VARSITY_JACKET", patterns: [rx("varsity jacket|바시티 ?재킷|바시티 ?자켓")] },
   { type: "SUB_ITEM", value: "DENIM_JACKET", patterns: [rx("denim jacket|데님 ?재킷|데님 ?자켓|청자켓")] },
+  // Excludes T_SHIRT/SWEATSHIRT/RUGBY_SHIRT (티셔츠, T셔츠, 스웨트셔츠/스웨트
+  // 셔츠, 럭비 셔츠/rugby shirt) so those three already-more-specific SUB_ITEM
+  // values never also double-tag as generic SHIRT (verified: without the
+  // SWEATSHIRT exclusion, "거친 듯 옅게 워싱된 라일락 컬러 스웨트셔츠" fired both
+  // SHIRT+WASHED and SWEATSHIRT+WASHED from identical evidence; "T셔츠" - a
+  // real corpus fused Latin-T form distinct from "티셔츠" - was a second,
+  // separately found item-presence false positive). Compound real-corpus
+  // subtypes with no dedicated SUB_ITEM of their own (폴로 셔츠, 오버셔츠,
+  // 워크웨어 셔츠) are intentionally left matching generic SHIRT - it is the
+  // best available tag for them.
+  {
+    type: "SUB_ITEM",
+    value: "SHIRT",
+    patterns: [rx("(?<!t-)(?<!t )(?<!rugby )\\bshirt\\b|(?<!티)(?<!t)(?<!스웨트)(?<!스웨트 )(?<!럭비 )셔츠")]
+  },
+  { type: "SUB_ITEM", value: "SHORTS", patterns: [rx("\\bshorts\\b|쇼츠|반바지")] },
+  { type: "SUB_ITEM", value: "SKIRT", patterns: [rx("\\bskirt\\b|스커트|치마")] },
+  { type: "SUB_ITEM", value: "SWEATSHIRT", patterns: [rx("sweatshirt|맨투맨|스웨트 ?셔츠")] },
+  // 카디건 is a real alternate Korean transliteration found in this corpus
+  // (3 HYPEBEAST_KR articles) alongside the more common 가디건 spelling.
+  { type: "SUB_ITEM", value: "CARDIGAN", patterns: [rx("\\bcardigan\\b|카디건|가디건")] },
   { type: "DETAIL", value: "PIPING", patterns: [rx("\\bpiping\\b|\\uD30C\\uC774\\uD551")] },
   { type: "DETAIL", value: "EMBROIDERY", patterns: [rx("\\bembroidery\\b|\\uC790\\uC218")] },
   { type: "DETAIL", value: "WASHED", patterns: [rx("\\bwashed\\b|\\uC6CC\\uC2F1|\\uD53C\\uADF8\\uBA3C\\uD2B8")] },
