@@ -59,6 +59,7 @@ async function main() {
   verifyProductReferenceTaxonomy();
   verifyMultiBrandPortability();
   verifyColorAdjacencyGate();
+  verifyItemLanguageAliases();
   verifyEvidenceImageResolution();
   verifyAttributeBarWidth();
   await verifyAttributeBundles();
@@ -1253,6 +1254,79 @@ function verifyColorAdjacencyGate() {
   // REGRESSION GUARD: Editorial must remain completely unaffected.
   const editorialGuard = extractDirectAttributeRelations({ title: "블랙 후드와 백팩", excerpt: null, text: "" });
   assert.equal(editorialGuard.length, 0, "Editorial's own coordination guard (와/과) must remain unaffected by the color-adjacency gate test.");
+}
+
+/**
+ * ITEM-LANGUAGE FINAL GATE (2026-09-08): real MMLG fixtures proving the new
+ * English item-noun aliases (added to `product-reference/taxonomy.ts` only -
+ * `editorial/mentions.ts` was not touched) resolve items MMLG's own English
+ * naming previously left unrecognized, without creating any new false
+ * matches on brand-specific jargon. See docs/PRODUCT_REFERENCE_MULTIBRAND_AUDIT.md,
+ * "Item Language Final Gate", for the full 120-product before/after.
+ */
+function verifyItemLanguageAliases() {
+  const find = (relations: ReturnType<typeof extractProductObjectRelations>, item: string, type: string, value: string) =>
+    relations.find((r) => r.specificItem === item && r.attributeType === type && r.attributeValue === value);
+
+  // Real MMLG fixtures, case-insensitive English item nouns.
+  assert.equal(resolveSpecificItem("[Mmlg] SLOGAN HOODIE (EVERY BLACK)").status, "RESOLVED");
+  const hoodie = resolveSpecificItem("[Mmlg] SLOGAN HOODIE (EVERY BLACK)");
+  assert.equal(hoodie.status === "RESOLVED" && hoodie.item, "HOODIE", 'A real MMLG "HOODIE" name must resolve via the new English alias.');
+
+  const pants = resolveSpecificItem("[Mmlg] WE REGULAR SWEAT PANTS (CRANBERRY)");
+  assert.equal(pants.status === "RESOLVED" && pants.item, "PANTS", 'A real MMLG "...PANTS..." name must resolve via the new English alias, even with "SWEAT" sitting between the qualifier and "PANTS".');
+
+  const shirt = resolveSpecificItem("[Mmlg] CREW BUDDY MESH HF SHIRT (IVORY)");
+  assert.equal(shirt.status === "RESOLVED" && shirt.item, "SHIRT", 'A real MMLG "...SHIRT..." name must resolve via the new English alias.');
+
+  // "ballcap" (no space) resolves to the SAME existing canonical BALL_CAP
+  // value as the pre-existing spaced "ball cap" pattern - not a new item.
+  const ballcap = resolveSpecificItem("[Mmlg] EMB. MM BALLCAP (GREEN)");
+  assert.equal(ballcap.status === "RESOLVED" && ballcap.item, "BALL_CAP", 'MMLG\'s unspaced "BALLCAP" spelling must resolve to the existing BALL_CAP canonical, not a new item type.');
+  const ballcapColor = extractProductObjectRelations({ name: "[Mmlg] EMB. MM BALLCAP (GREEN)", description: null });
+  assert.ok(find(ballcapColor, "BALL_CAP", "COLOR", "GREEN"), "Once BALL_CAP resolves, the already-existing wrapped-parenthesis COLOR rule (from the color-adjacency gate test) must reach it with zero further grammar changes.");
+
+  // Word-boundary / case-insensitivity safety: "hoodie" must not fire inside
+  // an unrelated longer token, and matching must not depend on letter case.
+  assert.equal(resolveSpecificItem("HOODIED CREATURE GRAPHIC PRINT").status, "NONE", '"hoodie" must not match as a substring inside an unrelated longer word ("HOODIED").');
+  const upperHoodie = resolveSpecificItem("BASIC hoodie zip");
+  assert.equal(upperHoodie.status, "RESOLVED", "Matching must be case-insensitive.");
+
+  // T-SHIRT must never resolve as SHIRT via the new English alias. No
+  // English alias was added to T_SHIRT this pass (no real sample evidence
+  // required one - T_SHIRT stays Korean-only, exactly as before), so the
+  // correct, safe outcome is NONE, not a mistaken SHIRT match - proving the
+  // lookbehind guard actually blocks the substring, not that T_SHIRT itself
+  // gained new coverage.
+  assert.equal(resolveSpecificItem("BASIC T-SHIRT").status, "NONE", '"T-SHIRT" must never resolve as SHIRT via the new English alias (the lookbehind guard must block it); no English T_SHIRT alias was added this pass, so NONE is the correct, expected result.');
+  assert.equal(resolveSpecificItem("BASIC T SHIRT").status, "NONE", '"T SHIRT" (space form) must likewise never resolve as SHIRT.');
+
+  // Brand-specific jargon must NOT accidentally match: MMLG's own house
+  // abbreviations ("HF-T", "LSV-T") are real, repeated tokens in the sample
+  // but were deliberately left unaliased (brand-specific, not standard
+  // generic nouns) - they must remain unresolved, not silently misread as
+  // SHIRT or anything else.
+  assert.equal(resolveSpecificItem("[Mmlg W] LINE HF-T (BLACK)").status, "NONE", 'MMLG\'s own "HF-T" house abbreviation must not resolve to any item - it is brand jargon, not a standard noun, and was deliberately not aliased.');
+  assert.equal(resolveSpecificItem("[Mmlg] MMLG CURLY LSV-T (AUTHENTIC NAVY)").status, "NONE", 'MMLG\'s own "LSV-T" house abbreviation must likewise remain unresolved.');
+
+  // REGRESSION: bare "SWEAT" (not "SWEATSHIRT"/"SWEATPANTS") was deliberately
+  // NOT aliased (too ambiguous a standalone English word) - must stay NONE.
+  assert.equal(resolveSpecificItem("[Mmlg W] OBJECT SWEAT (ASH GREY)").status, "NONE", 'Bare "SWEAT" was deliberately rejected as too ambiguous to alias - it must remain unresolved, not silently mapped to SWEATSHIRT.');
+
+  // REGRESSION: KIRSH's existing item resolution and color-wrapper behavior
+  // must be completely unaffected by adding English aliases.
+  const kirshUnaffected = extractProductObjectRelations({ name: "빅 체리 후디 [블랙]", description: null });
+  assert.ok(find(kirshUnaffected, "HOODIE", "COLOR", "BLACK"), "KIRSH's existing Korean HOODIE + bracket-color behavior must be completely unaffected by adding the English alias.");
+
+  // REGRESSION: description-wide COLOR scanning must remain disabled.
+  const colorListDescription = "º디자인- 벨트로 포인트를 줄 수 있는 팬츠º원단컬러 : 베이지, 블랙[사이즈]1: 총장 100";
+  const blackPants = extractProductObjectRelations({ name: "컬렉션 벨트 포인트 투턱 팬츠 [블랙]", description: colorListDescription });
+  assert.equal(find(blackPants, "PANTS", "COLOR", "BEIGE"), undefined, "Description-wide COLOR scanning must remain disabled after adding item-language aliases.");
+
+  // REGRESSION GUARD: Editorial must remain completely unaffected - this
+  // pass never touches editorial/mentions.ts.
+  const editorialGuard = extractDirectAttributeRelations({ title: "", text: "이번 캡슐은 오버사이즈 축구 셔츠와 트랙 재킷, 트레이닝 기어가 관중석을 벗어난다." });
+  assert.equal(editorialGuard.some((relation) => relation.specificItem === "TRACK_JACKET"), false, "Adding Product-Reference-only English item aliases must not affect the Editorial enumeration guard.");
 }
 
 async function verifyAttributeBundles() {

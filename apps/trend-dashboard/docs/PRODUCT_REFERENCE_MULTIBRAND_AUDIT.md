@@ -549,3 +549,197 @@ All existing Covernat-derived fixtures (`verifyProductReferenceAttributes`, `ver
 - `pnpm --filter @open-design/trend-dashboard test`: PASS (all existing fixtures, plus new `verifyColorAdjacencyGate` - real KIRSH bracket positive, constructed-Korean-item parenthesis positive, unbalanced/multi-value-bracket negative, product-code-between-item-and-bracket negative, plain-whitespace-suffix regression, description-COLOR-scan-disabled regression, Editorial regression; one pre-existing multi-brand fixture assertion was updated, not weakened, to reflect that its own motivating case is now correctly captured via the NAME check rather than remaining an unexplained non-match)
 - `pnpm --filter @open-design/trend-dashboard build`: PASS (no route/UI changes)
 - The two ad-hoc scripts used to produce this section's numbers (`probe-color-adjacency.ts`, `probe-color-adjacency-misses.ts`) were deleted after use, per this project's established convention
+
+---
+
+## Item Language Final Gate (2026-09-08)
+
+**This is the final Product Reference extraction gate for this research track.** Grammar work is frozen (per the prior section's own conclusion); the one remaining high-confidence portability question is whether Korean-only/Korean-heavy item vocabulary, not grammar, is the last major bottleneck - tested here by adding ONLY English item-noun aliases, with zero attribute-taxonomy or grammar changes, and measuring the real effect on the exact persisted 120 products.
+
+### Baseline re-confirmation (Section 1)
+
+Re-fetched the exact 120 canonical URLs from `docs/product-reference-samples/*.jsonl` (no resampling) and ran the unmodified `c70f93e` code:
+
+```
+Item-bearing:        46/120 = 38.3%
+Attribute-bearing:   29/120 = 24.2%
+Relations:           48
+```
+
+Identical to the persisted baseline - confirmed comparable.
+
+### Item=NONE/AMBIGUOUS audit - all 74 misses classified (Section 2)
+
+| Category | Count | Brands |
+|---|---:|---|
+| English item noun present (some real word, whether aliasable or brand jargon) | 29 | MMLG only |
+| Korean item noun missing from current taxonomy (지갑/베스트/후드/다운/탑/슬리퍼/백참/라운드티/다운코트/삭스/래쉬가드/집티/백/티/트라우저/진/캡/벨트/오거나이저, etc.) | 34 | KIRSH (7), TNF Korea (9), PAF (18) |
+| Brand-specific model name only, no generic item noun at all (와오나/로켓/벡티브 엔듀리스/DV+PAF 준야 레이서/커브드 슬라이드/클라우드소마 PAF) | 6 | TNF Korea (3), PAF (3) |
+| No product noun present at all (attribute/material combo with no head noun, e.g. "패스트팩 보아 고어텍스", "타이니 멀티팩 퍼") | 2 | TNF Korea |
+| `[SET]`/multi-item ambiguous name (by design, not a vocabulary gap) | 3 | KIRSH (2), TNF Korea (1) |
+| **Total** | **74** | |
+
+**Would recognizing the item unlock a relation? Answered empirically in Section "After metrics" below, not guessed.** Note the Korean-item-noun-missing category (34, the single largest bucket) is explicitly OUT OF SCOPE for this pass, per the task's own framing ("Korean-only/Korean-heavy item taxonomy VS real multilingual fashion product naming" - i.e. testing whether ENGLISH coverage helps, not expanding Korean vocabulary further) - these are reported for completeness, not acted on.
+
+### MMLG deep audit - every real English item noun, with counts (Section 3)
+
+All 29 of MMLG's misses carry an identifiable English item-shaped token. Exact recurring nouns, real counts from the actual sample (not assumed):
+
+| Surface Form | Product Count | Category | Action |
+|---|---:|---|---|
+| HOODIE | 5 | Standard, unambiguous | **Aliased** to existing `HOODIE` canonical |
+| SWEAT (bare, no "-shirt"/"-pants" suffix) | 5 | Ambiguous as a standalone English word | Rejected - candidate only |
+| HF-T | 5 | Brand-specific house abbreviation | Rejected - brand jargon, audit-only |
+| BALLCAP (no space) | 4 | Standard, unambiguous, alternate spelling of an already-tracked concept | **Aliased** to existing `BALL_CAP` canonical (editorialRules) |
+| PANTS (as "...SWEAT PANTS") | 2 | Standard, unambiguous | **Aliased** to existing `PANTS` canonical |
+| HOOD (bare, not "HOODIE") | 1 | Names a garment PART, not a garment - real ambiguity risk | Rejected - candidate only |
+| KNITVEST (one-word compound) | 1 | Unusual brand coinage, no existing VEST canonical to alias to | Rejected - candidate only |
+| ANORAK | 1 | Standard noun, but only 1 real occurrence and no existing canonical to alias to (would require a brand-new item type) | Rejected - candidate only |
+| CAP (bare) | 1 | Standard, but no existing generic-cap canonical to alias to (would require a brand-new item type on 1 occurrence) | Rejected - candidate only |
+| BAG (bare) | 1 | Standard, but no existing generic-bag canonical (would require a brand-new item type on 1 occurrence) | Rejected - candidate only |
+| HAT (bare) | 1 | Standard, but no existing generic-hat canonical (would require a brand-new item type on 1 occurrence) | Rejected - candidate only |
+| SHIRT (as "...HF SHIRT") | 1 | Standard, unambiguous - included at n=1 specifically because it is a SAME-CANONICAL alias (zero new taxonomy surface), not a new item type | **Aliased** to existing `SHIRT` canonical |
+| LSV-T | 1 | Brand-specific house abbreviation | Rejected - brand jargon, audit-only |
+
+**Policy applied, stated explicitly**: a NEW canonical item requires >= 2 real occurrences (this project's established bar from prior passes); a SAME-CANONICAL ALIAS for an already-existing item may be added at n=1 when the word is genuinely a universally standard, unambiguous fashion noun (SHIRT), because it adds zero new taxonomy surface. This is why SHIRT (n=1) was added but CAP/BAG/HAT/ANORAK (also n=1, but each would need a brand-new canonical) were not.
+
+### Other brands (Section 4)
+
+**Zero English item nouns recur outside MMLG.** KIRSH's, The North Face Korea's, and PAF's 45 combined misses are entirely Korean-vocabulary gaps, brand-specific model names, no-product-noun cases, or `[SET]` ambiguity - none is an untranslated English item word. This means every alias in this pass is, by the classification in Section 18 below, **SINGLE-BRAND BUT GENERIC**, never MULTI-BRAND - included anyway per the task's own explicit allowance for that category, and reported as such rather than overstated.
+
+### Aliases added (Sections 5-8) - all in `product-reference/taxonomy.ts` only
+
+| Canonical (existing) | New Pattern | Scope Note |
+|---|---|---|
+| `HOODIE` | `\bhoodie\b` (case-insensitive) | Alias added inside the existing `taxonomy.ts` HOODIE rule |
+| `PANTS` | `\bpants\b` (case-insensitive) | Alias added inside the existing `taxonomy.ts` PANTS rule |
+| `SHIRT` | `(?<!t-)(?<!t )\bshirt\b` (case-insensitive) | Same T-exclusion logic already used for the Korean pattern, ported to English so "T-SHIRT"/"T SHIRT" never double-resolve as SHIRT |
+| `BALL_CAP` | `\bballcap\b` (case-insensitive) | New entry in `taxonomy.ts` with the SAME canonical value as the existing `editorialRules` `BALL_CAP` (spaced "ball cap") - reached only when the spaced pattern doesn't match, per the existing two-tier priority rule; `editorial/mentions.ts` was not touched |
+
+Zero changes to `editorial/mentions.ts`. Zero new COLOR/MATERIAL/DETAIL/SILHOUETTE/STYLE values. Zero grammar changes (the wrapped-color rule, description scanning, and cross-field linkage from the prior two passes are untouched).
+
+### After metrics (Section 13)
+
+```
+Item-bearing:        58/120 = 48.3%   (+12 products, +10.0 percentage points)
+Attribute-bearing:   32/120 = 26.7%   (+3 products, +2.5 percentage points)
+Relations:           52                (+4)
+Distinct pairs (global union): 44      (+4)
+```
+
+### Unlocked relations - every one of the 4 new relations inspected (Section 14)
+
+| Brand | Product | Recognized Item | Attribute | Evidence Field | Evidence | Classification |
+|---|---|---|---|---|---|---|
+| MMLG | 8037 | BALL_CAP | COLOR:GREEN | NAME (suffix, parenthesis-wrapped - the prior pass's own gate-test rule, unchanged) | "BALLCAP (GREEN)" | VALID |
+| MMLG | 9000 | BALL_CAP | DETAIL:WASHED | NAME (direct-phrase) | "WASHED JUST WALKING" | QUESTIONABLE - genuinely ambiguous whether "WASHED" describes a garment-wash finish or is part of a sub-collection/print name ("Just Walking"); no additional context available to resolve it either way |
+| MMLG | 9000 | BALL_CAP | COLOR:BLACK | NAME (suffix, parenthesis-wrapped) | "BALLCAP (BLACK)" | VALID |
+| MMLG | 9961 | BALL_CAP | COLOR:RED | NAME (suffix, parenthesis-wrapped) | "BALLCAP (RED)" | VALID |
+
+**3 VALID, 1 QUESTIONABLE, 0 FALSE POSITIVE.** All 4 come from BALL_CAP specifically - the 5 newly-resolved HOODIE products and 2 newly-resolved PANTS products produced ZERO relations, a real, diagnosed, disclosed finding (Section "Bottleneck" below), not a bug.
+
+### Full precision audit (Section 15)
+
+```
+Combined VALID:          45 (prior pass) + 3 (new) = 48
+Combined QUESTIONABLE:   3 (unchanged) + 1 (new)    = 4
+Combined FALSE POSITIVE: 0 (unchanged)               = 0
+Combined total:          52
+
+Strict precision:        48 / 48 = 100%
+Conservative precision:  48 / 52 = 92.3%
+```
+
+Clears the required >= 90%. Precision moved from 93.75% to 92.3% (a small, expected dip - one genuinely ambiguous new case out of only 4 - not a hidden tradeoff: every new relation is individually itemized above, none hidden).
+
+### MMLG result - the central portability test (Section 16)
+
+```
+MMLG Before:
+  Recognized Item Products: 1/30  = 3.3%
+  Attribute Products:       1/30  = 3.3%
+
+MMLG After:
+  Recognized Item Products: 13/30 = 43.3%   (+12 products, +40.0 percentage points)
+  Attribute Products:       4/30  = 13.3%   (+3 products, +10.0 percentage points)
+  Relations:                 5    (+4)
+
+Recovered wrapped-color products (parenthesis COLOR now reachable because the
+item resolved - the SAME grammar rule from the prior color-adjacency gate
+test pass, unchanged): 3 of 4 new relations (BALL_CAP x GREEN/BLACK/RED)
+```
+
+Item recognition on MMLG rose dramatically (+40pp) - proof the language gap was real and the alias fix genuinely closed it for the aliased nouns. Attribute recognition rose far less (+10pp on MMLG, +2.5pp combined) - proof that item recognition was necessary but not sufficient: most of MMLG's newly-recognized items (HOODIE x5, PANTS x2) still produced zero attribute relations, because their own real color data sits inside a QUALIFIED parenthesis ("EVERY BLACK", "SQUID BLACK", "BABY LEAF", "DEEP GREEN" - a qualifier word before the actual color, inside the wrapper) that the already-frozen adjacency rule correctly does not reach (the same class of limitation already disclosed for KIRSH's "다크 네이비"/"멜란지 그레이" in the prior pass) - not because MMLG lacks a description worth reading (MMLG's Cafe24 `description` field, when present, is thin/templated, not a real per-SKU design-bullet convention).
+
+### Per-brand summary (Section 17)
+
+| Brand | Item Rate Before | Item Rate After | Attribute Rate Before | Attribute Rate After |
+|---|---:|---:|---:|---:|
+| KIRSH | 70.0% | 70.0% (unchanged) | 50.0% | 50.0% (unchanged) |
+| MMLG | 3.3% | 43.3% | 3.3% | 13.3% |
+| The North Face Korea | 50.0% | 50.0% (unchanged) | 23.3% | 23.3% (unchanged) |
+| PAF | 30.0% | 30.0% (unchanged) | 20.0% | 20.0% (unchanged) |
+
+**All item-recognition and attribute gain is isolated to MMLG**, exactly as expected given Section 4's finding that no English item noun recurred elsewhere. Stated plainly, per the task's instruction: this is a single-brand fix in its measured effect, even though the aliases themselves are generic (not brand-specific) vocabulary.
+
+### Item language portability classification (Section 18)
+
+| Alias | Classification |
+|---|---|
+| HOODIE | SINGLE-BRAND BUT GENERIC (universally standard word; only observed on MMLG in this sample) |
+| PANTS | SINGLE-BRAND BUT GENERIC |
+| SHIRT | SINGLE-BRAND BUT GENERIC |
+| BALLCAP | SINGLE-BRAND BUT GENERIC |
+| HF-T, LSV-T | BRAND-SPECIFIC - correctly left audit-only, not implemented |
+
+No alias in this pass reached the MULTI-BRAND tier (Section 4). Both implemented tiers permitted by the task were used correctly; the disallowed tier (brand-specific) was identified and explicitly rejected rather than implemented.
+
+### Final gate (Section 19)
+
+```
+Combined Attribute Rate:        26.7%
+Combined Conservative Precision: 92.3%
+```
+
+26.7% is **below 30%** - bucket **C** applies: `Attribute Rate < 30% => STOP PRODUCT REFERENCE DEVELOPMENT. No further parser/taxonomy passes.`
+
+### Secondary interpretation (Section 20)
+
+```
+Item Recognition Rate:  38.3% -> 48.3%  (+10.0pp, a strong, real rise)
+Attribute Rate:         24.2% -> 26.7%  (+2.5pp, a modest rise)
+```
+
+Item recognition rose strongly while attribute rate rose only modestly -> **conclusion: SOURCE COPY RICHNESS BOTTLENECK.** Language/vocabulary coverage was a real, fixable gap (proven by MMLG's own +40pp item-recognition jump), but fixing it mostly surfaced items with no real attribute-bearing text behind them at all. The dominant, now twice-confirmed bottleneck across all three passes (multi-brand baseline, color-adjacency, item-language) is that most real-world fashion e-commerce product pages simply do not carry Covernat's (and, to a lesser extent, KIRSH's and PAF's) rich per-SKU `[디자인]`-style design-bullet convention - not a fixable taxonomy or grammar gap.
+
+### 21. The 40% bar was not lowered
+
+Reported plainly: 26.7% is not close to 30%, let alone 40%. No rationalization was applied.
+
+### Tests (Section 22)
+
+Added `verifyItemLanguageAliases` to `scripts/smoke-test.ts`: real MMLG fixtures for HOODIE/PANTS/SHIRT/BALLCAP resolution, a word-boundary negative (`"HOODIED"` must not match `hoodie`), a case-insensitivity positive, T-SHIRT/T SHIRT must never double-resolve as SHIRT, MMLG's own brand-jargon abbreviations (`HF-T`, `LSV-T`) must remain unresolved, bare `SWEAT` must remain unresolved (deliberately rejected), plus regression checks for KIRSH's existing bracket-color behavior, description-COLOR-scan-disabled, and Editorial. All prior fixtures (`verifyColorAdjacencyGate`, `verifyMultiBrandPortability`, `verifyProductReferenceTaxonomy`, `verifyProductReferenceAttributes`, all Editorial fixtures) were kept and re-verified passing, not removed or weakened.
+
+### Data safety (this section)
+
+- EditorialPost: 283 (unchanged) - reconfirmed via `audit-editorial-quality.ts` before and after this section's code change
+- EditorialMention: 916 (unchanged)
+- Editorial Direct Relations: 15 (unchanged)
+- Editorial Bundles: 8 (unchanged)
+- MarketRankingSnapshot: 667 (unchanged)
+- No DB mutation, no Prisma change, no Editorial/Market collection, no UI change, no new source/brand discovery
+
+### Validation (this section)
+
+- `pnpm --filter @open-design/trend-dashboard typecheck`: PASS
+- `pnpm --filter @open-design/trend-dashboard test`: PASS
+- `pnpm --filter @open-design/trend-dashboard build`: PASS (no route/UI changes)
+- The one ad-hoc script used to produce this section's numbers (`probe-item-language.ts`) was deleted after use
+
+## Final Product Reference decision
+
+**STOP PRODUCT REFERENCE DEVELOPMENT.** Across four passes - Covernat taxonomy closure, multi-brand baseline, color-adjacency grammar, and item-language vocabulary - every fixable mechanism this research track could identify was found, evidence-checked, and (where the evidence justified it) fixed: a real precision bug (KIRSH's shared color list), a real grammar gap (bracket/parenthesis-wrapped colors), and a real vocabulary gap (English item nouns on MMLG). Each fix was genuine, safe, and precision-positive-or-neutral. None of them, individually or combined, moved the combined Direct Attribute Product Rate close to the 30% "promising" threshold, let alone the 40% production bar (16.7% -> 20.0% -> 24.2% -> 26.7% across the three post-Covernat passes). Per the task's own decision rule for this outcome: **no further parser/taxonomy passes.** The validated extractor and this document's findings should be archived as research (the core mechanism - item resolution, direct-phrase/adjacency attribute extraction, structured-object cross-field linkage - is sound, portable, and precision-safe, at 92.3% conservative precision across 5 independent brands/sources), and further product-signal effort should return to Editorial or other already-productive signal sources rather than continuing to tune this extractor.
+
+### Next step (superseding all prior "next step" recommendations in this document)
+
+**None for Product Reference extraction.** If a future need reopens this track, the single most useful preparatory step would not be another grammar or taxonomy patch, but a deliberate SOURCE SELECTION change: seek out brands whose product pages are independently known to carry rich, structured, per-SKU descriptive copy (the trait that made Covernat, KIRSH, and PAF's resolved items 3-4x more attribute-dense than TNF Korea's and MMLG's), since this pass's own evidence shows that trait - not language, not grammar - is what actually predicts whether a brand's Product Reference data will be useful.

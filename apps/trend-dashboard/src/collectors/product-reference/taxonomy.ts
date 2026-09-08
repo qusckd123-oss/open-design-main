@@ -76,19 +76,48 @@ export const productReferenceItemRules: ProductReferenceRule[] = [
   { type: "SUB_ITEM", value: "SHORTS", patterns: [rx("쇼츠")] },
   // "팬츠": 4 of 30 (11679, 11712, 11858, 12011) - none of these are the
   // already-tracked "와이드 팬츠"/"와이드 데님" phrasing.
-  { type: "SUB_ITEM", value: "PANTS", patterns: [rx("팬츠")] },
+  //
+  // English alias "pants" added in the 2026-09-08 item-language pass: real
+  // evidence on MMLG ("MM WIDE SWEAT PANTS", "WE REGULAR SWEAT PANTS" - 2
+  // real occurrences neither one already covered by the existing English
+  // "wide pants" SUB_ITEM pattern in editorialRules, since a THIRD word
+  // ("SWEAT") sits between "WIDE"/"REGULAR" and "PANTS", breaking that
+  // pattern's own contiguous-phrase match). No other brand in the
+  // 2026-09-08 multi-brand sample used an English item noun at all (see
+  // docs/PRODUCT_REFERENCE_MULTIBRAND_AUDIT.md, "Item Language Final Gate")
+  // - this is the "SINGLE-BRAND BUT GENERIC" category, not MULTI-BRAND:
+  // "pants" is included anyway because it is an unambiguous, universally
+  // standard fashion noun, and adding it is a same-canonical alias (zero new
+  // taxonomy surface), not a new concept.
+  { type: "SUB_ITEM", value: "PANTS", patterns: [rx("팬츠|\\bpants\\b", "i")] },
   // "셔츠" (plain, e.g. 포플린 셔츠): 1 of 30 (11659). The lookbehind excludes
   // "티셔츠" - without it this would double-count every T_SHIRT match as a
   // SHIRT too, which is a real, verified false-duplication risk this pattern
   // specifically prevents.
-  { type: "SUB_ITEM", value: "SHIRT", patterns: [rx("(?<!티)셔츠")] },
+  //
+  // English alias "shirt" added in the 2026-09-08 item-language pass: real
+  // evidence on MMLG ("CREW BUDDY MESH HF SHIRT" - 1 real occurrence).
+  // Single-brand-but-generic, same reasoning as "pants" above - included at
+  // n=1 specifically because it is a same-canonical alias for an
+  // unambiguous, universally standard noun, not a new item type. The
+  // negative lookbehind mirrors the Korean pattern's own T_SHIRT exclusion:
+  // "T-SHIRT"/"T SHIRT" must resolve to T_SHIRT, never double-tag as SHIRT.
+  { type: "SUB_ITEM", value: "SHIRT", patterns: [rx("(?<!티)셔츠"), rx("(?<!t-)(?<!t )\\bshirt\\b", "i")] },
   // "맨투맨": 3 of 30 (11618, 11757, 11991). The two [SET] product names that
   // also contain 맨투맨 (10917, 10959) are excluded upstream by the
   // multi-item-in-one-name ambiguity guard, not by this pattern.
   { type: "SUB_ITEM", value: "SWEATSHIRT", patterns: [rx("맨투맨")] },
   // "후디" (pullover hoodie): 1 of 30 (11639). Distinct spelling/word from
   // "후드집업" below - no overlap risk.
-  { type: "SUB_ITEM", value: "HOODIE", patterns: [rx("후디")] },
+  //
+  // English alias "hoodie" added in the 2026-09-08 item-language pass: real
+  // evidence on MMLG ("SLOGAN HOODIE", "WORK TABLE HOODIE", "MM AFTERIMAGE
+  // HOODIE", "TERRASHELL HOODIE JUMPER", "MMLG EARTH SKETCH HOODIE" - 5 real
+  // occurrences, the single most repeated English item noun found in this
+  // pass). Bare "HOOD" (distinct from "HOODIE") was deliberately NOT
+  // aliased - "hood" alone names a garment PART, not a garment, and is a
+  // real ambiguity risk this pass chose not to take on 1 thin occurrence.
+  { type: "SUB_ITEM", value: "HOODIE", patterns: [rx("후디"), rx("\\bhoodie\\b", "i")] },
   // "후드집업" (zip hoodie): 1 of 30 (11598).
   { type: "SUB_ITEM", value: "ZIP_HOODIE", patterns: [rx("후드집업")] },
   // "니트" as a garment noun: 1 of 30 (11971). Deliberately distinct from the
@@ -114,7 +143,26 @@ export const productReferenceItemRules: ProductReferenceRule[] = [
   // "부츠": 1 of 30 (12072).
   { type: "SUB_ITEM", value: "BOOTS", patterns: [rx("부츠")] },
   // "푸퍼" (puffer): 1 of 30 (12158).
-  { type: "SUB_ITEM", value: "PUFFER", patterns: [rx("푸퍼")] }
+  { type: "SUB_ITEM", value: "PUFFER", patterns: [rx("푸퍼")] },
+
+  // "ballcap" (no-space compound spelling): added in the 2026-09-08
+  // item-language pass. Real evidence on MMLG - 4 occurrences ("WASHED JUST
+  // WALKING BALLCAP", "EMB. MM BALLCAP", "INITIAL M APPLIQUE BALLCAP",
+  // "SCRIPT EM BALLCAP" - the most-repeated single English item spelling
+  // after "hoodie"). This is NOT a new canonical item: `BALL_CAP` already
+  // exists as an `editorialRules` SUB_ITEM (pattern requires the spaced
+  // form "ball cap"/"baseball cap"/볼캡, which never matches MMLG's
+  // unspaced "ballcap"). Using the SAME value here means
+  // `resolveSpecificItem` treats both spellings as one identical canonical
+  // item - this entry is only ever consulted when the existing spaced
+  // pattern already failed to match, per the two-tier priority rule
+  // documented in `object-relations.ts`. Bare generic "캡"/"CAP" (1 real
+  // MMLG occurrence, "WORKERS CAP") was deliberately NOT added - it would
+  // require a brand-new canonical item (no existing generic-cap value to
+  // alias), and this pass's own bar for a new canonical item is >=2 real
+  // occurrences (unlike a same-canonical alias, which this pass allows at
+  // n=1 for a universally standard noun - see PANTS/SHIRT above).
+  { type: "SUB_ITEM", value: "BALL_CAP", patterns: [rx("\\bballcap\\b", "i")] }
 ];
 
 /**
