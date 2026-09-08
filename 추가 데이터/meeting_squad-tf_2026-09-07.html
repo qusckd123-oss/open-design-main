@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>스쿼드 TF 1차 킥오프 — 2026-09-07</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Pretendard Variable', 'Pretendard', -apple-system, sans-serif;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 28px;
+    color: #264148;
+    line-height: 1.85;
+    font-size: 14px;
+    background: #fff;
+  }
+
+  /* 헤더 */
+  .doc-header { margin-bottom: 36px; }
+  .doc-header h1 {
+    font-size: 22px;
+    font-weight: 800;
+    border-bottom: 3px solid #264148;
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    letter-spacing: -0.3px;
+  }
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px 24px;
+    font-size: 13px;
+    color: #718790;
+  }
+  .meta-grid span strong { color: #264148; margin-right: 6px; }
+
+  /* 섹션 */
+  h2 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    background: #264148;
+    padding: 9px 14px;
+    border-radius: 6px;
+    margin: 36px 0 16px;
+    letter-spacing: -0.2px;
+  }
+
+  h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #264148;
+    margin: 22px 0 8px;
+    padding-left: 10px;
+    border-left: 3px solid #718790;
+  }
+
+  /* 카드 */
+  .card {
+    background: #f8f9fa;
+    border-left: 3px solid #718790;
+    border-radius: 5px;
+    padding: 14px 16px;
+    margin: 10px 0;
+  }
+  .card.highlight { border-left-color: #264148; background: #EEF2F3; }
+  .card.star { border-left-color: #F4A623; background: #FEF9E7; }
+  .card.star::before { content: "★ "; color: #F4A623; font-weight: 700; }
+  .card.action { border-left-color: #4ECDC4; background: #F0FAFA; }
+  .card.risk { border-left-color: #E8453C; background: #FEF2F2; }
+
+  .card .card-title {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #264148;
+  }
+
+  .card ul { margin: 6px 0 0 16px; }
+  .card li { margin: 4px 0; font-size: 13.5px; }
+  .card p { font-size: 13.5px; margin: 3px 0; }
+
+  /* 행/열 레이블 */
+  .label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #718790;
+    min-width: 72px;
+    margin-right: 4px;
+  }
+
+  /* 의견 카드 */
+  .opinion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 10px;
+    margin: 10px 0;
+  }
+  .opinion-card {
+    background: #f8f9fa;
+    border: 1px solid #DEE2E3;
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+  .opinion-card .speaker {
+    font-weight: 700;
+    color: #264148;
+    font-size: 12px;
+    margin-bottom: 6px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #DEE2E3;
+  }
+  .opinion-card li { margin: 3px 0; font-size: 13px; }
+  .opinion-card ul { margin: 4px 0 0 14px; }
+
+  /* 브랜드 태그 */
+  .brand-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+  .brand-tag {
+    background: #DEE2E3;
+    color: #264148;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* 트랙 */
+  .track-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 12px 0;
+  }
+  .track {
+    border: 2px solid #264148;
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .track .track-title {
+    font-weight: 800;
+    font-size: 14px;
+    color: #264148;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #DEE2E3;
+  }
+  .track ul { margin-left: 16px; }
+  .track li { margin: 4px 0; font-size: 13px; }
+
+  /* 다음 회의 */
+  .next-meeting {
+    margin-top: 40px;
+    padding: 22px 24px;
+    background: #264148;
+    color: #fff;
+    border-radius: 10px;
+  }
+  .next-meeting h2 {
+    background: none;
+    color: #4ECDC4;
+    margin: 0 0 14px;
+    padding: 0;
+    font-size: 15px;
+  }
+  .next-meeting p, .next-meeting li { font-size: 13.5px; color: #DEE2E3; }
+  .next-meeting ul { margin-left: 18px; }
+  .next-meeting li { margin: 5px 0; }
+  .next-meeting .confirm-needed { color: #F4A623; font-weight: 600; }
+
+  /* 인라인 배지 */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 10px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .badge.new { background: #4ECDC4; color: #fff; }
+  .badge.confirmed { background: #264148; color: #fff; }
+  .badge.tbd { background: #F4A623; color: #fff; }
+  .badge.risk { background: #E8453C; color: #fff; }
+
+  /* 구분선 */
+  hr { border: none; border-top: 1px solid #DEE2E3; margin: 28px 0; }
+
+  @media print {
+    body { padding: 20px; font-size: 12px; }
+    h2 { break-after: avoid; }
+    .card, .opinion-card, .track { break-inside: avoid; }
+    .next-meeting { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <h1>스쿼드 TF 1차 킥오프 회의 <span class="badge new">첫 회의</span></h1>
+  <div class="meta-grid">
+    <div><span><strong>일시</strong>2026-09-07 (월)</span></div>
+    <div><span><strong>성격</strong>구 카테고리 유닛 → 스쿼드 TF 체제 전환 킥오프</span></div>
+    <div><span><strong>참석</strong>호진 과장, 배영 과장, 순범 대리, 강 대리(소싱), 동균 대리, 지원 대리, 창현 대리, 지연 대리, PD 1명(중도 합류)</span></div>
+    <div><span><strong>진행</strong>호진 과장</span></div>
+  </div>
+</div>
+
+
+<!-- 1. 스쿼드 체계 소개 -->
+<h2>1. 스쿼드 TF 체계 소개 및 운영 방식</h2>
+
+<div class="card highlight">
+  <div class="card-title">메인 목표 2가지 <span class="badge confirmed">확정</span></div>
+  <ul>
+    <li><strong>① 뉴베이직 재설계</strong> — 유니섹스 라인을 여성 소비자도 함께 살 수 있는 방향으로 강화</li>
+    <li><strong>② IP(캐릭터) 활용</strong> — 서브 트랙으로 운용, 콜라보·콘텐츠 형태로 노출 (상품 메인에 강제 삽입 X)</li>
+  </ul>
+</div>
+
+<div class="card">
+  <div class="card-title">정기 운영 일정 <span class="badge confirmed">확정</span></div>
+  <p><span class="label">정기 미팅</span>매주 <strong>월요일</strong> 동일 시간 진행</p>
+  <p><span class="label">공유 채널</span>매주 <strong>화요일</strong> — 전날 미팅 내용 정리 후 공유 채널 업로드 (호진 과장 담당)</p>
+  <p><span class="label">참석</span>모두 필참 의무 아님. 초반에는 감독급이 일정 조율해 유연하게 운영</p>
+</div>
+
+<div class="card">
+  <div class="card-title">기타 운영 규칙</div>
+  <ul>
+    <li>복종 제한 없음 — 티셔츠 제안은 현실화하기 좋다는 이유의 권고, 구애받지 않고 자유롭게 제안 가능</li>
+    <li>기본 제안 수량: 스타일당 약 <strong>200~300장</strong>. 설득력 있는 아이템은 <strong>1,000장 이상</strong> 상향 검토 가능</li>
+    <li>신규 시도 아이템은 스쿼드 내부에서 기획·수량 결정 후 진행. 대물량은 사전 컨펌 필요</li>
+    <li>로고·캐릭터 변형도 적극 제안 가능 (교묘한 변형 형태로 제안 → 피드백 수렴)</li>
+  </ul>
+</div>
+
+<div class="card star">
+  <div class="card-title">소재 담당 공석 대응</div>
+  <p>소재 담당 역할이 현재 공석. <strong>임시로 스쿼드 전원이 함께 소재를 탐색</strong>하는 방식으로 운영. 월요일 미팅에서 정리해 공유.</p>
+</div>
+
+<div class="card">
+  <div class="card-title">시즌 적용 시기 <span class="badge tbd">확인 필요</span></div>
+  <p>사업부장님 면담 결과: 26FW부터 바로 적용하고 싶다면 바로 기획 진행. 27SS 이후도 무방. <strong>스쿼드 내부에서 시즌 결정 가능.</strong></p>
+</div>
+
+
+<!-- 2. 방향성 논의 -->
+<h2>2. 핵심 방향성 — 유니섹스의 여성화</h2>
+
+<div class="card highlight">
+  <div class="card-title">위에서 내려온 방향 요약</div>
+  <ul>
+    <li>유니섹스가 너무 여성 라인(우먼스)과 양분화됨 → 유니 라인에 <strong>여성 소비자도 같이 살 이유</strong>를 만들어야</li>
+    <li>"여성스러운 디테일/컬러를 추가"가 아니라 → <strong>여자도 편하게 입을 수 있는 베이직 유니 아이템 강화</strong>가 핵심</li>
+    <li>우먼스는 러블리·프릴 위주 → 유니는 베이직·캐주얼로 차별화, 여성 고객 유입 경로 만들기</li>
+  </ul>
+</div>
+
+<h3>팀원별 의견 요약</h3>
+
+<div class="opinion-grid">
+
+  <div class="opinion-card">
+    <div class="speaker">강 대리 (소싱)</div>
+    <ul>
+      <li>원가 구조상 유니클로·어텐다드 대비 가격 경쟁력 낮음 → <strong>컬러감·텍스처로 차별화</strong></li>
+      <li>레퍼런스: 자라 FW 워크자켓 — 기본 실루엣 + 포인트 컬러 구성 (베이직 컬러 1~2 + 포인트 컬러 전개)</li>
+      <li>새 시도: <strong>페이크레더 블레이저, 연조스웨이드</strong> 등 특종 아이템 업체 소싱 검토</li>
+    </ul>
+  </div>
+
+  <div class="opinion-card">
+    <div class="speaker">순범 대리</div>
+    <ul>
+      <li>잘 팔렸던 그래픽 아이템(예: 하리보 ST16) — 한 시즌 후 죽이는 구조가 아쉬움</li>
+      <li><strong>검증된 아이템 리오더·컬러 추가로 대물량 전개</strong>, 그래픽은 유지하되 컬러를 늘리는 방식</li>
+      <li>유쾌한 포인트의 스트릿 무드 유지 — 너무 세지 않게</li>
+    </ul>
+  </div>
+
+  <div class="opinion-card">
+    <div class="speaker">배영 과장 (기획)</div>
+    <ul>
+      <li>유니 이슈화 너무 적음 — 마케팅에 <strong>SNS 트렌드 → 상품 반영 피드백 루프</strong> 요청</li>
+      <li><strong>남녀 함께 입는 연출</strong>을 컨텐츠에서 적극 노출해야 유니 구매 이유가 생김</li>
+      <li>탄산마그네슘 레퍼런스 — 여성 타겟 모델 위주지만 남녀 모두 구매</li>
+    </ul>
+  </div>
+
+  <div class="opinion-card">
+    <div class="speaker">동균 대리</div>
+    <ul>
+      <li><strong>용품(모자 등) 접근</strong> — 성별 구분 없는 유니 아이템으로 여성 라인과 브릿지 역할</li>
+      <li>의류 그래픽과 연결된 모자 등으로 통일성·노출 효과 동시에</li>
+      <li>여성 라인에서 별도 기획 중인 용품과 시너지 가능</li>
+    </ul>
+  </div>
+
+  <div class="opinion-card">
+    <div class="speaker">지원 대리</div>
+    <ul>
+      <li>타겟: <strong>20대 초중반</strong> (중고생 포함) — 편하게 교복에 걸쳐 입을 수 있는 아이템</li>
+      <li>레퍼런스: 후아유 — 데일리·교복 코디 가능 포지션</li>
+      <li><strong>커플템 연출</strong> — 여성이 유니를 살 이유는 커플 구매. 원이 착장으로 남녀 함께 코디 노출</li>
+    </ul>
+  </div>
+
+  <div class="opinion-card">
+    <div class="speaker">창현 대리</div>
+    <ul>
+      <li>브라운브레스처럼 <strong>댄스·음악 크루와 문화적 연결</strong> — 크루 후원·협업으로 자연스러운 브랜딩</li>
+      <li>스케이트/스트릿은 대표님 선호 아님. 크루화는 문화 차원에서 접근</li>
+    </ul>
+  </div>
+
+  <div class="opinion-card">
+    <div class="speaker">지연 대리</div>
+    <ul>
+      <li>유니에서 잘 팔리는 아이템은 <strong>편한 데일리 착용</strong> 포지션</li>
+      <li>여성이 유니를 고르는 이유 = 주로 <strong>커플템</strong> → 커플 코디 연출로 바이럴 유도</li>
+      <li>우먼스는 너무 러블리 → 러블리 싫어하는 여성 고객 흡수할 <strong>베이직+포인트 한 스푼 유니</strong> 필요</li>
+    </ul>
+  </div>
+
+  <div class="opinion-card">
+    <div class="speaker">디자이너</div>
+    <ul>
+      <li>포인트 하나만 있는 심플 디자인 — <strong>배색만으로도 충분히 차별화</strong> 가능</li>
+      <li>레이어드 아이템 (예: 반팔+긴팔 소매 다른 소재, 컬러 동일) — 입기 편하면서 디테일 있음</li>
+      <li>과한 컬러 배색보다 <strong>소재 다르게 + 컬러는 묻히게</strong> 하는 것이 트렌드</li>
+      <li>키키 캐릭터 크게 넣으면 인플루언서 픽업 저조 → 타이포만이면 괜찮음</li>
+    </ul>
+  </div>
+
+</div>
+
+<hr>
+
+<!-- 3. 벤치마크 브랜드 -->
+<h2>3. 벤치마크 브랜드</h2>
+
+<div class="brand-tags">
+  <span class="brand-tag">탄산마그네슘</span>
+  <span class="brand-tag">톤세</span>
+  <span class="brand-tag">테켓</span>
+  <span class="brand-tag">웰빙 익스프레스</span>
+  <span class="brand-tag">선러브 투어</span>
+  <span class="brand-tag">브라운브레스</span>
+  <span class="brand-tag">스컬프터 (참고)</span>
+  <span class="brand-tag">골든션 차이</span>
+</div>
+
+<div class="card">
+  <div class="card-title">브랜드별 참고 포인트</div>
+  <p><span class="label">탄산마그네슘</span>여성 타겟 모델·광고 → 실제로 남녀 모두 구매. 동일 그래픽으로 라인 묶어 IP 활용. <strong>우리가 가야 할 포지션의 레퍼런스</strong></p>
+  <p><span class="label">톤세</span>빈티지 무드 컬러감. 아트워크+배색 조합이 시장 내 차별화 포인트. <strong>컬러 트랙 레퍼런스</strong></p>
+  <p><span class="label">테켓</span>컬러감 조합 레퍼런스 — 팀즈 채널에 사진 공유 요청</p>
+  <p><span class="label">브라운브레스</span>댄스·음악 크루와 문화적 연결이 브랜드 정체성. 크루화 접근 참고</p>
+  <p><span class="label">웰빙 익스프레스 / 선러브 투어</span>여성성 있는 유니섹스 포지션. 우리가 여성 소비자 흡수하려 할 때 참고 방향</p>
+  <p><span class="label">스컬프터</span>약간 세고 누나 감성. 그 강도보다는 낮게, 무드만 참고</p>
+</div>
+
+<hr>
+
+<!-- 4. 레퍼런스 아이템 -->
+<h2>4. 레퍼런스 아이템 & 제안 아이디어</h2>
+
+<div class="card highlight">
+  <div class="card-title">검증된 과거 아이템 (재개발 후보)</div>
+  <ul>
+    <li><strong>ST16 (하리보 타이포폼 티셔츠)</strong> — 판매 좋음. 하리보 레퍼런스 → 스케치로 디벨로프 후에도 잘 팔림. 연계 상품(맨투맨·긴팔 등) 라인 확장 없이 끊긴 것이 아쉬움 → 이번에 전개 재고</li>
+    <li><strong>타이다이 원단 맥북돌이 티셔츠</strong> — 잘 팔렸으나 원단 재고 소진. 타이다이 원단 확보 시 재기획 가능</li>
+    <li><strong>와플 후드 레이어드 롱슬리브</strong> — 반응 좋음</li>
+    <li><strong>보라·노란 스트라이프 후드 니트</strong> — 샘플 반응 좋음, 판매 아직 시작 전</li>
+    <li><strong>러닝코어 키키 그래픽 티</strong> — 잘 팔렸음. 포인트 레이블 수준의 변형도 시도해볼 것</li>
+  </ul>
+</div>
+
+<div class="card">
+  <div class="card-title">신규 아이템 제안 아이디어</div>
+  <ul>
+    <li><strong>자라 FW 워크자켓 스타일</strong> — 베이직 실루엣 + 포인트 컬러. 남녀 모두 무난, 컬러로 차별화</li>
+    <li><strong>페이크레더 블레이저 / 연조스웨이드 소재 아이템</strong> — 기존에 없었던 특종 소재 업체 소싱 진행 예정 (강 대리)</li>
+    <li><strong>용품 — 모자류</strong> — 남녀 구분 없는 진입 카테고리. 의류 그래픽과 연계 가능 (동균 대리)</li>
+    <li><strong>레이어드 아이템</strong> — 소재 다른 반팔+긴팔 조합, 컬러는 묻히게. 입기 편하고 디테일 있음</li>
+    <li><strong>커플템 기획 아이템</strong> — 남녀 함께 입는 연출 특화. 후드·롱슬리브 등 기본물로 가능</li>
+  </ul>
+</div>
+
+<div class="card star">
+  <div class="card-title">피트 재설계 제안</div>
+  <p>기존 오버핏/오피스핏 피트 히스토리 있음. 이번 기회에 피트 재설계(TF 블록 재설계) 논의 필요 가능성 제기. <strong>PD 합류 후 별도 논의 일정 잡기 [확인 필요]</strong></p>
+</div>
+
+<hr>
+
+<!-- 5. 2트랙 편성 -->
+<h2>5. 결정 — 2트랙 팀 편성</h2>
+
+<div class="track-grid">
+  <div class="track">
+    <div class="track-title">트랙 A — 검증 아이템 재개발</div>
+    <ul>
+      <li>기존 잘 팔렸던 아이템 발굴·재개발</li>
+      <li>우먼스에서 잘 팔린 프린트 → 유니 라인 전개</li>
+      <li>컬러 추가·라인 확장으로 연계 전개 (죽이지 않고 시즌 넘기기)</li>
+      <li>기본 매출 확보 역할</li>
+    </ul>
+  </div>
+  <div class="track">
+    <div class="track-title">트랙 B — 컬러감 신규 아이템</div>
+    <ul>
+      <li>톤세·탄산마그네슘 무드의 빈티지 컬러감 아이템</li>
+      <li>배색·소재로 차별화하는 새 아이템 개발</li>
+      <li>여성 소비자 흡수 포지션 공략</li>
+      <li>신규 시도 트랙 (소량 테스트 → 검증 시 확대)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card action">
+  <div class="card-title">팀 편성 방법 <span class="badge confirmed">확정</span></div>
+  <ul>
+    <li><strong>[호진 과장]</strong> — 임의로 팀 나눈 뒤 <strong>단체방 공유</strong>. 조정 원하는 멤버는 의견 제출하면 반영</li>
+    <li>대략 트랙당 2명 내외로 편성 예정</li>
+    <li>IP(캐릭터) 활용 트랙은 별도로 두지 않고, <strong>좋은 아이디어 생기면 다 함께 개발</strong>하는 방식</li>
+  </ul>
+</div>
+
+<hr>
+
+<!-- 6. 마케팅/이슈화 -->
+<h2>6. 마케팅 방향 요청 사항 <span class="badge new">★</span></h2>
+
+<div class="card star">
+  <div class="card-title">유니 이슈화 강화 요청 (배영 과장 → 마케팅)</div>
+  <ul>
+    <li>현재 모든 노출이 여성 모델 위주 → 유니 구매 이유 약해짐</li>
+    <li>마케팅팀에서 <strong>SNS 트렌드 이슈 발생 시 스쿼드에 공유</strong> → 빠르게 상품화 가능</li>
+    <li>팀즈 채팅방에 이슈화될 만한 트렌드 편하게 공유해주면 상품에 반영</li>
+  </ul>
+</div>
+
+<div class="card">
+  <div class="card-title">연출 방향 요청</div>
+  <ul>
+    <li><strong>남녀 함께 입는 연출</strong> — 커플템·데이트룩 등 실제 코디 노출로 유니 구매 이유 형성</li>
+    <li>원이(리센느) 착장 활용 시 <strong>남녀 사이즈 함께 코디한 컷</strong> 적극 요청</li>
+    <li>인플루언서 픽업: 20대 초중반 일반인급 인플루언서 (연예인 팬심 아닌, 코디 참고 목적 타겟)</li>
+  </ul>
+</div>
+
+<hr>
+
+<!-- 7. 미결 사항 -->
+<h2>7. 미결 사항 및 다음 주 준비</h2>
+
+<div class="card risk">
+  <div class="card-title">확인 필요 항목</div>
+  <ul>
+    <li><strong>시즌 적용 확정</strong> — 26FW 바로 적용할지 / 27SS부터 할지 스쿼드 내부 결정 필요</li>
+    <li><strong>소재 담당 공석</strong> — 임시 운영(다 함께) 지속 or 역할 재배분 논의</li>
+    <li><strong>피트 재설계 일정</strong> — PD 합류 후 별도 일정 조율</li>
+    <li><strong>브랜드 레퍼런스 자료 공유</strong> — 창현 대리 / 각자 팀즈 채팅방에 이미지 업로드</li>
+  </ul>
+</div>
+
+<!-- 다음 회의 -->
+<div class="next-meeting">
+  <h2>다음 회의</h2>
+  <ul>
+    <li><strong>일정:</strong> 다음 주 월요일 (2026-09-14) 동일 시간대 <span class="confirm-needed">[정확한 시간 확인 필요]</span></li>
+    <li><strong>진행 방식:</strong> 한 번 더 전체 모임 OR 팀별 분리 진행 — 팀 편성 공유 후 결정</li>
+    <li><strong>사전 준비:</strong>
+      <ul>
+        <li>[호진 과장] 팀 편성안 단체방 공유 (이번 주 중)</li>
+        <li>[전원] 트랙별 레퍼런스 아이템/브랜드 이미지 팀즈 채팅방 공유</li>
+        <li>[전원] 27SS 아이템별 상품MAP 검토 — 추가하고 싶은 스팟 스타일 각자 의견 준비</li>
+      </ul>
+    </li>
+    <li><strong>주요 아젠다:</strong> 트랙별 구체 아이템 1~2개 확정 + 벤치마크 브랜드 공통 정렬</li>
+  </ul>
+</div>
+
+<p style="text-align:right; color:#718790; font-size:12px; margin-top:28px;">
+  정리: 스쿼드 TF · ERP 기준 2026-09-07 · 작성 ObsidianCode
+</p>
+
+</body>
+</html>
