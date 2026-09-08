@@ -4,6 +4,8 @@ Checked date: 2026-09-08
 
 Goal: find out whether the second-largest bottleneck in Editorial planning evidence is **item taxonomy coverage** - real product nouns in the stored corpus that the current SUB_ITEM taxonomy simply cannot see - as opposed to attribute vocabulary or raw source coverage. Product Reference research is closed; this pass does not touch it, and where the two systems turned out to be coupled, Editorial yielded rather than crossing that boundary.
 
+**Metric naming note (added by the 2026-09-08 Signal Trust pass)**: every "emitted / distinct" or "X/Y" relation count pair below means **Direct Relation Instances / Distinct Item+Attribute Pairs** - see `docs/EDITORIAL_SIGNAL_TRUST_AUDIT.md`, "Metric Definitions", for the precise, code-traced definition of both. No historical number in this document was changed; this is a naming clarification only.
+
 ## Baseline (before this pass)
 
 - `EditorialPost` REAL: 283. `EditorialMention` REAL: 916. `MarketRankingSnapshot` REAL: 667. FASHION_RELEVANT REAL: 272.

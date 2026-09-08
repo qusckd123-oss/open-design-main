@@ -56,8 +56,18 @@ async function main() {
     }
   }
 
-  console.log(`Direct relations emitted (post-level): ${emitted}`);
-  console.log(`Distinct (item, attributeType, attributeValue): ${rows.size}\n`);
+  // Two distinct, easily-conflated metrics - named explicitly per
+  // docs/EDITORIAL_SIGNAL_TRUST_AUDIT.md ("Metric Definitions") to prevent
+  // future ambiguity like the "Relations 41/35" shorthand this audit found:
+  //   Direct Relation Instances: one count per (post, specificItem,
+  //     attributeType, attributeValue) tuple - the SAME pair found in two
+  //     different articles counts twice here (this is `emitted`, matching
+  //     the sum of each pair's article presence).
+  //   Distinct Item+Attribute Pairs: one count per unique (specificItem,
+  //     attributeType, attributeValue) combination, regardless of how many
+  //     articles/sources support it (this is `rows.size`).
+  console.log(`Direct Relation Instances (post-level; same pair across 2 articles counts twice): ${emitted}`);
+  console.log(`Distinct Item+Attribute Pairs (unique specificItem+type+value combinations): ${rows.size}\n`);
 
   console.log("=== DIRECT ATTRIBUTE RELATIONS ===");
   console.log("Specific Item | Attribute Type | Attribute Value | Relation Kind | Articles | Sources");
