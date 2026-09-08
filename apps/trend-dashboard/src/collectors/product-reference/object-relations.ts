@@ -1,4 +1,4 @@
-import { editorialRules } from "@/collectors/editorial/mentions";
+import { frozenEditorialRules } from "./frozen-editorial-vocabulary";
 import { productReferenceAttributeRules, productReferenceItemRules, type ProductReferenceRuleType } from "./taxonomy";
 
 /**
@@ -14,17 +14,28 @@ import { productReferenceAttributeRules, productReferenceItemRules, type Product
  * MATERIAL / DETAIL / STYLE / COLOR attributes does that same item carry?
  *
  * It reads vocabulary from two sources and never writes back to either:
- *   - `editorialRules` (`src/collectors/editorial/mentions.ts`) - reused
- *     read-only, exactly as `product-reference/attributes.ts` already does.
- *     Existing SUB_ITEM/attribute values here always win over the
- *     supplemental ones below (see `resolveSpecificItem`).
+ *   - `frozenEditorialRules` (`./frozen-editorial-vocabulary.ts`) - a
+ *     PERMANENTLY FROZEN, hand-copied snapshot of Editorial's SUB_ITEM/
+ *     attribute rules as they stood before this pass's item-taxonomy
+ *     expansion work began (commit `7f75410`). This module used to import
+ *     `editorialRules` LIVE from `editorial/mentions.ts`; that coupling
+ *     silently changed this module's output on the persisted 120-product
+ *     regression sample every time Editorial's live taxonomy grew (see
+ *     docs/EDITORIAL_ITEM_TAXONOMY_AUDIT.md, "Previous Coupling"). Existing
+ *     SUB_ITEM/attribute values here always win over the supplemental ones
+ *     below (see `resolveSpecificItem`) - that priority rule is unchanged,
+ *     only the SOURCE of "existing" is now frozen instead of live.
  *   - `productReferenceItemRules` / `productReferenceAttributeRules`
  *     (`./taxonomy.ts`) - the PRODUCT_REFERENCE-only supplemental
- *     vocabulary this pass added. Never merged into `editorialRules`.
+ *     vocabulary this pass added. Never merged into `frozenEditorialRules`.
  *
  * Nothing in this file is imported by, or imports, any Editorial collection
- * or mention code path. Running this module cannot change
- * `extractEditorialMentions` or `extractDirectAttributeRelations` output.
+ * or mention code path (`frozen-editorial-vocabulary.ts` has no dependency
+ * on `editorial/mentions.ts` either - it is a standalone, hardcoded copy,
+ * not a live re-export). Running this module cannot change
+ * `extractEditorialMentions` or `extractDirectAttributeRelations` output,
+ * and no future Editorial taxonomy change - however large - can change this
+ * module's output either.
  *
  * ITEM IDENTITY (one item per product, or none)
  * ----------------------------------------------
@@ -34,7 +45,7 @@ import { productReferenceAttributeRules, productReferenceItemRules, type Product
  * would risk attaching a real attribute to the wrong item, or attaching a
  * SET product's color to only one of its two pieces. So item resolution is
  * a strict, two-tier, all-or-nothing rule:
- *   1. Check every existing `editorialRules` SUB_ITEM pattern. If exactly one
+ *   1. Check every existing `frozenEditorialRules` SUB_ITEM pattern. If exactly one
  *      DISTINCT value matches anywhere in the name, that is the item -
  *      supplemental generic items are never even consulted (this is what
  *      makes "링거 티셔츠" resolve to the existing RINGER_TEE, not the new
@@ -150,13 +161,13 @@ const SIZE_MARKER = "SIZE(CM)";
 const COMPANION_SKU_CODE = /\bCO\d{3,5}[A-Z]{1,4}\d{0,3}\b/;
 
 function existingSubItemRules(): CombinedRule[] {
-  return editorialRules
+  return frozenEditorialRules
     .filter((rule) => rule.type === "SUB_ITEM")
     .map((rule) => ({ type: "SUB_ITEM" as const, value: rule.value, patterns: rule.patterns }));
 }
 
 function existingAttributeRules(types: ProductReferenceRuleType[]): CombinedRule[] {
-  return editorialRules
+  return frozenEditorialRules
     .filter((rule) => (types as string[]).includes(rule.type))
     .map((rule) => ({ type: rule.type as ProductReferenceRuleType, value: rule.value, patterns: rule.patterns }));
 }

@@ -12,6 +12,7 @@ import { composeBundleName } from "../src/lib/korean-labels";
 import { classifyFashionRelevance, EditorialRateLimitedError, getHypebeastFashionEntries, parseArticlePage, parseEsquireKrArticlePage, parseEsquireKrBody, parseEsquireKrSitemap, parseEyesmagRichBody, parseGenericSitemap, parseHypebeastListing, parseHypebeastRichBody, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
 import { extractProductNameColorRelations, findDescriptionCandidates } from "../src/collectors/product-reference/attributes";
 import { extractProductObjectRelations, resolveSpecificItem } from "../src/collectors/product-reference/object-relations";
+import { frozenEditorialRules } from "../src/collectors/product-reference/frozen-editorial-vocabulary";
 import { editorialSourceConfigs } from "../src/config/editorial-sources";
 import { aggregateEditorialMentions, auditUnmatchedFashionPhrases, getSpecificItemEditorialDetail, partitionCoOccurrence } from "../src/services/editorial-analytics-service";
 import { classifyDomesticTrendDemandInsight, classifyPlanningInsight, getPlanningDashboardData, matchesPlanningGender, planningItemKey } from "../src/services/planning-dashboard-service";
@@ -58,6 +59,7 @@ async function main() {
   verifyProductReferenceAttributes();
   verifyProductReferenceTaxonomy();
   verifyMultiBrandPortability();
+  verifyEditorialProductReferenceScopeIsolation();
   verifyColorAdjacencyGate();
   verifyItemLanguageAliases();
   verifyEvidenceImageResolution();
@@ -1198,6 +1200,73 @@ function verifyMultiBrandPortability() {
   // taxonomy additions or the description-scan fix.
   const editorialStillGuarded = extractDirectAttributeRelations({ title: "", text: "이번 캡슐은 오버사이즈 축구 셔츠와 트랙 재킷, 트레이닝 기어가 관중석을 벗어난다." });
   assert.equal(editorialStillGuarded.some((relation) => relation.specificItem === "TRACK_JACKET"), false, "The multi-brand pass must not affect the Editorial enumeration guard.");
+}
+
+/**
+ * SCOPE ISOLATION TEST (2026-09-08 decoupling pass, see
+ * docs/EDITORIAL_ITEM_TAXONOMY_AUDIT.md, "Previous Coupling"): proves the
+ * architectural boundary itself, not just individual fixtures.
+ *
+ * Before this pass, `product-reference/object-relations.ts` imported
+ * `editorialRules` LIVE from `editorial/mentions.ts`. Adding COAT/VEST/
+ * DOWN_JACKET to Editorial's live taxonomy (a prior, separate pass) silently
+ * moved Product Reference's persisted 120-product regression baseline from
+ * 58/120 to 61/120 item-bearing - a real, undetected regression, found only
+ * by re-running that exact persisted sample before this pass touched
+ * anything. `object-relations.ts`/`attributes.ts` now read ONLY
+ * `frozen-editorial-vocabulary.ts`, a permanently frozen, hand-copied
+ * snapshot with zero import dependency on `editorial/mentions.ts`.
+ */
+function verifyEditorialProductReferenceScopeIsolation() {
+  // Structural pin: the frozen snapshot is a completely separate array from
+  // Editorial's live rules, and stays fixed at exactly the commit-7f75410
+  // rule count regardless of how much Editorial's live taxonomy grows.
+  assert.equal(frozenEditorialRules.length, 57, "frozen-editorial-vocabulary.ts must stay pinned at exactly 57 rules (commit 7f75410) - it must never be edited to track Editorial changes.");
+  assert.notEqual(frozenEditorialRules as unknown, editorialRules as unknown, "The frozen snapshot must be a physically distinct array from Editorial's live editorialRules, never a live re-export or alias.");
+
+  // None of Editorial's later additions (this pass's or the prior item-
+  // taxonomy pass's) may ever appear in the frozen snapshot.
+  for (const value of ["COAT", "VEST", "DOWN_JACKET", "VARSITY_JACKET", "DENIM_JACKET", "SHIRT", "SHORTS", "SKIRT", "SWEATSHIRT", "CARDIGAN"]) {
+    assert.equal(
+      frozenEditorialRules.some((rule) => rule.type === "SUB_ITEM" && rule.value === value),
+      false,
+      `${value} must never appear in the frozen Product Reference snapshot, regardless of whether Editorial's live editorialRules recognizes it.`
+    );
+  }
+
+  // BEHAVIORAL PROOF 1 (real fixture, KIRSH#7321): adding Editorial-only
+  // VEST must not change Product Reference's resolution for a name that
+  // depends on it. Before the freeze fix, this name newly resolved to VEST
+  // in Product Reference too - a real, measured regression on the persisted
+  // sample.
+  const kirshVestName = "카라 셔링 우븐 베스트 집업 [화이트]";
+  assert.equal(resolveSpecificItem(kirshVestName).status, "NONE", "Product Reference must NOT resolve an item for this real KIRSH name via Editorial's VEST rule - VEST is Editorial-only.");
+  assert.ok(extractEditorialMentions({ title: kirshVestName, text: "" }).some((m) => m.type === "SUB_ITEM" && m.value === "VEST"), "Editorial's live extractor MUST still recognize VEST for the exact same real text.");
+
+  // BEHAVIORAL PROOF 2 (real fixture, TNF#NJ1DR89A): adding Editorial-only
+  // COAT must not create a brand-new Product Reference resolution.
+  const tnfCoatName = "여성 버나비 디테쳐블 다운 코트 BLACK NJ1DR89A - 노스페이스";
+  assert.equal(resolveSpecificItem(tnfCoatName).status, "NONE", "Product Reference must NOT resolve an item for this real TNF Korea name via Editorial's COAT rule - COAT is Editorial-only.");
+  assert.ok(extractEditorialMentions({ title: tnfCoatName, text: "" }).some((m) => m.type === "SUB_ITEM" && m.value === "COAT"), "Editorial's live extractor MUST still recognize COAT for the exact same real text.");
+
+  // BEHAVIORAL PROOF 3 (real fixture, TNF#NJ1DR87C): adding Editorial-only
+  // DOWN_JACKET must not RECLASSIFY an existing Product Reference
+  // resolution - this product must keep resolving to the old generic
+  // JACKET it always resolved to, never the new specific DOWN_JACKET.
+  const tnfDownJacketName = "여성 스카이 다운 자켓 (RDS) GRAYISH_PINK NJ1DR87C - 노스페이스";
+  const tnfResolved = resolveSpecificItem(tnfDownJacketName);
+  assert.equal(tnfResolved.status === "RESOLVED" && tnfResolved.item, "JACKET", "Product Reference must keep resolving this real TNF Korea name to the old generic JACKET, never reclassify it to the new specific DOWN_JACKET.");
+  assert.ok(extractEditorialMentions({ title: tnfDownJacketName, text: "" }).some((m) => m.type === "SUB_ITEM" && m.value === "DOWN_JACKET"), "Editorial's live extractor MUST still recognize the more specific DOWN_JACKET for the exact same real text.");
+
+  // Symmetric direction: Product Reference's own supplemental-only items
+  // (never in editorialRules) must never leak into Editorial's mention
+  // parsing. Editorial's mentions.ts has no import from product-reference/*
+  // at all, so this is true by construction - asserted explicitly anyway so
+  // a future accidental import is caught immediately.
+  const blouseMentions = extractEditorialMentions({ title: "블라우스 스타일링", text: "" });
+  assert.equal(blouseMentions.some((m) => m.type === "SUB_ITEM" && m.value === "BLOUSE"), false, "BLOUSE is a Product-Reference-only supplemental item and must never be recognized by Editorial's extractor.");
+  const zipHoodieMentions = extractEditorialMentions({ title: "후드집업 착용", text: "" });
+  assert.equal(zipHoodieMentions.some((m) => m.type === "SUB_ITEM" && m.value === "ZIP_HOODIE"), false, "ZIP_HOODIE is a Product-Reference-only supplemental item and must never be recognized by Editorial's extractor.");
 }
 
 /**

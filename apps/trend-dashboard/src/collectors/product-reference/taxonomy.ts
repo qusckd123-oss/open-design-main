@@ -1,7 +1,7 @@
 /**
  * PRODUCT REFERENCE SUPPLEMENTAL TAXONOMY
  *
- * This is a DELIBERATELY SEPARATE vocabulary from `editorialRules` in
+ * This is a DELIBERATELY SEPARATE vocabulary from `frozenEditorialRules` in
  * `src/collectors/editorial/mentions.ts`. It exists to close two real,
  * evidence-backed gaps found while measuring Covernat product pages
  * (`docs/PRODUCT_ATTRIBUTE_REFERENCE_AUDIT.md`):
@@ -13,7 +13,7 @@
  *   2. A SILHOUETTE dimension (핏/fit language: 오버핏, 레귤러핏, 크롭핏, ...)
  *      that does not exist anywhere in `editorialMentionTypes` at all.
  *
- * These rules are NEVER merged into `editorialRules` and NEVER imported by
+ * These rules are NEVER merged into `frozenEditorialRules` and NEVER imported by
  * `src/collectors/editorial/mentions.ts` or
  * `src/collectors/editorial/attribute-relations.ts`. Adding a value here has
  * ZERO effect on `extractEditorialMentions`, `extractDirectAttributeRelations`,
@@ -52,14 +52,14 @@ function rx(pattern: string, flags?: string) {
 /**
  * Generic specific-item nouns. Each is included because it appears as the
  * head noun of at least one real sampled product NAME and has no existing
- * `editorialRules` SUB_ITEM that already covers it. Item recognition itself
+ * `frozenEditorialRules` SUB_ITEM that already covers it. Item recognition itself
  * carries no interpretive/attribute-fabrication risk (it is a factual "this
  * SKU is a X" observation, not a claim about what modifies what), so - per
  * the task's own Section 3 instruction - these are included at >=1 real
  * occurrence rather than held to the >=2 bar used for attributes below.
  *
  * Priority note: when resolving the specific item for a product NAME,
- * callers must check `editorialRules` SUB_ITEM patterns FIRST and only fall
+ * callers must check `frozenEditorialRules` SUB_ITEM patterns FIRST and only fall
  * back to these when none match - e.g. "토트백" must resolve to the existing
  * TOTE_BAG, "롱슬리브" to the existing LONG_SLEEVE_TEE, "링거 티셔츠" to the
  * existing RINGER_TEE, never to a generic value here. This file does not
@@ -80,7 +80,7 @@ export const productReferenceItemRules: ProductReferenceRule[] = [
   // English alias "pants" added in the 2026-09-08 item-language pass: real
   // evidence on MMLG ("MM WIDE SWEAT PANTS", "WE REGULAR SWEAT PANTS" - 2
   // real occurrences neither one already covered by the existing English
-  // "wide pants" SUB_ITEM pattern in editorialRules, since a THIRD word
+  // "wide pants" SUB_ITEM pattern in frozenEditorialRules, since a THIRD word
   // ("SWEAT") sits between "WIDE"/"REGULAR" and "PANTS", breaking that
   // pattern's own contiguous-phrase match). No other brand in the
   // 2026-09-08 multi-brand sample used an English item noun at all (see
@@ -150,7 +150,7 @@ export const productReferenceItemRules: ProductReferenceRule[] = [
   // WALKING BALLCAP", "EMB. MM BALLCAP", "INITIAL M APPLIQUE BALLCAP",
   // "SCRIPT EM BALLCAP" - the most-repeated single English item spelling
   // after "hoodie"). This is NOT a new canonical item: `BALL_CAP` already
-  // exists as an `editorialRules` SUB_ITEM (pattern requires the spaced
+  // exists as an `frozenEditorialRules` SUB_ITEM (pattern requires the spaced
   // form "ball cap"/"baseball cap"/볼캡, which never matches MMLG's
   // unspaced "ballcap"). Using the SAME value here means
   // `resolveSpecificItem` treats both spellings as one identical canonical
@@ -209,9 +209,9 @@ export const productReferenceAttributeRules: ProductReferenceRule[] = [
   // without it, "울" would also match inside unrelated words.
   { type: "MATERIAL", value: "WOOL", patterns: [rx("(?:^|\\s)울(?:\\s|$)|\\bwool\\b", "i")] },
   // NOTE: 코듀로이/corduroy is NOT added here - it already exists as an
-  // editorialRules MATERIAL value (added in an earlier, unrelated pass) and
+  // frozenEditorialRules MATERIAL value (added in an earlier, unrelated pass) and
   // is already reachable through `object-relations.ts`'s read-only merge of
-  // `editorialRules`. The 2026-09-08 multi-brand pass confirmed it firing
+  // `frozenEditorialRules`. The 2026-09-08 multi-brand pass confirmed it firing
   // for real on POST ARCHIVE FACTION's own description text - a genuine
   // cross-brand generalization finding for an EXISTING value, not a new
   // addition. See docs/PRODUCT_REFERENCE_MULTIBRAND_AUDIT.md.

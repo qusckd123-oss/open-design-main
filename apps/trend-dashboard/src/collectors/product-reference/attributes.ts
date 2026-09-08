@@ -1,7 +1,13 @@
-import { editorialRules } from "@/collectors/editorial/mentions";
+import { frozenEditorialRules } from "./frozen-editorial-vocabulary";
 
 /**
  * PRODUCT REFERENCE ATTRIBUTE EXTRACTION
+ *
+ * Reads item/color vocabulary from `frozen-editorial-vocabulary.ts` - a
+ * permanently frozen snapshot, never the live `editorial/mentions.ts` - so
+ * this module's output cannot drift when Editorial's taxonomy grows. See
+ * that file's docstring and docs/EDITORIAL_ITEM_TAXONOMY_AUDIT.md,
+ * "Previous Coupling", for why.
  *
  * This is a DELIBERATELY SEPARATE module from
  * `src/collectors/editorial/attribute-relations.ts`. It exists because
@@ -51,8 +57,8 @@ export type ProductAttributeRelation = {
 // color, never wide enough to reach past a plausible second token.
 const ADJACENT_WINDOW = 14;
 
-const specificItemRules = () => editorialRules.filter((rule) => rule.type === "SUB_ITEM");
-const colorRules = () => editorialRules.filter((rule) => rule.type === "COLOR");
+const specificItemRules = () => frozenEditorialRules.filter((rule) => rule.type === "SUB_ITEM");
+const colorRules = () => frozenEditorialRules.filter((rule) => rule.type === "COLOR");
 
 function globalPattern(pattern: RegExp) {
   return new RegExp(pattern.source, pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`);
