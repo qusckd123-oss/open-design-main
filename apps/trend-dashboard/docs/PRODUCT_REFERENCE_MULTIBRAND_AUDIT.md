@@ -388,3 +388,164 @@ No pixel/visual attribute inference was performed anywhere in this pass, consist
 ## Next step (exactly one recommendation)
 
 **Do not proceed to production Product Reference collection yet (Gate A fails).** The single highest-leverage next action is a small, dedicated, standalone precision pass that extends the COLOR-adjacency check (shared by `attributes.ts` and `object-relations.ts`) to tolerate exactly one matching bracket or parenthesis pair with no other content in the gap - the single change most likely to meaningfully close the item-resolution/attribute-rate gap on real brands, since it directly addresses a grammar convention confirmed on 2 of the 5 brands examined so far (KIRSH, MMLG), without touching item vocabulary at all. That pass should re-measure Gate A specifically (Direct Attribute Product Rate), since Gates B-E already pass comfortably.
+
+**Addendum (2026-09-08, later same day): this recommendation was acted on as a dedicated gate test.** See "Color Adjacency Gate Test" below for the controlled before/after result on the exact same 120 persisted products - the fix was real, safe, and precision-positive, but did not clear the production gate on its own, and per that section's own decision rule, no further grammar patch is recommended.
+
+---
+
+## Color Adjacency Gate Test (2026-09-08)
+
+**Question**: does a narrowly-scoped fix for `ITEM [COLOR]` / `ITEM (COLOR)` syntax materially improve multi-brand Product Reference coverage without reducing precision? This is a GATE TEST, not a new taxonomy expansion pass - no new items/colors/silhouettes/materials/details/styles were added in this section, and description-wide COLOR scanning remains disabled exactly as the prior pass fixed it.
+
+### Known misses (Section 2) - identified from the exact persisted 120 products before any code change
+
+Every `[COLOR]`/`(COLOR)` case where the bracketed/parenthesized content matched an already-registered COLOR value was enumerated across all 120 products (script-verified, not spot-checked). Two clusters, both real:
+
+**Bracket cases - KIRSH, 24 of 30 products** (every KIRSH product samples uses `[COLOR]`). Of these, 16 had the item already resolved and were pure adjacency misses (the rest were `item=NONE`/`AMBIGUOUS` for unrelated reasons - e.g. an untracked noun like "지갑"/wallet, or the KNIT/SKIRT ambiguity already disclosed in the prior pass - and would not have benefited from a color fix alone):
+
+| Product | Raw Name | Expected Item | Expected Color | Current Failure Reason |
+|---|---|---|---|---|
+| 3201 | "아치 로고 트랙 팬츠 KA [아이보리]" | PANTS | IVORY | A product code ("KA") sits between item and bracket - correctly still rejected after this fix (see below) |
+| 5318 | "체리 브이넥 가디건 셋업 [라이트 레드]" | CARDIGAN | RED | "셋업" sits between item and bracket - correctly still rejected |
+| 6456 | "유니 텍스처 니트 [아이보리]" | KNIT | IVORY | Bracket immediately adjacent, nothing else in the gap - **fixed** |
+| 6904 | "컬렉션 벨트 포인트 투턱 팬츠 [블랙]" | PANTS | BLACK | **Fixed** |
+| 7006 | "유스호스텔 피그먼트 포인트 하프 팬츠 [아이보리]" | PANTS | IVORY | **Fixed** |
+| 7778 | "치크체크 슬림핏 스판 팬츠 [브라운]" | PANTS | BROWN | **Fixed** |
+| 8250 | "체리 컨셉 워딩 니트 [다크 네이비]" | KNIT | NAVY | "다크" sits inside the bracket before the matched word - correctly still rejected (see "residual misses" below) |
+| 9189 | "빅 체리 후디 [블랙]" | HOODIE | BLACK | **Fixed** |
+| 9454 | "두들 체리 서클 로고 조거 팬츠 [멜란지 그레이]" | PANTS | GRAY | "멜란지" sits inside the bracket before the matched word - correctly still rejected |
+| 9603 | "72 볼링 셔츠 [블랙]" | SHIRT | BLACK | **Fixed** |
+| 10323 | "모헤어 메탈 로고 비니 [블랙]" | KNIT_BEANIE | BLACK | **Fixed** |
+| 10495 | "키즈 스몰 체리 스탠다드 티셔츠 [블랙]" | T_SHIRT | BLACK | **Fixed** |
+| 10804 | "체리 그래픽 루즈핏 스웻팬츠 [멜란지 그레이]" | PANTS | GRAY | Same as 9454 - correctly still rejected |
+| 10981 | "플레인 루즈핏 버뮤다 데님 팬츠 [블랙]" | PANTS | BLACK | **Fixed** |
+| 11198 | "스몰 체리 컬러믹스 래글런 크롭 티셔츠 [네이비]" | T_SHIRT | NAVY | **Fixed** |
+| 11277 | "키르시 X 챠미키티 러플 우븐 스커트 [화이트]" | SKIRT | WHITE | **Fixed** |
+
+**Parenthesis cases - MMLG, 15 of 30 products.** All 15 have `item=NONE` (MMLG's English-only item nouns don't resolve at all - the already-disclosed, out-of-scope language-scope limitation from the prior pass). None of these could benefit from a color-adjacency fix alone, since there is no item to anchor the color to; confirmed, not assumed, by re-running after the fix (Section "Per-brand effect" below).
+
+**Brands affected**: KIRSH (16 real, in-scope misses) and MMLG (15 real misses, but blocked by a separate, out-of-scope cause). The North Face Korea and PAF had zero bracket/parenthesis-wrapped recognized-color cases in their real sampled names.
+
+### Rule implemented (Sections 3-7)
+
+In `src/collectors/product-reference/object-relations.ts`, the SUFFIX side of `nameColorRelations` (`ITEM` followed by `COLOR`) now accepts a gap that is either pure whitespace (unchanged, original behavior) OR whitespace plus exactly one opening bracket/paren (`[` or `(`) - and, when a bracket/paren opener is present, additionally requires the matching CLOSER (`]`/`)`) to appear immediately (optionally after whitespace) after the color match, i.e. a genuinely **balanced** wrapper around the color, not a stray character. No punctuation stripping was implemented; no long-distance relation is allowed; the PREFIX direction (`[COLOR] ITEM`) was deliberately left untouched, since no real evidence in the 120-product sample showed that convention (per the task's explicit "do not implement on hypothetical syntax" instruction). The change is entirely inside `object-relations.ts`; `product-reference/attributes.ts`'s separate, independently-tested COLOR module was not touched, and neither Editorial file was touched.
+
+**Description-wide COLOR scanning remains disabled**, exactly as the prior pass fixed it - verified explicitly by a new regression test (`verifyColorAdjacencyGate`) reusing the exact KIRSH "available colors" list fixture from the prior pass's own regression guard.
+
+### Baseline re-confirmation (Section 9)
+
+Re-ran the exact same 120 persisted products (re-fetched from the manifests' own `canonicalUrl`s, not resampled) against the UNMODIFIED `47a5d22` code before any change:
+
+```
+Item-bearing:        46/120 = 38.3%
+Attribute-bearing:   24/120 = 20.0%
+Relations:           37
+```
+
+Identical to the persisted baseline - confirmed comparable, controlled measurement.
+
+### After the fix (Section 10)
+
+```
+Item-bearing:        46/120 = 38.3%   (unchanged - this fix does not touch item resolution)
+Attribute-bearing:   29/120 = 24.2%   (+5 products, +4.2 percentage points)
+Relations:           48                (+11)
+Distinct pairs (global union): 40      (+9)
+```
+
+### New relations audit - every one of the 11 new relations inspected (Section 11)
+
+| Product | Item | New Relation | Evidence | Classification |
+|---|---|---|---|---|
+| 6456 | KNIT | COLOR:IVORY | "니트 [아이보리]" | VALID |
+| 6904 | PANTS | COLOR:BLACK | "팬츠 [블랙]" | VALID |
+| 7006 | PANTS | COLOR:IVORY | "팬츠 [아이보리]" | VALID |
+| 7778 | PANTS | COLOR:BROWN | "팬츠 [브라운]" | VALID |
+| 9189 | HOODIE | COLOR:BLACK | "후디 [블랙]" | VALID |
+| 9603 | SHIRT | COLOR:BLACK | "셔츠 [블랙]" | VALID |
+| 10323 | KNIT_BEANIE | COLOR:BLACK | "비니 [블랙]" | VALID |
+| 10495 | T_SHIRT | COLOR:BLACK | "티셔츠 [블랙]" | VALID |
+| 10981 | PANTS | COLOR:BLACK | "팬츠 [블랙]" | VALID |
+| 11198 | T_SHIRT | COLOR:NAVY | "티셔츠 [네이비]" | VALID |
+| 11277 | SKIRT | COLOR:WHITE | "스커트 [화이트]" | VALID |
+
+**11 VALID, 0 QUESTIONABLE, 0 FALSE POSITIVE.** Every new relation is the exact color stated in the product's own name, immediately and unambiguously wrapped - precisely the class of case this narrow rule targets. No sampling was used; all 11 were inspected.
+
+### Full precision audit (Section 12)
+
+```
+Combined VALID:          34 (prior pass) + 11 (new) = 45
+Combined QUESTIONABLE:   3 (unchanged - all pre-existing KIRSH cases, unrelated to this fix)
+Combined FALSE POSITIVE: 0 (unchanged)
+Combined total:          48
+
+Strict precision:        45 / 45       = 100%
+Conservative precision:  45 / 48       = 93.75%
+```
+
+**Improved from 91.9% to 93.75%** - the fix is precision-positive, not merely precision-neutral, because every one of its 11 new relations is unambiguously correct. Clears the required >= 90% and is close to the preferred >= 95%.
+
+### Per-brand effect (Section 13)
+
+| Brand | Before (attribute rate) | After (attribute rate) | Delta |
+|---|---:|---:|---:|
+| KIRSH | 33.3% (10/30) | 50.0% (15/30) | **+16.7pp** |
+| MMLG | 3.3% (1/30) | 3.3% (1/30) | 0 |
+| The North Face Korea | 23.3% (7/30) | 23.3% (7/30) | 0 |
+| PAF | 20.0% (6/30) | 20.0% (6/30) | 0 |
+
+**All improvement comes from exactly one brand (KIRSH).** This is stated plainly, per the task's explicit instruction: the fix is real and safe, but it is a KIRSH-specific grammar fix in its measured effect, not a general multi-brand unlock - MMLG's parenthesis convention exists (verified working in this pass's own test fixtures using a constructed Korean-item example) but never fires on MMLG's own real 30 products because MMLG's item resolution fails first, for the separate, already-disclosed, out-of-scope reason (English-only item nouns).
+
+### Dimension effect (Section 14)
+
+Only COLOR changed. DETAIL (KIRSH 9 relations, unchanged), MATERIAL (KIRSH 7, PAF 2, unchanged), SILHOUETTE (KIRSH 1, PAF 6, unchanged), STYLE (TNF 1, unchanged) are all bit-for-bit identical before and after - expected, and confirmed rather than assumed.
+
+### Gate interpretation (Section 15)
+
+```
+Combined Attribute Rate:        24.2%
+Combined Conservative Precision: 93.75%
+```
+
+24.2% is **below 30%** - bucket **C** applies: `Attribute Rate < 30% -> NO-GO remains. Do NOT continue stacking small grammar patches.`
+
+### Minimum meaningful delta (Section 16)
+
+```
+Before: 20.0%
+After:  24.2%
+Delta:  +4.2 percentage points
+```
+
+**Classified MODERATE IMPACT** (+3 to +9.9pp) - a real, measurable, safe gain, but not enough on its own to change the production decision.
+
+### Out-of-scope taxonomy candidates noticed during this pass (Section 17)
+
+No new taxonomy was added or is recommended from this pass. Two vocabulary-adjacent observations, logged as out-of-scope only:
+
+- Compound colors written INSIDE a bracket with a qualifier before the base word this taxonomy already tracks (`"[다크 네이비]"`, `"[멜란지 그레이]"`) are not reached by this narrow rule, since the qualifier ("다크"/"멜란지") sits between the bracket-open and the matched word - correctly treated as "extra content in the gap," not a grammar bug. A future pass could register these as their own compound COLOR values (already partially done for `DUSTY_BLUE`/`HEATHER_GRAY` etc.) rather than loosening the adjacency rule further - a taxonomy question, not a grammar question, and out of scope here.
+- MMLG's English item vocabulary gap (already disclosed in the prior pass) remains the actual blocker for that brand; this pass's own new parenthesis-tolerance fixture proves the GRAMMAR side is now ready for MMLG whenever/if item-noun coverage is later addressed - but that is a taxonomy/language-scope decision for a separate, dedicated pass, not this one.
+
+### Covernat regression check (Section 18)
+
+All existing Covernat-derived fixtures (`verifyProductReferenceAttributes`, `verifyProductReferenceTaxonomy`) and the prior multi-brand fixtures (`verifyMultiBrandPortability`) were re-run unchanged and pass - see Validation below. No Covernat product's plain-whitespace suffix behavior changed (explicitly re-verified with a dedicated `"티셔츠 화이트"` fixture in `verifyColorAdjacencyGate`).
+
+### Gate decision
+
+**NO-GO remains.** Per the task's own decision rule for this bucket: *"product-page attribute richness varies heavily by brand, and current Product Reference layer does not justify production integration yet."* The color-adjacency fix was real, safe, isolated, and even precision-positive - but it confirms rather than changes the prior pass's core finding: the dominant bottleneck is brand-by-brand page-copy richness and item-noun/language coverage, not any single fixable grammar rule. Per Section 15's explicit instruction for this bucket, **no further grammar patch is recommended** - continued small grammar patching is not the productive next step.
+
+### Data safety (this section)
+
+- EditorialPost: 283 (unchanged) - reconfirmed via `audit-editorial-quality.ts` before and after this section's code change
+- EditorialMention: 916 (unchanged)
+- Editorial Direct Relations: 15 (unchanged)
+- Editorial Bundles: 8 (unchanged)
+- MarketRankingSnapshot: 667 (unchanged)
+- No DB mutation, no Prisma change, no Editorial/Market collection, no UI change
+
+### Validation (this section)
+
+- `pnpm --filter @open-design/trend-dashboard typecheck`: PASS
+- `pnpm --filter @open-design/trend-dashboard test`: PASS (all existing fixtures, plus new `verifyColorAdjacencyGate` - real KIRSH bracket positive, constructed-Korean-item parenthesis positive, unbalanced/multi-value-bracket negative, product-code-between-item-and-bracket negative, plain-whitespace-suffix regression, description-COLOR-scan-disabled regression, Editorial regression; one pre-existing multi-brand fixture assertion was updated, not weakened, to reflect that its own motivating case is now correctly captured via the NAME check rather than remaining an unexplained non-match)
+- `pnpm --filter @open-design/trend-dashboard build`: PASS (no route/UI changes)
+- The two ad-hoc scripts used to produce this section's numbers (`probe-color-adjacency.ts`, `probe-color-adjacency-misses.ts`) were deleted after use, per this project's established convention

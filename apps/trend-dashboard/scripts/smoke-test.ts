@@ -58,6 +58,7 @@ async function main() {
   verifyProductReferenceAttributes();
   verifyProductReferenceTaxonomy();
   verifyMultiBrandPortability();
+  verifyColorAdjacencyGate();
   verifyEvidenceImageResolution();
   verifyAttributeBarWidth();
   await verifyAttributeBundles();
@@ -1168,7 +1169,11 @@ function verifyMultiBrandPortability() {
     "º디자인- 벨트로 포인트를 줄 수 있는 팬츠º원단겉감 - polyester 100%º제조국 : 중국컬러 : 베이지, 블랙[사이즈]1: 총장 100";
   const blackPants = extractProductObjectRelations({ name: "컬렉션 벨트 포인트 투턱 팬츠 [블랙]", description: colorListDescription });
   assert.equal(find(blackPants, "PANTS", "COLOR", "BEIGE"), undefined, "A sibling color variant named in a shared 'available colors' description list must never be attributed to this product.");
-  assert.equal(find(blackPants, "PANTS", "COLOR", "BLACK"), undefined, "COLOR must never be read from the description at all (even a value that happens to be correct) - only from the NAME-anchored bidirectional check.");
+  assert.equal(
+    find(blackPants, "PANTS", "COLOR", "BLACK")?.relationKind,
+    "NAME_COLOR_SUFFIX",
+    "BLACK must be captured (this product's own bracketed name says so, and the color-adjacency gate test - see verifyColorAdjacencyGate - now reaches it), but strictly via the NAME-anchored check, never DESCRIPTION_OBJECT."
+  );
 
   // DETAIL/MATERIAL/SILHOUETTE from the description must be entirely
   // unaffected by removing COLOR from the same scan.
@@ -1192,6 +1197,62 @@ function verifyMultiBrandPortability() {
   // taxonomy additions or the description-scan fix.
   const editorialStillGuarded = extractDirectAttributeRelations({ title: "", text: "이번 캡슐은 오버사이즈 축구 셔츠와 트랙 재킷, 트레이닝 기어가 관중석을 벗어난다." });
   assert.equal(editorialStillGuarded.some((relation) => relation.specificItem === "TRACK_JACKET"), false, "The multi-brand pass must not affect the Editorial enumeration guard.");
+}
+
+/**
+ * COLOR-ADJACENCY GATE TEST (2026-09-08): a narrowly-scoped fix, found and
+ * verified against the exact persisted 120-product multi-brand sample (see
+ * docs/PRODUCT_REFERENCE_MULTIBRAND_AUDIT.md, "Color Adjacency Gate Test").
+ * KIRSH wraps its suffix color in a bracket ("ITEM [COLOR]"); this tolerates
+ * exactly one BALANCED bracket/parenthesis pair in the gap between item and
+ * color, nothing more - no punctuation stripping, no long-distance relation.
+ */
+function verifyColorAdjacencyGate() {
+  const find = (relations: ReturnType<typeof extractProductObjectRelations>, item: string, type: string, value: string) =>
+    relations.find((r) => r.specificItem === item && r.attributeType === type && r.attributeValue === value);
+
+  // Positive, real KIRSH bracket syntax.
+  const kirshBracket = extractProductObjectRelations({ name: "빅 체리 후디 [블랙]", description: null });
+  assert.ok(find(kirshBracket, "HOODIE", "COLOR", "BLACK"), 'A real KIRSH "ITEM [COLOR]" name must now yield the bracketed color.');
+
+  // Positive, real MMLG parenthesis syntax - color captured once the item
+  // itself resolves (MMLG's all-English item nouns are a separate, disclosed
+  // out-of-scope limitation - not fixed by this gate test; verified here
+  // with a Korean item noun standing in for the same punctuation grammar).
+  const parenColor = extractProductObjectRelations({ name: "후디 (BLACK)", description: null });
+  assert.ok(find(parenColor, "HOODIE", "COLOR", "BLACK"), 'An "ITEM (COLOR)" name (MMLG\'s real parenthesis convention) must also now yield the wrapped color.');
+
+  // Negative: a stray, UNBALANCED bracket (no matching closer immediately
+  // after the color) must still be rejected - this is not "strip
+  // punctuation," it is "tolerate one genuinely balanced wrapper."
+  const unbalanced = extractProductObjectRelations({ name: "후디 [블랙/레드/블루]", description: null });
+  assert.equal(find(unbalanced, "HOODIE", "COLOR", "BLACK"), undefined, "A bracket containing more than just the color (an unbalanced/multi-value wrapper) must not be treated as adjacent.");
+  assert.equal(find(unbalanced, "HOODIE", "COLOR", "RED"), undefined, "No sibling color inside the same multi-value bracket may be captured either.");
+
+  // Negative: real KIRSH case with a product code between the item and the
+  // bracket ("아치 로고 트랙 팬츠 KA [아이보리]") - the gap contains "KA", not
+  // just whitespace and a bracket, so this must still be rejected. This is
+  // one of the 5 real, disclosed residual misses this narrow rule does not
+  // recover (see the multi-brand audit doc).
+  const codeBetween = extractProductObjectRelations({ name: "아치 로고 트랙 팬츠 KA [아이보리]", description: null });
+  assert.equal(find(codeBetween, "PANTS", "COLOR", "IVORY"), undefined, "Extra content (a product code) between the item and the bracket must block the relation, not be silently skipped.");
+
+  // Ordinary plain-whitespace suffix (Covernat/TNF convention) must be
+  // completely unaffected by adding bracket/paren tolerance.
+  const plainSuffix = extractProductObjectRelations({ name: "티셔츠 화이트", description: null });
+  assert.ok(find(plainSuffix, "T_SHIRT", "COLOR", "WHITE"), "The original plain-whitespace suffix convention must still work unchanged.");
+
+  // REGRESSION GUARD: description-wide COLOR scanning must remain disabled -
+  // the KIRSH "available colors" list bug this project already fixed must
+  // never come back, including via this new bracket tolerance.
+  const colorListDescription = "º디자인- 벨트로 포인트를 줄 수 있는 팬츠º원단컬러 : 베이지, 블랙[사이즈]1: 총장 100";
+  const blackPants = extractProductObjectRelations({ name: "컬렉션 벨트 포인트 투턱 팬츠 [블랙]", description: colorListDescription });
+  assert.equal(find(blackPants, "PANTS", "COLOR", "BEIGE"), undefined, "Description-wide COLOR scanning must remain disabled - a sibling color in the description must never appear, bracket tolerance or not.");
+  assert.ok(find(blackPants, "PANTS", "COLOR", "BLACK"), "The correct color must still be captured, but only via the NAME-anchored bracket-tolerant check, not the description.");
+
+  // REGRESSION GUARD: Editorial must remain completely unaffected.
+  const editorialGuard = extractDirectAttributeRelations({ title: "블랙 후드와 백팩", excerpt: null, text: "" });
+  assert.equal(editorialGuard.length, 0, "Editorial's own coordination guard (와/과) must remain unaffected by the color-adjacency gate test.");
 }
 
 async function verifyAttributeBundles() {

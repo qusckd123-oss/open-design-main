@@ -233,6 +233,48 @@ function nameDirectPhraseRelations(name: string, resolved: { item: string; index
   return found;
 }
 
+/**
+ * COLOR-ADJACENCY GATE TEST (2026-09-08): the multi-brand pass found that
+ * KIRSH wraps its suffix color in a bracket ("가디건 [화이트]") and confirmed
+ * 16 real, resolved-item KIRSH products (out of the persisted 120-product
+ * multi-brand sample) whose real color was blocked purely by this
+ * punctuation, not by missing vocabulary or missing item recognition - see
+ * docs/PRODUCT_REFERENCE_MULTIBRAND_AUDIT.md, "Color Adjacency Gate Test".
+ *
+ * This tolerates EXACTLY one bracket or parenthesis character sitting in the
+ * gap between the item and the color match, and nothing else - not
+ * "strip all punctuation" (which could collapse unrelated tokens together),
+ * a controlled, narrow adjacency relaxation:
+ *   - the gap (whitespace + at most one of "[" or "(", any order/amount of
+ *     surrounding whitespace) must contain NO other character, and
+ *   - if a bracket/paren opener was present in the gap, the matching CLOSER
+ *     (an accompanying "]" or ")") must appear immediately after the color
+ *     match (optionally after whitespace) - i.e. a genuinely BALANCED pair
+ *     wrapping the color, not a stray, unrelated bracket character.
+ *
+ * Scope, deliberately narrow per the task this was built for:
+ *   - SUFFIX direction only ("ITEM [COLOR]"/"ITEM (COLOR)"). The PREFIX
+ *     direction ("[COLOR] ITEM") is NOT relaxed here - no real evidence in
+ *     the persisted 120-product sample showed that convention, and the task
+ *     explicitly warns against implementing on hypothetical syntax alone.
+ *   - Product Reference only. This function is never called from, and never
+ *     imported by, any Editorial mention/relation code path - Editorial's
+ *     own coordination/adjacency rules in `editorial/attribute-relations.ts`
+ *     are completely untouched by this change.
+ *   - `product-reference/attributes.ts`'s separate, older
+ *     `extractProductNameColorRelations` is also untouched - this pass's own
+ *     measurement and tests exercise `object-relations.ts` exclusively, and
+ *     touching a second, independently-tested module was judged out of
+ *     scope for a narrowly-scoped gate test.
+ */
+function suffixGapAllowed(gap: string, tail: string): boolean {
+  if (/^\s*$/.test(gap)) return true;
+  const bracketGap = gap.match(/^(\s*)([([])(\s*)$/);
+  if (!bracketGap) return false;
+  const closer = bracketGap[2] === "[" ? "]" : ")";
+  return new RegExp(`^\\s*\\${closer}`).test(tail);
+}
+
 function nameColorRelations(name: string, resolved: { item: string; index: number; matchedText: string }) {
   const itemStart = resolved.index;
   const itemEnd = resolved.index + resolved.matchedText.length;
@@ -253,10 +295,12 @@ function nameColorRelations(name: string, resolved: { item: string; index: numbe
     }
     for (const match of ruleMatches(afterWindow, [rule])) {
       const gap = afterWindow.slice(0, match.index);
-      if (!/^\s*$/.test(gap)) continue;
+      const tail = afterWindow.slice(match.index + match.text.length);
+      if (!suffixGapAllowed(gap, tail)) continue;
       if (seenColor.has(rule.value)) continue;
       seenColor.add(rule.value);
-      found.push({ value: rule.value, evidenceText: `${resolved.matchedText}${gap}${match.text}`, relationKind: "NAME_COLOR_SUFFIX" });
+      const closer = gap.includes("[") ? "]" : gap.includes("(") ? ")" : "";
+      found.push({ value: rule.value, evidenceText: `${resolved.matchedText}${gap}${match.text}${closer}`, relationKind: "NAME_COLOR_SUFFIX" });
     }
   }
   return found;
