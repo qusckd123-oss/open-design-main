@@ -11,6 +11,7 @@ import { attributeBarWidthPercent } from "../src/lib/attribute-visual";
 import { composeBundleName } from "../src/lib/korean-labels";
 import { classifyFashionRelevance, EditorialRateLimitedError, getHypebeastFashionEntries, parseArticlePage, parseEsquireKrArticlePage, parseEsquireKrBody, parseEsquireKrSitemap, parseEyesmagRichBody, parseGenericSitemap, parseHypebeastListing, parseHypebeastRichBody, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
 import { extractProductNameColorRelations, findDescriptionCandidates } from "../src/collectors/product-reference/attributes";
+import { extractProductObjectRelations, resolveSpecificItem } from "../src/collectors/product-reference/object-relations";
 import { editorialSourceConfigs } from "../src/config/editorial-sources";
 import { aggregateEditorialMentions, auditUnmatchedFashionPhrases, getSpecificItemEditorialDetail, partitionCoOccurrence } from "../src/services/editorial-analytics-service";
 import { classifyDomesticTrendDemandInsight, classifyPlanningInsight, getPlanningDashboardData, matchesPlanningGender, planningItemKey } from "../src/services/planning-dashboard-service";
@@ -55,6 +56,7 @@ async function main() {
   verifyLegacyMarketBlockVisibility();
   verifyDirectAttributeRelations();
   verifyProductReferenceAttributes();
+  verifyProductReferenceTaxonomy();
   verifyEvidenceImageResolution();
   verifyAttributeBarWidth();
   await verifyAttributeBundles();
@@ -1010,6 +1012,106 @@ function verifyProductReferenceAttributes() {
   );
   const editorialCoordination = extractDirectAttributeRelations({ title: "블랙 후드와 백팩", excerpt: null, text: "" });
   assert.equal(editorialCoordination.length, 0, "Editorial's own coordination guard (와/과) must remain unaffected by the new module.");
+}
+
+/**
+ * PRODUCT REFERENCE TAXONOMY CLOSURE (2026-09-08): `object-relations.ts` +
+ * `taxonomy.ts` close real item/attribute gaps found on a fresh 30-product
+ * Covernat resample (the exact URL set from the 2026-09-07 probe could not be
+ * recovered byte-for-byte - the sitemap grew from 2,254 to 2,309 URLs
+ * overnight - so this pass re-fetched 30 products using the same documented
+ * position formula against current data; see
+ * `docs/PRODUCT_ATTRIBUTE_REFERENCE_AUDIT.md` for the full disclosure).
+ * These fixtures use the real product NAME/description text this pass
+ * measured, not invented examples.
+ */
+function verifyProductReferenceTaxonomy() {
+  const find = (relations: ReturnType<typeof extractProductObjectRelations>, item: string, type: string, value: string) =>
+    relations.find((r) => r.specificItem === item && r.attributeType === type && r.attributeValue === value);
+
+  const resolvedItem = (name: string) => {
+    const resolution = resolveSpecificItem(name);
+    return resolution.status === "RESOLVED" ? resolution.item : resolution.status;
+  };
+
+  // Generic product item recognition: none of these nouns exist as an
+  // editorialRules SUB_ITEM, so they only resolve via the new supplemental
+  // vocabulary in taxonomy.ts.
+  assert.equal(resolvedItem("우먼 리브드 카라 니트 베이지"), "KNIT");
+  assert.equal(resolvedItem("C 로고 맨투맨 더스티 블루"), "SWEATSHIRT");
+  assert.equal(resolvedItem("우먼 카고 팬츠 카키"), "PANTS");
+
+  // Existing editorialRules SUB_ITEM values must still win over the new
+  // generic fallback - "링거 티셔츠" must resolve to RINGER_TEE, never the new
+  // generic T_SHIRT, even though "티셔츠" also matches the new pattern.
+  assert.equal(
+    resolvedItem("[커버낫x하이다나] 럭키 씨리얼 링거 티셔츠 네이비"),
+    "RINGER_TEE",
+    "An existing SUB_ITEM (RINGER_TEE) must take priority over the new generic T_SHIRT fallback."
+  );
+
+  // Ambiguous multi-item names (a bundled [SET] product naming two different
+  // items) must yield NO relations at all - never a guess at which item a
+  // color/material belongs to.
+  const set = extractProductObjectRelations({ name: "[SET] 스몰 어센틱 다잉 맨투맨&팬츠 Sky Blue", description: null });
+  assert.equal(set.length, 0, "A [SET] name listing two different items must be treated as ambiguous, not resolved to either one.");
+  assert.equal(resolveSpecificItem("[SET] 테크 나일론 베이직 티셔츠&팬츠 Light Gray(팬츠.ver)").status, "AMBIGUOUS");
+
+  // NAME-level direct-phrase MATERIAL/DETAIL (prefix modifier, same window
+  // discipline as Editorial's own extractor).
+  const denimPants = extractProductObjectRelations({ name: "우먼 스트레이트 데님 팬츠 블랙", description: null });
+  assert.ok(find(denimPants, "PANTS", "MATERIAL", "DENIM"), '"우먼 스트레이트 데님 팬츠 블랙" must yield PANTS + MATERIAL:DENIM.');
+  assert.ok(find(denimPants, "PANTS", "COLOR", "BLACK"), "The same name must also yield the bidirectional suffix COLOR:BLACK.");
+
+  const shirringBlouse = extractProductObjectRelations({ name: "우먼 셔링 블라우스 아이보리", description: null });
+  assert.ok(find(shirringBlouse, "BLOUSE", "DETAIL", "SHIRRING"), '"우먼 셔링 블라우스 아이보리" must yield BLOUSE + DETAIL:SHIRRING (an existing Editorial DETAIL value, newly reachable via the new BLOUSE item).');
+
+  // DESCRIPTION-level SILHOUETTE - the structured-product-object license:
+  // the attribute sits in `description`, never adjacent to the item noun in
+  // `name`, and is still attributed to the item resolved from `name`.
+  const cropTee = extractProductObjectRelations({
+    name: "우먼 아이스 스트링 크롭 반팔티 스카이 블루",
+    description: "º디자인- 소프트한 터치감의 냉감 소재를 사용해 시원한 착용감- 짧은 기장의 크롭핏º원단겉감 - polyester 96%, polyurethane 4%"
+  });
+  assert.ok(find(cropTee, "T_SHIRT", "SILHOUETTE", "CROP_FIT"), "A SILHOUETTE term present only in the description must still attach to the NAME-resolved item.");
+  assert.ok(find(cropTee, "T_SHIRT", "COLOR", "SKY_BLUE"), "The compound COLOR value SKY_BLUE must match as a trailing NAME suffix.");
+
+  // DESCRIPTION-level MATERIAL.
+  const suedeBoots = extractProductObjectRelations({
+    name: "클로버하트 프릴 퍼 부츠 브라운",
+    description: "[디자인]\r\n-부드러운 스웨이드 소재와 따듯한 퍼 안감\r\n[원단]\r\n겉감-cow leather (suede) 100%"
+  });
+  assert.ok(find(suedeBoots, "BOOTS", "MATERIAL", "SUEDE"), "MATERIAL:SUEDE in the description must attach to the new BOOTS item.");
+
+  // Relation deduplication: the same real fact confirmed in BOTH the name
+  // (direct-phrase) and the description (restated) must collapse to exactly
+  // one relation, never two.
+  const dedupBlouse = extractProductObjectRelations({
+    name: "우먼 셔링 블라우스 아이보리",
+    description: "[디자인]\r\n-볼륨감 있는 실루엣 연출이 가능한 레귤러핏\r\n-어깨와 뒷 절개 셔링 디테일"
+  });
+  const shirringHits = dedupBlouse.filter((r) => r.attributeType === "DETAIL" && r.attributeValue === "SHIRRING");
+  assert.equal(shirringHits.length, 1, "DETAIL:SHIRRING confirmed in both the name and the description must still count as exactly one relation.");
+
+  // Companion-SKU cross-reference lines must be stripped before description
+  // scanning - a real, verified hazard in Covernat's own description
+  // convention: "-CO2501HZ31(C 로고 후디 집업)와 셋업 연출" describes a
+  // DIFFERENT product being suggested as a matching set, not this product.
+  const crossRef = extractProductObjectRelations({
+    name: "버뮤다 C 로고 스웻 쇼츠 블랙",
+    description: "º디자인\r\n- 버뮤다핏\r\n- 레귤러핏 CO2501HZ31(C 로고 후드집업)와 셋업 연출"
+  });
+  assert.equal(
+    crossRef.some((r) => r.attributeType === "SILHOUETTE" && r.attributeValue === "REGULAR_FIT"),
+    false,
+    "A companion product's own attributes (sitting on a CO-code cross-reference line) must never attach to this product, even when the line also contains an otherwise-valid attribute keyword."
+  );
+
+  // REGRESSION GUARD: this module must never affect Editorial mention/
+  // relation extraction, even though it reads `editorialRules` for its own
+  // item-priority resolution.
+  const stillGuarded = extractDirectAttributeRelations({ title: "", text: "이번 캡슐은 오버사이즈 축구 셔츠와 트랙 재킷, 트레이닝 기어가 관중석을 벗어난다." });
+  assert.equal(stillGuarded.some((relation) => relation.specificItem === "TRACK_JACKET"), false, "Adding the taxonomy-closure module must not affect the Editorial enumeration guard.");
 }
 
 async function verifyAttributeBundles() {

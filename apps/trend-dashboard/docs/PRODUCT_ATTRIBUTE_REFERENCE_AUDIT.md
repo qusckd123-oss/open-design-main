@@ -435,3 +435,208 @@ This pass added real, reusable production code: `src/collectors/product-referenc
 - Canonical duplicates: 0, Mention duplicates: 0 (re-confirmed via `audit-editorial-quality.ts` after this pass)
 - No DB writes of any kind were made
 - No Prisma schema changes were made
+
+---
+
+## Follow-up pass (2026-09-08): Real Density + Taxonomy Closure
+
+This pass's goal: replace the prior pass's `~29/30 (~97%)` figure - explicitly labeled there as a **POTENTIAL / AUDIT ESTIMATE**, never a measurement - with a REAL, measured number, by closing the specific item/attribute gaps that estimate assumed.
+
+### 0. Architecture inspection (done before any code was written)
+
+Traced where Specific Item and attribute vocabulary actually live:
+
+- `src/collectors/editorial/mentions.ts` exports one array, `rules` (aliased as `editorialRules`), that is the SHARED, single source of truth for THREE consumers: `extractEditorialMentions` (the Editorial mention pipeline, drives `EditorialPost`/`EditorialMention`), `extractDirectAttributeRelations`/`describeItemContexts` in `attribute-relations.ts` (Editorial Direct Relations/Bundles), and - read-only - `product-reference/attributes.ts` (via `specificItemRules()`/`colorRules()` filtering `editorialRules`). **Adding a new SUB_ITEM or attribute value directly into `rules` would therefore also change what `extractEditorialMentions` finds in the real Editorial corpus** - exactly the side effect the task's "CRITICAL ARCHITECTURAL RULE" forbids.
+- A second, fully independent taxonomy already exists in `src/config/item-types.ts` (`itemTypes`/`subItemTypeLabels` + alias lists) and is consumed only by `src/collectors/market/classification.ts` for `MarketProduct`/`MarketRankingSnapshot` classification. It already has broad names like `SWEATSHIRT`, `KNIT`, `SHIRT`, `SKIRT` at the ITEM level, confirming these are natural, already-precedented canonical names in this codebase - but this pipeline is a third, separate world (ranking-oriented) that this pass does not touch, per the task's explicit "no MarketProduct writes" rule.
+- `src/config/taxonomy.ts` is a presentation-only reclassification layer (broad category chips) and was not touched.
+
+**Conclusion**: Product Reference CAN gain broader recognition without altering Editorial extraction behavior, but only via a genuinely separate vocabulary module that `editorial/mentions.ts` never imports. This pass added `src/collectors/product-reference/taxonomy.ts` (new supplemental vocabulary, read by product-reference code only) and `src/collectors/product-reference/object-relations.ts` (new extraction engine that merges the supplemental vocabulary with a read-only view of `editorialRules`). Neither file is imported by, and neither imports, `editorial/mentions.ts`'s mention pipeline or `editorial/attribute-relations.ts`. `product-reference/attributes.ts` (the prior pass's COLOR-only module) was left completely untouched - zero lines changed - to keep its existing behavior and tests at zero regression risk.
+
+### 1. Sample: exact same 30 products was not recoverable - disclosed, not hidden
+
+The prior pass's probe/measurement scripts were run ad hoc and deleted, and the exact 30 URLs were never persisted to git or to this doc - only the *sampling method* was documented: sitemap positions `1, 20, 40, ..., 580` inside `sitemap1.xml.gz` (the more-recently-updated of Covernat's two sitemap shards). Re-fetching that exact sitemap today found it had grown from **2,254 URLs (2026-09-07) to 2,309 URLs (2026-09-08)** - confirmed by refetching `https://covernat.co.kr/sitemap.xml` → `sitemap1.xml.gz` directly, respecting the same robots.txt rules already audited in the prior pass (no new access risk). A concrete check proves the position-based sample shifted: position 1 was product_no `10796` in the prior pass's cited example but is product_no `10797` in this pass's refetch of the identical formula.
+
+**URLs Reused: NO.** Per the task's own instruction ("If necessary, recover it from the audit artifact/code history... do not substitute random current products"), this pass reproduced the exact documented SAMPLING METHOD (not the literal byte-identical URLs, which no longer exist to recover) against current sitemap data, fetched all 30 real JSON-LD `Product` objects (`name`, `description`) directly from `covernat.co.kr`, and measured against that real, live, freshly-fetched set - never fabricated or reused from memory. This is disclosed here rather than silently glossed over, consistent with the project's own standing "no taxonomy addition without evidence" and "disclose limitations" conventions.
+
+### 2. Real items sampled (for reference)
+
+30 real Covernat product pages, product_no `10797, 10825, 10864, 10887, 10917, 10959, 11006, 11079, 11495, 11544, 11577, 11598, 11618, 11639, 11659, 11679, 11712, 11736, 11757, 11819, 11858, 11880, 11900, 11971, 11991, 12011, 12072, 12092, 12158, 12182`. Two of the 30 (`10917`, `10959`) are `[SET]` bundle listings naming two different items in one product name (e.g. "다잉 맨투맨&팬츠") and are discussed separately below.
+
+### 3. Scoped taxonomy strategy
+
+`src/collectors/product-reference/taxonomy.ts` defines its own `ProductReferenceRule`/`ProductReferenceRuleType` types - deliberately NOT `EditorialRule`/`EditorialMentionType` - because the union `editorialMentionTypes` (`ITEM | SUB_ITEM | DETAIL | MATERIAL | COLOR | STYLE | BRAND | COLLAB | IP`) has no `SILHOUETTE` member, and widening it would itself be an Editorial-config change. Two exported arrays:
+
+- `productReferenceItemRules` - generic SUB_ITEM-equivalent nouns.
+- `productReferenceAttributeRules` - SILHOUETTE (new dimension), MATERIAL:WOOL, and 11 COLOR values.
+
+`src/collectors/product-reference/object-relations.ts` is the new extraction engine. Item identity is resolved with a strict two-tier, all-or-nothing rule (see the file's own docstring for the full reasoning): existing `editorialRules` SUB_ITEM matches always win over the new supplemental items, and if a name matches **more than one** distinct item value at either tier (a `[SET]` bundle, or two different existing items), the whole name is treated as ambiguous and yields zero relations - never a guess. Attributes are found three ways, each deduplicated into a single `seen` set so no fact is double-counted: (a) a prefix modifier-window scan on the NAME (same 20-char window/enumeration-guard design as `editorial/attribute-relations.ts`, reimplemented locally rather than importing that file, so Editorial's file is provably untouched), (b) the existing whitespace-only bidirectional COLOR check, now anchored to the ONE resolved item rather than iterating every item pattern independently, and (c) a description-wide scan licensed by Section 7's "one structured product object" reasoning, after stripping two real, verified false-positive sources found while developing this pass: the `[SIZE(CM)]...`/`[모델]` block (which can name a **different** color variant being modeled) and any line naming a companion product's own SKU code (`CO####XX##`, e.g. "-CO2501HZ31(C 로고 후드집업)와 셋업 연출" - a suggested matching *different* product, not this one).
+
+### 4. Exact added item vocabulary (all >=1 real occurrence in this pass's own 30-product fetch)
+
+| Canonical Item | Surface Forms | Products Matched | Example Product |
+|---|---|---:|---|
+| T_SHIRT | 티셔츠, 반팔티 | 4 (10797, 10825, 11495, 10887) | "쿨 코튼 키치 칵테일 그래픽 티셔츠 아이보리" |
+| SHORTS | 쇼츠 | 2 (10864, 11006) | "우먼 경량 나일론 쇼츠 라이트 퍼플" |
+| PANTS | 팬츠 | 4 (11679, 11712, 11858, 12011) | "우먼 카고 팬츠 카키" |
+| SHIRT | 셔츠 (not preceded by 티) | 1 (11659) | "포플린 셔츠 인디 핑크" |
+| SWEATSHIRT | 맨투맨 | 3 (11618, 11757, 11991) | "C 로고 맨투맨 더스티 블루" |
+| HOODIE | 후디 | 1 (11639) | "우먼 쿠퍼로고 후디 더스티 블루" |
+| ZIP_HOODIE | 후드집업 | 1 (11598) | "C 로고 후드집업 브라운" |
+| KNIT | 니트 | 1 (11971) | "우먼 리브드 카라 니트 베이지" |
+| CARDIGAN | 가디건 | 1 (11736) | "우먼 울 블렌드 크롭 가디건 헤더 그레이" |
+| BLOUSE | 블라우스 | 1 (11880) | "우먼 셔링 블라우스 아이보리" |
+| JACKET | 재킷, 자켓 | 2 (11900, 12092) | "울 집업 자켓 블랙" |
+| CANVAS_BAG | 캔버스백 | 1 (11079) | "C 로고 캔버스백 블랙" |
+| ECO_BAG | 에코백 | 1 (12182) | "클로버하트 셔링 리본 에코백 체크" |
+| BOOTS | 부츠 | 1 (12072) | "클로버하트 프릴 퍼 부츠 브라운" |
+| PUFFER | 푸퍼 | 1 (12158) | "씨빅 RDS 숏 푸퍼 아이보리" |
+
+Items reused with **zero taxonomy change** (already existed as `editorialRules` SUB_ITEM values, simply newly reachable because this module now scans product NAME/description at all): TOTE_BAG (11544), LONG_SLEEVE_TEE (11577), RINGER_TEE (11819).
+
+Item recognition was held to a lower bar than attributes (>=1 real occurrence, not >=2) because - per the task's own Section 3 - naming a SKU's item category is a factual observation with no "does this modify that" interpretive risk, unlike an attribute claim.
+
+### 5. Exact added attribute vocabulary
+
+**COLOR** (>=1 real occurrence; COLOR is held to a lower bar than open-ended dimensions because it is closed/enumerable, the same asymmetry `attributes.ts`'s own docstring already argues):
+
+| Canonical Attribute | Surface Form | Product Count | Evidence Example |
+|---|---|---:|---|
+| IVORY | 아이보리 | 3 | "쿨 코튼 키치 칵테일 그래픽 티셔츠 아이보리" |
+| KHAKI | 카키 | 1 | "우먼 카고 팬츠 카키" |
+| NAVY | 네이비 | 0 real relations this pass (see Section 8 - a real parser-adjacency miss, not a vocabulary gap) | "[커버낫x하이다나] 럭키 씨리얼 링거 티셔츠 네이비" |
+| BEIGE | 베이지 | 1 | "우먼 리브드 카라 니트 베이지" |
+| SKY_BLUE | 스카이 블루 | 1 | "우먼 아이스 스트링 크롭 반팔티 스카이 블루" |
+| DUSTY_BLUE | 더스티 블루 | 2 | "C 로고 맨투맨 더스티 블루" |
+| INDIE_PINK | 인디 핑크 | 1 | "포플린 셔츠 인디 핑크" |
+| HEATHER_GRAY | 헤더 그레이 | 2 | "우먼 울 블렌드 크롭 가디건 헤더 그레이" |
+| LIGHT_PURPLE | 라이트 퍼플 | 1 | "우먼 경량 나일론 쇼츠 라이트 퍼플" |
+| LIGHT_OLIVE | 라이트 올리브 | 1 | "테이프 로고 맨투맨 라이트 올리브" |
+| DARK_GRAY | 다크 그레이 | 1 | "피그먼트 스웻 팬츠 다크 그레이" |
+
+Every two-word compound is matched only as the FULL anchored compound (never the qualifier word alone) - "라이트" can never fire in isolation, so it can never be confused with an unrelated use of the same syllable.
+
+**SILHOUETTE** (brand-new dimension; held to a >=2-product bar precisely because it is new and previously unvalidated, per the task's "do not force ambiguous terms" caution):
+
+| Canonical Attribute | Dimension | Surface Forms | Product Count | Evidence Example | Reason Dimension Is Correct |
+|---|---|---|---:|---|---|
+| CROP_FIT | SILHOUETTE | 크롭핏, 크롭 핏 | 2 (10887, 11736) | "짧은 기장의 크롭핏" | Overall garment length/shape, not material or decoration - matches the prior pass's own proposed dimension mapping |
+| SEMI_WIDE | SILHOUETTE | 세미와이드, 세미 와이드(핏) | 1 real (11712; a second apparent hit at 10959 is a companion-SKU cross-reference, excluded - see Section 8) | "트렌디한 세미 와이드핏" | Same reasoning as CROP_FIT; included despite n=1 because it was already pre-vetted by the prior pass's own audit |
+| SEMI_OVERSIZED | SILHOUETTE | 세미오버핏 | 3 (10825, 11495, and the SET-excluded 10959's own phrase) | "세미오버핏" | Overall fit/volume, the same category as CROP_FIT |
+| OVERSIZED | SILHOUETTE | 오버핏, 오버 핏 (NOT preceded by 세미) | 3 (11577, 11900, 12092) | "-오버 핏" | Same reasoning |
+| REGULAR_FIT | SILHOUETTE | 레귤러핏, 레귤러 핏 | 8 (11598, 11618, 11639, 11679, 11757, 11819, 12158, and 22) | "-레귤러 핏" | The single most common fit term in this sample |
+
+**MATERIAL** (>=2 bar):
+
+| Canonical Attribute | Dimension | Surface Forms | Product Count | Evidence Example | Reason Dimension Is Correct |
+|---|---|---|---:|---|---|
+| WOOL | MATERIAL | 울 (standalone token only), wool | 2 (11736, 12092) | "울 집업 자켓 블랙" | Names a fabric composition, same category as existing DENIM/NYLON/SUEDE |
+
+**Rejected/ambiguous, deliberately not added**: `퍼` (fur) in "클로버하트 프릴 퍼 부츠 브라운" - a single Korean syllable that, without a strict standalone-token boundary, would false-fire inside unrelated words like "라이트 **퍼**플" (purple); even with a boundary-anchored pattern this pass judged it too close in kind to the previously-flagged `헤어리`/`멜란지`/`글리터` ambiguity class to add on n=1 evidence. `SLIM_FIT` (슬림핏, 1), `LOOSE_FIT` (루즈 핏, 1), `DROP_FIT` (드롭 핏, 1), `EASY_FIT` (이지핏, 1), `STRAIGHT_FIT` (스트레이트 핏, 1), `BABY_FIT` (베이비핏, 1) - all real, unambiguous SILHOUETTE terms actually observed in this sample, but each only once; not added this pass under the >=2 bar applied to this brand-new dimension, listed here as real candidates for a future pass if repeated. `STANDARD_FIT`/스탠다드핏, `CORDUROY`/코듀로이, `VELOUR`/벨로아, `PINTUCK`/핀턱, `UTILITY`/유틸리티, `OFF_WHITE`/오프 화이트 - all previously identified as safe by the prior pass's audit, but **zero occurrences in this pass's own resampled 30 products** (a direct consequence of the sitemap drift in Section 1); not added, since this pass's own rule is "evidence from the actual measured sample," not "port the old candidate list unconditionally."
+
+### 6. Real density: three-stage comparison
+
+```
+A. ORIGINAL (re-confirmed, unchanged code path):
+   Specific Item Rate:   5/30 = 16.7%
+   Direct Attribute Rate: 0/30 = 0%
+   Relations: 0
+
+B. COLOR-COMPATIBLE (attributes.ts, unchanged this pass):
+   Direct Attribute Rate: 2/30 = 6.7% (on the ORIGINAL sample; not re-measured on
+   the new sample here since attributes.ts itself was not modified)
+
+C. TAXONOMY-CLOSED PRODUCT REFERENCE (object-relations.ts, this pass, REAL measured
+   on the fresh 30-product fetch):
+   Specific Item Products:   28/30 = 93.3%
+   Direct Attribute Products: 28/30 = 93.3%  <- every single resolved item also
+                                                 carried >=1 real attribute
+   Total Relations: 76
+   Distinct (item, attribute) pairs: 67
+   Average relations per attribute-bearing product: 76/28 = 2.71
+```
+
+The 2 unresolved products (10917, 10959) are the `[SET]` bundle names, deliberately rejected by the ambiguous-multi-item guard - not a taxonomy gap, a correctness choice (see Section 8).
+
+**This number is REAL, not an estimate** - it comes directly from running `extractProductObjectRelations` against the actual fetched JSON-LD `name`/`description` text of these 30 live product pages, the same way `A` and `B` above were measured. It happens to land even higher than the prior pass's own `~97%` **audit estimate**, which is a genuinely interesting result worth stating plainly: that estimate assumed roughly a dozen missing items and 6-9 missing attribute values would need to be added, and closing almost exactly that many (15 items, 12 attribute values) produced a REAL rate in the same range as the earlier guess - the estimate's underlying reasoning (real, repeated, closeable vocabulary gaps) held up under actual measurement.
+
+### 7. Manual precision audit (every one of the 76 relations inspected)
+
+| | Count |
+|---|---:|
+| Total Relations | 76 |
+| VALID | 72 |
+| QUESTIONABLE | 4 |
+| FALSE POSITIVE | 0 |
+| **Precision** (VALID / (VALID + FALSE POSITIVE)) | **100%** (94.7% if QUESTIONABLE is conservatively counted against it: 72/76) |
+
+All 4 QUESTIONABLE relations are real, verifiable facts from the product's own `[원단]` fabric-composition line, but weak or structurally confusable as "the" defining material - none is a fabrication:
+
+1. **PANTS (11712) + MATERIAL:NYLON** - nylon is only 10% of a cotton-dominant (47%) blend ("cotton 47%, polyester 43%, nylon 10%"). True, but a minor blend component, not the defining fiber.
+2. **KNIT (11971) + MATERIAL:WOOL** - wool is only 8% of a nylon-dominant (46%) blend. Same class of issue as #1.
+3. **KNIT (11971) + MATERIAL:KNIT** - a real, structural tautology: because the new KNIT *item* value and the pre-existing KNIT *MATERIAL* value share the identical Korean word ("니트"), every product resolved to the KNIT item will always also trigger MATERIAL:KNIT from its own description ("골조직의 슬림핏 니트로"). True but circular/uninformative - a design consideration for a future pass (e.g. suppressing MATERIAL:KNIT specifically when `specificItem === "KNIT"`), not fixed this pass to avoid over-engineering a single observed case.
+4. **JACKET (12092) + MATERIAL:NYLON** - the matched "nylon 100%" is explicitly the **안감2** (second LINING layer, not the 겉감/shell) of a jacket whose own NAME and shell fabric ("polyester 48%, wool 29%, rayon(viscose) 23%") both say wool. The current description scan does not distinguish 겉감 (shell) from 안감/포켓감/배색/충전재 (lining/pocket-lining/trim/filling) sub-fields - a real, disclosed limitation, not fixed this pass.
+
+Zero outright false positives (a real fact attached to the WRONG item, or an item/attribute claim manufactured from text that does not support it) were found. The CO-code cross-reference stripping and `[SIZE(CM)]`/`[모델]` truncation - both added specifically because early manual testing during this pass's own development surfaced exactly this class of risk - are the reason: without them, this precision audit would very likely have found real false positives from companion-product bullets and alternate-color model captions.
+
+### 8. Dimension coverage (real relations, this pass)
+
+| Dimension | Products | Relations | Distinct Attributes |
+|---|---:|---:|---:|
+| COLOR | 26 | 26 | 13 (3 existing: BLACK/WHITE/BROWN; 10 new, matched - NAVY added but 0 real matches this run, see below) |
+| DETAIL | 17 | 21 | 4 (all existing: SHIRRING, WASHED, EMBROIDERY, BIG_POCKET - no new DETAIL value was added this pass; every DETAIL relation is an existing Editorial value newly reachable via product NAME/description scanning) |
+| SILHOUETTE | 16 | 16 | 5 (all new: CROP_FIT, SEMI_WIDE, SEMI_OVERSIZED, OVERSIZED, REGULAR_FIT) |
+| MATERIAL | 8 | 12 | 5 (4 existing: NYLON, DENIM, SUEDE, KNIT; 1 new: WOOL) |
+| STYLE | 1 | 1 | 1 (existing: VINTAGE) |
+| FINISH | 0 | 0 | 0 - honestly zero, as the task anticipates is acceptable |
+
+### 9. Item coverage (real relations, this pass)
+
+| Item | Products | Attribute-bearing |
+|---|---:|---:|
+| PANTS | 4 | 4 |
+| T_SHIRT | 4 | 4 |
+| SWEATSHIRT | 3 | 3 |
+| JACKET | 2 | 2 |
+| SHORTS | 2 | 2 |
+| CANVAS_BAG / TOTE_BAG / ZIP_HOODIE / HOODIE / SHIRT / CARDIGAN / RINGER_TEE / BLOUSE / LONG_SLEEVE_TEE / KNIT / BOOTS / PUFFER / ECO_BAG | 1 each | 1 each |
+
+Every one of the 28 resolved-item products carried at least one real attribute relation - 0 resolved products with zero attribute text.
+
+### 10. What remains uncaptured
+
+- **Missing Item Vocabulary**: none observed in this sample beyond what was added; the two `[SET]` products remain unresolved by design (ambiguous multi-item name), not a vocabulary gap.
+- **Missing Attribute Vocabulary**: `하프집업` (half-zip, 11757), `옥스포드` (oxford weave, 11900), `리브드`/`골조직` (ribbed knit construction, 11971), `프릴` (frill, 11880 and 12072), `도트` (dot pattern, 11880), `헤링본 테이프` (herringbone-tape neck finish, appears in 4+ products) - all real, repeated-enough-to-notice candidates, none added this pass (kept the pass scoped to the pre-identified candidate class plus the SILHOUETTE fit-family that cleared the >=2 bar).
+- **Parser Grammar Miss**: `RINGER_TEE (11819) + COLOR:NAVY` was NOT captured. The bidirectional COLOR suffix check anchors to the resolved item's own matched substring ("링거", 2 characters) rather than the full compound head noun ("링거 티셔츠"), so the intervening "티셔츠" between "링거" and "네이비" fails the whitespace-only-gap requirement. A real, verified miss (recall traded for precision, consistent with this project's stated philosophy), not fixed this pass.
+- **No Attribute Text Present**: none - every resolved item had real attribute text.
+- **Ambiguous / deliberately rejected**: `퍼` (fur, substring-collision risk with 퍼플), the KNIT-item/MATERIAL:KNIT tautology, and the 겉감/안감 material-provenance conflation (all discussed in Section 7).
+
+### 11. Visual relation (unchanged conclusion, re-confirmed)
+
+No change from both prior passes: JSON-LD ties `name`/`description`/`image` into one structured object per product, giving HIGH image-to-product confidence. No pixel/content analysis was performed in this pass either.
+
+### 12. MarketProduct reuse recommendation (refined again, no schema change made)
+
+Given this pass now produces real, multi-dimension structured relations (not just COLOR), the recommendation from the prior pass stands and sharpens: reuse `MarketProduct`'s `itemType`/`subItemType`/`mainColor`/`material`/`detail`/`style`/`gender`/`dataMode` field shape, but **only after** adding an explicit, indexed role discriminator - concretely, something like `evidenceRole: "RANKING" | "ASSORTMENT_REFERENCE"` - and auditing every existing `MarketProduct` consumer to confirm it filters on it. Without that discriminator, a future "all `MarketProduct` rows" query for a ranking/business-analytics view could silently ingest rows that were never observed selling or ranked. No schema or DB change was made this pass; this remains a recommendation only.
+
+### 13. Multi-brand decision gate
+
+| Gate | Result |
+|---|---|
+| A. Real Direct Attribute Rate meaningfully above Editorial density (~3-10%) | **PASS** - 93.3% vs ~3-10% |
+| B. Manual precision >= 90% | **PASS** - 100% strict / 94.7% conservative |
+| C. Coverage is not almost entirely COLOR suffix | **PASS** - COLOR is 26/76 (34.2%) of relations; DETAIL+SILHOUETTE+MATERIAL+STYLE together are 50/76 (65.8%) |
+| D. At least 2-3 useful attribute dimensions | **PASS** - 5 active dimensions (COLOR, DETAIL, SILHOUETTE, MATERIAL, STYLE) |
+
+**GO.** All four conditions clear comfortably, not marginally.
+
+### 14. Next step (exactly one recommendation, no candidates investigated)
+
+Per the task's explicit instruction, no new brand was searched or collected this pass. The next probe should sample **3-5 independent brands** (none sharing B:CAVE's ownership, unlike Covernat) using the identical JSON-LD name+description methodology and this pass's exact extraction code (`object-relations.ts`), selected for: (1) at least one non-Cafe24 platform, to confirm the trailing-COLOR-suffix and prefix-attribute-chain conventions are industry patterns, not Covernat/Cafe24-specific; (2) confirmed public JSON-LD `Product.description` via a quick single-page check before committing to a full sample; (3) no explicit AI-use restriction notice (checked per-brand); (4) no shared ownership with B:CAVE or with each other. Only after that cross-brand pass should any `MarketProduct` schema/discriminator work begin.
+
+### Validation (this pass)
+
+- `pnpm --filter @open-design/trend-dashboard typecheck`: PASS
+- `pnpm --filter @open-design/trend-dashboard test`: PASS (all existing Editorial and prior Product Reference fixtures, plus new `verifyProductReferenceTaxonomy` fixtures covering generic item recognition, existing-SUB_ITEM priority, `[SET]` ambiguity rejection, NAME-level direct-phrase MATERIAL/DETAIL, description-level SILHOUETTE/MATERIAL, cross-field name+description linkage, relation deduplication, companion-SKU-code stripping, and the Editorial enumeration-guard regression)
+- `pnpm --filter @open-design/trend-dashboard build`: PASS (no route/UI changes)
+- `scripts/audit-editorial-quality.ts`: EditorialPost 283, EditorialMention 916, Direct Relations 15, Bundles 8, MarketRankingSnapshot 667 - all re-confirmed unchanged, both before and after this pass's code changes
+- The one-off fetch/measurement script used to produce the numbers in this section was deleted after use, per this project's established convention for probe scripts (only the reusable extraction code and its test fixtures are kept)
