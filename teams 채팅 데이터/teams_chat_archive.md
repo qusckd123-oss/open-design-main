@@ -183108,3 +183108,5059 @@ tags:
 [<p>안녕하세요!</p>]
 
 ---
+
+
+---
+
+# Memorial: 2026-09-08 Teams update sources
+
+- source: local Microsoft Teams chat/channel backup files clipped as 2026-09-07
+- captured: 2026-09-08
+- type: teams-update-source-archive
+- tags: teams, auto-backup, memorial
+- source_count: 17
+
+
+---
+
+# Source: teams 채널 데이터/Teams Channel - 와키윌리 QR 대응 체계 - 26FW QR - 2026-09-07 - 080026.md
+
+- bytes: 28773
+- sha256: 45f658d519d1855c8121edca3c42a9ee435e48c59b7c809d30ad2759851972e2
+
+---
+type: teams-channel
+source: Microsoft Teams
+team: 와키윌리 QR 대응 체계
+channel: 26FW QR
+clipped: 2026-09-07
+tags:
+  - teams
+  - channel-backup
+---
+
+# 📢 26FW QR
+
+> 백업일: 2026-09-07
+> 팀: 와키윌리 QR 대응 체계
+
+---
+
+
+## 📝 [김연희] 2026-09-03 13:12
+<p>안녕하세요, 기획팀 김연희 입니다.</p>
+<p>&nbsp;</p>
+<p>금주 26FW 리오더 검토 중인 스타일 공유 드립니다.&nbsp;</p>
+<p>WA2603CD53 RD컬러, WA2603KT62 SB, YE, NA 컬러로 총 4 SKU 입니다.&nbsp;</p>
+<p>글로벌 리오더 의향 있으시면,</p>
+<p>금주 발주 기준으로 받은 납기라서, 빠른 발주 진행할 수 있도록 최대한 금주 중으로 수량 취합 후 회신 요청 드립니다</p>
+<p><img src="https://graph.microsoft.com/beta/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1788408775531/hostedContents/aWQ9eF8wLXNrci1kNC1kODRiN2Y5YzgzNzM2NWY0NmUzMzRmMTA2YTQxY2FiYyx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC1kODRiN2Y5YzgzNzM2NWY0NmUzMzRmMTA2YTQxY2FiYy92aWV3cy9pbWdv/$value" width="1305" height="247" alt="이미지" itemid="0-skr-d4-d84b7f9c837365f46e334f106a41cabc"></p>
+<p>&nbsp;</p>
+<p>감사합니다.&nbsp;</p>
+<p><at id="0">글로벌팀</at></p>
+
+### 💬 댓글
+- **[왕지영]** 2026-09-07 16:13
+  <p><at id="0">김연희</at>과장님, 해외 오더 총 10pcs 취합하여 전달 드립니다.</p>
+<p>대만지사의 경우는 회신 기한에 전달 못받아서 추후 해당 상품 입고 후 기재고 있는 국내물량 사용 가능성 있다고 예측 합니다. 참고 부탁드립니다.</p>
+<p>cc <at id="1">고수빈</at></p><attachment id="956760b6-1cf2-47db-bcd6-d8d2b86b15e9"></attachment>
+
+
+## 📝 [변창현] 2026-07-31 13:06
+<p style="margin-left:0">안녕하세요</p>
+<p style="margin-left:0">어패럴 기획팀 변창현입니다.</p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0">26FW 추가 SPOT 스타일 진행 건 업데이트 하여 공유드립니다. CC. <at id="0">기획팀</at></p>
+<p style="margin-left:0">해외 오더 진행 여부 확인 부탁드립니다.</p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0"><at id="1">글로벌팀</at></p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0">"SPOT" 시트에서 "W"열 "O" 건들 필터링해서 봐주시면 됩니다.</p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0"><img src="https://graph.microsoft.com/beta/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1785470783487/hostedContents/aWQ9eF8wLWNrci1kMS00NGE5OWNkMGU5Y2U1MWQ1OTIwY2FiYzA0YjZkYjY3Yyx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLWNrci1kMS00NGE5OWNkMGU5Y2U1MWQ1OTIwY2FiYzA0YjZkYjY3Yy92aWV3cy9pbWdv/$value" width="456.81330472103" height="250" alt="이미지" itemid="0-ckr-d1-44a99cd0e9ce51d5920cabc04b6db67c"></p>
+<p style="margin-left:0">&nbsp;</p>
+<p><a href="https://barrelsco.sharepoint.com/sites/MD616/_layouts/15/Doc.aspx?sourcedoc=%7B3E317B18-9265-4E5E-92E9-AB3D668F516E%7D&amp;file=Wacky%20Willy_26FW%20LINE%20SHEET%20260413.xlsx&amp;action=default&amp;mobileredirect=true&amp;DefaultItemOpen=1" itemtype="http://schema.skype.com/HyperLink/Files" rel="noreferrer noopener" title="https://barrelsco.sharepoint.com/sites/MD616/_layouts/15/Doc.aspx?sourcedoc=%7B3E317B18-9265-4E5E-92E9-AB3D668F516E%7D&amp;file=Wacky%20Willy_26FW%20LINE%20SHEET%20260413.xlsx&amp;action=default&amp;mobileredirect=true&amp;DefaultItemOpen=1" target="_blank" itemid="3E317B18-9265-4E5E-92E9-AB3D668F516E">Wacky Willy_26FW LINE SHEET 260413.xlsx</a></p><attachment id="3E317B18-9265-4E5E-92E9-AB3D668F516E"></attachment>
+
+### 💬 댓글
+- **[변창현]** 2026-08-20 11:02
+  <p><at id="0">왕지영</at>&nbsp;안녕하세요 대리님 네 YE 코드 맞습니다!</p>
+
+- **[왕지영]** 2026-08-20 10:45
+  <p><at id="0">변창현</at>대리님, 넵 해당 칼러 코드는 YE로 보면 될까요?</p>
+
+- **[변창현]** 2026-08-07 16:45
+  <p><at id="0">왕지영</at>&nbsp;대리님</p>
+<p>&nbsp;</p>
+<p>26FW SPOT 오더 관련해서,</p>
+<p>WA2603ST13 BLUE 컬러 -&gt; YELLOW 컬러로 변경되어 참고로 공유드립니다.</p>
+<p>컬러 설명드리자면, 블루 컬러의 옐로우 틴 워싱해서 (블루+옐로우 섞인 컬러로 봐주시면 됩니다)</p>
+<p><img src="https://graph.microsoft.com/v1.0/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1785470783487/replies/1786088748888/hostedContents/aWQ9eF8wLXNrci1kNC03OGYyMTQ0YjY0M2E4NTM2NWVjOGIwMzk5NzQzMDc2Mix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC03OGYyMTQ0YjY0M2E4NTM2NWVjOGIwMzk5NzQzMDc2Mi92aWV3cy9pbWdv/$value" width="597.0149253731344" height="250" alt="이미지" itemid="0-skr-d4-78f2144b643a85365ec8b03997430762"></p>
+<p>&nbsp;</p>
+
+- **[박희현]** 2026-08-07 16:00
+  <p><at id="0">왕지영</at>대리님,</p>
+<p>SPOT 진행 건에 대하여 국내택으로 부착되어 국내 입고 진행 예정이니 참고 부탁드립니다.</p>
+
+- **[변창현]** 2026-08-07 15:58
+  <p><at id="0">소싱팀</at>&nbsp;안녕하세요!</p>
+<p>26FW SPOT 해외 오더 진행 건 1,885PCS입니다</p>
+<p>&nbsp;</p>
+<p>해당 건은 "SPOT 건" 프로세스대로 국내 입고 후 글로벌팀에서 이관 진행할 예정이며,</p>
+<p>참고 부탁드리겠습니다.</p>
+<p>&nbsp;</p>
+<p><strong>1. 메인 정규 오더 : 국내 / 대만 / 일본 / 글로벌 로 PO 분리</strong></p>
+<p><strong>2. SPOT : PO 분리하지 않고, 국내 입고 후 별도 출고</strong></p>
+<p><strong>3. 대만 전용 등 (특정 국가 전용 SPOT) : 특정 국가로 PO 진행</strong></p>
+<p><span style="background-color:#E5F18F">* 단, 글로벌 PO가 포함될 시, 특정 국가 / 국내 입고분 PO 분리</span></p>
+<p>&nbsp;</p>
+<p>CC. <at id="1">기획팀</at></p>
+<p>&nbsp;</p>
+<p><at id="2">왕지영</at>&nbsp;대리님, 오더 수량 확인했습니다.</p>
+<p>SPOT 진행 건은 별도 택갈이 진행 없이 국내 입고 진행되는 건 다시 한번 참고 부탁드립니다.</p>
+
+- **[왕지영]** 2026-08-07 15:21
+  <p><at id="0">변창현</at>대리님, 해외 수량 취합하여 총 수량 1,885PCS 확인 부탁드립니다.</p>
+<p>물량 확정되면 회신 부탁드립니다.</p>
+<p><a href="https://barrelsco.sharepoint.com/:x:/s/msteams_bec739/IQCbGCFobiLhTpfbqK6VzQnuAQjMti24-08McLODxkSGwE0?e=60os0A" itemtype="http://schema.skype.com/HyperLink/Files" rel="noreferrer noopener" title="https://barrelsco.sharepoint.com/:x:/s/msteams_bec739/iqcbgcfobilhtpfbqk6vzqnuaqjmti24-08mclodxksgwe0?e=60os0a" target="_blank" itemid="6821189B-226E-4EE1-97DB-A8AE95CD09EE">★취합_WACKY WILLY 26FW APP SPOT 0804.xlsx</a></p>
+<p>CC&nbsp;<at id="1">고수빈</at>&nbsp;<at id="2">서민지</at></p>
+<p><img itemid="0-skr-d3-db5a908d98630ad6d97dab8fd6f72114" src="https://graph.microsoft.com/v1.0/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1785470783487/replies/1786083687658/hostedContents/aWQ9eF8wLXNrci1kMy1kYjVhOTA4ZDk4NjMwYWQ2ZDk3ZGFiOGZkNmY3MjExNCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMy1kYjVhOTA4ZDk4NjMwYWQ2ZDk3ZGFiOGZkNmY3MjExNC92aWV3cy9pbWdv/$value" alt="이미지" width="800" height="202"></p><attachment id="6821189B-226E-4EE1-97DB-A8AE95CD09EE"></attachment>
+
+- **[변창현]** 2026-08-07 13:33
+  <p><at id="0">왕지영</at>&nbsp;안녕하세요 대리님</p>
+<p>우선 전달 주시면 가능 여부 회신드리겠습니다!</p>
+
+- **[왕지영]** 2026-08-06 18:32
+  <p><at id="0">변창현</at>대리님, 일부 국가 발주 계획있는데 아직 파일 받지 못 해서 혹시 8/7 퇴근전까지 회신 드려도 되는지 문의 드립니다.&nbsp;<emoji id="praying" alt="🙏🏻🏻" title="밝은 스킨 톤의 밝은 스킨 톤의 기도하는 손"></emoji></p>
+
+- **[변창현]** 2026-08-03 19:56
+  <p><at id="0">왕지영</at>&nbsp;안녕하세요 대리님</p>
+<p>권한 추가했습니다</p>
+<p>&nbsp;</p>
+<p>취합해서 전달 주시면</p>
+<p>당시 수량 확인 후 오더 불가한 건이 있으면 별도 피드백드리겠습니다!</p>
+
+- **[왕지영]** 2026-08-03 17:31
+  <p><at id="0">변창현</at>대리님, 해당 파일 권한 부탁드립니다.</p>
+<p>혹시 해외 발주는 8/6 오후 3시까지 취합 후 회신 드려도 될까요?</p>
+
+
+## 📝 [변창현] 2026-06-23 09:54
+<p style="margin-left:0">안녕하세요</p>
+<p style="margin-left:0">어패럴 기획팀 변창현입니다.</p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0"><strong>26FW QR 구성 파일 경로 공유드립니다. </strong><span style="background-color:#E5F18F"><strong>(SPOT/REORDER)</strong></span></p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0">해당 파일로 실시간 업데이트 진행하겠습니다.&nbsp;<at id="0">와키윌리</at>&nbsp;<at id="1">QR</at>&nbsp;<at id="2">대응</at>&nbsp;<at id="3">체계</at></p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0"><a href="https://barrelsco.sharepoint.com/:x:/r/sites/bcave_wa_qr/Shared%20Documents/26FW%20QR/26FW%20%EC%99%80%ED%82%A4%EC%9C%8C%EB%A6%AC%20QR%EA%B5%AC%EC%84%B1(SPOT,Reorder).xlsx?d=wada378380d8a4b41be3e067876c91d45&amp;csf=1&amp;web=1&amp;e=6EcZeg" itemtype="http://schema.skype.com/HyperLink/Files" rel="noreferrer noopener" title="https://barrelsco.sharepoint.com/:x:/r/sites/bcave_wa_qr/Shared%20Documents/26FW%20QR/26FW%20%EC%99%80%ED%82%A4%EC%9C%8C%EB%A6%AC%20QR%EA%B5%AC%EC%84%B1(SPOT,Reorder).xlsx?d=wada378380d8a4b41be3e067876c91d45&amp;csf=1&amp;web=1&amp;e=6EcZeg" target="_blank" itemid="ADA37838-0D8A-4B41-BE3E-067876C91D45">26FW 와키윌리 QR구성(SPOT,Reorder).xlsx</a></p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0"><img src="https://graph.microsoft.com/beta/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1782176042091/hostedContents/aWQ9eF8wLXNrci1kNC0wYjIyNzA4Y2VjNjE3YzkxNjFiMDNkZjM0ODFhODgzOSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC0wYjIyNzA4Y2VjNjE3YzkxNjFiMDNkZjM0ODFhODgzOS92aWV3cy9pbWdv/$value" width="507.25725725725727" height="250" alt="이미지" itemid="0-skr-d4-0b22708cec617c9161b03df3481a8839"></p>
+<p style="margin-left:0">&nbsp;</p><attachment id="ADA37838-0D8A-4B41-BE3E-067876C91D45"></attachment>
+
+### 💬 댓글
+- **[신민석]** 2026-07-10 18:55
+  <p>판매가 조정해주셔서 현재 25% 후반으로 형성된게 맞습니다. &nbsp;제 워딩에 오해의 소지가 있었습니다. 미안합니다. <at id="0">한병현</at></p>
+
+- **[한병현]** 2026-07-10 18:52
+  <div><at id="0">소싱팀</at> 저희가 판매가 조정 안한 것 처럼 말씀 하셔서 댓글 달아 둘게요.<br>
+다운이랑 자켓 판매가 조율 해서 26% 였는데 아닌가요??? 왜 더 올라간거에요??</div>
+
+- **[신민석]** 2026-07-10 18:49
+  <p>안녕하세요&nbsp;<at id="0">기획팀</at>&nbsp;현재 원가율 목표가 25%인데, 현재 27%정도로 형성되어 네고 중인 부분은 잘 아실거라고 생각합니다. (판매가 조정 없을 시 순수 약 9억 원 절감 필요) &nbsp;추가될 제품들의 경우, 사양 점검/원가/판매가/수량부터 미팅 진행하여 원가율부터 꼼꼼히 사전 충분히 논의하고 진행해야 하겠습니다.&nbsp;</p>
+
+- **[변창현]** 2026-07-09 15:11
+  <p><at id="0">신민석</at>&nbsp;팀장님 안녕하세요</p>
+<p>하기로 답변드립니다.</p>
+<p>&nbsp;</p>
+<p>1. WA2604HZ01(HNC) 소재만 기모로 변경 --&gt; 어떤 스타일에 사용했던 기모 퀄리티인지 구체적인 확인 필요합니다.<br>
+<span style="background-color:#E5F18F"><strong>: 기모 퀄리티 기준입니다.</strong></span><br>
+<span style="background-color:#E5F18F"><strong>HNC - WA2604PT65 CP360 쭈리 기모</strong></span><br>
+<span style="background-color:#E5F18F"><strong>(기모 덜 긁은 기준 퀄리티로 털빠짐 개선)</strong></span></p>
+<p>&nbsp;</p>
+<p>2. WA2504PT01 핏 확정 시점 필요<br>
+<span style="background-color:#E5F18F"><strong>: WA2603PT02 스펙 동일 진행합니다.</strong></span></p>
+<p>&nbsp;</p>
+<p>3. WA2603HZ17~WA2603PT17 기존 진행한 뉴베이직 워싱물은 무슨 워싱테크닉인지?<br>
+<span style="background-color:#E5F18F"><strong>: C100 경량쭈리 400G에서 애시드 워싱으로 컬러 블리칭하는 기법입니다.</strong></span></p>
+<p>&nbsp;</p>
+<p>4. WA2603HZ15~WA2603HZ06 소재가 무엇인지 몰라, 리드타임 책정이 어렵습니다.<br>
+<span style="background-color:#E5F18F"><strong>: 전부 CP360 쭈리 기준입니다.</strong></span></p>
+
+- **[한병현]** 2026-07-09 14:37
+  <p><at id="0">고홍석</at>&nbsp;</p>
+<p><i><strong><u>3. SKU# 관련 문의드립니다.</u></strong></i></p>
+<p>그레이 체크 컬러가 유니-&gt;우먼 되면서 WA2604JK72로 새로 생성되는게 맞을지 문의드립니다.</p>
+<p>&nbsp;ㄴ네, 맞습니다. 품번 나뉘면서 차콜 (그레이) + 솔리드 컬러 (브라운) 추가 되었습니다.&nbsp;</p>
+<p>&nbsp;</p>
+<p><at id="1">김연희</at>&nbsp;과장님 해당건 S,M 사이즈 오더 받으면 업데이트 부탁 드립니다.&nbsp;</p>
+
+- **[신민석]** 2026-07-09 14:34
+  <p>안녕하세요 <at id="0">기획팀</at>&nbsp;<at id="1">변창현</at>&nbsp;대리님 현재 재경 팀에서 9월 입고 금액 조정 요청이 있는 상황이라, 해당 제품들이 9월 내 필수적으로 입고 되어야 할 경우, 기존 9월 입고 계획 분의 물량 조정이 필요할 수 있습니다. &nbsp;그리고 스타일 별 소재 확정 및 워싱 테크닉 등 세부 사항부터 결정 된 뒤 논의 부탁 드립니다. &nbsp;(1. WA2604HZ01(HNC) 소재만 기모로 변경 --&gt; 어떤 스타일에 사용했던 기모 퀄리티인지 구체적인 확인 필요합니다. &nbsp;2. WA2504PT01 핏 확정 시점 필요 3. WA2603HZ17~WA2603PT17 기존 진행한 뉴베이직 워싱물은 무슨 워싱테크닉인지? 3 WA2603HZ15~WA2603HZ06 소재가 무엇인지 몰라, 리드타임 책정이 어렵습니다. ) 현 성수기 시점 기본적인 리드타임은 기 개발된 원단의 경우, 작업지시서 발행 이후 원단 4~5주 + &nbsp;재단 + 아트웍 + 봉제 (워싱 테크닉 시 1주 추가)+출고 &nbsp;4~5주 (3,000PCS 기준)이며, 자재 컨펌 리드타임 &nbsp;포함 시 차주 PO발행 시 빠르면 9월 말~10월 초중순으로 가늠됩니다.</p>
+
+- **[변창현]** 2026-07-09 13:55
+  <p>안녕하세요!</p>
+<p><at id="0">소싱팀</at></p>
+<p>26FW SPOT 진행해야될 스타일</p>
+<p>해당 파일에 업데이트되어 있습니다</p>
+<p>&nbsp;</p>
+<p>발주 수량 및 타겟 납기 참고해 주셔서 (9월 내 입고)</p>
+<p>발주 데드라인 확인해 주셔서</p>
+<p><strong>차주 화요일 미팅 때</strong> 투입 시기 논의하면 좋을 것 같습니다!</p>
+<p>&nbsp;</p>
+<p>"투입 대기" 스타일</p>
+<p><img src="https://graph.microsoft.com/v1.0/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1782176042091/replies/1783572927810/hostedContents/aWQ9eF8wLXNrci1kMS1kZTE5NmI1OTFjMzAwNzY5OTNlOGY4ZDI1NWE3YjJjMCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS1kZTE5NmI1OTFjMzAwNzY5OTNlOGY4ZDI1NWE3YjJjMC92aWV3cy9pbWdv/$value" width="768.7943262411347" height="250" alt="이미지" itemid="0-skr-d1-de196b591c30076993e8f8d255a7b2c0"></p>
+<p>&nbsp;</p>
+<p>TO. <at id="1">디자인실</at>&nbsp;</p>
+<p>발주 데드라인 대비, 디자인실 케파 어려울 시에는</p>
+<p>25FW에서 로고만 변경 or 원단 컬러만 변경 하는 등</p>
+<p>최대한 업무 줄여서 발주 진행하려고 합니다</p>
+
+- **[고홍석]** 2026-07-09 10:46
+  <p><at id="0">한병현</at>&nbsp;<at id="1">글로벌팀</at>&nbsp;<at id="2">소싱팀</at></p>
+<p>안녕하십니까 과장님,</p>
+<p>아래 내용 확인 부탁드리겠습니다.</p>
+<p>감사합니다.</p>
+<p>&nbsp;</p>
+<p>1. 우먼스로 변경된 WA2604JK72 그레이 체크 SKU는 L, XL 오더가 있었습니다. (일본 지사 &amp; 태국 총판)</p>
+<p>각 바이어와 확인하여 변경 오더 수량을 시트에 업데이트 하겠습니다.</p>
+<p>&nbsp;</p>
+<p><i><strong><u>2. 추가 오더 취합은 필요하지 않을것으로 판단됩니다. 해당 스타일은 기존에도 오더가 많지 않았습니다.</u></strong></i></p>
+<p><strong>기존 오더</strong></p>
+<p>JK17GR : 일본지사 10개, 태국 총판 6개</p>
+<p>JK17BE : 일본지사 10개</p>
+<p>&nbsp;</p>
+<p><i><strong><u>3. SKU# 관련 문의드립니다.</u></strong></i></p>
+<p>그레이 체크 컬러가 유니-&gt;우먼 되면서 WA2604JK72로 새로 생성되는게 맞을지 문의드립니다.</p>
+<p><img src="https://graph.microsoft.com/v1.0/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1782176042091/replies/1783561612209/hostedContents/aWQ9eF8wLXNrci1kMi03OTEwYTcyOWRiYzgzOWQyZjI4YTVmNjhkOWJhNDhjNSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMi03OTEwYTcyOWRiYzgzOWQyZjI4YTVmNjhkOWJhNDhjNS92aWV3cy9pbWdv/$value" width="215.64885496183206" height="250" alt="이미지" itemid="0-skr-d2-7910a729dbc839d2f28a5f68d9ba48c5"></p>
+
+- **[한병현]** 2026-07-09 10:23
+  <p>&nbsp;안녕하세요, <at id="0">글로벌팀</at>&nbsp;<at id="1">소싱팀</at><br>
+&nbsp; WA2604JK17 체크패턴 플리스 관련하여 컬러 운영 방향이 일부 변경되어 공유드립니다.</p>
+<p>&nbsp;</p>
+<p>&nbsp; 기존 WA2604JK17 체크패턴 플리스는 유니/우먼스 공통으로 운영 예정이었으나, 최종적으로 아래와 같이 라<br>
+&nbsp; 인별 컬러가 분리되어 진행될 예정입니다.</p>
+<p>&nbsp;</p>
+<p>&nbsp; - 유니: 베이지 체크패턴 컬러 진행</p>
+<p><img src="https://graph.microsoft.com/v1.0/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1782176042091/replies/1783560226759/hostedContents/aWQ9eF8wLXNrci1kMy0zM2JhMjczMGExYTQ0Y2NmODI3MjYxMTcwOGE0ZTU1ZSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMy0zM2JhMjczMGExYTQ0Y2NmODI3MjYxMTcwOGE0ZTU1ZS92aWV3cy9pbWdv/$value" width="475" height="104" alt="이미지" itemid="0-skr-d3-33ba2730a1a44ccf8272611708a4e55e"></p>
+<p><br>
+&nbsp; - 우먼스: 차콜 체크패턴 컬러 진행</p>
+<p><img src="https://graph.microsoft.com/v1.0/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1782176042091/replies/1783560226759/hostedContents/aWQ9eF8wLXNrci1kNC01OTViMDkxZjc1ZWUyOTBjMzY3NGJlMmViZDM0YzAzNSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC01OTViMDkxZjc1ZWUyOTBjMzY3NGJlMmViZDM0YzAzNS92aWV3cy9pbWdv/$value" width="114" height="134" alt="이미지" itemid="0-skr-d4-595b091f75ee290c3674be2ebd34c035"></p>
+<p>&nbsp;</p>
+<p>&nbsp; 이에 따라 각 라인별로 추가 컬러도 함께 구성되었습니다.</p>
+<p>&nbsp;</p>
+<p><span style="background-color:#9DD9DB"><strong>&nbsp; - 유니 추가 컬러: 솔리드 차콜, 겨울 무드의 패턴 플리스</strong></span><br>
+<span style="background-color:#9DD9DB"><strong>&nbsp; - 우먼스 추가 컬러: 솔리드 브라운</strong></span></p>
+<p>&nbsp;</p>
+<p>&nbsp; 정리하면, 유니는 베이지 체크패턴을 중심으로 차콜 솔리드와 겨울 느낌의 패턴 플리스를 추가하여 구성되<br>
+&nbsp; 고, 우먼스는 기존 차콜 체크패턴에 브라운 솔리드 컬러가 추가되는 방향입니다.</p>
+<p>&nbsp;</p>
+<p>&nbsp; 해당 변경 사항 확인 부탁드리며, 글로벌팀 기준으로 추가 오더가 필요한 컬러 및 수량이 있을지 검토 부<br>
+&nbsp; 탁드립니다.<br>
+&nbsp; 필요 시 각 컬러별 예상 오더 수량을 공유해주시면 생산/오더 계획에 반영할 수 있도록 하겠습니다.</p>
+<p>&nbsp;</p>
+<p>&nbsp; 감사합니다.</p>
+<p>&nbsp;</p>
+<p><span style="background-color:#DF9299"><strong>[※ 품번이 나눠 지면서 우먼스(</strong></span><span style="background-color:#DF9299; font-size:inherit"><strong>WA2604JK72) 품번은 사이즈 진행이 축소(S,M,L,XL -&gt; S,M 진행) 되었습니다.&nbsp;</strong></span></p>
+<p><span style="background-color:#DF9299; font-size:inherit"><strong>업무에 참고 바랍니다.]</strong></span></p>
+
+
+## 📝 [신민석] 2026-07-02 16:16
+<p><at id="0">기획팀</at></p>
+<p>&nbsp;</p>
+<p>다이마루 리오더 시 제품 리드타임 첨부 드리니 업무에 참고 부탁 드립니다.</p><attachment id="30020d65-bda0-48c8-975b-e37edea55417"></attachment>
+
+### 💬 댓글
+- **[변창현]** 2026-07-07 15:09
+  <p><at id="0">소싱팀</at>&nbsp;안녕하세요!</p>
+<p>26FW 뉴베이직 아이템 추가</p>
+<p>금주 중으로 가능하실지 확인 부탁드립니다.</p>
+
+- **[변창현]** 2026-07-02 18:33
+  <p><at id="0">영업기획팀</at>&nbsp;안녕하세요</p>
+<p>&nbsp;</p>
+<p>26FW 리오더 진행 시 리드타임입니다.</p>
+<p>해당 파일에 뉴베이직 아이템도 업데이트 예정이라고 합니다.</p>
+
+
+## 📝 [변창현] 2026-06-23 10:07
+<p style="margin-left:0">안녕하세요</p>
+<p style="margin-left:0">어패럴 기획팀 변창현입니다.</p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0"><strong>26FW 워싱물 스웻류 및 뒤판 그래픽 후드집업 진행 건이 있어 공유드립니다. </strong><at id="0">와키윌리</at>&nbsp;<at id="1">QR</at>&nbsp;<at id="2">대응</at>&nbsp;<at id="3">체계</at></p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0">26FW 발주 금액 증량 및 필요 룸으로 인하여 진행되는 점 참고해 주셔서</p>
+<p style="margin-left:0">협조 부탁드리겠습니다.</p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0"><img src="https://graph.microsoft.com/beta/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1782176824607/hostedContents/aWQ9eF8wLXNrci1kNC1hOWU4NTQzOWIxNTg1ODc5NDM1ZGNiNGJkOGUyZjIxMSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC1hOWU4NTQzOWIxNTg1ODc5NDM1ZGNiNGJkOGUyZjIxMS92aWV3cy9pbWdv/$value" width="583.8235294117648" height="250" alt="이미지" itemid="0-skr-d4-a9e85439b1585879435dcb4bd8e2f211"></p>
+<p style="margin-left:0"><a href="https://barrelsco.sharepoint.com/:x:/r/sites/bcave_wa_qr/Shared%20Documents/26FW%20QR/26FW%20%EC%99%80%ED%82%A4%EC%9C%8C%EB%A6%AC%20QR%EA%B5%AC%EC%84%B1(SPOT,Reorder).xlsx?d=wada378380d8a4b41be3e067876c91d45&amp;csf=1&amp;web=1&amp;e=6EcZeg" itemtype="http://schema.skype.com/HyperLink/Files" rel="noreferrer noopener" title="https://barrelsco.sharepoint.com/:x:/r/sites/bcave_wa_qr/Shared%20Documents/26FW%20QR/26FW%20%EC%99%80%ED%82%A4%EC%9C%8C%EB%A6%AC%20QR%EA%B5%AC%EC%84%B1(SPOT,Reorder).xlsx?d=wada378380d8a4b41be3e067876c91d45&amp;csf=1&amp;web=1&amp;e=6EcZeg" target="_blank" itemid="ADA37838-0D8A-4B41-BE3E-067876C91D45">- 26FW QR 구성 파일 참고</a></p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0">TO. <at id="4">디자인실</at></p>
+<p style="margin-left:0">담당자 지정 부탁드립니다.</p>
+<p style="margin-left:0">디자인은 최대한 기존 디자인에서 활용하려고 합니다.</p>
+<p style="margin-left:0">ex) 워싱물 - 기존 뉴베이직 워싱물 디자인 활용</p>
+<p style="margin-left:0">&nbsp; &nbsp; &nbsp; 뒤판그래픽물 - 26FW 후드 집업 DROP 건 활용</p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0">TO. <at id="5">소싱팀</at></p>
+<p style="margin-left:0">협력사 지정 부탁드립니다.</p>
+<p style="margin-left:0">워싱물은 협력사 원가 비딩도 진행 부탁드리겠습니다. EX) SDPK(워싱 특화 고려) / 다이마루 협력사</p>
+<p style="margin-left:0">필요 납기 및 발주 수량 등 해당 파일내 기재했습니다. (9월 내 입고)</p><attachment id="ADA37838-0D8A-4B41-BE3E-067876C91D45"></attachment>
+
+### 💬 댓글
+- **[박희현]** 2026-06-23 10:09
+  <p><at id="0">변창현</at>&nbsp;안녕하세요 대리님</p>
+<p>대략적인 도식화가 있는 앞작지 주시면 협력사 지정 후 어바웃 견적서 전달 드리겠습니다.</p>
+<p>SDPK 의 경우 다이마루 전문업체가 아니기에 가능하면 다이마루 협력사로 배정 예정입니다.</p>
+
+
+## 📝 [변창현] 2026-06-19 17:17
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">안녕하세요</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">어패럴 기획팀 변창현입니다.</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">&nbsp;</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px"><strong>26FW 기모 스웻 스타일 진행 건이 있어 공유드립니다.&nbsp;</strong><at id="0">기획팀</at>&nbsp;<at id="1">영업기획팀</at>&nbsp;<at id="2">글로벌팀</at>&nbsp;<at id="3">온라인팀</at>&nbsp;<at id="4">마케팅팀</at></p>
+<p><img src="https://graph.microsoft.com/beta/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1781857046086/hostedContents/aWQ9eF8wLXNrci1kMS1hODc5ODBlY2VjMDg0MjczOWMzZWMyMTJiZGU2OWYwNCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS1hODc5ODBlY2VjMDg0MjczOWMzZWMyMTJiZGU2OWYwNC92aWV3cy9pbWdv/$value" alt="이미지" width="437.636761487965" height="250" itemid="0-skr-d1-a87980ecec0842739c3ec212bde69f04"></p>
+<p>&nbsp;</p>
+<p style="margin-bottom:0px; margin-top:0px">26FW 상품MAP - 뉴오더 시트 참고 부탁드립니다.</p>
+<p style="margin-bottom:0px; margin-top:0px"><a href="https://barrelsco.sharepoint.com/:x:/s/MD616/IQBiHJI35HdvQ4pvml1Z5WPWARdFRt9u9n6hWPZk78K5esU?e=QMNkEk" itemtype="http://schema.skype.com/HyperLink/Files" rel="noreferrer noopener" title="https://barrelsco.sharepoint.com/:x:/s/MD616/IQBiHJI35HdvQ4pvml1Z5WPWARdFRt9u9n6hWPZk78K5esU?e=QMNkEk" target="_blank" itemid="37921C62-77E4-436F-8A6F-9A5D59E563D6">★26FW 아이템별 상품MAP.xlsx</a></p>
+<p style="margin-bottom:0px; margin-top:0px">&nbsp;</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px"><strong>TO.&nbsp;</strong><at id="5">소싱팀</at></p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">기존 9월 3주차 오프라인 출고 딜리버리 일정입니다.</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">늦어도 9월 말 입고 기준으로 작업지시서 및 PO 불출 데드라인 확인 부탁드립니다.</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">&nbsp;</p>
+<p><img src="https://graph.microsoft.com/beta/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1781857046086/hostedContents/aWQ9eF8wLXNrci1kNC03MDFlMDBhN2MwMzcxMGU4YjcwYjI0ODU4ZjYyZjNlMSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC03MDFlMDBhN2MwMzcxMGU4YjcwYjI0ODU4ZjYyZjNlMS92aWV3cy9pbWdv/$value" alt="이미지" width="451" height="239" itemid="0-skr-d4-701e00a7c03710e8b70b24858f62f3e1"></p>
+<p>&nbsp;</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">&nbsp;</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">기모 털빠짐 이슈 관련하여, 소재 퀄리티 고려해 주셔서 협력사 지정 부탁드립니다.</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px"><strong>CC.&nbsp;</strong><at id="6">김나연</at></p>
+<p>&nbsp;과장님 퀄리티 확인 부탁드립니다.</p>
+<p>&nbsp;</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">&nbsp;</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px"><strong>TO.&nbsp;</strong><at id="7">디자인실</at></p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">기모스웻류 담당자 지정 부탁드립니다.</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">&nbsp;</p><attachment id="37921C62-77E4-436F-8A6F-9A5D59E563D6"></attachment>
+
+### 💬 댓글
+- **[한병현]** 2026-06-23 09:37
+  <p><at id="0">26FW</at>&nbsp;<at id="1">QR</at>&nbsp;연관부서에서 체크 하신걸로 알고 진행 하겠습니다.</p>
+
+- **[한병현]** 2026-06-23 09:37
+
+
+---
+
+# Source: teams 채널 데이터/Teams Channel - 와키윌리 QR 대응 체계 - 26FW QR - 2026-09-07 - 080108.md
+
+- bytes: 28773
+- sha256: 45f658d519d1855c8121edca3c42a9ee435e48c59b7c809d30ad2759851972e2
+
+---
+type: teams-channel
+source: Microsoft Teams
+team: 와키윌리 QR 대응 체계
+channel: 26FW QR
+clipped: 2026-09-07
+tags:
+  - teams
+  - channel-backup
+---
+
+# 📢 26FW QR
+
+> 백업일: 2026-09-07
+> 팀: 와키윌리 QR 대응 체계
+
+---
+
+
+## 📝 [김연희] 2026-09-03 13:12
+<p>안녕하세요, 기획팀 김연희 입니다.</p>
+<p>&nbsp;</p>
+<p>금주 26FW 리오더 검토 중인 스타일 공유 드립니다.&nbsp;</p>
+<p>WA2603CD53 RD컬러, WA2603KT62 SB, YE, NA 컬러로 총 4 SKU 입니다.&nbsp;</p>
+<p>글로벌 리오더 의향 있으시면,</p>
+<p>금주 발주 기준으로 받은 납기라서, 빠른 발주 진행할 수 있도록 최대한 금주 중으로 수량 취합 후 회신 요청 드립니다</p>
+<p><img src="https://graph.microsoft.com/beta/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1788408775531/hostedContents/aWQ9eF8wLXNrci1kNC1kODRiN2Y5YzgzNzM2NWY0NmUzMzRmMTA2YTQxY2FiYyx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC1kODRiN2Y5YzgzNzM2NWY0NmUzMzRmMTA2YTQxY2FiYy92aWV3cy9pbWdv/$value" width="1305" height="247" alt="이미지" itemid="0-skr-d4-d84b7f9c837365f46e334f106a41cabc"></p>
+<p>&nbsp;</p>
+<p>감사합니다.&nbsp;</p>
+<p><at id="0">글로벌팀</at></p>
+
+### 💬 댓글
+- **[왕지영]** 2026-09-07 16:13
+  <p><at id="0">김연희</at>과장님, 해외 오더 총 10pcs 취합하여 전달 드립니다.</p>
+<p>대만지사의 경우는 회신 기한에 전달 못받아서 추후 해당 상품 입고 후 기재고 있는 국내물량 사용 가능성 있다고 예측 합니다. 참고 부탁드립니다.</p>
+<p>cc <at id="1">고수빈</at></p><attachment id="956760b6-1cf2-47db-bcd6-d8d2b86b15e9"></attachment>
+
+
+## 📝 [변창현] 2026-07-31 13:06
+<p style="margin-left:0">안녕하세요</p>
+<p style="margin-left:0">어패럴 기획팀 변창현입니다.</p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0">26FW 추가 SPOT 스타일 진행 건 업데이트 하여 공유드립니다. CC. <at id="0">기획팀</at></p>
+<p style="margin-left:0">해외 오더 진행 여부 확인 부탁드립니다.</p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0"><at id="1">글로벌팀</at></p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0">"SPOT" 시트에서 "W"열 "O" 건들 필터링해서 봐주시면 됩니다.</p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0"><img src="https://graph.microsoft.com/beta/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1785470783487/hostedContents/aWQ9eF8wLWNrci1kMS00NGE5OWNkMGU5Y2U1MWQ1OTIwY2FiYzA0YjZkYjY3Yyx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLWNrci1kMS00NGE5OWNkMGU5Y2U1MWQ1OTIwY2FiYzA0YjZkYjY3Yy92aWV3cy9pbWdv/$value" width="456.81330472103" height="250" alt="이미지" itemid="0-ckr-d1-44a99cd0e9ce51d5920cabc04b6db67c"></p>
+<p style="margin-left:0">&nbsp;</p>
+<p><a href="https://barrelsco.sharepoint.com/sites/MD616/_layouts/15/Doc.aspx?sourcedoc=%7B3E317B18-9265-4E5E-92E9-AB3D668F516E%7D&amp;file=Wacky%20Willy_26FW%20LINE%20SHEET%20260413.xlsx&amp;action=default&amp;mobileredirect=true&amp;DefaultItemOpen=1" itemtype="http://schema.skype.com/HyperLink/Files" rel="noreferrer noopener" title="https://barrelsco.sharepoint.com/sites/MD616/_layouts/15/Doc.aspx?sourcedoc=%7B3E317B18-9265-4E5E-92E9-AB3D668F516E%7D&amp;file=Wacky%20Willy_26FW%20LINE%20SHEET%20260413.xlsx&amp;action=default&amp;mobileredirect=true&amp;DefaultItemOpen=1" target="_blank" itemid="3E317B18-9265-4E5E-92E9-AB3D668F516E">Wacky Willy_26FW LINE SHEET 260413.xlsx</a></p><attachment id="3E317B18-9265-4E5E-92E9-AB3D668F516E"></attachment>
+
+### 💬 댓글
+- **[변창현]** 2026-08-20 11:02
+  <p><at id="0">왕지영</at>&nbsp;안녕하세요 대리님 네 YE 코드 맞습니다!</p>
+
+- **[왕지영]** 2026-08-20 10:45
+  <p><at id="0">변창현</at>대리님, 넵 해당 칼러 코드는 YE로 보면 될까요?</p>
+
+- **[변창현]** 2026-08-07 16:45
+  <p><at id="0">왕지영</at>&nbsp;대리님</p>
+<p>&nbsp;</p>
+<p>26FW SPOT 오더 관련해서,</p>
+<p>WA2603ST13 BLUE 컬러 -&gt; YELLOW 컬러로 변경되어 참고로 공유드립니다.</p>
+<p>컬러 설명드리자면, 블루 컬러의 옐로우 틴 워싱해서 (블루+옐로우 섞인 컬러로 봐주시면 됩니다)</p>
+<p><img src="https://graph.microsoft.com/v1.0/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1785470783487/replies/1786088748888/hostedContents/aWQ9eF8wLXNrci1kNC03OGYyMTQ0YjY0M2E4NTM2NWVjOGIwMzk5NzQzMDc2Mix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC03OGYyMTQ0YjY0M2E4NTM2NWVjOGIwMzk5NzQzMDc2Mi92aWV3cy9pbWdv/$value" width="597.0149253731344" height="250" alt="이미지" itemid="0-skr-d4-78f2144b643a85365ec8b03997430762"></p>
+<p>&nbsp;</p>
+
+- **[박희현]** 2026-08-07 16:00
+  <p><at id="0">왕지영</at>대리님,</p>
+<p>SPOT 진행 건에 대하여 국내택으로 부착되어 국내 입고 진행 예정이니 참고 부탁드립니다.</p>
+
+- **[변창현]** 2026-08-07 15:58
+  <p><at id="0">소싱팀</at>&nbsp;안녕하세요!</p>
+<p>26FW SPOT 해외 오더 진행 건 1,885PCS입니다</p>
+<p>&nbsp;</p>
+<p>해당 건은 "SPOT 건" 프로세스대로 국내 입고 후 글로벌팀에서 이관 진행할 예정이며,</p>
+<p>참고 부탁드리겠습니다.</p>
+<p>&nbsp;</p>
+<p><strong>1. 메인 정규 오더 : 국내 / 대만 / 일본 / 글로벌 로 PO 분리</strong></p>
+<p><strong>2. SPOT : PO 분리하지 않고, 국내 입고 후 별도 출고</strong></p>
+<p><strong>3. 대만 전용 등 (특정 국가 전용 SPOT) : 특정 국가로 PO 진행</strong></p>
+<p><span style="background-color:#E5F18F">* 단, 글로벌 PO가 포함될 시, 특정 국가 / 국내 입고분 PO 분리</span></p>
+<p>&nbsp;</p>
+<p>CC. <at id="1">기획팀</at></p>
+<p>&nbsp;</p>
+<p><at id="2">왕지영</at>&nbsp;대리님, 오더 수량 확인했습니다.</p>
+<p>SPOT 진행 건은 별도 택갈이 진행 없이 국내 입고 진행되는 건 다시 한번 참고 부탁드립니다.</p>
+
+- **[왕지영]** 2026-08-07 15:21
+  <p><at id="0">변창현</at>대리님, 해외 수량 취합하여 총 수량 1,885PCS 확인 부탁드립니다.</p>
+<p>물량 확정되면 회신 부탁드립니다.</p>
+<p><a href="https://barrelsco.sharepoint.com/:x:/s/msteams_bec739/IQCbGCFobiLhTpfbqK6VzQnuAQjMti24-08McLODxkSGwE0?e=60os0A" itemtype="http://schema.skype.com/HyperLink/Files" rel="noreferrer noopener" title="https://barrelsco.sharepoint.com/:x:/s/msteams_bec739/iqcbgcfobilhtpfbqk6vzqnuaqjmti24-08mclodxksgwe0?e=60os0a" target="_blank" itemid="6821189B-226E-4EE1-97DB-A8AE95CD09EE">★취합_WACKY WILLY 26FW APP SPOT 0804.xlsx</a></p>
+<p>CC&nbsp;<at id="1">고수빈</at>&nbsp;<at id="2">서민지</at></p>
+<p><img itemid="0-skr-d3-db5a908d98630ad6d97dab8fd6f72114" src="https://graph.microsoft.com/v1.0/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1785470783487/replies/1786083687658/hostedContents/aWQ9eF8wLXNrci1kMy1kYjVhOTA4ZDk4NjMwYWQ2ZDk3ZGFiOGZkNmY3MjExNCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMy1kYjVhOTA4ZDk4NjMwYWQ2ZDk3ZGFiOGZkNmY3MjExNC92aWV3cy9pbWdv/$value" alt="이미지" width="800" height="202"></p><attachment id="6821189B-226E-4EE1-97DB-A8AE95CD09EE"></attachment>
+
+- **[변창현]** 2026-08-07 13:33
+  <p><at id="0">왕지영</at>&nbsp;안녕하세요 대리님</p>
+<p>우선 전달 주시면 가능 여부 회신드리겠습니다!</p>
+
+- **[왕지영]** 2026-08-06 18:32
+  <p><at id="0">변창현</at>대리님, 일부 국가 발주 계획있는데 아직 파일 받지 못 해서 혹시 8/7 퇴근전까지 회신 드려도 되는지 문의 드립니다.&nbsp;<emoji id="praying" alt="🙏🏻🏻" title="밝은 스킨 톤의 밝은 스킨 톤의 기도하는 손"></emoji></p>
+
+- **[변창현]** 2026-08-03 19:56
+  <p><at id="0">왕지영</at>&nbsp;안녕하세요 대리님</p>
+<p>권한 추가했습니다</p>
+<p>&nbsp;</p>
+<p>취합해서 전달 주시면</p>
+<p>당시 수량 확인 후 오더 불가한 건이 있으면 별도 피드백드리겠습니다!</p>
+
+- **[왕지영]** 2026-08-03 17:31
+  <p><at id="0">변창현</at>대리님, 해당 파일 권한 부탁드립니다.</p>
+<p>혹시 해외 발주는 8/6 오후 3시까지 취합 후 회신 드려도 될까요?</p>
+
+
+## 📝 [변창현] 2026-06-23 09:54
+<p style="margin-left:0">안녕하세요</p>
+<p style="margin-left:0">어패럴 기획팀 변창현입니다.</p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0"><strong>26FW QR 구성 파일 경로 공유드립니다. </strong><span style="background-color:#E5F18F"><strong>(SPOT/REORDER)</strong></span></p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0">해당 파일로 실시간 업데이트 진행하겠습니다.&nbsp;<at id="0">와키윌리</at>&nbsp;<at id="1">QR</at>&nbsp;<at id="2">대응</at>&nbsp;<at id="3">체계</at></p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0"><a href="https://barrelsco.sharepoint.com/:x:/r/sites/bcave_wa_qr/Shared%20Documents/26FW%20QR/26FW%20%EC%99%80%ED%82%A4%EC%9C%8C%EB%A6%AC%20QR%EA%B5%AC%EC%84%B1(SPOT,Reorder).xlsx?d=wada378380d8a4b41be3e067876c91d45&amp;csf=1&amp;web=1&amp;e=6EcZeg" itemtype="http://schema.skype.com/HyperLink/Files" rel="noreferrer noopener" title="https://barrelsco.sharepoint.com/:x:/r/sites/bcave_wa_qr/Shared%20Documents/26FW%20QR/26FW%20%EC%99%80%ED%82%A4%EC%9C%8C%EB%A6%AC%20QR%EA%B5%AC%EC%84%B1(SPOT,Reorder).xlsx?d=wada378380d8a4b41be3e067876c91d45&amp;csf=1&amp;web=1&amp;e=6EcZeg" target="_blank" itemid="ADA37838-0D8A-4B41-BE3E-067876C91D45">26FW 와키윌리 QR구성(SPOT,Reorder).xlsx</a></p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0"><img src="https://graph.microsoft.com/beta/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1782176042091/hostedContents/aWQ9eF8wLXNrci1kNC0wYjIyNzA4Y2VjNjE3YzkxNjFiMDNkZjM0ODFhODgzOSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC0wYjIyNzA4Y2VjNjE3YzkxNjFiMDNkZjM0ODFhODgzOS92aWV3cy9pbWdv/$value" width="507.25725725725727" height="250" alt="이미지" itemid="0-skr-d4-0b22708cec617c9161b03df3481a8839"></p>
+<p style="margin-left:0">&nbsp;</p><attachment id="ADA37838-0D8A-4B41-BE3E-067876C91D45"></attachment>
+
+### 💬 댓글
+- **[신민석]** 2026-07-10 18:55
+  <p>판매가 조정해주셔서 현재 25% 후반으로 형성된게 맞습니다. &nbsp;제 워딩에 오해의 소지가 있었습니다. 미안합니다. <at id="0">한병현</at></p>
+
+- **[한병현]** 2026-07-10 18:52
+  <div><at id="0">소싱팀</at> 저희가 판매가 조정 안한 것 처럼 말씀 하셔서 댓글 달아 둘게요.<br>
+다운이랑 자켓 판매가 조율 해서 26% 였는데 아닌가요??? 왜 더 올라간거에요??</div>
+
+- **[신민석]** 2026-07-10 18:49
+  <p>안녕하세요&nbsp;<at id="0">기획팀</at>&nbsp;현재 원가율 목표가 25%인데, 현재 27%정도로 형성되어 네고 중인 부분은 잘 아실거라고 생각합니다. (판매가 조정 없을 시 순수 약 9억 원 절감 필요) &nbsp;추가될 제품들의 경우, 사양 점검/원가/판매가/수량부터 미팅 진행하여 원가율부터 꼼꼼히 사전 충분히 논의하고 진행해야 하겠습니다.&nbsp;</p>
+
+- **[변창현]** 2026-07-09 15:11
+  <p><at id="0">신민석</at>&nbsp;팀장님 안녕하세요</p>
+<p>하기로 답변드립니다.</p>
+<p>&nbsp;</p>
+<p>1. WA2604HZ01(HNC) 소재만 기모로 변경 --&gt; 어떤 스타일에 사용했던 기모 퀄리티인지 구체적인 확인 필요합니다.<br>
+<span style="background-color:#E5F18F"><strong>: 기모 퀄리티 기준입니다.</strong></span><br>
+<span style="background-color:#E5F18F"><strong>HNC - WA2604PT65 CP360 쭈리 기모</strong></span><br>
+<span style="background-color:#E5F18F"><strong>(기모 덜 긁은 기준 퀄리티로 털빠짐 개선)</strong></span></p>
+<p>&nbsp;</p>
+<p>2. WA2504PT01 핏 확정 시점 필요<br>
+<span style="background-color:#E5F18F"><strong>: WA2603PT02 스펙 동일 진행합니다.</strong></span></p>
+<p>&nbsp;</p>
+<p>3. WA2603HZ17~WA2603PT17 기존 진행한 뉴베이직 워싱물은 무슨 워싱테크닉인지?<br>
+<span style="background-color:#E5F18F"><strong>: C100 경량쭈리 400G에서 애시드 워싱으로 컬러 블리칭하는 기법입니다.</strong></span></p>
+<p>&nbsp;</p>
+<p>4. WA2603HZ15~WA2603HZ06 소재가 무엇인지 몰라, 리드타임 책정이 어렵습니다.<br>
+<span style="background-color:#E5F18F"><strong>: 전부 CP360 쭈리 기준입니다.</strong></span></p>
+
+- **[한병현]** 2026-07-09 14:37
+  <p><at id="0">고홍석</at>&nbsp;</p>
+<p><i><strong><u>3. SKU# 관련 문의드립니다.</u></strong></i></p>
+<p>그레이 체크 컬러가 유니-&gt;우먼 되면서 WA2604JK72로 새로 생성되는게 맞을지 문의드립니다.</p>
+<p>&nbsp;ㄴ네, 맞습니다. 품번 나뉘면서 차콜 (그레이) + 솔리드 컬러 (브라운) 추가 되었습니다.&nbsp;</p>
+<p>&nbsp;</p>
+<p><at id="1">김연희</at>&nbsp;과장님 해당건 S,M 사이즈 오더 받으면 업데이트 부탁 드립니다.&nbsp;</p>
+
+- **[신민석]** 2026-07-09 14:34
+  <p>안녕하세요 <at id="0">기획팀</at>&nbsp;<at id="1">변창현</at>&nbsp;대리님 현재 재경 팀에서 9월 입고 금액 조정 요청이 있는 상황이라, 해당 제품들이 9월 내 필수적으로 입고 되어야 할 경우, 기존 9월 입고 계획 분의 물량 조정이 필요할 수 있습니다. &nbsp;그리고 스타일 별 소재 확정 및 워싱 테크닉 등 세부 사항부터 결정 된 뒤 논의 부탁 드립니다. &nbsp;(1. WA2604HZ01(HNC) 소재만 기모로 변경 --&gt; 어떤 스타일에 사용했던 기모 퀄리티인지 구체적인 확인 필요합니다. &nbsp;2. WA2504PT01 핏 확정 시점 필요 3. WA2603HZ17~WA2603PT17 기존 진행한 뉴베이직 워싱물은 무슨 워싱테크닉인지? 3 WA2603HZ15~WA2603HZ06 소재가 무엇인지 몰라, 리드타임 책정이 어렵습니다. ) 현 성수기 시점 기본적인 리드타임은 기 개발된 원단의 경우, 작업지시서 발행 이후 원단 4~5주 + &nbsp;재단 + 아트웍 + 봉제 (워싱 테크닉 시 1주 추가)+출고 &nbsp;4~5주 (3,000PCS 기준)이며, 자재 컨펌 리드타임 &nbsp;포함 시 차주 PO발행 시 빠르면 9월 말~10월 초중순으로 가늠됩니다.</p>
+
+- **[변창현]** 2026-07-09 13:55
+  <p>안녕하세요!</p>
+<p><at id="0">소싱팀</at></p>
+<p>26FW SPOT 진행해야될 스타일</p>
+<p>해당 파일에 업데이트되어 있습니다</p>
+<p>&nbsp;</p>
+<p>발주 수량 및 타겟 납기 참고해 주셔서 (9월 내 입고)</p>
+<p>발주 데드라인 확인해 주셔서</p>
+<p><strong>차주 화요일 미팅 때</strong> 투입 시기 논의하면 좋을 것 같습니다!</p>
+<p>&nbsp;</p>
+<p>"투입 대기" 스타일</p>
+<p><img src="https://graph.microsoft.com/v1.0/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1782176042091/replies/1783572927810/hostedContents/aWQ9eF8wLXNrci1kMS1kZTE5NmI1OTFjMzAwNzY5OTNlOGY4ZDI1NWE3YjJjMCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS1kZTE5NmI1OTFjMzAwNzY5OTNlOGY4ZDI1NWE3YjJjMC92aWV3cy9pbWdv/$value" width="768.7943262411347" height="250" alt="이미지" itemid="0-skr-d1-de196b591c30076993e8f8d255a7b2c0"></p>
+<p>&nbsp;</p>
+<p>TO. <at id="1">디자인실</at>&nbsp;</p>
+<p>발주 데드라인 대비, 디자인실 케파 어려울 시에는</p>
+<p>25FW에서 로고만 변경 or 원단 컬러만 변경 하는 등</p>
+<p>최대한 업무 줄여서 발주 진행하려고 합니다</p>
+
+- **[고홍석]** 2026-07-09 10:46
+  <p><at id="0">한병현</at>&nbsp;<at id="1">글로벌팀</at>&nbsp;<at id="2">소싱팀</at></p>
+<p>안녕하십니까 과장님,</p>
+<p>아래 내용 확인 부탁드리겠습니다.</p>
+<p>감사합니다.</p>
+<p>&nbsp;</p>
+<p>1. 우먼스로 변경된 WA2604JK72 그레이 체크 SKU는 L, XL 오더가 있었습니다. (일본 지사 &amp; 태국 총판)</p>
+<p>각 바이어와 확인하여 변경 오더 수량을 시트에 업데이트 하겠습니다.</p>
+<p>&nbsp;</p>
+<p><i><strong><u>2. 추가 오더 취합은 필요하지 않을것으로 판단됩니다. 해당 스타일은 기존에도 오더가 많지 않았습니다.</u></strong></i></p>
+<p><strong>기존 오더</strong></p>
+<p>JK17GR : 일본지사 10개, 태국 총판 6개</p>
+<p>JK17BE : 일본지사 10개</p>
+<p>&nbsp;</p>
+<p><i><strong><u>3. SKU# 관련 문의드립니다.</u></strong></i></p>
+<p>그레이 체크 컬러가 유니-&gt;우먼 되면서 WA2604JK72로 새로 생성되는게 맞을지 문의드립니다.</p>
+<p><img src="https://graph.microsoft.com/v1.0/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1782176042091/replies/1783561612209/hostedContents/aWQ9eF8wLXNrci1kMi03OTEwYTcyOWRiYzgzOWQyZjI4YTVmNjhkOWJhNDhjNSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMi03OTEwYTcyOWRiYzgzOWQyZjI4YTVmNjhkOWJhNDhjNS92aWV3cy9pbWdv/$value" width="215.64885496183206" height="250" alt="이미지" itemid="0-skr-d2-7910a729dbc839d2f28a5f68d9ba48c5"></p>
+
+- **[한병현]** 2026-07-09 10:23
+  <p>&nbsp;안녕하세요, <at id="0">글로벌팀</at>&nbsp;<at id="1">소싱팀</at><br>
+&nbsp; WA2604JK17 체크패턴 플리스 관련하여 컬러 운영 방향이 일부 변경되어 공유드립니다.</p>
+<p>&nbsp;</p>
+<p>&nbsp; 기존 WA2604JK17 체크패턴 플리스는 유니/우먼스 공통으로 운영 예정이었으나, 최종적으로 아래와 같이 라<br>
+&nbsp; 인별 컬러가 분리되어 진행될 예정입니다.</p>
+<p>&nbsp;</p>
+<p>&nbsp; - 유니: 베이지 체크패턴 컬러 진행</p>
+<p><img src="https://graph.microsoft.com/v1.0/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1782176042091/replies/1783560226759/hostedContents/aWQ9eF8wLXNrci1kMy0zM2JhMjczMGExYTQ0Y2NmODI3MjYxMTcwOGE0ZTU1ZSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMy0zM2JhMjczMGExYTQ0Y2NmODI3MjYxMTcwOGE0ZTU1ZS92aWV3cy9pbWdv/$value" width="475" height="104" alt="이미지" itemid="0-skr-d3-33ba2730a1a44ccf8272611708a4e55e"></p>
+<p><br>
+&nbsp; - 우먼스: 차콜 체크패턴 컬러 진행</p>
+<p><img src="https://graph.microsoft.com/v1.0/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1782176042091/replies/1783560226759/hostedContents/aWQ9eF8wLXNrci1kNC01OTViMDkxZjc1ZWUyOTBjMzY3NGJlMmViZDM0YzAzNSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC01OTViMDkxZjc1ZWUyOTBjMzY3NGJlMmViZDM0YzAzNS92aWV3cy9pbWdv/$value" width="114" height="134" alt="이미지" itemid="0-skr-d4-595b091f75ee290c3674be2ebd34c035"></p>
+<p>&nbsp;</p>
+<p>&nbsp; 이에 따라 각 라인별로 추가 컬러도 함께 구성되었습니다.</p>
+<p>&nbsp;</p>
+<p><span style="background-color:#9DD9DB"><strong>&nbsp; - 유니 추가 컬러: 솔리드 차콜, 겨울 무드의 패턴 플리스</strong></span><br>
+<span style="background-color:#9DD9DB"><strong>&nbsp; - 우먼스 추가 컬러: 솔리드 브라운</strong></span></p>
+<p>&nbsp;</p>
+<p>&nbsp; 정리하면, 유니는 베이지 체크패턴을 중심으로 차콜 솔리드와 겨울 느낌의 패턴 플리스를 추가하여 구성되<br>
+&nbsp; 고, 우먼스는 기존 차콜 체크패턴에 브라운 솔리드 컬러가 추가되는 방향입니다.</p>
+<p>&nbsp;</p>
+<p>&nbsp; 해당 변경 사항 확인 부탁드리며, 글로벌팀 기준으로 추가 오더가 필요한 컬러 및 수량이 있을지 검토 부<br>
+&nbsp; 탁드립니다.<br>
+&nbsp; 필요 시 각 컬러별 예상 오더 수량을 공유해주시면 생산/오더 계획에 반영할 수 있도록 하겠습니다.</p>
+<p>&nbsp;</p>
+<p>&nbsp; 감사합니다.</p>
+<p>&nbsp;</p>
+<p><span style="background-color:#DF9299"><strong>[※ 품번이 나눠 지면서 우먼스(</strong></span><span style="background-color:#DF9299; font-size:inherit"><strong>WA2604JK72) 품번은 사이즈 진행이 축소(S,M,L,XL -&gt; S,M 진행) 되었습니다.&nbsp;</strong></span></p>
+<p><span style="background-color:#DF9299; font-size:inherit"><strong>업무에 참고 바랍니다.]</strong></span></p>
+
+
+## 📝 [신민석] 2026-07-02 16:16
+<p><at id="0">기획팀</at></p>
+<p>&nbsp;</p>
+<p>다이마루 리오더 시 제품 리드타임 첨부 드리니 업무에 참고 부탁 드립니다.</p><attachment id="30020d65-bda0-48c8-975b-e37edea55417"></attachment>
+
+### 💬 댓글
+- **[변창현]** 2026-07-07 15:09
+  <p><at id="0">소싱팀</at>&nbsp;안녕하세요!</p>
+<p>26FW 뉴베이직 아이템 추가</p>
+<p>금주 중으로 가능하실지 확인 부탁드립니다.</p>
+
+- **[변창현]** 2026-07-02 18:33
+  <p><at id="0">영업기획팀</at>&nbsp;안녕하세요</p>
+<p>&nbsp;</p>
+<p>26FW 리오더 진행 시 리드타임입니다.</p>
+<p>해당 파일에 뉴베이직 아이템도 업데이트 예정이라고 합니다.</p>
+
+
+## 📝 [변창현] 2026-06-23 10:07
+<p style="margin-left:0">안녕하세요</p>
+<p style="margin-left:0">어패럴 기획팀 변창현입니다.</p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0"><strong>26FW 워싱물 스웻류 및 뒤판 그래픽 후드집업 진행 건이 있어 공유드립니다. </strong><at id="0">와키윌리</at>&nbsp;<at id="1">QR</at>&nbsp;<at id="2">대응</at>&nbsp;<at id="3">체계</at></p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0">26FW 발주 금액 증량 및 필요 룸으로 인하여 진행되는 점 참고해 주셔서</p>
+<p style="margin-left:0">협조 부탁드리겠습니다.</p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0"><img src="https://graph.microsoft.com/beta/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1782176824607/hostedContents/aWQ9eF8wLXNrci1kNC1hOWU4NTQzOWIxNTg1ODc5NDM1ZGNiNGJkOGUyZjIxMSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC1hOWU4NTQzOWIxNTg1ODc5NDM1ZGNiNGJkOGUyZjIxMS92aWV3cy9pbWdv/$value" width="583.8235294117648" height="250" alt="이미지" itemid="0-skr-d4-a9e85439b1585879435dcb4bd8e2f211"></p>
+<p style="margin-left:0"><a href="https://barrelsco.sharepoint.com/:x:/r/sites/bcave_wa_qr/Shared%20Documents/26FW%20QR/26FW%20%EC%99%80%ED%82%A4%EC%9C%8C%EB%A6%AC%20QR%EA%B5%AC%EC%84%B1(SPOT,Reorder).xlsx?d=wada378380d8a4b41be3e067876c91d45&amp;csf=1&amp;web=1&amp;e=6EcZeg" itemtype="http://schema.skype.com/HyperLink/Files" rel="noreferrer noopener" title="https://barrelsco.sharepoint.com/:x:/r/sites/bcave_wa_qr/Shared%20Documents/26FW%20QR/26FW%20%EC%99%80%ED%82%A4%EC%9C%8C%EB%A6%AC%20QR%EA%B5%AC%EC%84%B1(SPOT,Reorder).xlsx?d=wada378380d8a4b41be3e067876c91d45&amp;csf=1&amp;web=1&amp;e=6EcZeg" target="_blank" itemid="ADA37838-0D8A-4B41-BE3E-067876C91D45">- 26FW QR 구성 파일 참고</a></p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0">TO. <at id="4">디자인실</at></p>
+<p style="margin-left:0">담당자 지정 부탁드립니다.</p>
+<p style="margin-left:0">디자인은 최대한 기존 디자인에서 활용하려고 합니다.</p>
+<p style="margin-left:0">ex) 워싱물 - 기존 뉴베이직 워싱물 디자인 활용</p>
+<p style="margin-left:0">&nbsp; &nbsp; &nbsp; 뒤판그래픽물 - 26FW 후드 집업 DROP 건 활용</p>
+<p style="margin-left:0">&nbsp;</p>
+<p style="margin-left:0">TO. <at id="5">소싱팀</at></p>
+<p style="margin-left:0">협력사 지정 부탁드립니다.</p>
+<p style="margin-left:0">워싱물은 협력사 원가 비딩도 진행 부탁드리겠습니다. EX) SDPK(워싱 특화 고려) / 다이마루 협력사</p>
+<p style="margin-left:0">필요 납기 및 발주 수량 등 해당 파일내 기재했습니다. (9월 내 입고)</p><attachment id="ADA37838-0D8A-4B41-BE3E-067876C91D45"></attachment>
+
+### 💬 댓글
+- **[박희현]** 2026-06-23 10:09
+  <p><at id="0">변창현</at>&nbsp;안녕하세요 대리님</p>
+<p>대략적인 도식화가 있는 앞작지 주시면 협력사 지정 후 어바웃 견적서 전달 드리겠습니다.</p>
+<p>SDPK 의 경우 다이마루 전문업체가 아니기에 가능하면 다이마루 협력사로 배정 예정입니다.</p>
+
+
+## 📝 [변창현] 2026-06-19 17:17
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">안녕하세요</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">어패럴 기획팀 변창현입니다.</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">&nbsp;</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px"><strong>26FW 기모 스웻 스타일 진행 건이 있어 공유드립니다.&nbsp;</strong><at id="0">기획팀</at>&nbsp;<at id="1">영업기획팀</at>&nbsp;<at id="2">글로벌팀</at>&nbsp;<at id="3">온라인팀</at>&nbsp;<at id="4">마케팅팀</at></p>
+<p><img src="https://graph.microsoft.com/beta/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1781857046086/hostedContents/aWQ9eF8wLXNrci1kMS1hODc5ODBlY2VjMDg0MjczOWMzZWMyMTJiZGU2OWYwNCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS1hODc5ODBlY2VjMDg0MjczOWMzZWMyMTJiZGU2OWYwNC92aWV3cy9pbWdv/$value" alt="이미지" width="437.636761487965" height="250" itemid="0-skr-d1-a87980ecec0842739c3ec212bde69f04"></p>
+<p>&nbsp;</p>
+<p style="margin-bottom:0px; margin-top:0px">26FW 상품MAP - 뉴오더 시트 참고 부탁드립니다.</p>
+<p style="margin-bottom:0px; margin-top:0px"><a href="https://barrelsco.sharepoint.com/:x:/s/MD616/IQBiHJI35HdvQ4pvml1Z5WPWARdFRt9u9n6hWPZk78K5esU?e=QMNkEk" itemtype="http://schema.skype.com/HyperLink/Files" rel="noreferrer noopener" title="https://barrelsco.sharepoint.com/:x:/s/MD616/IQBiHJI35HdvQ4pvml1Z5WPWARdFRt9u9n6hWPZk78K5esU?e=QMNkEk" target="_blank" itemid="37921C62-77E4-436F-8A6F-9A5D59E563D6">★26FW 아이템별 상품MAP.xlsx</a></p>
+<p style="margin-bottom:0px; margin-top:0px">&nbsp;</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px"><strong>TO.&nbsp;</strong><at id="5">소싱팀</at></p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">기존 9월 3주차 오프라인 출고 딜리버리 일정입니다.</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">늦어도 9월 말 입고 기준으로 작업지시서 및 PO 불출 데드라인 확인 부탁드립니다.</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">&nbsp;</p>
+<p><img src="https://graph.microsoft.com/beta/teams/0b15045d-7bd2-42e0-a3a9-b2c87e21e480/channels/19:e880ab5581774ca8b78acc12454a2246@thread.tacv2/messages/1781857046086/hostedContents/aWQ9eF8wLXNrci1kNC03MDFlMDBhN2MwMzcxMGU4YjcwYjI0ODU4ZjYyZjNlMSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC03MDFlMDBhN2MwMzcxMGU4YjcwYjI0ODU4ZjYyZjNlMS92aWV3cy9pbWdv/$value" alt="이미지" width="451" height="239" itemid="0-skr-d4-701e00a7c03710e8b70b24858f62f3e1"></p>
+<p>&nbsp;</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">&nbsp;</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">기모 털빠짐 이슈 관련하여, 소재 퀄리티 고려해 주셔서 협력사 지정 부탁드립니다.</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px"><strong>CC.&nbsp;</strong><at id="6">김나연</at></p>
+<p>&nbsp;과장님 퀄리티 확인 부탁드립니다.</p>
+<p>&nbsp;</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">&nbsp;</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px"><strong>TO.&nbsp;</strong><at id="7">디자인실</at></p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">기모스웻류 담당자 지정 부탁드립니다.</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">&nbsp;</p><attachment id="37921C62-77E4-436F-8A6F-9A5D59E563D6"></attachment>
+
+### 💬 댓글
+- **[한병현]** 2026-06-23 09:37
+  <p><at id="0">26FW</at>&nbsp;<at id="1">QR</at>&nbsp;연관부서에서 체크 하신걸로 알고 진행 하겠습니다.</p>
+
+- **[한병현]** 2026-06-23 09:37
+
+
+---
+
+# Source: teams 채팅 데이터/Teams - 기획+디자인+소싱 - 2026-09-07 - 230019.md
+
+- bytes: 13222
+- sha256: 66ae8121ad5624533fbfc19c096c6b1b3feaacdb9d6bdc48e44dbd9de47a631e
+
+---
+type: teams-chat
+source: Microsoft Teams
+channel: 기획+디자인+소싱
+clipped: 2026-09-07
+platform: Microsoft Teams
+tags:
+  - teams
+  - auto-backup
+---
+
+# 기획+디자인+소싱
+
+> 백업일: 2026-09-07
+> 자동 백업 by Power Automate
+
+---
+
+
+**[배용준]** — [2026-09-07 17:42]
+
+[<p>안녕하세요 대리님</p>
+<p>넵넵&nbsp;</p>]
+
+---
+
+**[변창현]** — [2026-09-07 17:41]
+
+[<p><at id="0">배용준</at>&nbsp;안녕하세요</p>
+<p><strong>WA2701LT12 </strong>SKU별 원가 이슈로</p>
+<p>SKU별 판가 조정으로 <strong>품번 분리</strong>하고자 합니다.</p>
+<p>&nbsp;</p>
+<p>LT17 TC 건 추가로 작지 발행 부탁드립니다.</p>
+<p>&nbsp;</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:e25961c823814a7b900bbebce241b53d@thread.v2/messages/1788770488968/hostedContents/aWQ9eF8wLXNrci1kNC03MGQ4ZWM3MzViYTA5MzE0Y2ZiOGE0Nzg1ZjZlOWJjMix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC03MGQ4ZWM3MzViYTA5MzE0Y2ZiOGE0Nzg1ZjZlOWJjMi92aWV3cy9pbWdv/$value" width="64.5506419400856" height="250" alt="이미지" itemid="0-skr-d4-70d8ec735ba09314cfb8a4785f6e9bc2"></p>]
+
+---
+
+**[황다울]** — [2026-09-07 16:52]
+
+[<p>최종 QC 파일 경로 전달드립니다. &nbsp;공유파일은 리뷰 전일 퇴근전 업데이트 진행중입니다.</p>
+<p>&nbsp;</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:e25961c823814a7b900bbebce241b53d@thread.v2/messages/1788767576222/hostedContents/aWQ9eF8wLWNrci1kMS0wZmJhMmVlMTI4ODFiZTE0OGI0MDQ1NmQ5OTBmYjg2Zix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLWNrci1kMS0wZmJhMmVlMTI4ODFiZTE0OGI0MDQ1NmQ5OTBmYjg2Zi92aWV3cy9pbWdv/$value" width="629.3363499245852" height="250" alt="이미지" itemid="0-ckr-d1-0fba2ee12881be148b40456d990fb86f"></p>
+<p>&nbsp;</p>]
+
+---
+
+**[김연희]** — [2026-09-07 15:22]
+
+[<p>안녕하세요, 과장님. 창현대리님 회의중으로 제가 대신 회신드립니다. 이번에 팀즈 채널에 올려드려 달라고 말씀드리는 거는,&nbsp;</p>
+<ol>
+<li>원드라이브 파일의 문제인지 확인했을 때 업데이트 안되어 있는 부분들이 여러번 있어서, 스케줄 확인할 때 어려움이 있었습니다.</li><li>전체 소통 채널을 TEAMS GTM 체계로 통일 (이부분은 부장님의 지속적인 지시사항입니다.)</li></ol>
+<p>위 두 가지 이유로, 기획과 소싱에서 QC 스케줄을 사전확인 하고, 함께 참여해가기 위함이니, TEAMS 채널에 업로드를 부탁 드리겠습니다.</p>
+<p>양식은 그냥 게시물에 캡쳐본을 업로드 해주셔도 되고, 올려주신 PDF 를 그냥 올려주셔도 상관없습니다.&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>]
+
+---
+
+**[황다울]** — [2026-09-07 15:14]
+
+[<p>안녕하세요 창현대리님, 샘플 리뷰일정 공유방식 전달드립니다.</p>
+<p>공유파일은 리뷰 전일 퇴근전 업데이트 진행중입니다.</p>
+<p>&nbsp;</p>
+<p>우먼스 - D:\OneDrive - (주)배럴즈&gt;와릿이즌&gt;1.와릿이즌&gt;1. 디자인&gt;@우먼악세디자인팀&gt;QC리스트(PDF파일)</p>
+<p>유니 - D:\OneDrive - (주)배럴즈&gt;와릿이즌&gt;1.와릿이즌&gt;1. 디자인&gt;@UNI 어패럴 디자인팀&gt;QC리스트(PDF파일)</p>
+<p>&nbsp;</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:e25961c823814a7b900bbebce241b53d@thread.v2/messages/1788761656528/hostedContents/aWQ9eF8wLXNrci1kMi1kNzVlNTMyNWNhZGU5M2RiNDYyYmM3NTNhYmRhNTJlNSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMi1kNzVlNTMyNWNhZGU5M2RiNDYyYmM3NTNhYmRhNTJlNS92aWV3cy9pbWdv/$value" width="356.042654028436" height="250" alt="이미지" itemid="0-skr-d2-d75e5325cade93db462bc753abda52e5"><img src="https://graph.microsoft.com/beta/chats/19:e25961c823814a7b900bbebce241b53d@thread.v2/messages/1788761656528/hostedContents/aWQ9eF8wLWNrci1kMS0xZDQ3NzI1NTUwODMxZmFkNjhjZWQ2MTZjNDI5ZjAyYix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLWNrci1kMS0xZDQ3NzI1NTUwODMxZmFkNjhjZWQ2MTZjNDI5ZjAyYi92aWV3cy9pbWdv/$value" width="354.7666335650447" height="250" alt="이미지" itemid="0-ckr-d1-1d47725550831fad68ced616c429f02b"></p>]
+
+---
+
+**[변창현]** — [2026-09-07 11:47]
+
+[<p>안녕하세요&nbsp;</p>
+<p>TO. 디자인실</p>
+<p><at id="0">모든 사용자</at>&nbsp;CC. 기획팀, 소싱팀</p>
+<p>&nbsp;</p>
+<p>디자인실에서 공유해주시는 샘플 리뷰 일정 관련해서,</p>
+<p>채널 일원화 및 아카이빙 목적으로 TEAMS 채널로 통합하려고 합니다.</p>
+<p>&nbsp;</p>
+<p>업데이트는 리뷰 전일 공유해주시면 확인 후에 리뷰 참석하려고 합니다.</p>
+<p>&nbsp;</p>
+<p>전자필기장 (ONE NOTE)이 새로운 채널 개설 시에도 연동이 가능해서 선택했고,</p>
+<p>다른 의견 있으시면 주셔도 좋습니다!</p>
+<p>&nbsp;</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:e25961c823814a7b900bbebce241b53d@thread.v2/messages/1788749264564/hostedContents/aWQ9eF8wLXNrci1kMS1hZTA0ODIxOTY1MDY3YWQ0ZDk0ZjhhYmYxZmYyMmYyYix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS1hZTA0ODIxOTY1MDY3YWQ0ZDk0ZjhhYmYxZmYyMmYyYi92aWV3cy9pbWdv/$value" width="499.72098214285717" height="250" alt="이미지" itemid="0-skr-d1-ae04821965067ad4d94f8abf1ff22f2b"></p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:e25961c823814a7b900bbebce241b53d@thread.v2/messages/1788749264564/hostedContents/aWQ9eF8wLXNrci1kNC00MjRhMjQ4NzkxZmI4OThmYTcyZWMyZGYwNTA0OTdiNix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC00MjRhMjQ4NzkxZmI4OThmYTcyZWMyZGYwNTA0OTdiNi92aWV3cy9pbWdv/$value" width="500" height="250" alt="이미지" itemid="0-skr-d4-424a248791fb898fa72ec2df050497b6"></p>]
+
+---
+
+**[조장희]** — [2026-09-07 11:19]
+
+[<p>안녕하세요 조장희 입니다 앞으로 잘 부탈 드립니다.&nbsp;</p>]
+
+---
+
+**[박희현]** — [2026-09-07 11:17]
+
+[<p>안녕하세요</p>
+<p>소싱팀 신규 입사자 조장희 과장님 초대하였습니다.</p>]
+
+---
+
+**[]** — [2026-09-07 11:17]
+
+[<systemEventMessage/>]
+
+---
+
+**[신민석]** — [2026-09-03 13:53]
+
+[<p>수량 100장 소량이라 기존 진행하던 SDPK로 진행하도록 하겠습니다.</p>
+<attachment id="1788402058650"></attachment>]
+
+---
+
+**[정경화]** — [2026-09-03 12:00]
+
+[<p>유니 1차 소재 시트 &nbsp;공유드립니다.</p><attachment id="033ebec0-7e9d-47c9-a747-634c9d5d9d49"></attachment>]
+
+---
+
+**[신민석]** — [2026-09-03 11:23]
+
+[<p>해당 건은 SDPK 또는 아이제이 비교 견적 후 알려드리겠습니다. <at id="0">김호진</at>&nbsp;<at id="1">진승현</at>&nbsp;소재 확인 및 추후 각각 협력사 가격 확인해주시고 우등한 곳으로 &nbsp;배정해주세요.&nbsp;</p>]
+
+---
+
+**[변창현]** — [2026-09-03 11:20]
+
+[<p>안녕하세요</p>
+<p>27SS 유니 스웻 팬츠 룸 추가되어 품번 공유드립니다. (WA2701PT19)</p>
+<p>&nbsp;</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:e25961c823814a7b900bbebce241b53d@thread.v2/messages/1788402058650/hostedContents/aWQ9eF8wLWNrci1kMS05NTljMGEyNjRmYzMyMjM4Mzc3ZjFjZDEzNTljNTk2MSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLWNrci1kMS05NTljMGEyNjRmYzMyMjM4Mzc3ZjFjZDEzNTljNTk2MS92aWV3cy9pbWdv/$value" width="114.5655877342419" height="250" alt="이미지" itemid="0-ckr-d1-959c0a264fc32238377f1cd1359c5961"></p>
+<p>&nbsp;</p>
+<p>TO.&nbsp;<at id="0">신민석</at>&nbsp;<at id="1">박희현</at>&nbsp;<at id="2">진승현</at>&nbsp;<at id="3">유지원</at>&nbsp;<at id="4">김호진</at></p>
+<p>&nbsp;</p>
+<p>소재 - 데님라이크 워싱 + 니트 아플리케 스타일로 업체 배분 부탁드리겠습니다!</p>
+<p>&nbsp;</p>
+<p>CC.&nbsp;<at id="5">정대건</at>&nbsp;<at id="6">성현진</at></p>]
+
+---
+
+**[정경화]** — [2026-09-01 18:21]
+
+[<p>우먼1차 소재시트 먼저 공유드립니다. &nbsp;유니1차도 완성되는데로 추후에 공유 예정입니다</p>]
+
+---
+
+**[정경화]** — [2026-09-01 18:20]
+
+[<attachment id="b899fc81-6228-4744-b2c0-298b5409967a"></attachment>]
+
+---
+
+**[변창현]** — [2026-09-01 17:19]
+
+[<attachment id="1788235935421"></attachment>
+<p><at id="0">신민석</at>&nbsp;팀장님</p>
+<p>WA2702ST01,ST02은</p>
+<p>&nbsp;</p>
+<p>WA2602ST01 풀스펙과 동일하게 봐주시면 됩니다!</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:e25961c823814a7b900bbebce241b53d@thread.v2/messages/1788250791908/hostedContents/aWQ9eF8wLXNrci1kMS0yYjQ5NzllMzZkODM4N2U0NzY4NDQ0YjE2NzU0MGNjNCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS0yYjQ5NzllMzZkODM4N2U0NzY4NDQ0YjE2NzU0MGNjNC92aWV3cy9pbWdv/$value" width="413.38028169014086" height="250" alt="이미지" itemid="0-skr-d1-2b4979e36d8387e4768444b167540cc4"></p>
+<p>&nbsp;</p>
+<p>컬러별 수량은 아이템별 상품 MAP 참고해 주시면 됩니다</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:e25961c823814a7b900bbebce241b53d@thread.v2/messages/1788250791908/hostedContents/aWQ9eF8wLXNrci1kNC0xOTZhYjhlMDZmNDYyNzdjYjJmOTRhNjJmMjdiNGFhZix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC0xOTZhYjhlMDZmNDYyNzdjYjJmOTRhNjJmMjdiNGFhZi92aWV3cy9pbWdv/$value" width="297.49568221070814" height="250" alt="이미지" itemid="0-skr-d4-196ab8e06f46277cb2f94a62f27b4aaf"></p>]
+
+---
+
+**[신민석]** — [2026-09-01 13:12]
+
+[<p>타잇한 시점이고 1월말~2월초 가능할것같습니다. 어소트 비율이라도 확인해야될것같고 협력사랑 세부스케쥴 조율해보고 업데이트드리겠습니다.&nbsp;&nbsp;스케치+스펙 작지 받아볼수있나요?</p>]
+
+---
+
+**[변창현]** — [2026-09-01 13:07]
+
+[<attachment id="1788226941679"></attachment>
+<p>팀장님 BT 불출 먼저 진행하고,</p>
+<p>메인 작지는 기존 일정대로 9/14~로 진행하면 일정은 괜찮을까요?</p>
+<p>(BT 컬러 변경 없는 기준)</p>]
+
+---
+
+**[신민석]** — [2026-09-01 10:42]
+
+[<p>1월말까지라면 시도는 해보겠습니다만, 이번주 BT불출부터 이루어져야 할 것 같습니다.</p>]
+
+---
+
+**[성현진]** — [2026-09-01 10:40]
+
+[<p>1월말로했을때 마지막 투입시기 한번 부탁드립니다..!</p>]
+
+---
+
+**[성현진]** — [2026-09-01 10:40]
+
+[<p>&nbsp;1월말 입고기준은으로 달리면 안될까요..?&nbsp;</p>]
+
+---
+
+**[신민석]** — [2026-09-01 10:39]
+
+[<p>미얀마 투입으로 인해 원가 절감 하려고했는데 어렵네요.</p>]
+
+---
+
+**[신민석]** — [2026-09-01 10:39]
+
+[<p><img src="https://graph.microsoft.com/beta/chats/19:e25961c823814a7b900bbebce241b53d@thread.v2/messages/1788226748819/hostedContents/aWQ9eF8wLXNrci1kMy03ZDZlNjA0ZGYxOGQ1OWJhMGQ4OTQ5YmUwZWE1M2JkMCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMy03ZDZlNjA0ZGYxOGQ1OWJhMGQ4OTQ5YmUwZWE1M2JkMC92aWV3cy9pbWdv/$value" width="180.78175895765472" height="250" alt="이미지" itemid="0-skr-d3-7d6e604df18d59ba0d8949be0ea53bd0">현재 기준으로는 WA2702ST01은 벌써 2주 늦은 시점입니다.</p>]
+
+---
+
+**[변창현]** — [2026-09-01 10:15]
+
+[<attachment id="1788224524915"></attachment>
+<p>네 실장님 CAD 미팅만 이번주로 말씀드린 게 맞습니다</p>
+<p>&nbsp;</p>
+<p><at id="0">신민석</at>&nbsp;팀장님 안녕하세요!</p>
+<p>해당 건 3국 진행으로 선 투입 요청 주신 스타일인데</p>
+<p>&nbsp;</p>
+<p>메인 작업지시서 투입 데드라인 확인 부탁드립니다!</p>]
+
+---
+
+**[우혜원]** — [2026-09-01 10:02]
+
+[<p>목요일이면 이번주 말씀하시는 건가요? 일부만 끊어서 진행하는건 어렵습니다 메인작지 투입일정 확인부탁드려요</p>]
+
+---
+
+**[정대건]** — [2026-09-01 10:01]
+
+[]
+
+---
+
+**[변창현]** — [2026-09-01 09:59]
+
+[<p><at id="0">정대건</at>&nbsp;대리님 안녕하세요</p>
+<p>&nbsp;</p>
+<p>유니 - 27SS 추가 스타일 中 급 투입 건 3스타일은</p>
+<p>목요일에 먼저 CAD 미팅 진행하는 걸로 일정 확인 부탁드립니다!</p>
+<p>&nbsp;</p>
+<p><at id="1">한병현</at></p>
+<img src="https://graph.microsoft.com/beta/chats/19:e25961c823814a7b900bbebce241b53d@thread.v2/messages/1788224376862/hostedContents/aWQ9eF8wLWNrci1kMS02MTVhZGNiNzg1Y2JiYmRjOGNkMDdiMmNjOWQ0NmU0Nix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLWNrci1kMS02MTVhZGNiNzg1Y2JiYmRjOGNkMDdiMmNjOWQ0NmU0Ni92aWV3cy9pbWdv/$value" alt="이미지" width="118.42105263157895" height="250" itemid="0-ckr-d1-615adcb785cbbbdc8cd07b2cc9d46e46"><img src="https://graph.microsoft.com/beta/chats/19:e25961c823814a7b900bbebce241b53d@thread.v2/messages/1788224376862/hostedContents/aWQ9eF8wLXNrci1kMy1kNzBmZTAwNjQ4ZTdlZDE1ODc2ZjUxZmZhNTU1ODM4Yix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMy1kNzBmZTAwNjQ4ZTdlZDE1ODc2ZjUxZmZhNTU1ODM4Yi92aWV3cy9pbWdv/$value" alt="이미지" width="277.72963604852686" height="250" itemid="0-skr-d3-d70fe00648e7ed15876f51ffa555838b">
+<p>&nbsp;</p>]
+
+---
+
+
+---
+
+# Source: teams 채팅 데이터/Teams - 와키 기획팀 실무 - 2026-09-07 - 080021.md
+
+- bytes: 5587
+- sha256: 74e9fb8e08d92d3eeaf4b7e6018b09b6ec5f609df81211087afb9676ec5ddf23
+
+---
+type: teams-chat
+source: Microsoft Teams
+channel: 와키 기획팀 실무
+clipped: 2026-09-07
+platform: Microsoft Teams
+tags:
+  - teams
+  - auto-backup
+---
+
+# 와키 기획팀 실무
+
+> 백업일: 2026-09-07
+> 자동 백업 by Power Automate
+
+---
+
+
+**[김연희]** — [2026-09-07 18:57]
+
+[<p>조심히 들어가세염~~~</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:57]
+
+[<p>ㅋㅋㅋㅋㅋㅋㅋㅋㅋ뛰쳐나가고 싶네요</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:56]
+
+[<p>후..</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:56]
+
+[<p>막.. 하.. 막 ... 그랬어요&nbsp;</p>]
+
+---
+
+**[한병현]** — [2026-09-07 18:56]
+
+[열받으니까 4분 먼저 퇴근해]
+
+---
+
+**[김연희]** — [2026-09-07 18:56]
+
+[<p>근데 또 막 가격검토 하겠다니까</p>]
+
+---
+
+**[한병현]** — [2026-09-07 18:56]
+
+[모지리한테 감정소모 하지 말자구요]
+
+---
+
+**[김연희]** — [2026-09-07 18:56]
+
+[<p>그러게말이에요</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:55]
+
+[<p>ㅋㅋㅋㅋㅋㅋㅋㅋㅋ....</p>]
+
+---
+
+**[한병현]** — [2026-09-07 18:55]
+
+[콧털쉐끼]
+
+---
+
+**[한병현]** — [2026-09-07 18:55]
+
+[거기랑도 비교하지]
+
+---
+
+**[김연희]** — [2026-09-07 18:55]
+
+[<p>줏대없이 막 흔들려</p>]
+
+---
+
+**[한병현]** — [2026-09-07 18:55]
+
+[349인가 그런데]
+
+---
+
+**[한병현]** — [2026-09-07 18:55]
+
+[살로몬 품절난 경량패딩도]
+
+---
+
+**[김연희]** — [2026-09-07 18:55]
+
+[<p>막.. 가격이 막</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:55]
+
+[<p>갈대야 갈대</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:55]
+
+[<p>대표님도 가격 119 얘기했던거를 코이세이오꺼 보고서 우리꺼 싸다하니까..&nbsp;</p>]
+
+---
+
+**[한병현]** — [2026-09-07 18:55]
+
+[병신새끼한테 왜 화내고 그래요…]
+
+---
+
+**[김연희]** — [2026-09-07 18:54]
+
+[<p>아니에요 그냥 순간 욱해서 그랬어염</p>]
+
+---
+
+**[한병현]** — [2026-09-07 18:54]
+
+[무슨 일이지]
+
+---
+
+**[김연희]** — [2026-09-07 18:38]
+
+[<p>하..........진짜..</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:38]
+
+[<p>뭐.. 저런..</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:38]
+
+[<p>능력부족으로 원가율 못맞추는거를</p>]
+
+---
+
+**[양윤선]** — [2026-09-07 18:36]
+
+[<p>그러게여..</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:36]
+
+[<p>이해를 할수가 없네</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:36]
+
+[<p>하.. 진짜</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:36]
+
+[<p>왜 조닝은 있고</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:36]
+
+[<p>왜 브랜드를 나누냐 ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:36]
+
+[<p>브랜드 가격대는 무시하고 그냥 다른데 가격이랑 비교해서 다 따라할거면</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:36]
+
+[<p>왜 저러는거야 진짜</p>]
+
+---
+
+**[양윤선]** — [2026-09-07 18:35]
+
+[<p>저희는 심지어 일부러 낮춘건데.. 대표님 지시라고 해서 ㅠㅎㅎ</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:34]
+
+[<p>명품은 백만원인데 우리는왜 20만원이냐고 하지 그냥?</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:34]
+
+[<p>왜 명품이랑 가격비교 하지</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:34]
+
+[<p>비교를 하는게 맞아?..</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:34]
+
+[<p>코이세이오랑 가격 레인지 자체가 다른데</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:33]
+
+[<p><img src="https://graph.microsoft.com/beta/chats/19:9d3be72e8eda409b8564c7f26b417c16@thread.v2/messages/1788773639026/hostedContents/aWQ9eF8wLXNrci1kNC1mYjQ4YmU5ZWE0ZDc4NDFlYzM2M2VkN2I4ZGQ0MTIyNyx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC1mYjQ4YmU5ZWE0ZDc4NDFlYzM2M2VkN2I4ZGQ0MTIyNy92aWV3cy9pbWdv/$value" width="1091" height="162" alt="이미지" itemid="0-skr-d4-fb48be9ea4d7841ec363ed7b8dd41227"></p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:33]
+
+[<p><img src="https://graph.microsoft.com/beta/chats/19:9d3be72e8eda409b8564c7f26b417c16@thread.v2/messages/1788773629220/hostedContents/aWQ9eF8wLXNrci1kMS1iZDc2MWIyMWYzYjFiYTViNjgwZTFiMjgzNDRmNTk2OSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS1iZDc2MWIyMWYzYjFiYTViNjgwZTFiMjgzNDRmNTk2OS92aWV3cy9pbWdv/$value" width="468.32191780821915" height="250" alt="이미지" itemid="0-skr-d1-bd761b21f3b1ba5b680e1b28344f5969"></p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:33]
+
+[<p>우리꺼 너무 싼거아니냐고</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:33]
+
+[<p>코이세이오 패딩 가격보고서</p>]
+
+---
+
+**[김연희]** — [2026-09-07 18:33]
+
+[<p>아니..</p>]
+
+---
+
+**[김연희]** — [2026-09-07 17:30]
+
+[<p>ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ</p>]
+
+---
+
+**[한병현]** — [2026-09-07 17:30]
+
+[<attachment id="d0002928-ff05-4dbf-b1cb-311141278e9b"></attachment>]
+
+---
+
+**[한병현]** — [2026-09-07 17:29]
+
+[<p>나도 질 수 없지</p>]
+
+---
+
+**[한병현]** — [2026-09-07 17:29]
+
+[<p>그럼</p>]
+
+---
+
+**[김연희]** — [2026-09-07 17:18]
+
+[<p>잘못올렷따</p>]
+
+---
+
+**[김연희]** — [2026-09-07 17:18]
+
+[<p>주간리뷰 드립니다.</p><attachment id="00a1d69f-71e4-4790-b123-6a2dd4e054df"></attachment>]
+
+---
+
+**[김연희]** — [2026-09-07 17:18]
+
+[<p>아</p>]
+
+---
+
+**[한병현]** — [2026-09-07 17:17]
+
+[<p>먼저 올려요 ㅋㅋ</p>]
+
+---
+
+**[한병현]** — [2026-09-07 17:17]
+
+[<p>왜용</p>]
+
+---
+
+**[김연희]** — [2026-09-07 17:15]
+
+[<p>과장님 올리면 올려야지..</p>]
+
+---
+
+
+---
+
+# Source: teams 채팅 데이터/Teams - 와키 어패럴 기획팀 - 2026-09-07 - 080057.md
+
+- bytes: 14534
+- sha256: ad93587aa22b9d6ab3fce98fa5b309b90283eea469180463b502b72fd5646ab7
+
+---
+type: teams-chat
+source: Microsoft Teams
+channel: 와키 어패럴 기획팀
+clipped: 2026-09-07
+platform: Microsoft Teams
+tags:
+  - teams
+  - auto-backup
+---
+
+# 와키 어패럴 기획팀
+
+> 백업일: 2026-09-07
+> 자동 백업 by Power Automate
+
+---
+
+
+**[성현진]** — [2026-09-07 17:36]
+
+[<p>그러니까여... 놀랍네여...</p>]
+
+---
+
+**[김연희]** — [2026-09-07 17:34]
+
+[<p>와.. 거긴.. 들어오면 나가는 곳인가봐요</p>]
+
+---
+
+**[성현진]** — [2026-09-07 17:33]
+
+[<p>참고하셔요...</p>]
+
+---
+
+**[성현진]** — [2026-09-07 17:33]
+
+[<p>그 김솔이씨도 10월2일까지만한데요...</p>]
+
+---
+
+**[성현진]** — [2026-09-07 17:31]
+
+[<p>그녀.. 임팩트가잇네..</p>]
+
+---
+
+**[성현진]** — [2026-09-07 17:31]
+
+[<p>다들 똑같이느꼈군여</p>]
+
+---
+
+**[한병현]** — [2026-09-07 17:31]
+
+[<p>ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ</p>]
+
+---
+
+**[김연희]** — [2026-09-07 17:31]
+
+[<p>ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ</p>]
+
+---
+
+**[성현진]** — [2026-09-07 17:30]
+
+[<p>칼같으셧네</p>]
+
+---
+
+**[성현진]** — [2026-09-07 17:30]
+
+[<p>저도 약간 mang으로봣는데</p>]
+
+---
+
+**[성현진]** — [2026-09-07 17:30]
+
+[<p>그러게요..</p>]
+
+---
+
+**[한병현]** — [2026-09-07 17:30]
+
+[<p>생각보다 판단력이 좋네요</p>]
+
+---
+
+**[한병현]** — [2026-09-07 17:30]
+
+[<p>그렇게 안봤는데..</p>]
+
+---
+
+**[성현진]** — [2026-09-07 17:30]
+
+[<p>당황스럽</p>]
+
+---
+
+**[성현진]** — [2026-09-07 17:30]
+
+[<p>ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ몰라여.. 그냥 임실장님과 계속 소통해야할거같아여..</p>]
+
+---
+
+**[김연희]** — [2026-09-07 17:29]
+
+[<p>그럼 또 다시.. 누구랑.. 소통을..</p>]
+
+---
+
+**[양윤선]** — [2026-09-07 17:29]
+
+[<p>헉,,</p>]
+
+---
+
+**[김연희]** — [2026-09-07 17:29]
+
+[<p>빠른 상황판단이신가.. ...</p>]
+
+---
+
+**[김연희]** — [2026-09-07 17:29]
+
+[<p>와우..</p>]
+
+---
+
+**[성현진]** — [2026-09-07 17:29]
+
+[<p>지난주에온 온라인팀 팀장 퇴사하셨데여;;</p>]
+
+---
+
+**[한병현]** — [2026-09-07 17:22]
+
+[<p>주간리뷰 유니 입니다.</p><attachment id="69e35f97-0b96-4ee5-bb85-9598f1eab08f"></attachment>]
+
+---
+
+**[김연희]** — [2026-09-07 17:18]
+
+[<p>주간리뷰 드립니다.</p><attachment id="10de700a-3e08-4c52-a2aa-71808b02ee64"></attachment>]
+
+---
+
+**[변창현]** — [2026-09-07 17:10]
+
+[<p><at id="0">성현진</at>&nbsp;팀장님</p>
+<p>27SS 국내 수량은 현재 발주리스트 기준으로 확정으로 봐도 될까요?</p>
+<p>아니면 사업부장님 결재 때 변동 가능성 있을까요?</p>]
+
+---
+
+**[양윤선]** — [2026-09-07 13:31]
+
+[<p>26SS/FW 판매추이 업데이트 완료됐습니다.</p>]
+
+---
+
+**[김연희]** — [2026-09-07 13:24]
+
+[<p>매장형태별판매 공유합니다.</p><attachment id="dad935af-59b3-4df0-b533-c848067673fe"></attachment>]
+
+---
+
+**[성현진]** — [2026-09-07 13:23]
+
+[<attachment id="1788754981607"></attachment>
+<p>넵 알겠습니다! &nbsp;감사합니다~! 샘플나오면 한번보여주세요:)</p>]
+
+---
+
+**[한병현]** — [2026-09-07 13:23]
+
+[<p><at id="0">성현진</at>&nbsp;소싱팀에서 금주까지 업체 견적 비딩 예정 이라고 합니다.&nbsp;</p>
+<p>기획쪽에서는 창현대리가 따로 SDPK에 샘플투입 해 놓은 상황이며, 샘플도 이번주 금요일안에는 받을 수 있을 것 같습니다.</p>]
+
+---
+
+**[성현진]** — [2026-09-07 13:15]
+
+[<p><at id="0">한병현</at><at id="1">변창현</at>&nbsp;저희 피그먼트 2팩은 어떻게 진행되고있나요~?</p>]
+
+---
+
+**[양윤선]** — [2026-09-07 12:00]
+
+[<p>주간 RAW DATA 공유드립니다!</p><attachment id="b34843ac-036b-48f1-947a-87eb3eeec1a0"></attachment>]
+
+---
+
+**[성현진]** — [2026-09-07 11:55]
+
+[<p>과장님들,안녕하세요&nbsp;</p>
+<p>&nbsp;</p>
+<p>매주 여기 양식에 26FW / 26SS 맞게끔&nbsp;</p>
+<p>-각 라인별 시즌별 아이템 판매요약 &nbsp;</p>
+<p>-복종 잘팔린것 OR 현재 입고가안되서 안팔린것 복종 내용 요약</p>
+<p>(필요한것은 &nbsp;이슈사항에 주관적인 담당의견 / 그리고 잘팔린것이 있다면 어디서 잘팔렸는지 채널도 첨부해주세요)&nbsp;</p>
+<p>-담당의견 있으시면 파란색 글씨로 표시해주세용. ( 제가 전주에 한거라 보시면 알것같습니다)</p>
+<p>-라인별 베스트상품 ,&nbsp;</p>
+<p>&nbsp;</p>
+<p>더 추가사항잇으시면 남겨주셔도됩니다! 어패럴 전체 1,2 판매써머리/ 전체주간베스트 등은 &nbsp;제가넣겠습니다.&nbsp;</p>
+<p>&nbsp;</p>
+<p>앞으로 주간보고가 대표님보고가 되는바람에,, 제가 라인별/복종별로 세세하게 알아둬야할것같아서&nbsp;</p>
+<p>요청드립니다. &nbsp;감사합니다!&nbsp;</p>
+<p>&nbsp;</p><attachment id="b0f4190a-aaec-4688-85b5-b2f463d46812"></attachment>]
+
+---
+
+**[성현진]** — [2026-09-07 10:58]
+
+[<p>&nbsp;</p>
+<table>
+<tbody>
+<tr>
+<td><strong>팀</strong></td>
+<td><strong>월</strong></td>
+<td><strong>화</strong></td>
+<td><strong>수</strong></td>
+<td><strong>목</strong></td>
+<td><strong>금</strong></td>
+<td><strong>전체</strong></td>
+</tr>
+<tr>
+<td rowspan="6"><strong>어패럴</strong><br>
+<strong>기획팀</strong></td>
+<td><span style="font-size:inherit">10:00 스케줄 미팅</span></td>
+<td><span style="font-size:inherit">14:00 주간회의</span></td>
+<td><span style="font-size:inherit">1:30 월리뷰</span></td>
+<td><span style="font-size:inherit">14:00 27SS&nbsp; 추가디자인 캐드미팅</span></td>
+<td><span style="font-size:inherit">10:00 리더십교육</span></td>
+<td><span style="font-size:inherit">27SS 봄 메인 작지 결재 완료 /추가캐드 수량 FIX</span></td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td><span style="font-size:inherit">ㄴ 글로벌 PO수량 취합 후 전체완료</span></td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td><span style="font-size:inherit">26FW 원이콜라보 진행(~9월 中 확정완료)</span></td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td><span style="font-size:inherit">26FW 어패럴 네이밍 변경 완료</span></td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td><span style="font-size:inherit">26FW 예산 증액 컨펌 , 리오더 점검</span></td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td><span style="font-size:inherit">봄 작지 결재완료</span></td>
+<td><span style="font-size:inherit">26/ 27년도 발주금액 점검</span></td>
+</tr>
+</tbody>
+</table>
+<p>금주 스케쥴 입니다!&nbsp;</p>]
+
+---
+
+**[성현진]** — [2026-09-07 10:42]
+
+[<p>네네 알겠습니다~!&nbsp;</p>]
+
+---
+
+**[변창현]** — [2026-09-07 10:01]
+
+[<attachment id="1788315937633"></attachment>
+<p><at id="0">성현진</at>&nbsp;팀장님 안녕하세요!</p>
+<p>&nbsp;</p>
+<p>금일 스케줄 미팅 때&nbsp;</p>
+<p>2PACK 메인 작업지시서&nbsp;</p>
+<p>금주 불출 일정 확인 부탁드리겠습니다!</p>
+<p>&nbsp;</p>
+<p>당시 스케줄 상으로는 7월 말 작업지시서 불출 -&gt; 1월 초 입고로</p>
+<p>현재는 한달 지난 관계로 1월 말 예상 스케줄입니다.</p>]
+
+---
+
+**[성현진]** — [2026-09-04 19:02]
+
+[<p><img src="https://graph.microsoft.com/beta/chats/19:a0d50cea8601444ca3c3ff8669392bb7@thread.v2/messages/1788516120584/hostedContents/aWQ9eF8wLXNrci1kNC01ZjUzNzcwODQ0NzEwODU4OWI5YmY4ZTVmODAxY2YzMyx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC01ZjUzNzcwODQ0NzEwODU4OWI5YmY4ZTVmODAxY2YzMy92aWV3cy9pbWdv/$value" width="551.2907608695652" height="250" alt="이미지" itemid="0-skr-d4-5f537708447108589b9bf8e5f801cf33"></p>]
+
+---
+
+**[성현진]** — [2026-09-04 18:25]
+
+[<p><strong>26FW 네이밍 선정 아이디어</strong></p>
+<p>&nbsp;</p>
+<p><strong>1. 와플</strong></p>
+<p>: 뉴베이직 포함, 와플 디테일 들어간 스타일</p>
+<p>=&gt; WAFFY (와피) =&gt; <strong>와피</strong></p>
+<p>&nbsp;</p>
+<p><strong>2. 벨루어</strong></p>
+<p>: 벨루어 저지 아이템들</p>
+<p>=&gt; BUNNY (버니) =&gt; <strong>버니 벨루어</strong></p>
+<p><strong>=&gt; </strong>FUZZY(퍼지) =&gt; <strong>퍼지 벨루어</strong></p>
+<p><strong>=&gt; 소프트 벨벳 / 시어 벨벳</strong></p>
+<p>&nbsp;</p>
+<p><strong>3. 데님라이크</strong></p>
+<p>: 데님라이크 스웻 전 스타일</p>
+<p>=&gt; DENISH 너무 김</p>
+<p>=&gt; DENNY SWEAT (데니 스웻)</p>
+<p>=&gt; DENIM LIKE -&gt; <strong>LIKEY DENIM</strong> (거꾸로)</p>
+<p>=&gt;<strong> 올데이 데님&nbsp;</strong></p>
+<p>&nbsp;</p>
+<p><strong>4. 플리스</strong></p>
+<p>: 플리스류 전 스타일</p>
+<p>=&gt; TEDDY(테디) =&gt; <strong>테디 플리스</strong> (확정)&nbsp;</p>
+<p>=&gt; <strong>퍼지 플리스</strong></p>
+<p>&nbsp;</p>
+<p><strong>5. 패딩</strong></p>
+<p>: 다운 X, 폴리에스터 충전재</p>
+<p>=&gt; PUFFY (사업부 내 투표 1순위) =&gt; <strong>퍼피 패딩 </strong>(확정)</p>
+<p>&nbsp;</p>
+<p><strong>6. 우먼 에센셜</strong></p>
+<p>:릴리 베이직=&gt;<strong>ESSENTIC or B-LILLY</strong></p>
+<p><strong>=&gt; 베이비릴리 / 빅릴리의 다른버젼&nbsp;</strong></p>
+<p><strong>=&gt; 릴리에센셜&nbsp;</strong></p>
+<p>&nbsp;</p>]
+
+---
+
+**[변창현]** — [2026-09-04 18:21]
+
+[<attachment id="1788512244182"></attachment>
+<p>벨루어 "버니" 외에 "퍼지" 추가했습니다</p>]
+
+---
+
+**[성현진]** — [2026-09-04 18:13]
+
+[<p>아이디어 정리하느라 고생하셨구 월요일에 탕탕하시죠~!&nbsp;</p>]
+
+---
+
+**[성현진]** — [2026-09-04 18:13]
+
+[<p>데님시리즈는 저는 "올데이 데님 " 생각했습니당</p>]
+
+---
+
+**[성현진]** — [2026-09-04 18:12]
+
+[<p><img itemid="0-skr-d4-437fdddcbcfbf09af8625c8678ab81b0" src="https://graph.microsoft.com/beta/chats/19:a0d50cea8601444ca3c3ff8669392bb7@thread.v2/messages/1788513146025/hostedContents/aWQ9eF8wLXNrci1kNC00MzdmZGRkY2JjZmJmMDlhZjg2MjVjODY3OGFiODFiMCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC00MzdmZGRkY2JjZmJmMDlhZjg2MjVjODY3OGFiODFiMC92aWV3cy9pbWdv/$value" alt="이미지" width="145.3125" height="250"><img itemid="0-skr-d4-4b641c6c5df3c108b692a0cc2a2e4deb" src="https://graph.microsoft.com/beta/chats/19:a0d50cea8601444ca3c3ff8669392bb7@thread.v2/messages/1788513146025/hostedContents/aWQ9eF8wLXNrci1kNC00YjY0MWM2YzVkZjNjMTA4YjY5MmEwY2MyYTJlNGRlYix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC00YjY0MWM2YzVkZjNjMTA4YjY5MmEwY2MyYTJlNGRlYi92aWV3cy9pbWdv/$value" alt="이미지" width="151.5625" height="250"></p>
+<p>SS티셔츠네임으로 쓰면괜찮을것 같다고 저는 생각했구</p>]
+
+---
+
+**[성현진]** — [2026-09-04 18:06]
+
+[<div><img src="https://graph.microsoft.com/beta/chats/19:a0d50cea8601444ca3c3ff8669392bb7@thread.v2/messages/1788512804926/hostedContents/aWQ9LHR5cGU9MSx1cmw9aHR0cHM6Ly9rci1wcm9kLmFzeW5jZ3cudGVhbXMubWljcm9zb2Z0LmNvbS92MS9vYmplY3RzLzAtc2tyLWQxLWI4NjMwOTA2MDUxYTM1ZDZhYWNjOGM5NjBjNjcxMzI1L3ZpZXdzL2ltZ28=/$value" style="width:3024px; height:4032px"><br>
+<img src="https://graph.microsoft.com/beta/chats/19:a0d50cea8601444ca3c3ff8669392bb7@thread.v2/messages/1788512804926/hostedContents/aWQ9LHR5cGU9MSx1cmw9aHR0cHM6Ly9rci1wcm9kLmFzeW5jZ3cudGVhbXMubWljcm9zb2Z0LmNvbS92MS9vYmplY3RzLzAtc2tyLWQ0LWVkYjFkZDAxYzEyMTJhNjVhYWVlYWM2MDQ4OTVjZmI2L3ZpZXdzL2ltZ28=/$value" style="width:3024px; height:4032px"><br>
+<img src="https://graph.microsoft.com/beta/chats/19:a0d50cea8601444ca3c3ff8669392bb7@thread.v2/messages/1788512804926/hostedContents/aWQ9LHR5cGU9MSx1cmw9aHR0cHM6Ly9rci1wcm9kLmFzeW5jZ3cudGVhbXMubWljcm9zb2Z0LmNvbS92MS9vYmplY3RzLzAtc2tyLWQxLWU3MzYwMzkyMWMwMjUwMzA0Njk3ODlkYmI1NTdmNWQ3L3ZpZXdzL2ltZ28=/$value" style="width:3024px; height:4032px"></div>]
+
+---
+
+**[변창현]** — [2026-09-04 17:57]
+
+[<p><strong>26FW 네이밍 선정 아이디어</strong></p>
+<p>&nbsp;</p>
+<p><strong>1. 와플</strong></p>
+<p>: 뉴베이직 포함, 와플 디테일 들어간 스타일</p>
+<p>=&gt; WAFFY (와피) =&gt; <strong>와피</strong></p>
+<p>&nbsp;</p>
+<p><strong>2. 벨루어</strong></p>
+<p>: 벨루어 저지 아이템들</p>
+<p>=&gt; BUNNY (버니) =&gt; <strong>버니 벨루어</strong></p>
+<p><strong>==&gt; 너무 우먼즈 스러움 =&gt; </strong>FUZZY(퍼지) =&gt; <strong>퍼지 벨루어</strong></p>
+<p>&nbsp;</p>
+<p><strong>3. 데님라이크</strong></p>
+<p>: 데님라이크 스웻 전 스타일</p>
+<p>=&gt; DENISH 너무 김</p>
+<p>==&gt; DENNY SWEAT (데니 스웻)</p>
+<p>===&gt; DENIM LIKE -&gt; <strong>LIKEY DENIM</strong> (거꾸로)</p>
+<p>&nbsp;</p>
+<p><strong>4. 플리스</strong></p>
+<p>: 플리스류 전 스타일</p>
+<p>=&gt; TEDDY(테디) =&gt; <strong>테디 플리스</strong> (확정)</p>
+<p>&nbsp;</p>
+<p><strong>5. 패딩</strong></p>
+<p>: 다운 X, 폴리에스터 충전재</p>
+<p>=&gt; PUFFY (사업부 내 투표 1순위) =&gt; <strong>퍼피 패딩 </strong>(확정)</p>
+<p>&nbsp;</p>
+<p><strong>6. 우먼 에센셜</strong></p>
+<p>: ESSENTIC or B-LILLY</p>
+<p>=&gt; 릴리 베이직</p>]
+
+---
+
+**[성현진]** — [2026-09-04 16:46]
+
+[<div>저 가는데 길이너무막혀서 6시나 도착할거같아요!ㅠㅠ<br>
+팀분들끼리 미팅 먼저하시구 라인마다 그룹핑되는 스타일들 네이밍 아이디어 있으신거 1차적으로 정리만 부탁드립니다:) <br>
+재밌는 네이밍이 &nbsp;필요하다고 하시네요 ! 여러개 많이던져주세요! <br>
+<br>
+감사합니다.</div>]
+
+---
+
+**[성현진]** — [2026-09-04 15:26]
+
+[저는 돌아가면 5시정도될거같아요~! 참고해주세욥]
+
+---
+
+**[김연희]** — [2026-09-04 13:31]
+
+[<p>넵</p>]
+
+---
+
+**[성현진]** — [2026-09-04 13:31]
+
+[<p>증액 나중에 또받을바에 넉넉하게 받으려구용</p>]
+
+---
+
+**[성현진]** — [2026-09-04 13:30]
+
+[<p>리오더건 검토중인거말고, 앞으로 검토할건에 대해서 수량 좀더넉넉하게 넣어주세용 과장님!</p>]
+
+---
+
+**[성현진]** — [2026-09-04 13:30]
+
+[<p>옙&nbsp;</p>]
+
+---
+
+**[김연희]** — [2026-09-04 11:53]
+
+[<p>홀리데이...&nbsp;</p>]
+
+---
+
+**[김연희]** — [2026-09-04 11:53]
+
+[<p>가디건 리오더건..&nbsp;</p>]
+
+---
+
+**[김연희]** — [2026-09-04 11:53]
+
+[<p>우먼스 부츠컷 데님, 기모스웻팬츠&nbsp;</p>]
+
+---
+
+
+---
+
+# Source: teams 채팅 데이터/Teams - 와키윌리 글로벌 (기획+소싱) - 2026-09-07 - 230009.md
+
+- bytes: 10895
+- sha256: fd40489b91685e3102a3bdf6a492e961ff5f460af8a1af6eee42746739cdc4f0
+
+---
+type: teams-chat
+source: Microsoft Teams
+channel: 와키윌리 글로벌 (기획+소싱)
+clipped: 2026-09-07
+platform: Microsoft Teams
+tags:
+  - teams
+  - auto-backup
+---
+
+# 와키윌리 글로벌 (기획+소싱)
+
+> 백업일: 2026-09-07
+> 자동 백업 by Power Automate
+
+---
+
+
+**[변창현]** — [2026-09-07 17:47]
+
+[<p><at id="0">왕지영</at>&nbsp;대리님 안녕하세요</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:8442816134604ceb8c2518496b2b6965@thread.v2/messages/1788770873702/hostedContents/aWQ9eF8wLXNrci1kMS03NjM0NjVmN2M3N2E1NWFkM2YzMTk5MDRjZDVmYzIwOCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS03NjM0NjVmN2M3N2E1NWFkM2YzMTk5MDRjZDVmYzIwOC92aWV3cy9pbWdv/$value" width="438.7755102040816" height="250" alt="이미지" itemid="0-skr-d1-763465f7c77a55ad3f319904cd5fc208"></p>
+<p>&nbsp;</p>
+<p>WA2701LT12 MG 컬러 / TC 컬러 판가 상이하여</p>
+<p>품번 분리되어 참고로 공유드립니다.</p>
+<p>&nbsp;</p>
+<p>WA2701LT12 - MG</p>
+<p>WA2701LT17 - TC</p>]
+
+---
+
+**[왕지영]** — [2026-09-07 17:26]
+
+[<p><at id="0">박희현</at>과장님, 네 O.C 파일에 반영하여 대만지사에 안내드리겠습니다. 공유 감사합니다.</p>]
+
+---
+
+**[김연희]** — [2026-09-07 17:26]
+
+[<p>넵 그럼 수량 주신 10 PCS 만 추가 해서 진행하도록 하겠습니다.&nbsp;</p>]
+
+---
+
+**[왕지영]** — [2026-09-07 17:25]
+
+[<attachment id="1788769483913"></attachment>
+<p><at id="0">김연희</at>과장님, 대만지사 방금 회신 받았습니다. 해당 리오더 미진행 합니다. 감사합니다!</p>]
+
+---
+
+**[김연희]** — [2026-09-07 17:24]
+
+[<attachment id="1788749654206"></attachment>
+<p><at id="0">왕지영</at>&nbsp;대리님, 대만지사 수량은 국내 입고분에서 사용 가능성 있다고 하셨는데, 리오더건에서 재고 수량 가져가는 부분 때문에 국내 물량 핸들링에 이슈가 있어서 일부러 리오더 수량 취합 요청 드린 건입니다. 대만지사 리오더 수량은 언제까지 받을수 있는건가요? 입고후 가져가시는 것 말고, 사전 오더 요청 드립니다.</p>]
+
+---
+
+**[박희현]** — [2026-09-07 17:21]
+
+[<p>안녕하세요 <at id="0">왕지영</at>대리님</p>
+<p>하기 스타일들 9/8 EX-FAC 예정이었으나 생산 지연으로 현재 9/14 EX-FAC 가능한 상황이라 내용 공유 드립니다.</p>
+<p>&nbsp;</p>
+<p>WA2603HZ51 - NA</p>
+<p>WA2603HD62</p>
+<p>WA2603JK61</p>
+<p>WA2603JK64</p>
+<p>WA2603CR13</p>]
+
+---
+
+**[왕지영]** — [2026-09-07 14:16]
+
+[<p><at id="0">변창현</at>대리님 확인 후 회신드리겠습니다.</p>]
+
+---
+
+**[변창현]** — [2026-09-07 14:07]
+
+[<attachment id="1784787893831"></attachment>
+<p><at id="0">왕지영</at>&nbsp;<at id="1">박희현</at>&nbsp;<at id="2">진승현</at></p>
+<p>안녕하세요</p>
+<p>&nbsp;</p>
+<p>해당 스타일 협력사 이관/디자인 변경 등으로 납기 지연되어</p>
+<p>27SS로 이관하려고 합니다.</p>
+<p>&nbsp;</p>
+<p><strong>현 납기 26년 12월 중순 예정</strong></p>
+<p>&nbsp;</p>
+<p>TO. 글로벌 사업부</p>
+<p>: 오더 지속 여부에 대해서 확인 요청드립니다.</p>
+<p>&nbsp;</p>
+<p>품번 변경</p>
+<p><strong>WA2603CR17 =&gt; WA2701CR15</strong></p>
+<p>&nbsp;</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:8442816134604ceb8c2518496b2b6965@thread.v2/messages/1788757677196/hostedContents/aWQ9eF8wLXNrci1kMy0xMmE4NjUwNzlkNDhjYzE4NjAwZjVhMGU3ZjJlNDRhNix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMy0xMmE4NjUwNzlkNDhjYzE4NjAwZjVhMGU3ZjJlNDRhNi92aWV3cy9pbWdv/$value" width="103.97553516819572" height="250" alt="이미지" itemid="0-skr-d3-12a865079d48cc18600f5a0e7f2e44a6"></p>]
+
+---
+
+**[왕지영]** — [2026-09-07 11:54]
+
+[<p><at id="0">김연희</at>&nbsp;과장님, 네 글로볼오더로 한차수에 한꺼번에 진행 부탁드립니다.</p>
+<p>26fw 리오더 건 오후 3시까지 회신 드려도 될까요?</p>
+<p>&nbsp;</p>]
+
+---
+
+**[김연희]** — [2026-09-07 11:10]
+
+[그리고 대리님, 저번에 말씀드린 26fw리오더건 회신 부탁드려요]
+
+---
+
+**[김연희]** — [2026-09-07 10:50]
+
+[<p><at id="0">왕지영</at>대리님, 그리고 대만지사, 일본지사 외에 태국, IT, 몽골 물량은 글로벌오더로 한차수에 한꺼번에 들어갑니다. 물류입고도 한꺼번에 됩니다. 이부분은 변동 없으시죠? &nbsp;</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:8442816134604ceb8c2518496b2b6965@thread.v2/messages/1788745845925/hostedContents/aWQ9eF8wLXNrci1kNC1mNjY2Mzg1ZWNlYjMyYjQ5MTEyNzM5YmZmNmZmNzg3MCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC1mNjY2Mzg1ZWNlYjMyYjQ5MTEyNzM5YmZmNmZmNzg3MC92aWV3cy9pbWdv/$value" width="1706" height="189" alt="이미지" itemid="0-skr-d4-f666385eceb32b49112739bff6ff7870"></p>]
+
+---
+
+**[왕지영]** — [2026-09-07 10:41]
+
+[<p><at id="0">김연희</at>과장님, 일본지사 물량으로 보시면 됩니다.</p>
+<p>최종 취합장 링크 공유 드립니<img src="https://graph.microsoft.com/beta/chats/19:8442816134604ceb8c2518496b2b6965@thread.v2/messages/1788745314669/hostedContents/aWQ9eF8wLWNrci1kMS1hZGUwMTNkYzQ2OGYyYzFiNTdhOWQzYWU4YTQyYzYxOCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLWNrci1kMS1hZGUwMTNkYzQ2OGYyYzFiNTdhOWQzYWU4YTQyYzYxOC92aWV3cy9pbWdv/$value" width="957" height="167" alt="이미지" itemid="0-ckr-d1-ade013dc468f2c1b57a9d3ae8a42c618"></p>]
+
+---
+
+**[김연희]** — [2026-09-07 10:39]
+
+[<attachment id="1788744143408"></attachment>
+<p><at id="0">왕지영</at>&nbsp;대리님, 안녕하세요. 대리님 우먼스 시트에서 "B.CAVE 수정완료" 라고 되어있는 물량이 일본지사 물량으로 보면 되나요?</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:8442816134604ceb8c2518496b2b6965@thread.v2/messages/1788745152742/hostedContents/aWQ9eF8wLXNrci1kMi0wZWZkNjE3Mzg4OWVmM2ViNzM5OGNhYjg5YmRkYjdlNSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMi0wZWZkNjE3Mzg4OWVmM2ViNzM5OGNhYjg5YmRkYjdlNS92aWV3cy9pbWdv/$value" width="1006" height="233" alt="이미지" itemid="0-skr-d2-0efd6173889ef3eb7398cab89bddb7e5"></p>]
+
+---
+
+**[왕지영]** — [2026-09-07 10:22]
+
+[<p>안녕하세요&nbsp;<at id="0">변창현</at>&nbsp;대리님,&nbsp;</p>
+<p>발송드렸습니다. 확인 부탁드립니다</p>]
+
+---
+
+**[변창현]** — [2026-09-07 09:48]
+
+[<p><at id="0">왕지영</at>&nbsp;대리님 안녕하세요!</p>
+<p>&nbsp;</p>
+<p>금일 27SS 해외 최종 오더본 몇시쯤 받을 수 있을까요?</p>
+<p><at id="1">고수빈</at>&nbsp;<at id="2">서민지</at></p>]
+
+---
+
+**[한병현]** — [2026-09-04 13:51]
+
+[<p>네 감사합니다</p>]
+
+---
+
+**[왕지영]** — [2026-09-04 13:51]
+
+[<p><at id="0">한병현</at>대리님, 유니라인 총 15 SKU의 변경 사항 확인했습니다.<br>
+반영 후 최종 오더 전달드리겠습니다.</p>]
+
+---
+
+**[변창현]** — [2026-09-04 11:45]
+
+[<p><at id="0">왕지영</at></p>
+<p>안녕하세요!</p>
+<p>&nbsp;</p>
+<p>27SS LINE SHEET 관련해서</p>
+<p>국내 발주 수량 축소 사유로, 아소트 변경 건이 있어 해당 라인 시트 - "Z열"에 내용 추가로 기입했습니다.</p>
+<p>&nbsp;</p>
+<p>차주 월요일 최종 오더 확정 수량 주실 때 반영 가능하실지 확인 부탁드립니다!!</p>
+<p>&nbsp;</p>
+<p>CC. <at id="1">고수빈</at>&nbsp;<at id="2">서민지</at></p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:8442816134604ceb8c2518496b2b6965@thread.v2/messages/1788489935504/hostedContents/aWQ9eF8wLXNrci1kNC1jMWE2YTRjMzMyYmQ2MWY3OGYxOTRhYjgyZjcwNzIwNCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC1jMWE2YTRjMzMyYmQ2MWY3OGYxOTRhYjgyZjcwNzIwNC92aWV3cy9pbWdv/$value" width="620.6896551724138" height="250" alt="이미지" itemid="0-skr-d4-c1a6a4c332bd61f78f194ab82f707204"></p>]
+
+---
+
+**[왕지영]** — [2026-09-03 14:20]
+
+[<p><at id="0">김연희</at>과장님, 내부 파일 작업 후 바이어에게 안내까지 진행해야 해서, 회신 소요 시간을 고려하면 내일 퇴근 전까지 전달드리기는 어려울 것 같습니다. 혹시 월요일 퇴근 전까지 회신드려도 괜찮을까요?</p>]
+
+---
+
+**[김연희]** — [2026-09-03 13:14]
+
+[<p>4 SKU 검토중이고, 중국 추석, 국경절 연휴 끼어 있어서 납기 타이트하니, 최대한 금주 중으로 검토해서 회신 주시면 감사하겠습니다.&nbsp;</p>]
+
+---
+
+**[김연희]** — [2026-09-03 13:14]
+
+[<p><at id="0">왕지영</at>&nbsp;대리님, 안녕하세요. 금주 우먼스 리오더 검토중인 스타일 있어서 26FW QR 채널에 올려드렸습니다.&nbsp;</p>]
+
+---
+
+**[왕지영]** — [2026-09-03 11:51]
+
+[<p>@어패럴기획팀 안녕하세요,</p>
+<p>와키윌리 26FW 리오더 검토 진행 시, <a href="https://teams.microsoft.com/l/channel/19%3Ae880ab5581774ca8b78acc12454a2246%40thread.tacv2/26FW%20QR?groupId=0b15045d-7bd2-42e0-a3a9-b2c87e21e480&amp;tenantId=09cefcf6-a744-4cc2-a8ec-681fe0d1a85a" rel="noreferrer noopener" title="https://teams.microsoft.com/l/channel/19%3ae880ab5581774ca8b78acc12454a2246%40thread.tacv2/26fw%20qr?groupid=0b15045d-7bd2-42e0-a3a9-b2c87e21e480&amp;tenantid=09cefcf6-a744-4cc2-a8ec-681fe0d1a85a" target="_blank">26FW QR</a> 채널에 관련 게시물을 상신 예정인지 문의드립니다.</p>
+<p>저희 글로벌사업부를 태그해 주시면, 각 국가별 거래처의 리오더 의향을 취합하여 3일 이내 해외 오더로 전달드릴 수 있습니다.</p>
+<p>현재 대만지사에서 판매가 좋은 상품들의 경우 리오더 수요가 많은 상황이오니, 검토 시 함께 참고 부탁드립니다.</p>]
+
+---
+
+**[왕지영]** — [2026-09-01 14:34]
+
+[]
+
+---
+
+**[변창현]** — [2026-09-01 14:20]
+
+[<p><at id="0">왕지영</at>&nbsp;대리님 안녕하세요</p>
+<p>27SS LINE SHEET - 수정사항 유니/우먼(0831 시트)업데이트했습니다!</p>
+<p>&nbsp;</p>
+<p>현재 S1(봄) 건들이 투입되면서 수정사항들이 반영됐고,</p>
+<p>추후 S2(여름) 건이나, 변동사항들은 별도로 알림드리겠습니다</p>
+<p>&nbsp;</p>
+<p>해외 오더 확정 여부 일정 확인 부탁드립니다~</p>
+<p>&nbsp;</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:8442816134604ceb8c2518496b2b6965@thread.v2/messages/1788240019464/hostedContents/aWQ9eF8wLXNrci1kNC1hNWZmOGI3ODFjMWMwYWM1OTI4YTU4OTQ4ZGMwYzg4OSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC1hNWZmOGI3ODFjMWMwYWM1OTI4YTU4OTQ4ZGMwYzg4OS92aWV3cy9pbWdv/$value" width="545.816733067729" height="250" alt="이미지" itemid="0-skr-d4-a5ff8b781c1c0ac5928a58948dc0c889"></p>
+<p>&nbsp;</p>]
+
+---
+
+
+---
+
+# Source: teams 채팅 데이터/Teams - 와키윌리 기획-소싱 - 2026-09-07 - 080104.md
+
+- bytes: 8845
+- sha256: 1b4b9df27306ef4d2aa44462af5335d81971670caf74f2acf40530247df56da8
+
+---
+type: teams-chat
+source: Microsoft Teams
+channel: 와키윌리 기획-소싱
+clipped: 2026-09-07
+platform: Microsoft Teams
+tags:
+  - teams
+  - auto-backup
+---
+
+# 와키윌리 기획-소싱
+
+> 백업일: 2026-09-07
+> 자동 백업 by Power Automate
+
+---
+
+
+**[박희현]** — [2026-09-07 17:30]
+
+[<attachment id="1788769446787"></attachment>
+<p>현재 견적서가 어떻게 들어가있는지 정확히 모르겠는데 HNC - 25FW 시즌 재고 원단 사용하는 것은 해당 시즌 원단가 적용하기로 협력사랑 협의 했습니다.</p>
+<p>&nbsp;</p>
+<p>HNC - 25FW 원단가&nbsp;</p>
+<p>C/P ZURRY 360G</p>
+<p>&nbsp;</p>
+<p>-솔리드 $ 4.3/YD</p>
+<p>-멜란지 $4.35/YD</p>
+<p>&nbsp;</p>]
+
+---
+
+**[변창현]** — [2026-09-07 17:24]
+
+[<attachment id="1788768941321"></attachment>
+<p>감사합니다 과장님</p>
+<p>현재 전달주신 견적가보다 해당 시즌 단가가 더 낮은 거죠?</p>]
+
+---
+
+**[박희현]** — [2026-09-07 17:15]
+
+[<attachment id="1788768714593"></attachment>
+<p>안녕하세요 대리님</p>
+<p>재고라서 가능하면 해당 시즌 단가로 진행될 수 있도록 협력사랑 소통해보고 업데이트 드리겠습니다</p>]
+
+---
+
+**[변창현]** — [2026-09-07 17:11]
+
+[<p>안녕하세요 과장님 <at id="0">박희현</at></p>
+<p>&nbsp;</p>
+<p>27SS 재고 소진 스타일</p>
+<p>HNC - 원단가는 당시 시즌 고정 단가로 진행될까요?</p>
+<p>아니면 조정 가능성이 있을까요?</p>
+<p>&nbsp;</p>
+<p>27SS 견적과 연관되어 문의드립니다</p>]
+
+---
+
+**[박희현]** — [2026-09-07 11:16]
+
+[<p>안녕하세요</p>
+<p>소싱팀 신규 입사자 조장희 과장님 초대하였습니다.</p>]
+
+---
+
+**[]** — [2026-09-07 11:16]
+
+[<systemEventMessage/>]
+
+---
+
+**[성현진]** — [2026-09-04 16:47]
+
+[<div><at id="0">신민석</at>발주리스트 참고해주세요 팀장님<br>
+감사합니다! <br>
+<br>
+유니라인 수량을 좀 정리했고<br>
+그정도로 우먼스 수량을 좀더 늘렸습니다.</div>]
+
+---
+
+**[변창현]** — [2026-09-04 16:13]
+
+[<attachment id="1788503500087"></attachment>
+<p>네 팀장님 27SS 발주리스트에 수량 적용되어 있습니다!</p>]
+
+---
+
+**[신민석]** — [2026-09-04 15:31]
+
+[<p>27SS 변경된 수량은 &nbsp;상품기획안 차트로 확인하면 되나요?</p>]
+
+---
+
+**[박희현]** — [2026-09-04 11:41]
+
+[<p>안녕하세요</p>
+<p>HNC 진행건 중 뉴베이직/플리스 원단 일부를 선적한 모선이 현재 고장난 상황이라 원단 입고 일자가 미정이라고 합니다.</p>
+<p>이로 인해 가먼트 지연 가능성 있는 품번들에 대해서 리스트업하였으니 첨부 드리는 파일 참고 부탁드립니다.</p>
+<p>&nbsp;</p>
+<p>현재 전달받은 상황은 인양선이 붙어서 끌고가는 중이고 상륙해서 수리 시작해야 어느정도 지연 되는지 알것 같다고 합니다.</p>
+<p>최악의 상황은 모선의 주인이 수리하지 않아서 물건을 못찾는 경우라고 하네요..</p>
+<p>&nbsp;</p>
+<p>지속적으로 확인 예정이니 업데이트 되는 대로 내용 공유 드리도록 하겠습니다.</p>
+<p>&nbsp;</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:9b27d6810f274563a7126e97db9d9149@thread.v2/messages/1788489675935/hostedContents/aWQ9eF8wLXNrci1kMS00YjEwN2VkNzkzOTgzY2I5MjAxOTg5ZDM4MGYzMjNlMix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS00YjEwN2VkNzkzOTgzY2I5MjAxOTg5ZDM4MGYzMjNlMi92aWV3cy9pbWdv/$value" width="296.06060606060606" height="250" alt="이미지" itemid="0-skr-d1-4b107ed793983cb9201989d380f323e2"></p>
+<p>&nbsp;</p><attachment id="1aea2555-48ad-4c56-a2f4-3474bee059df"></attachment>]
+
+---
+
+**[신민석]** — [2026-09-03 13:13]
+
+[<p>제가 물류와 영업기획 쪽에 얘기해보도록 하겠습니다</p>]
+
+---
+
+**[박희현]** — [2026-09-03 13:11]
+
+[<attachment id="1788408524765"></attachment>
+<p>가능하면 9/17 입고로 챙기려고 하는데 입고 수량 생각하면 하루가 아쉬운 상황이라서요ㅠㅠ..</p>
+<p>혹시 9/18 오후에 입고 하더라도 해당 건까지 출고 될수 있도록 소통 한번 부탁드려도 될까요?</p>]
+
+---
+
+**[변창현]** — [2026-09-03 13:08]
+
+[<attachment id="1788403538300"></attachment>
+<p>안녕하세요 과장님! <at id="0">박희현</at></p>
+<p>&nbsp;</p>
+<p>확인 감사합니다</p>
+<p>기존 9/18 입고 건들은 일자는 동일하고, 입고 수량 업데이트 주시는 걸로 이해했습니다!</p>
+<p>&nbsp;</p>
+<p>납기 최대한 당겨주려고 하시겠지만 9/18 오전 11시가 데드라인이여서</p>
+<p>9/17 입고로 최대한 챙겨주시면 감사하겠습니다!</p>]
+
+---
+
+**[박희현]** — [2026-09-03 11:45]
+
+[<p>안녕하세요 <at id="0">성현진</at>팀장님 &nbsp;/ <at id="1">변창현</at>대리님</p>
+<p>뉴베이직 축률 이슈 관련 내용 업데이트 드립니다.</p>
+<p>&nbsp;</p>
+<p>작일 지케미 (원단처) -&gt; HNC (봉제처) 공장 방문하여 축률 랜덤 검사하였고, 검사 한 것들은 약 3% 내외라고 합니다.</p>
+<p>3% 내외인 롤들은 재단 진행 시켰고, 롤별로 축률이 상이하기 때문에 3% 이상 나오는 것들은 동영상으로 공유하여 덤블 등 추가 조치하여 작업 진행 하는 것으로 소통 하였습니다.</p>
+<p>&nbsp;</p>
+<p>추가로 기획 팀장님께서 CR04/PT04 를 우선 순위로 말씀주셔서 협력사에 해당 스타일 우선 진행 요청해두었고,&nbsp;</p>
+<p>9/18일자 입고는 맞출 예정이나 입고 가능 수량은 차주 수요일쯤 업데이트 받을 예정이니 업무에 참고 부탁드리겠습니다.</p>]
+
+---
+
+**[성현진]** — [2026-09-01 10:59]
+
+[<p>네 감사합니다!</p>]
+
+---
+
+**[박희현]** — [2026-09-01 10:57]
+
+[<p>넵 피드백 체이스하고 있는 상황이니 업데이트 받는 대로 공유 드리겠습니다</p>]
+
+---
+
+**[성현진]** — [2026-09-01 10:56]
+
+[<p>넵 이해했습니다! 검사결과 + 지케미에서 개런티내용 전달오면 같이 담당이랑 정리하겠습니다</p>
+<p>감사합니다!</p>]
+
+---
+
+**[박희현]** — [2026-09-01 10:55]
+
+[<attachment id="1788227647821"></attachment>
+<p>안녕하세요 팀장님</p>
+<p>작일 전달 드린 TEST 결과 사진은 HNC 에서 자체적으로 진행 한 것이며, 현재 지케미에서 실물 확인 중인것은 HNC 자체 테스트에서 축률 문제가 발생한 컬러에 대해서만 지케미에서 추가 TEST 진행하고 있습니다.</p>]
+
+---
+
+**[성현진]** — [2026-09-01 10:54]
+
+[<attachment id="1788225477171"></attachment>
+<p>안녕하세요 <at id="0">박희현</at>과장님~! 이거 HCN자체테스트가 아니라 지케미 자체테스트를 말하시는거죠?</p>]
+
+---
+
+**[변창현]** — [2026-09-01 10:50]
+
+[<attachment id="1788225477171"></attachment>
+<p>네 해당 스타일은 그럼 축률 문제는 없는 걸로 확인했습니다!</p>]
+
+---
+
+**[박희현]** — [2026-09-01 10:17]
+
+[<attachment id="1788143215730"></attachment>
+<p>BR/LB (BL) &nbsp;컬러 축률 TEST 결과도 포함되어있으며, HNC 자체 TEST 상 문제는 없으나 공유드린 내용과 같이 덤블 작업 진행할 경우 앞 스타일 생산이 딜레이되기때문에 해당 2스타일도 소폭 지연 가능성 있다고 말씀 드린 건입니다.</p>]
+
+---
+
+**[변창현]** — [2026-09-01 10:13]
+
+[<attachment id="1788224072444"></attachment>
+<p>과장님 <at id="0">박희현</at></p>
+<p>&nbsp;</p>
+<p>지연 건 중에서</p>
+<p><span style="font-size:inherit">4) WA2603CR04 - 1차 입고 일자 변동 / 덤블 작업 진행 할 경우 생산 지연되어 납기 딜레이&nbsp;</span></p>
+<p><span style="font-size:inherit">BR/LB - 9/22 500장씩 입고 예정 (기존 9/18 입고로 협의)</span></p>
+<p>&nbsp;</p>
+<p><span style="font-size:inherit">5) WA2603PT04 - 1차 입고 일자 변동 / 덤블 작업 진행 할 경우 생산 지연되어 납기 딜레이</span></p>
+<p><span style="font-size:inherit">BR/LB - 9/22 400장씩 입고 예정 (기존 9/18 입고로 협의)</span></p>
+<p>&nbsp;</p>
+<p><span style="font-size:inherit">위 2스타일 BR컬러/LB 컬러 축률만 별도로 확인 가능하실까요?</span></p>]
+
+---
+
+**[박희현]** — [2026-09-01 09:54]
+
+[<attachment id="1788223861239"></attachment>
+<p>안녕하세요 대리님 <at id="0">변창현</at></p>
+<p>지케미에서 자체 테스트하고 연락 주기로 했다고해서 기다리고 있습니다.</p>
+<p>오전중으로 업데이트 요청했습니다.</p>]
+
+---
+
+**[변창현]** — [2026-09-01 09:51]
+
+[<attachment id="1788168753924"></attachment>
+<p>안녕하세요 과장님 <at id="0">박희현</at></p>
+<p>금일 오전 중에 진행 여부 결정해야한다고 해주셨는데</p>
+<p>&nbsp;</p>
+<p>지케미 피드백 받으셨을까요?</p>]
+
+---
+
+
+---
+
+# Source: teams 채팅 데이터/Teams - 와키윌리 사업부_온라인실 - 2026-09-07 - 230032.md
+
+- bytes: 17078
+- sha256: 801731958ec455ddc04d3f772fb043ff12b7af54523a05d395efd4a0777b8159
+
+---
+type: teams-chat
+source: Microsoft Teams
+channel: 와키윌리 사업부_온라인실
+clipped: 2026-09-07
+platform: Microsoft Teams
+tags:
+  - teams
+  - auto-backup
+---
+
+# 와키윌리 사업부_온라인실
+
+> 백업일: 2026-09-07
+> 자동 백업 by Power Automate
+
+---
+
+
+**[강승오]** — [2026-09-07 13:08]
+
+[<p>안녕하세요!</p>
+<p>&nbsp;</p>
+<p>현재 9.15(화) 원이 착장 2차 발매에 조금 더 포커싱하여 무신사 측에서 조금 더 이슈화가 가능할 것으로 예상되어 룩북 노출 및 구좌 확보 조율 중에 있습니다!</p>
+<p>9.14(월) 정규 룩북의 경우 릴리즈 이후 일반 기획전으로 소구하도록 하겠습니다!</p>]
+
+---
+
+**[이의뜸]** — [2026-09-07 10:47]
+
+[<p>안녕하세요~!</p>
+<p>지난주 금요일에 유니 룩북컷 공유드렸었는데, 관련하여 무신사 기획전이나 프로모션 진행할 구좌 진행 가능할지 문의 드립니다.</p>
+<p>&nbsp;</p>
+<p>고해상 데이터 경로 &gt;</p>
+<p>C:\Users\bcave\(주)비케이브\[공유]비케이브 - 와릿이즌\1.와릿이즌\7. 마케팅\01. 컨텐츠\12. 26FW\2. 가을 정규 화보\데이터\고해상 최종본</p>]
+
+---
+
+**[이의뜸]** — [2026-09-03 18:08]
+
+[<p>네 확인 감사합니다~</p>]
+
+---
+
+**[김솔이]** — [2026-09-03 18:06]
+
+[<p><at id="0">이의뜸</at>안녕하세요! 옵션까지 노출되고 있는상황이나 카테고리에는 꽂혀 있지 않아 개발자분께 여쭤본 상황입니다 상품명은 수정했습니다! 쿠키 삭제해도 15분 소요(시간단축 개발X) 되기 때문에 그 이후에 확인해주시면 감사하겠습니다!</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788426360938/hostedContents/aWQ9eF8wLXNrci1kMi0zYjU1NTYxNjA4MTkyZDFjY2E0MzI3MzA1YTdiN2Q5NSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMi0zYjU1NTYxNjA4MTkyZDFjY2E0MzI3MzA1YTdiN2Q5NS92aWV3cy9pbWdv/$value" width="1372" height="184" alt="이미지" itemid="0-skr-d2-3b55561608192d1cca4327305a7b7d95"></p>]
+
+---
+
+**[이의뜸]** — [2026-09-03 17:53]
+
+[<p>안녕하세요~ 헤어핀 검색시 원이 착용 헤어핀 2개 보이고, 3set 상품인데 2set으로 표기되어 확인 부탁드립니다.</p>]
+
+---
+
+**[이의뜸]** — [2026-09-03 17:53]
+
+[<p><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788425599859/hostedContents/aWQ9eF8wLWNrci1kMS1mNmFhYTRkYWYyM2NmZjNiMTA5MGE2MGM5NzRjYzZlMix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLWNrci1kMS1mNmFhYTRkYWYyM2NmZjNiMTA5MGE2MGM5NzRjYzZlMi92aWV3cy9pbWdv/$value" width="520.3744493392071" height="250" alt="이미지" itemid="0-ckr-d1-f6aaa4daf23cff3b1090a60c974cc6e2"><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788425599859/hostedContents/aWQ9eF8wLXNrci1kMi01NmZmNTg1N2UxMmJiNzkyMzdkZTVhMGEyZjdjZTk5NSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMi01NmZmNTg1N2UxMmJiNzkyMzdkZTVhMGEyZjdjZTk5NS92aWV3cy9pbWdv/$value" width="492.6636568848758" height="250" alt="이미지" itemid="0-skr-d2-56ff5857e12bb79237de5a0a2f7ce995"></p>]
+
+---
+
+**[김솔이]** — [2026-09-02 14:06]
+
+[<p><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788325587488/hostedContents/aWQ9eF8wLWNrci1kMS04YjI4MWM4Mjg1MzRlNThjMmMzN2JlZTA3MmUxNDcyNSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLWNrci1kMS04YjI4MWM4Mjg1MzRlNThjMmMzN2JlZTA3MmUxNDcyNS92aWV3cy9pbWdv/$value" width="500.4664179104478" height="250" alt="이미지" itemid="0-ckr-d1-8b281c828534e58c2c37bee072e14725"></p>
+<p>안녕하세요 [우먼스 스쿨백 블랙] / [우먼스 플리스 프리오더] 예약배송 채널별 판매 현황 공유드립니다.</p>]
+
+---
+
+**[임제형]** — [2026-09-02 11:32]
+
+[<p>단독상품이 멘션에 어떻게 노출되는지 알 수 있을까요?</p>
+<p>단순하게 '더현대 단독상품' 이렇게 노출되는거라면 10일에 내리지 않아도 될것 같습니다</p>]
+
+---
+
+**[성현진]** — [2026-09-02 10:10]
+
+[<p>왠지 2차티징에는 내용들어갈것같아서 여쭤봤습니다!</p>]
+
+---
+
+**[성현진]** — [2026-09-02 10:10]
+
+[<p>아하 네네! 그럼 10일에는 내려야겠네요!</p>]
+
+---
+
+**[박다솜]** — [2026-09-02 10:09]
+
+[<attachment id="1788311278938"></attachment>
+<p>안녕하세요 팀장님! 2차 업로드 시 프로모션 + 단독 상품 관련 내용은 멘션에 언급할 예정입니다~!</p>]
+
+---
+
+**[성현진]** — [2026-09-02 10:07]
+
+[<attachment id="1788310598254"></attachment>
+<p>아 단독상품이나 이런건안들어가는군여..? 9/11일에도 따로언급안되긴하는거죠..?</p>]
+
+---
+
+**[성현진]** — [2026-09-02 10:07]
+
+[<p>넵 맞습니다~!</p>]
+
+---
+
+**[임제형]** — [2026-09-02 09:58]
+
+[<p>네 공유 감사합니다</p>
+<p>티징 일정 확인하였고, 안전하게 9/14(월) 출근 이후 내리는건 어떨까요~?</p>
+<p>&nbsp;</p>
+<p>추가로 아래 상품이 최종인지도 한번 더 확인 부탁드립니다</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788310710851/hostedContents/aWQ9eF8wLXNrci1kMS0wYWZmMjNkOTBmMWIzMDI1NmQwNmE0ZmE1NDA1NjBhMix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS0wYWZmMjNkOTBmMWIzMDI1NmQwNmE0ZmE1NDA1NjBhMi92aWV3cy9pbWdv/$value" width="1833" height="206" alt="이미지" itemid="0-skr-d1-0aff23d90f1b30256d06a4fa540560a2"></p>]
+
+---
+
+**[이의뜸]** — [2026-09-02 09:56]
+
+[<p>안녕하세요~! 더현대 팝업 1차 티징 sns 게시물은 9월 4일 업로드 예정입니다.(상세 프로모션이나 단독 상품 언급 x) 2차 티징(원이숏폼) &nbsp;9월 11일 입니다. 참고 부탁드립니다.</p>]
+
+---
+
+**[성현진]** — [2026-09-02 09:47]
+
+[<attachment id="1788309871973"></attachment>
+<p>아,,, 일단 더현대 팝업 매리트를 더주기위해 하는 스타일들이긴한데 ,</p>
+<p>개인적인생각으로는 1장이라도 더팔고싶은마음에 그래도 좋을거같긴합니다...^^ &nbsp;</p>
+<p>홍보하고나서도 팔고있으면 그건 앞뒤가 안맞으니까,, 어떠세요 <at id="0">김민혁</at>&nbsp;실장님?</p>]
+
+---
+
+**[임제형]** — [2026-09-02 09:44]
+
+[<p>피드백 감사합니다</p>
+<p>그럼 내리는 일정도 팝업 홍보 직전에 내리는건 어떨까요?</p>]
+
+---
+
+**[성현진]** — [2026-09-02 09:43]
+
+[<p><at id="0">임제형</at>&nbsp;안녕하세요 실장님 <emoji id="smile" alt="🙂" title="웃는 표정"></emoji></p>
+<p>재개 바로 가능합니다! &nbsp;팝업시작 9/17 ~ 종료 9/30 일정입니다!</p>
+<p>참고부탁드립니다., 종료 다음날에 바로 올려도 상관없을것 같습니다,,!</p>]
+
+---
+
+**[임제형]** — [2026-09-02 09:40]
+
+[<p><at id="0">성현진</at>&nbsp;<at id="1">김민혁</at></p>
+<p>온라인 내리는 일정과 팝업 종료 이후 다시 업로드 재개 가능한지 여부도 같이 확인 부탁드립니다</p>
+<p>&nbsp;</p>
+<p>1) 판매 종료 일정</p>
+<p>&nbsp;</p>
+<p>2) 판매 재개시 일정</p>]
+
+---
+
+**[김민혁]** — [2026-09-02 09:39]
+
+[<p>네 더현대팝업 용품 익스클루시브는모자 2sku입니다</p>]
+
+---
+
+**[임제형]** — [2026-09-02 09:39]
+
+[<attachment id="1788308488808"></attachment>
+<p>첨참확요</p>
+<p>&nbsp;</p>
+<p>모자 2SKU 외에는 없을까요?</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788309557340/hostedContents/aWQ9eF8wLXNrci1kMy03ZWQ3NzA5Yjc4MzJhODk3ODQ3N2ExZDdhMGVhODJkMSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMy03ZWQ3NzA5Yjc4MzJhODk3ODQ3N2ExZDdhMGVhODJkMS92aWV3cy9pbWdv/$value" width="1310" height="117" alt="이미지" itemid="0-skr-d3-7ed7709b7832a8978477a1d7a0ea82d1"></p>]
+
+---
+
+**[김민혁]** — [2026-09-02 09:21]
+
+[<attachment id="1788260554090"></attachment>
+<p>실장님 굿모닝 이에요~</p>
+<p>더 현대 팝업 상품 리스트 정리한 것 공유 드려요~</p>
+<p>모자 익스클루시브 상품은 온라인에서 (자사/외부몰) 전부 내려주세요~</p>
+<p>&nbsp;</p>
+<p>첨참 <emoji id="smile" alt="🙂" title="웃는 표정"></emoji></p><attachment id="97e23286-94fd-4f57-a71a-8334a9591fd8"></attachment>]
+
+---
+
+**[김민혁]** — [2026-09-01 20:21]
+
+[<attachment id="1788260554090"></attachment>
+<p>내일 오전 중으로 업데이트 하여 다시 공유 드리겠습니다!</p>]
+
+---
+
+**[임제형]** — [2026-09-01 20:02]
+
+[<p>더현대 팝업 관련된 상품 리스트로 정리해서 최종본이라고 보면 될까요?</p>
+<p>모자, 가방도 있지 않나요? <at id="0">김민혁</at></p>
+<attachment id="1788243038573"></attachment>]
+
+---
+
+**[권순범]** — [2026-09-01 18:35]
+
+[<div>상의 - S<br>
+스커트 - S<br>
+팬츠 - M<br>
+디폴트 입니다!</div>]
+
+---
+
+**[]** — [2026-09-01 18:18]
+
+[<systemEventMessage/>]
+
+---
+
+**[]** — [2026-09-01 18:18]
+
+[<systemEventMessage/>]
+
+---
+
+**[]** — [2026-09-01 18:18]
+
+[<systemEventMessage/>]
+
+---
+
+**[성현진]** — [2026-09-01 18:06]
+
+[<p>넵! 대리님 감사합니다!&nbsp;</p>]
+
+---
+
+**[정원영]** — [2026-09-01 17:31]
+
+[<p><at id="0">성현진</at>&nbsp;안녕하세요 과장님!</p>
+<p>커머스 디자인팀 정원영 대리입니다.</p>
+<p>&nbsp;</p>
+<p>말씀하신 부분 체크해서 반영할 수 있도록 조치하겠습니다.</p>
+<p>추후 발매 및 상세페이지 관련해서 요청주실때는 담당자인 선영님만 태깅해주셔도 됩니다!</p>
+<p>&nbsp;</p>
+<p>와키윌리 자사몰 콘텐츠 제작/관리와 SFCC 리뉴얼 등 발매 작업 이외에 요청주실 부분이나 문의사항 있으시다면 저를 태깅해주시면 빠른 조치 도와드리겠습니다!</p>
+<p>&nbsp;</p>
+<p>cc.</p>
+<p><at id="1">차선영</at>&nbsp;위 내용 확인해주시고 과장님께서 요청주신 사항은 원이 착용 제품 사이즈 정보 토대로 상세페이지에 업데이트해서 셀릭 배포될 수 있게 준비 부탁드립니다!</p>]
+
+---
+
+**[김다솔]** — [2026-09-01 17:28]
+
+[<p>와키윌리 새로 오신 김다애 팀장,강승오사원 초대드립니다.&nbsp;</p>
+<p>잘부탁드립니다.&nbsp;</p>]
+
+---
+
+**[]** — [2026-09-01 17:27]
+
+[<systemEventMessage/>]
+
+---
+
+**[성현진]** — [2026-09-01 17:21]
+
+[<p>네네감사합니다~!</p>]
+
+---
+
+**[김솔이]** — [2026-09-01 17:20]
+
+[<p><at id="0">성현진</at>&nbsp;상세페이지 내용 추가 및 수정 관련해서는 웹디자인팀 태그해주시면 됩니다! <at id="1">정원영</at>&nbsp;<at id="2">차선영</at></p>]
+
+---
+
+**[성현진]** — [2026-09-01 17:18]
+
+[<p><at id="0">정원영</at><at id="1">차선영</at></p>
+<p>아 그리고 온라인팀에 요청 드리고싶은데,, 보통 모델입은 사이즈 표기가 들어가는데</p>
+<p>원이기획전에(자사몰,무신사) 원이 입은 스타일들에 사이즈정보가 안들어가있더라구요..</p>
+<p><at id="2">권순범</at><at id="3">이의뜸</at>&nbsp;마케팅팀에서 정보주시면 추후라도 표기부탁드립니다..!&nbsp;</p>
+<p>&nbsp;</p>
+<p>감사합니다..! &nbsp;</p>]
+
+---
+
+**[성현진]** — [2026-09-01 15:15]
+
+[<p>넵 감사합니다!!</p>]
+
+---
+
+**[김솔이]** — [2026-09-01 15:11]
+
+[<p><at id="0">성현진</at>&nbsp;<at id="1">이의뜸</at>&nbsp;넵 내리도록 하겠습니다!</p>]
+
+---
+
+**[성현진]** — [2026-09-01 15:10]
+
+[<p><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788243038573/hostedContents/aWQ9eF8wLXNrci1kMS04YTk2MjY5YjEyMzQ0Nzk2N2Y2ZjJiZWI0YjNiODk4MCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS04YTk2MjY5YjEyMzQ0Nzk2N2Y2ZjJiZWI0YjNiODk4MC92aWV3cy9pbWdv/$value" width="151.26050420168067" height="250" alt="이미지" itemid="0-skr-d1-8a96269b123447967f6f2beb4b3b8980"><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788243038573/hostedContents/aWQ9eF8wLWNrci1kMS1hZWFiZGQ3YTRjOTJlZDZlNDI3ZWRhMjc4ZWQyZTJjNCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLWNrci1kMS1hZWFiZGQ3YTRjOTJlZDZlNDI3ZWRhMjc4ZWQyZTJjNC92aWV3cy9pbWdv/$value" width="168.0327868852459" height="250" alt="이미지" itemid="0-ckr-d1-aeabdd7a4c92ed6e427eda278ed2e2c4"><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788243038573/hostedContents/aWQ9eF8wLXNrci1kMi01ODYxZjc3MzlhMGRjOTJjNjZlMTQwZGY0YmNiZTk2Mix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMi01ODYxZjc3MzlhMGRjOTJjNjZlMTQwZGY0YmNiZTk2Mi92aWV3cy9pbWdv/$value" width="154.45859872611464" height="250" alt="이미지" itemid="0-skr-d2-5861f7739a0dc92c66e140df4bcbe962"></p>
+<p>&nbsp;해당스타일 더현대 익스클루시브 상품입니다</p>]
+
+---
+
+**[성현진]** — [2026-09-01 15:10]
+
+[<p>아그것도올라갓나요? 아 공유가안되었나봅니다..</p>]
+
+---
+
+**[이의뜸]** — [2026-09-01 15:09]
+
+[<p>벨벳쇼츠도요!</p>]
+
+---
+
+**[성현진]** — [2026-09-01 15:08]
+
+[<p><a href="https://www.wackywilly.co.kr/product/WA2603KT68PI" itemtype="http://schema.skype.com/HyperLink" rel="noreferrer noopener" title="https://www.wackywilly.co.kr/product/WA2603KT68PI" target="_blank" itemid="f9dc63fa-216e-49c5-b650-3894761e35d6">[원이 착용] 우먼스 노르딕 풀오버 핑크</a> 해당상품도,,, 더현대 익스클루시브인데 온라인에 공유가 안된것같습니다..</p>
+<p>이것도 내려주세요ㅠㅠ 감사합니다.</p>]
+
+---
+
+**[박성찬]** — [2026-09-01 11:29]
+
+[<p>500장 이하 + 기존 시안으로만 가능합니다!</p>]
+
+---
+
+**[임제형]** — [2026-09-01 11:29]
+
+[<p>해당 내용으로 2시에 사업부 회의 아젠다 추가했으면 합니다</p>]
+
+---
+
+**[임제형]** — [2026-09-01 11:28]
+
+[<attachment id="1788225375305"></attachment>
+<p>안녕하세요 피드백 감사합니다</p>
+<p>&nbsp;</p>
+<p><strong>1) 추가 발주</strong></p>
+<p>추가 생산 자체가 어려운것으로 인지하면 될까요?</p>
+<p>최초 가능한것으로 들어 디벨롭 했던 부분입니다</p>
+<p>&nbsp;</p>
+<p><strong>2) 이미지 변경</strong></p>
+<p>셀카 소재로만 제작이 가능할까요? 기존에 B컷중에서 셀렉함을 생각했습니다</p>
+<p>&nbsp;</p>
+<p>실장님 말씀주신 겨울 헤비아우터 집중에 공감합니다 그렇다고 겨울을 집중 안 하겠다도 아닙니다</p>
+<p>현재 와키윌리 자사몰은 신규 고객 유입과 매출을 잘 준비해주신 원이 셀럽으로 메이크업하고 있는 상황에서 영업관점에서 추가 드라이브를 걸것에 대해 고민하다 나온 아이디어였습니다</p>
+<p>&nbsp;</p>
+<p>고객의 니즈가 포카에 있고 자사몰 신규 가입 수치도 긍정적인데 온라인 입장에서는 안할 이유가 없던 추가 오더였습니다</p>
+<p>&nbsp;</p>
+<p>그럼 9/15 2차 발매는 포토카드 모두 소진 완료로 기획전에 표기하면 될까요?</p>]
+
+---
+
+**[성현진]** — [2026-09-01 10:26]
+
+[<p>감사합니다.</p>]
+
+---
+
+**[성현진]** — [2026-09-01 10:26]
+
+[<p>네.. <a href="https://www.wackywilly.co.kr/product/WA2603CD63LP" itemtype="http://schema.skype.com/HyperLink" rel="noreferrer noopener" title="https://www.wackywilly.co.kr/product/WA2603CD63LP" target="_blank" itemid="10ab6ce9-74e8-4271-9918-18d60dece0fc">[원이 착용] 우먼스 레이스 프릴 가디건 핑크</a>&nbsp;</p>
+<p>이상품도 마찬가지 입니다.. 기획전에는 올라가있는데 우먼 -상의에는 없어요..! &nbsp;</p>
+<p>현재까지 업로드된 FW 신상품 전체 확인 부탁드립니다..!</p>]
+
+---
+
+**[김솔이]** — [2026-09-01 10:25]
+
+[<p><at id="0">성현진</at>&nbsp;세부 카테고리까지 하나하나 꽂아야하는 상황이라 누락 된것 같습니다 발매 상품부터 세팅 후 확인해보겠습니다!</p>]
+
+---
+
+**[성현진]** — [2026-09-01 10:23]
+
+[<p>그리고,, <a href="https://www.wackywilly.co.kr/product/WA2603PT76BL" itemtype="http://schema.skype.com/HyperLink" rel="noreferrer noopener" title="https://www.wackywilly.co.kr/product/wa2603pt76bl" target="_blank" itemid="7b6229b9-0eea-493c-b692-bff282593f4f">[원이 착용] 우먼스 아플리케 커브드 데님 팬츠 블루</a> 해당상품</p>
+<p>원이기획전에는 올라가있는데,, 왜 우먼 하의에는 안들어가있을까요..?</p>
+<p>&nbsp;</p>
+<p>현재 FW 신상 업로드 점검이 계속해서들어와서 확인부탁드립니다!&nbsp;</p>]
+
+---
+
+**[성현진]** — [2026-09-01 10:22]
+
+[<p>넵 감사합니다!</p>]
+
+---
+
+**[김솔이]** — [2026-09-01 10:21]
+
+[<p><at id="0">성현진</at>&nbsp;수정 했습니다!</p>]
+
+---
+
+
+---
+
+# Source: teams 채팅 데이터/Teams - 와키윌리 사업부_온라인실+마케팅 - 2026-09-07 - 230048.md
+
+- bytes: 17098
+- sha256: 863893399769da63969821eea31837e3f7641b34b4edd4798b1854f41affef0d
+
+---
+type: teams-chat
+source: Microsoft Teams
+channel: 와키윌리 사업부_온라인실+마케팅
+clipped: 2026-09-07
+platform: Microsoft Teams
+tags:
+  - teams
+  - auto-backup
+---
+
+# 와키윌리 사업부_온라인실+마케팅
+
+> 백업일: 2026-09-07
+> 자동 백업 by Power Automate
+
+---
+
+
+**[강승오]** — [2026-09-07 13:08]
+
+[<p>안녕하세요!</p>
+<p>&nbsp;</p>
+<p>현재 9.15(화) 원이 착장 2차 발매에 조금 더 포커싱하여 무신사 측에서 조금 더 이슈화가 가능할 것으로 예상되어 룩북 노출 및 구좌 확보 조율 중에 있습니다!</p>
+<p>9.14(월) 정규 룩북의 경우 릴리즈 이후 일반 기획전으로 소구하도록 하겠습니다!</p>]
+
+---
+
+**[이의뜸]** — [2026-09-07 10:47]
+
+[<p>안녕하세요~!</p>
+<p>지난주 금요일에 유니 룩북컷 공유드렸었는데, 관련하여 무신사 기획전이나 프로모션 진행할 구좌 진행 가능할지 문의 드립니다.</p>
+<p>&nbsp;</p>
+<p>고해상 데이터 경로 &gt;</p>
+<p>C:\Users\bcave\(주)비케이브\[공유]비케이브 - 와릿이즌\1.와릿이즌\7. 마케팅\01. 컨텐츠\12. 26FW\2. 가을 정규 화보\데이터\고해상 최종본</p>]
+
+---
+
+**[이의뜸]** — [2026-09-03 18:08]
+
+[<p>네 확인 감사합니다~</p>]
+
+---
+
+**[김솔이]** — [2026-09-03 18:06]
+
+[<p><at id="0">이의뜸</at>안녕하세요! 옵션까지 노출되고 있는상황이나 카테고리에는 꽂혀 있지 않아 개발자분께 여쭤본 상황입니다 상품명은 수정했습니다! 쿠키 삭제해도 15분 소요(시간단축 개발X) 되기 때문에 그 이후에 확인해주시면 감사하겠습니다!</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788426360938/hostedContents/aWQ9eF8wLXNrci1kMi0zYjU1NTYxNjA4MTkyZDFjY2E0MzI3MzA1YTdiN2Q5NSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMi0zYjU1NTYxNjA4MTkyZDFjY2E0MzI3MzA1YTdiN2Q5NS92aWV3cy9pbWdv/$value" width="1372" height="184" alt="이미지" itemid="0-skr-d2-3b55561608192d1cca4327305a7b7d95"></p>]
+
+---
+
+**[이의뜸]** — [2026-09-03 17:53]
+
+[<p>안녕하세요~ 헤어핀 검색시 원이 착용 헤어핀 2개 보이고, 3set 상품인데 2set으로 표기되어 확인 부탁드립니다.</p>]
+
+---
+
+**[이의뜸]** — [2026-09-03 17:53]
+
+[<p><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788425599859/hostedContents/aWQ9eF8wLWNrci1kMS1mNmFhYTRkYWYyM2NmZjNiMTA5MGE2MGM5NzRjYzZlMix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLWNrci1kMS1mNmFhYTRkYWYyM2NmZjNiMTA5MGE2MGM5NzRjYzZlMi92aWV3cy9pbWdv/$value" width="520.3744493392071" height="250" alt="이미지" itemid="0-ckr-d1-f6aaa4daf23cff3b1090a60c974cc6e2"><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788425599859/hostedContents/aWQ9eF8wLXNrci1kMi01NmZmNTg1N2UxMmJiNzkyMzdkZTVhMGEyZjdjZTk5NSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMi01NmZmNTg1N2UxMmJiNzkyMzdkZTVhMGEyZjdjZTk5NS92aWV3cy9pbWdv/$value" width="492.6636568848758" height="250" alt="이미지" itemid="0-skr-d2-56ff5857e12bb79237de5a0a2f7ce995"></p>]
+
+---
+
+**[김솔이]** — [2026-09-02 14:06]
+
+[<p><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788325587488/hostedContents/aWQ9eF8wLWNrci1kMS04YjI4MWM4Mjg1MzRlNThjMmMzN2JlZTA3MmUxNDcyNSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLWNrci1kMS04YjI4MWM4Mjg1MzRlNThjMmMzN2JlZTA3MmUxNDcyNS92aWV3cy9pbWdv/$value" width="500.4664179104478" height="250" alt="이미지" itemid="0-ckr-d1-8b281c828534e58c2c37bee072e14725"></p>
+<p>안녕하세요 [우먼스 스쿨백 블랙] / [우먼스 플리스 프리오더] 예약배송 채널별 판매 현황 공유드립니다.</p>]
+
+---
+
+**[임제형]** — [2026-09-02 11:32]
+
+[<p>단독상품이 멘션에 어떻게 노출되는지 알 수 있을까요?</p>
+<p>단순하게 '더현대 단독상품' 이렇게 노출되는거라면 10일에 내리지 않아도 될것 같습니다</p>]
+
+---
+
+**[성현진]** — [2026-09-02 10:10]
+
+[<p>왠지 2차티징에는 내용들어갈것같아서 여쭤봤습니다!</p>]
+
+---
+
+**[성현진]** — [2026-09-02 10:10]
+
+[<p>아하 네네! 그럼 10일에는 내려야겠네요!</p>]
+
+---
+
+**[박다솜]** — [2026-09-02 10:09]
+
+[<attachment id="1788311278938"></attachment>
+<p>안녕하세요 팀장님! 2차 업로드 시 프로모션 + 단독 상품 관련 내용은 멘션에 언급할 예정입니다~!</p>]
+
+---
+
+**[성현진]** — [2026-09-02 10:07]
+
+[<attachment id="1788310598254"></attachment>
+<p>아 단독상품이나 이런건안들어가는군여..? 9/11일에도 따로언급안되긴하는거죠..?</p>]
+
+---
+
+**[성현진]** — [2026-09-02 10:07]
+
+[<p>넵 맞습니다~!</p>]
+
+---
+
+**[임제형]** — [2026-09-02 09:58]
+
+[<p>네 공유 감사합니다</p>
+<p>티징 일정 확인하였고, 안전하게 9/14(월) 출근 이후 내리는건 어떨까요~?</p>
+<p>&nbsp;</p>
+<p>추가로 아래 상품이 최종인지도 한번 더 확인 부탁드립니다</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788310710851/hostedContents/aWQ9eF8wLXNrci1kMS0wYWZmMjNkOTBmMWIzMDI1NmQwNmE0ZmE1NDA1NjBhMix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS0wYWZmMjNkOTBmMWIzMDI1NmQwNmE0ZmE1NDA1NjBhMi92aWV3cy9pbWdv/$value" width="1833" height="206" alt="이미지" itemid="0-skr-d1-0aff23d90f1b30256d06a4fa540560a2"></p>]
+
+---
+
+**[이의뜸]** — [2026-09-02 09:56]
+
+[<p>안녕하세요~! 더현대 팝업 1차 티징 sns 게시물은 9월 4일 업로드 예정입니다.(상세 프로모션이나 단독 상품 언급 x) 2차 티징(원이숏폼) &nbsp;9월 11일 입니다. 참고 부탁드립니다.</p>]
+
+---
+
+**[성현진]** — [2026-09-02 09:47]
+
+[<attachment id="1788309871973"></attachment>
+<p>아,,, 일단 더현대 팝업 매리트를 더주기위해 하는 스타일들이긴한데 ,</p>
+<p>개인적인생각으로는 1장이라도 더팔고싶은마음에 그래도 좋을거같긴합니다...^^ &nbsp;</p>
+<p>홍보하고나서도 팔고있으면 그건 앞뒤가 안맞으니까,, 어떠세요 <at id="0">김민혁</at>&nbsp;실장님?</p>]
+
+---
+
+**[임제형]** — [2026-09-02 09:44]
+
+[<p>피드백 감사합니다</p>
+<p>그럼 내리는 일정도 팝업 홍보 직전에 내리는건 어떨까요?</p>]
+
+---
+
+**[성현진]** — [2026-09-02 09:43]
+
+[<p><at id="0">임제형</at>&nbsp;안녕하세요 실장님 <emoji id="smile" alt="🙂" title="웃는 표정"></emoji></p>
+<p>재개 바로 가능합니다! &nbsp;팝업시작 9/17 ~ 종료 9/30 일정입니다!</p>
+<p>참고부탁드립니다., 종료 다음날에 바로 올려도 상관없을것 같습니다,,!</p>]
+
+---
+
+**[임제형]** — [2026-09-02 09:40]
+
+[<p><at id="0">성현진</at>&nbsp;<at id="1">김민혁</at></p>
+<p>온라인 내리는 일정과 팝업 종료 이후 다시 업로드 재개 가능한지 여부도 같이 확인 부탁드립니다</p>
+<p>&nbsp;</p>
+<p>1) 판매 종료 일정</p>
+<p>&nbsp;</p>
+<p>2) 판매 재개시 일정</p>]
+
+---
+
+**[김민혁]** — [2026-09-02 09:39]
+
+[<p>네 더현대팝업 용품 익스클루시브는모자 2sku입니다</p>]
+
+---
+
+**[임제형]** — [2026-09-02 09:39]
+
+[<attachment id="1788308488808"></attachment>
+<p>첨참확요</p>
+<p>&nbsp;</p>
+<p>모자 2SKU 외에는 없을까요?</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788309557340/hostedContents/aWQ9eF8wLXNrci1kMy03ZWQ3NzA5Yjc4MzJhODk3ODQ3N2ExZDdhMGVhODJkMSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMy03ZWQ3NzA5Yjc4MzJhODk3ODQ3N2ExZDdhMGVhODJkMS92aWV3cy9pbWdv/$value" width="1310" height="117" alt="이미지" itemid="0-skr-d3-7ed7709b7832a8978477a1d7a0ea82d1"></p>]
+
+---
+
+**[김민혁]** — [2026-09-02 09:21]
+
+[<attachment id="1788260554090"></attachment>
+<p>실장님 굿모닝 이에요~</p>
+<p>더 현대 팝업 상품 리스트 정리한 것 공유 드려요~</p>
+<p>모자 익스클루시브 상품은 온라인에서 (자사/외부몰) 전부 내려주세요~</p>
+<p>&nbsp;</p>
+<p>첨참 <emoji id="smile" alt="🙂" title="웃는 표정"></emoji></p><attachment id="97e23286-94fd-4f57-a71a-8334a9591fd8"></attachment>]
+
+---
+
+**[김민혁]** — [2026-09-01 20:21]
+
+[<attachment id="1788260554090"></attachment>
+<p>내일 오전 중으로 업데이트 하여 다시 공유 드리겠습니다!</p>]
+
+---
+
+**[임제형]** — [2026-09-01 20:02]
+
+[<p>더현대 팝업 관련된 상품 리스트로 정리해서 최종본이라고 보면 될까요?</p>
+<p>모자, 가방도 있지 않나요? <at id="0">김민혁</at></p>
+<attachment id="1788243038573"></attachment>]
+
+---
+
+**[권순범]** — [2026-09-01 18:35]
+
+[<div>상의 - S<br>
+스커트 - S<br>
+팬츠 - M<br>
+디폴트 입니다!</div>]
+
+---
+
+**[]** — [2026-09-01 18:18]
+
+[<systemEventMessage/>]
+
+---
+
+**[]** — [2026-09-01 18:18]
+
+[<systemEventMessage/>]
+
+---
+
+**[]** — [2026-09-01 18:18]
+
+[<systemEventMessage/>]
+
+---
+
+**[성현진]** — [2026-09-01 18:06]
+
+[<p>넵! 대리님 감사합니다!&nbsp;</p>]
+
+---
+
+**[정원영]** — [2026-09-01 17:31]
+
+[<p><at id="0">성현진</at>&nbsp;안녕하세요 과장님!</p>
+<p>커머스 디자인팀 정원영 대리입니다.</p>
+<p>&nbsp;</p>
+<p>말씀하신 부분 체크해서 반영할 수 있도록 조치하겠습니다.</p>
+<p>추후 발매 및 상세페이지 관련해서 요청주실때는 담당자인 선영님만 태깅해주셔도 됩니다!</p>
+<p>&nbsp;</p>
+<p>와키윌리 자사몰 콘텐츠 제작/관리와 SFCC 리뉴얼 등 발매 작업 이외에 요청주실 부분이나 문의사항 있으시다면 저를 태깅해주시면 빠른 조치 도와드리겠습니다!</p>
+<p>&nbsp;</p>
+<p>cc.</p>
+<p><at id="1">차선영</at>&nbsp;위 내용 확인해주시고 과장님께서 요청주신 사항은 원이 착용 제품 사이즈 정보 토대로 상세페이지에 업데이트해서 셀릭 배포될 수 있게 준비 부탁드립니다!</p>]
+
+---
+
+**[김다솔]** — [2026-09-01 17:28]
+
+[<p>와키윌리 새로 오신 김다애 팀장,강승오사원 초대드립니다.&nbsp;</p>
+<p>잘부탁드립니다.&nbsp;</p>]
+
+---
+
+**[]** — [2026-09-01 17:27]
+
+[<systemEventMessage/>]
+
+---
+
+**[성현진]** — [2026-09-01 17:21]
+
+[<p>네네감사합니다~!</p>]
+
+---
+
+**[김솔이]** — [2026-09-01 17:20]
+
+[<p><at id="0">성현진</at>&nbsp;상세페이지 내용 추가 및 수정 관련해서는 웹디자인팀 태그해주시면 됩니다! <at id="1">정원영</at>&nbsp;<at id="2">차선영</at></p>]
+
+---
+
+**[성현진]** — [2026-09-01 17:18]
+
+[<p><at id="0">정원영</at><at id="1">차선영</at></p>
+<p>아 그리고 온라인팀에 요청 드리고싶은데,, 보통 모델입은 사이즈 표기가 들어가는데</p>
+<p>원이기획전에(자사몰,무신사) 원이 입은 스타일들에 사이즈정보가 안들어가있더라구요..</p>
+<p><at id="2">권순범</at><at id="3">이의뜸</at>&nbsp;마케팅팀에서 정보주시면 추후라도 표기부탁드립니다..!&nbsp;</p>
+<p>&nbsp;</p>
+<p>감사합니다..! &nbsp;</p>]
+
+---
+
+**[성현진]** — [2026-09-01 15:15]
+
+[<p>넵 감사합니다!!</p>]
+
+---
+
+**[김솔이]** — [2026-09-01 15:11]
+
+[<p><at id="0">성현진</at>&nbsp;<at id="1">이의뜸</at>&nbsp;넵 내리도록 하겠습니다!</p>]
+
+---
+
+**[성현진]** — [2026-09-01 15:10]
+
+[<p><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788243038573/hostedContents/aWQ9eF8wLXNrci1kMS04YTk2MjY5YjEyMzQ0Nzk2N2Y2ZjJiZWI0YjNiODk4MCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS04YTk2MjY5YjEyMzQ0Nzk2N2Y2ZjJiZWI0YjNiODk4MC92aWV3cy9pbWdv/$value" width="151.26050420168067" height="250" alt="이미지" itemid="0-skr-d1-8a96269b123447967f6f2beb4b3b8980"><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788243038573/hostedContents/aWQ9eF8wLWNrci1kMS1hZWFiZGQ3YTRjOTJlZDZlNDI3ZWRhMjc4ZWQyZTJjNCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLWNrci1kMS1hZWFiZGQ3YTRjOTJlZDZlNDI3ZWRhMjc4ZWQyZTJjNC92aWV3cy9pbWdv/$value" width="168.0327868852459" height="250" alt="이미지" itemid="0-ckr-d1-aeabdd7a4c92ed6e427eda278ed2e2c4"><img src="https://graph.microsoft.com/beta/chats/19:bba6f1d8d6384038880018cd474954bb@thread.v2/messages/1788243038573/hostedContents/aWQ9eF8wLXNrci1kMi01ODYxZjc3MzlhMGRjOTJjNjZlMTQwZGY0YmNiZTk2Mix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMi01ODYxZjc3MzlhMGRjOTJjNjZlMTQwZGY0YmNiZTk2Mi92aWV3cy9pbWdv/$value" width="154.45859872611464" height="250" alt="이미지" itemid="0-skr-d2-5861f7739a0dc92c66e140df4bcbe962"></p>
+<p>&nbsp;해당스타일 더현대 익스클루시브 상품입니다</p>]
+
+---
+
+**[성현진]** — [2026-09-01 15:10]
+
+[<p>아그것도올라갓나요? 아 공유가안되었나봅니다..</p>]
+
+---
+
+**[이의뜸]** — [2026-09-01 15:09]
+
+[<p>벨벳쇼츠도요!</p>]
+
+---
+
+**[성현진]** — [2026-09-01 15:08]
+
+[<p><a href="https://www.wackywilly.co.kr/product/WA2603KT68PI" itemtype="http://schema.skype.com/HyperLink" rel="noreferrer noopener" title="https://www.wackywilly.co.kr/product/WA2603KT68PI" target="_blank" itemid="f9dc63fa-216e-49c5-b650-3894761e35d6">[원이 착용] 우먼스 노르딕 풀오버 핑크</a> 해당상품도,,, 더현대 익스클루시브인데 온라인에 공유가 안된것같습니다..</p>
+<p>이것도 내려주세요ㅠㅠ 감사합니다.</p>]
+
+---
+
+**[박성찬]** — [2026-09-01 11:29]
+
+[<p>500장 이하 + 기존 시안으로만 가능합니다!</p>]
+
+---
+
+**[임제형]** — [2026-09-01 11:29]
+
+[<p>해당 내용으로 2시에 사업부 회의 아젠다 추가했으면 합니다</p>]
+
+---
+
+**[임제형]** — [2026-09-01 11:28]
+
+[<attachment id="1788225375305"></attachment>
+<p>안녕하세요 피드백 감사합니다</p>
+<p>&nbsp;</p>
+<p><strong>1) 추가 발주</strong></p>
+<p>추가 생산 자체가 어려운것으로 인지하면 될까요?</p>
+<p>최초 가능한것으로 들어 디벨롭 했던 부분입니다</p>
+<p>&nbsp;</p>
+<p><strong>2) 이미지 변경</strong></p>
+<p>셀카 소재로만 제작이 가능할까요? 기존에 B컷중에서 셀렉함을 생각했습니다</p>
+<p>&nbsp;</p>
+<p>실장님 말씀주신 겨울 헤비아우터 집중에 공감합니다 그렇다고 겨울을 집중 안 하겠다도 아닙니다</p>
+<p>현재 와키윌리 자사몰은 신규 고객 유입과 매출을 잘 준비해주신 원이 셀럽으로 메이크업하고 있는 상황에서 영업관점에서 추가 드라이브를 걸것에 대해 고민하다 나온 아이디어였습니다</p>
+<p>&nbsp;</p>
+<p>고객의 니즈가 포카에 있고 자사몰 신규 가입 수치도 긍정적인데 온라인 입장에서는 안할 이유가 없던 추가 오더였습니다</p>
+<p>&nbsp;</p>
+<p>그럼 9/15 2차 발매는 포토카드 모두 소진 완료로 기획전에 표기하면 될까요?</p>]
+
+---
+
+**[성현진]** — [2026-09-01 10:26]
+
+[<p>감사합니다.</p>]
+
+---
+
+**[성현진]** — [2026-09-01 10:26]
+
+[<p>네.. <a href="https://www.wackywilly.co.kr/product/WA2603CD63LP" itemtype="http://schema.skype.com/HyperLink" rel="noreferrer noopener" title="https://www.wackywilly.co.kr/product/WA2603CD63LP" target="_blank" itemid="10ab6ce9-74e8-4271-9918-18d60dece0fc">[원이 착용] 우먼스 레이스 프릴 가디건 핑크</a>&nbsp;</p>
+<p>이상품도 마찬가지 입니다.. 기획전에는 올라가있는데 우먼 -상의에는 없어요..! &nbsp;</p>
+<p>현재까지 업로드된 FW 신상품 전체 확인 부탁드립니다..!</p>]
+
+---
+
+**[김솔이]** — [2026-09-01 10:25]
+
+[<p><at id="0">성현진</at>&nbsp;세부 카테고리까지 하나하나 꽂아야하는 상황이라 누락 된것 같습니다 발매 상품부터 세팅 후 확인해보겠습니다!</p>]
+
+---
+
+**[성현진]** — [2026-09-01 10:23]
+
+[<p>그리고,, <a href="https://www.wackywilly.co.kr/product/WA2603PT76BL" itemtype="http://schema.skype.com/HyperLink" rel="noreferrer noopener" title="https://www.wackywilly.co.kr/product/wa2603pt76bl" target="_blank" itemid="7b6229b9-0eea-493c-b692-bff282593f4f">[원이 착용] 우먼스 아플리케 커브드 데님 팬츠 블루</a> 해당상품</p>
+<p>원이기획전에는 올라가있는데,, 왜 우먼 하의에는 안들어가있을까요..?</p>
+<p>&nbsp;</p>
+<p>현재 FW 신상 업로드 점검이 계속해서들어와서 확인부탁드립니다!&nbsp;</p>]
+
+---
+
+**[성현진]** — [2026-09-01 10:22]
+
+[<p>넵 감사합니다!</p>]
+
+---
+
+**[김솔이]** — [2026-09-01 10:21]
+
+[<p><at id="0">성현진</at>&nbsp;수정 했습니다!</p>]
+
+---
+
+
+---
+
+# Source: teams 채팅 데이터/Teams - 와키윌리 상품기획 + 영업기획 - 2026-09-07 - 080013.md
+
+- bytes: 12284
+- sha256: cce1849ebb50561eb72fbdee3d1912db614eecb223631f68759795c11e26cccb
+
+---
+type: teams-chat
+source: Microsoft Teams
+channel: ★와키윌리 상품기획+영업기획
+clipped: 2026-09-07
+platform: Microsoft Teams
+tags:
+  - teams
+  - auto-backup
+---
+
+# ★와키윌리 상품기획+영업기획
+
+> 백업일: 2026-09-07
+> 자동 백업 by Power Automate
+
+---
+
+
+**[오승택]** — [2026-09-07 11:49]
+
+[<p>네 알겠습니다.&nbsp;</p>
+<attachment id="1788746155224"></attachment>]
+
+---
+
+**[성현진]** — [2026-09-07 10:55]
+
+[<p>아 아닙니다 현재는 괜찮습니다..! 저희 금주 27SS 뉴베이직/캐리오버스타일 캐드미팅하는데,&nbsp;</p>
+<p>컬러나오고 결정되고 회신드리겠습니다. 그때 스타일별 수량 의견주세요!:) &nbsp;</p>]
+
+---
+
+**[오승택]** — [2026-09-07 10:53]
+
+[<p><at id="0">성현진</at>&nbsp;팀장님</p>
+<p>&nbsp;</p>
+<p>지난주 메신져 남겨주신 내용 확인이 늦었습니다.</p>
+<p>&nbsp;</p>
+<p>지난주 개인적인 업무로 인해서 목~금 연차였습니다.</p>
+<p>&nbsp;</p>
+<ol>
+<li>전체 회사 기조상 전년 과다 SKU진행으로 27SS 부터 SKU는 줄여서 진행하는것으로 이야기 되었는점.</li><li>1차메인 발주 / 2차 뉴베이직 추가 &nbsp;까지 물량으로 잡혀있고 , 10-11월에 Q2핫썸머 추가진행으로 (여름성아이템 그룹)이<br>
+그룹으로 추가될 예정입니다. 보내주신 우먼스 물량부족상품들이 거기에 들어가있는것같아서 참고해주셨으면합니다.&nbsp;<br>
+티셔츠/ 슬리브리스 / 스커트/ 팬츠등 여름성아이템이 발주금액 50억정도 추가될 예정입니다.<br>
+<br>
+위 내용은 확인했습니다.<br>
+&nbsp;</li></ol>
+<p>27SS 스타일별 의견관련하여 스타일 SKU별로 수량 의견을 드려야할까요?</p>
+<p>&nbsp;</p>]
+
+---
+
+**[이하영]** — [2026-09-04 14:01]
+
+[<p>넵넵 27SS 구성까진 못봐서 사유가 어떻게 되나 했습니다! 확인 감사합니다!&nbsp;</p>]
+
+---
+
+**[김연희]** — [2026-09-04 13:42]
+
+[<attachment id="1788488151179"></attachment>
+<p>대리님, 안녕하세요.&nbsp;</p>
+<ol>
+<li>CD51 - FCST 파일 내 리오더진행시 판매율 50% 언더로 설정되어있고, 아직 판매가 많이 올라오진 않아서 이후 판매 계속 팔로잉 하려고 합니다. 그리고 27SS 캐리오버로 진행하기 때문에, 재고를 많이 남길 필요가 없어서, 보수적으로 판단하려고 합니다.</li></ol>
+<p>그리고 CD63, CD54도 마찬가지로 리오더를 아예 하지 않겠다는게 아니고, 지금 판매 올라온지 얼마 안되서 판매 추이 팔로잉 후에 수량 결정하려고 합니다. FCST 상으로도 판매율 70%언더로 설정되어있는데, 도트 가디건 같은경우에도 디벨롭 버전 27SS 구성 예정이기 때문에, 추후 판매 추이에 따라 리오더 수량 결정 예정입니다 ! &nbsp;</p>]
+
+---
+
+**[이하영]** — [2026-09-04 11:15]
+
+[<attachment id="1788409739060"></attachment>
+<p><at id="0">김연희</at>&nbsp;과장님 안녕하세요, 리오더 확인이 좀 늦었습니다.&nbsp;</p>
+<p>영업기획 FCST예상 판매율 기준으로 봤다고 해주셔서요&nbsp;</p>
+<p>CD63 , CD51, CD54는 &nbsp;안들어가도 괜찮을까요? 상품기획실에서 예상하신거랑 감안해서 봐주신걸까요??</p>]
+
+---
+
+**[김연희]** — [2026-09-03 16:14]
+
+[<p>넵 감사합니다</p>]
+
+---
+
+**[이유림]** — [2026-09-03 16:11]
+
+[<attachment id="1788415583885"></attachment>
+<p>나머지 매장은 정상이라고 합니다! 타매장에서도 연락오면 공유 드리겠습니다~</p>
+<p>플래그십 홍대점에서 나온 2장은 CS로 보내겠습니다!&nbsp;</p>]
+
+---
+
+**[김연희]** — [2026-09-03 15:11]
+
+[<p>넵넵 감사합니다!</p>]
+
+---
+
+**[이유림]** — [2026-09-03 15:07]
+
+[<attachment id="1788415641596"></attachment>
+<p>넵 확인하고 공유드릴게요!</p>]
+
+---
+
+**[이하영]** — [2026-09-03 15:07]
+
+[<p>&nbsp;</p>
+<attachment id="1788415134277"></attachment>
+<p>유림님 이거 매장 몇군데만 물어봐주세요!</p>]
+
+---
+
+**[김연희]** — [2026-09-03 15:06]
+
+[<p>안녕하세요, 혹시 전체라고 하던가요? 일부라고 하던가요?</p>]
+
+---
+
+**[이유림]** — [2026-09-03 14:58]
+
+[<p>안녕하세요! 저희 택가 잘못 나온 품번이 있는데 확인 부탁드립니다~!</p>
+<p>WA2603LT62 입니다!</p>
+<p>&nbsp;</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:16b3fa36b0f4476a8bb8e26f4dde7b34@thread.v2/messages/1788415134277/hostedContents/aWQ9eF8wLXNrci1kMi1jYWFmYjExMGExMGQxNjYxYmRiM2QwNTY5MjdmY2U0Myx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMi1jYWFmYjExMGExMGQxNjYxYmRiM2QwNTY5MjdmY2U0My92aWV3cy9pbWdv/$value" width="187.5" height="250" alt="이미지" itemid="0-skr-d2-caafb110a10d1661bdb3d056927fce43"></p>]
+
+---
+
+**[성현진]** — [2026-09-03 13:34]
+
+[<p><at id="0">오승택</at>&nbsp;과장님! 그리구 영업기획에서 피드백주신 건 참고해서 발주 진행할 예정인데,,</p>
+<p>&nbsp;</p>
+<p>공유가 안되었을수도 있어서 다시한번 전달드립니다. 영업기획에서도 먼저 알고있으셔야 하는 내용은,</p>
+<ol>
+<li>전체 회사 기조상 전년 과다 SKU진행으로 27SS 부터 SKU는 줄여서 진행하는것으로 이야기 되었는점.</li><li>1차메인 발주 / 2차 뉴베이직 추가 &nbsp;까지 물량으로 잡혀있고 , 10-11월에 Q2핫썸머 추가진행으로 (여름성아이템 그룹)이<br>
+그룹으로 추가될 예정입니다. 보내주신 우먼스 물량부족상품들이 거기에 들어가있는것같아서 참고해주셨으면합니다.&nbsp;<br>
+티셔츠/ 슬리브리스 / 스커트/ 팬츠등 여름성아이템이 발주금액 50억정도 추가될 예정입니다.<br>
+&nbsp;<br>
+업무에 참고부탁드립니다:)</li></ol>]
+
+---
+
+**[김연희]** — [2026-09-03 13:29]
+
+[<p><a href="https://barrelsco.sharepoint.com/:x:/r/sites/bcave_wa_qr/Shared%20Documents/26FW%20QR/26FW%20%EC%99%80%ED%82%A4%EC%9C%8C%EB%A6%AC%20QR%EA%B5%AC%EC%84%B1(SPOT,Reorder).xlsx?d=wada378380d8a4b41be3e067876c91d45&amp;csf=1&amp;web=1&amp;e=gVa1h5" itemtype="http://schema.skype.com/HyperLink/Files" rel="noreferrer noopener" title="https://barrelsco.sharepoint.com/:x:/r/sites/bcave_wa_qr/Shared%20Documents/26FW%20QR/26FW%20%EC%99%80%ED%82%A4%EC%9C%8C%EB%A6%AC%20QR%EA%B5%AC%EC%84%B1(SPOT,Reorder).xlsx?d=wada378380d8a4b41be3e067876c91d45&amp;csf=1&amp;web=1&amp;e=gVa1h5" target="_blank" itemid="ADA37838-0D8A-4B41-BE3E-067876C91D45">26FW 와키윌리 QR구성(SPOT,Reorder).xlsx</a> 아래 리오더 QR 파일 함께 참고 부탁드립니다.</p><attachment id="ADA37838-0D8A-4B41-BE3E-067876C91D45"></attachment>]
+
+---
+
+**[김연희]** — [2026-09-03 13:28]
+
+[<attachment id="1788258535156"></attachment>
+<p><at id="0">이하영</at>대리님, 안녕하세요. 금주 리오더 검토 내용 회신 드립니다. 영업기획 FCST 파일 내에서 80% 판매율 이상인 상품 위주로 먼저 검토 진행하였습니다. WA2603CD53 RD 컬러, WA2603KT62 SB, YE, NA 컬러 총 4 SKU 금주 리오더 진행 예정입니다.&nbsp;</p>
+<p>WA2603CD53 레드 컬러는 소재 변경하여 27SS 캐리오버로 진행할 예정이라, 500장 진행하려고 합니다.</p>
+<p>&nbsp;</p>
+<p>4 SKU 외 의견 주신 스타일들은 추후 판매 계속 팔로잉 하며 리오더 추가 검토 진행하겠습니다.&nbsp;</p>
+<p>&nbsp;</p>
+<p>아래 수량 참고 부탁드리며, 의견 있으시면 회신 부탁드립니다. 감사합니다.</p>
+<p>&nbsp;</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:16b3fa36b0f4476a8bb8e26f4dde7b34@thread.v2/messages/1788409739060/hostedContents/aWQ9eF8wLXNrci1kMS01MWI3MDQ3YzQ5ZjE2NWQzMWIyMzM0ZTcwOTM1MTZlOCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS01MWI3MDQ3YzQ5ZjE2NWQzMWIyMzM0ZTcwOTM1MTZlOC92aWV3cy9pbWdv/$value" width="603" height="157" alt="이미지" itemid="0-skr-d1-51b7047c49f165d31b2334e7093516e8"></p>]
+
+---
+
+**[성현진]** — [2026-09-03 11:25]
+
+[<attachment id="1788343405709"></attachment>
+<p>과장님 의견 너무잘받았습니다.</p>
+<p>혹시~ 저는 27SS 리뷰 보내주신 것처럼 영업기획 수량의견 받아보려고 했었는데,,,</p>
+<p>스타일BY로 의견은 안주셔도 괜찮으신걸까요~?&nbsp;</p>
+<p>&nbsp;</p>
+<p>아니면 유니/우먼스의 추가로 진행하는 캐리오버+뉴베이직스타일 들 수량피드백이라도 받아보려고합니다~!&nbsp;</p>]
+
+---
+
+**[성현진]** — [2026-09-02 19:10]
+
+[<div>네 감사합니다 과장님!<br>
+저 내일들어가서 검토하고 저희가 수량점검을 다시할때 영기쪽 내용 반영해서 회의하겠습니다:)</div>]
+
+---
+
+**[오승택]** — [2026-09-02 19:03]
+
+[<attachment id="1788151034396"></attachment>
+<p><at id="0">성현진</at>&nbsp;팀장님</p>
+<p>&nbsp;</p>
+<p>27SS 수량 점검을 진행한 내용에 대해서 핵심내용만 공유드리겠습니다.</p>
+<p>&nbsp;</p>
+<p>유니에 대해서 수량점검은 별도로 피드백은 없으나, &nbsp;SKU별 발주 수량에 대한 차이가 많이나는 스타일에 대해서 점검만 부탁드리겠습니다.&nbsp;</p>
+<p>예를 들어서 WA2702JK02 / 후드 경량 윈드브레이커 집업(패커블) 와 같이 SKU별 차이가 많이 나는 경우 판매가 어렵습니다.</p>
+<p>&nbsp;</p>
+<p>26SS 판매율 55% 이상 9개 품목은 전부 우먼스인데, 27SS에서 품번 87→77개(-11.5%), 물량 192,266→159,700장(-16.9%)으로 스타일과 물량이 함께 축소됐습니다.</p>
+<p>&nbsp;</p>
+<p>관련하여 파일 공유드리겠습니다.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p><attachment id="92219c2e-46fb-4d9e-b7fa-fac7680bd6a2"></attachment>]
+
+---
+
+**[성현진]** — [2026-09-02 09:26]
+
+[<p>안녕하세요 대리님! 빠른 제안 감사합니다.</p>
+<p>&nbsp;</p>
+<p>우먼스 담당MD&nbsp;<at id="0">김연희</at>&nbsp;리오더 점검 기준 같이살펴본다음에</p>
+<p>진행할 스타일 /수량 /예상납기 &nbsp;수-목 중으로 &nbsp;회신 드리겠습니다 .</p>
+<p>감사합니다:)</p>]
+
+---
+
+**[성현진]** — [2026-09-02 09:24]
+
+[]
+
+---
+
+**[이하영]** — [2026-09-01 19:28]
+
+[<div><at id="0">성현진</at>&nbsp;안녕하세요 팀장님, &nbsp; 금주 리오더 요청 상품리스트 전달드립니다!<br>
+선 리오더 &nbsp;감안한 FCST이며, 요청수량은 참고로 봐주시고 상품기획팀에서 최종확정 부탁드립니다~&nbsp;<br>
+&nbsp;<br>
+■리오더 점검 기준<br>
+<b><span style="background-color:#e5f18f">FCST </span></b><b><span style="background-color:#e5f18f">로직</span></b>&nbsp;<br>
+<ul>
+<li>작년 같은 주차 복종별 판매비중 × 올해 복종별 목표판매율(수량) = 기준 예측치<br>
+</li><li>트렌드지수 곱해서 가속·둔화 보정<br>
+</li><li>판매율 60/70/80/90% 구간별로 예측치 단계적으로 축소<br>
+</li><li>지난 주차는 예측 대신 실적으로 대체<br>
+</li><li>미출시·완판·목표수량 도달 상품은 예측 0<br>
+</li><li>목표판매율: 상품별로 따로 없어서 전년 복종 12월 마감 판매율을 기본으로 쓰는데, 우먼스는 신장·유니 일부는 축소 등 복종별 트렌드 감안해서 영업기획에서 일부 수정한 값<br>
+</li><li>트렌드지수: ① 금년 최근4주 판매율 ÷ 전년 4주 누적판매율(전년대비 진도 비교) ② 최근2주 평균판매량 ÷ 최근4주 평균판매량(1 초과면 가속, 1 미만이면 둔화) 이 두 개 반영해서 나온 지수 &nbsp;<br>
+</li></ul>
+&nbsp;<br>
+■ 리오더 점검 대상&nbsp;<br>
+<ul>
+<li>12월 말 기준 FCST 판매율 60% &nbsp;이상 검토&nbsp;<br>
+</li><li>전 주 대비 대비 증가한 상품 검토&nbsp;<br>
+</li><li>FCST 판매율 10월 내 판매율 60% 도달 상품 검토</li></ul>
+</div><attachment id="81407ead-78f4-411a-93b8-72a04c08984c"></attachment>]
+
+---
+
+**[이하영]** — [2026-09-01 09:37]
+
+[<p>넵 일단알겠습니다. 확인 감사합니다!</p>]
+
+---
+
+**[성현진]** — [2026-09-01 09:21]
+
+[<attachment id="1788161915878"></attachment>
+<p><at id="0">이하영</at>&nbsp;부장님은 따로안하셨데요..! 저도 일정연락드린게 없긴한데..</p>]
+
+---
+
+
+---
+
+# Source: teams 채팅 데이터/Teams - 와키윌리 상품기획+영업기획+VM - 2026-09-07 - 080110.md
+
+- bytes: 12941
+- sha256: 9a6a33b7bfa790e8e987b89be4d52088d265305ba0542dbcd9350cba77f8b171
+
+---
+type: teams-chat
+source: Microsoft Teams
+channel: 와키윌리 상품기획+영업기획+VM
+clipped: 2026-09-07
+platform: Microsoft Teams
+tags:
+  - teams
+  - auto-backup
+---
+
+# 와키윌리 상품기획+영업기획+VM
+
+> 백업일: 2026-09-07
+> 자동 백업 by Power Automate
+
+---
+
+
+**[박상희]** — [2026-08-05 09:45]
+
+[<p><at id="0">성현진</at>&nbsp;<at id="1">한병현</at>&nbsp;<at id="2">김연희</at>&nbsp;안녕하세요. VM실 박상희입니다.</p>
+<p>FSS 영업팀에서 반팔티셔츠 핏가이드 제작 요청 왔는데, CAD 도안이 비슷하고 겹치는 핏이 있을것 같아 시안 공유드립니다.&nbsp;</p>
+<p>수정 및 보완 사항 있으시면 당팀으로 회신 부탁드립니다!</p><attachment id="4eb1fe44-0b18-4cfa-97e7-31608a057cdd"></attachment>]
+
+---
+
+**[]** — [2026-08-05 09:43]
+
+[<systemEventMessage/>]
+
+---
+
+**[노혜미]** — [2026-07-08 12:32]
+
+[<p><at id="0">김연희</at><at id="1">박상희</at></p>
+<p>해당내용 확인했습니다. 7/15(수) 예정되어있던 착장작업 관련하여 <at id="2">김연희</at>&nbsp;따로 연락 드리겠습니다!</p>]
+
+---
+
+**[박상희]** — [2026-07-08 11:20]
+
+[<div>
+<attachment id="1783477084195"></attachment>
+<at id="0">노혜미</at> 대리님 20일 이후로 스케쥴 상품팀과 조율 바랍니다</div>]
+
+---
+
+**[김연희]** — [2026-07-08 11:18]
+
+[<p>넵, 그럼 메인은 여름, 서브는 가을 착장으로 의견 드리겠습니다. 그리고 7/15 착장 작업으로 일정 주셨는데, 홍대에는 FW 샘플이 없고, 마케팅 샘플도 본사에서 FW 는 20일 이후 정도 되어야 일부 수령 가능할것같습니다. 일정 참고 부탁드립니다. !&nbsp;</p>]
+
+---
+
+**[박상희]** — [2026-07-08 11:14]
+
+[<attachment id="1783476475358"></attachment>
+<p><at id="0">김연희</at>&nbsp;안녕하세요. 과장님 8월 1,2주차 여름(메인), 8월 3,4주차 가을(서브) 이렇게 주시면 좋을것 같습니다.</p>]
+
+---
+
+**[김연희]** — [2026-07-08 11:08]
+
+[<p>의견 여쭤봅니당!</p>]
+
+---
+
+**[김연희]** — [2026-07-08 11:08]
+
+[<p>아니면 IMC 가 SS 로 잡혀있으니.. SS 상품으로 드려야할지 ㅠㅠ</p>]
+
+---
+
+**[김연희]** — [2026-07-08 11:08]
+
+[<p>그럼 8월 마네킹은 FW 상품으로 드리는게 나을까요?</p>]
+
+---
+
+**[김연희]** — [2026-07-08 11:07]
+
+[<p><at id="0">노혜미</at>&nbsp;대리님, 안녕하세요. 여쭤볼게 있습니다. 8월 VM 마네킹 착장 요청하셨던데, 저희가 8월 2주부터 FW 상품이 출고 예정으로 잡혀 있거든요.&nbsp;</p>]
+
+---
+
+**[]** — [2026-07-07 10:00]
+
+[<systemEventMessage/>]
+
+---
+
+**[노혜미]** — [2026-07-06 17:31]
+
+[<attachment id="1783326627748"></attachment>
+<p>네넵 알겠습니다! 수요일 부탁드리겠습니다~</p>]
+
+---
+
+**[이하영]** — [2026-07-06 17:30]
+
+[<attachment id="1783326009964"></attachment>
+<p>안녕하세요, 아직 영업에 전달을 못해서, 수요일까지 전달드려도될까요,, 오전에 작업하려고했는데 &nbsp;늦어졌습니다 ㅠㅠ</p>]
+
+---
+
+**[노혜미]** — [2026-07-06 17:20]
+
+[<attachment id="1783063416740"></attachment>
+<p><at id="0">이하영</at>&nbsp;안녕하세요! 혹시 먼작귀 오프라인매장 금일 중 회신 어려우실까요~?</p>]
+
+---
+
+**[변창현]** — [2026-07-06 13:32]
+
+[<p>안녕하세요!</p>
+<p><strong>먼작귀 최종 발매 일정 </strong>공유드립니다</p>
+<p>&nbsp;</p>
+<p><strong>1. AS-IS</strong></p>
+<p>7/27(월)<br>
+: 전 스타일 온라인 출시 (무신사 오프라인 홍대/대구점 포함)</p>
+<p>8/7(금)<br>
+: 전 스타일 오프라인 출시 (VM 적용)</p>
+<p>&nbsp;</p>
+<p><strong>2. TO-BE</strong></p>
+<p><span style="background-color:#E5F18F"><strong>8/7(금)</strong></span></p>
+<p><span style="background-color:#E5F18F"><strong>: 전 스타일 온&amp;오프라인 출시</strong></span></p>
+<p>&nbsp;</p>
+<p>-VM 적용</p>
+<p>: FSS - 하이라이트</p>
+<p>FSS 외 - 한 헹거 POP</p>]
+
+---
+
+**[노혜미]** — [2026-07-03 16:46]
+
+[<attachment id="1783063416740"></attachment>
+<p>감사합니다~!!</p>]
+
+---
+
+**[이하영]** — [2026-07-03 16:23]
+
+[<attachment id="1783055297536"></attachment>
+<p>안녕하세요, 먼작귀 오프라인 매장 월요일 오후까지 회신 드리도록 하겠습니다 !</p>]
+
+---
+
+**[노혜미]** — [2026-07-03 14:08]
+
+[<p><at id="0">김아영</at><at id="1">이하영</at></p>
+<p>&nbsp;</p>
+<p>안녕하세요! 먼작귀 오프라인 매장 하이라이팅 일정이 8/7(금)으로 당겨짐에 따라&nbsp;</p>
+<p>다음주 월요일까지 진행매장 리스트업 회신 요청드리겠습니다. 매장 인테리어 타입에 맞게 시안 작업 진행하고자 하오니, 바쁘시겠지만&nbsp;</p>
+<p>기한 내 회신 요청드리겠습니다!</p>]
+
+---
+
+**[박상희]** — [2026-07-01 15:57]
+
+[]
+
+---
+
+**[변창현]** — [2026-06-30 18:20]
+
+[<p>네 VM 일정 가능하시면 8/7로 진행 부탁드리겠습니다!</p>]
+
+---
+
+**[박상희]** — [2026-06-30 17:59]
+
+[<attachment id="1782809968640"></attachment>
+<p>네 8/7일 스타트 일정으로 확인하겠습니다. 오프라인 매장 리스트 부탁드립니다.</p>]
+
+---
+
+**[김아영]** — [2026-06-30 17:59]
+
+[<p>넵 반팔 물량이 더 많아서 8월 7일이 좋을 것 같습니다 ~ 상품팀만 괜찮으시면&nbsp;</p>]
+
+---
+
+**[박상희]** — [2026-06-30 17:51]
+
+[<attachment id="1782808610665"></attachment>
+<p>반팔보다 맨투맨이 있이서 8/14일로 말씀 주신걸로 아는데 8/7일이 나을까요?</p>]
+
+---
+
+**[이하영]** — [2026-06-30 17:36]
+
+[<attachment id="1782802891343"></attachment>
+<p><at id="0">박상희</at>&nbsp;팀장님 오프라인 8/14일 말고 8/7 로 당길수있을까요? &nbsp;VM 연출 준비 일정으로 인해서 중순으로 연락받긴했는데</p>
+<p>반팔물량이 좀 있어서 한주만 당길수있는지 검토부탁드립니다~!&nbsp;</p>]
+
+---
+
+**[이하영]** — [2026-06-30 17:16]
+
+[<attachment id="1782802891343"></attachment>
+<p>전매장 아니고 10~15개점 진행하려고합니다. 해당 매장은 영업이랑 소통 후 회신드리겠습니다!</p>]
+
+---
+
+**[박상희]** — [2026-06-30 16:01]
+
+[<attachment id="1782802615395"></attachment>
+<p><at id="0">김아영</at>&nbsp;<at id="1">이하영</at>&nbsp;먼작귀 오프라인 전매장 출고 하실지 일부매장 진행하실지 확인부탁드립니다!</p>]
+
+---
+
+**[변창현]** — [2026-06-30 15:56]
+
+[<p>금일 논의된 일정 공유드립니다.</p>
+<p>&nbsp;</p>
+<p><strong>[먼작귀 판매채널 및 발매 일정 조정]</strong></p>
+<p>&nbsp;</p>
+<p><strong>1. AS-IS</strong></p>
+<p>&nbsp;</p>
+<p>7/27(월)<br>
+: 반팔티 온라인 출시 (STC1/STC2/STC3)</p>
+<p>(무신사 오프라인 홍대/대구점 포함)</p>
+<p>8/14(금)<br>
+: 오프라인 및 온라인 전체 출시(전 스타일), FSS VM 적용</p>
+<p>&nbsp;</p>
+<p><strong>2. TO-BE</strong></p>
+<p>&nbsp;</p>
+<p>7/27(월)<br>
+: 전 스타일 온라인 출시 (무신사 오프라인 홍대/대구점 포함)</p>
+<p>8/14(금)<br>
+: 전 스타일 오프라인 출시 (VM 적용)</p>
+<p>&nbsp;</p>
+<p><strong>*추가 참고 사항</strong></p>
+<p>(1) 집중 매장 10~20개로 선정하여 출고 (영업 기획 진행)</p>
+<p>(2) VM 적용 : <strong>FSS </strong>- 하이라이트 적용 (ZONE 구성)</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<strong>나머지</strong> <strong>매장</strong> - 한 헹거 POP로 간단하게 적용</p>]
+
+---
+
+**[박상희]** — [2026-06-30 13:15]
+
+[<attachment id="1782792753817"></attachment>
+<p>네네!</p>]
+
+---
+
+**[]** — [2026-06-30 13:15]
+
+[<systemEventMessage/>]
+
+---
+
+**[변창현]** — [2026-06-30 13:12]
+
+[<p>먼작귀 관련 단체 메신저 방에서 마케팅팀이랑 VM 시안 확인 및 컨펌 건으로</p>
+<p>같이 소통하는 게 좋을 것 같은데</p>
+<p>&nbsp;</p>
+<p>단체 메신저 초대드려도 될까요?</p>]
+
+---
+
+**[변창현]** — [2026-06-30 13:11]
+
+[<attachment id="1782792414015"></attachment>
+<p>기존에 롱슬리브/맨투맨 판기 때문에 출시일을 분리해서 잡았는데,</p>
+<p>&nbsp;</p>
+<p>출시 임팩트가 분산된다는 피드백이 있어서</p>
+<p>한번에 출시 요청하는 방향으로 전달 받아서, 주력 판기는 아니지만 동시 출시로 진행하려고 합니다!</p>]
+
+---
+
+**[박상희]** — [2026-06-30 13:06]
+
+[<attachment id="1782792236196"></attachment>
+<p>안녕하세요. 대리님. 최대한 맞춰 보겠으나,,,,, mtm 포함이던데 7/27일 판기가 맞나요?</p>]
+
+---
+
+**[변창현]** — [2026-06-30 13:03]
+
+[<p><at id="0">박상희</at>&nbsp;팀장님 안녕하세요!</p>
+<p>만약 먼작귀 FSS VM 적용 시기 당긴다고 하면</p>
+<p>7/27(월)에도 적용이 가능할까요?</p>
+<p>&nbsp;</p>
+<p>(만약 7/27(월)에 전 스타일 출시 한다면)</p>]
+
+---
+
+**[]** — [2026-06-29 09:10]
+
+[<systemEventMessage/>]
+
+---
+
+**[박상희]** — [2026-06-23 17:41]
+
+[<attachment id="1782203420214"></attachment>
+<p>네 공유 감사합니다! 무신사는 이종현대리와 확인해 보겠습니다!</p>]
+
+---
+
+**[변창현]** — [2026-06-23 17:30]
+
+[<attachment id="1782202091855"></attachment>
+<p>안녕하세요!</p>
+<p>&nbsp;</p>
+<p><strong>먼작귀 판매채널 및 발매 일정 공유드립니다.</strong></p>
+<p>&nbsp;</p>
+<p>7/27(월)<br>
+: 반팔티 온라인 출시 (STC1/STC2/STC3)</p>
+<p>&nbsp;</p>
+<p>- 온라인 전체(자사몰/무신사/29CM)<br>
+- 무신사 오프라인 홍대점/대구점 예정</p>
+<p>&nbsp;</p>
+<p>8/14(금)<br>
+: 오프라인 및 온라인 전체 출시(전 스타일)<br>
+&nbsp;</p>
+<p>- 전체 오프라인 매장 출고<br>
+- 홍대/성수/명동 FSS에서만 VMD 진행</p>
+<p>- 무신사 오프라인 홍대점/대구점 예정</p>]
+
+---
+
+**[박상희]** — [2026-06-23 17:08]
+
+[<p>네네! 먼작귀 출시일 마케팅에 요청했더니 상품팀에서 잡으신다고 하여 일정 공유 부탁드리며, 성수 FSS 건도 진행사항 있으시면 같이 공유 부탁드립니다 <at id="0">한병현</at>&nbsp;<at id="1">변창현</at>&nbsp;<at id="2">김연희</at></p>]
+
+---
+
+**[김연희]** — [2026-06-23 17:06]
+
+[<p>요방입니다.&nbsp;</p>]
+
+---
+
+**[김연희]** — [2026-06-23 17:06]
+
+[<p><at id="0">박상희</at>&nbsp;팀장님, 안녕하세요</p>]
+
+---
+
+**[김연희]** — [2026-05-26 10:02]
+
+[<attachment id="1779426891718"></attachment>
+<p>안녕하세요, 핀터걸 스타일들은 온라인팀이랑 TF 미팅때 일정 정리했던 건들입니다. 온라인 선발매 진행후 6/1 오프 출고하기로 협의했었습니다.&nbsp;</p>]
+
+---
+
+**[박상희]** — [2026-05-22 15:17]
+
+[<p>차주 주간회의때 '핀터걸' 관련하여 내용정리 해야할것 같으니 참고 부탁드립니다. <at id="0">김연희</at>&nbsp;<at id="1">김현룡</at>&nbsp;<at id="2">노혜미</at>&nbsp;<at id="3">김아영</at></p>]
+
+---
+
+**[박상희]** — [2026-05-22 14:14]
+
+[<p>이거 혹시 온라인 선발매, 오프라인 발매 일정은 어느분이 정리하시는걸까요? <at id="0">김연희</at></p>]
+
+---
+
+**[김현룡]** — [2026-05-22 13:47]
+
+[<p>오프라인 매장에 출고는 되어 있고, 온라인 선발매 종료 후 판매 진행 예정입니다.</p>]
+
+---
+
+**[박상희]** — [2026-05-22 13:34]
+
+[<attachment id="1779424034558"></attachment>
+<p>오프라인 매장 10매장 유지하는걸까요? 아님 이번에 축소된 매장만 운영하시는걸까요/</p>]
+
+---
+
+**[김현룡]** — [2026-05-22 13:27]
+
+[<p>안녕하세요. 온라인팀에서 온라인 선발매 후 6월 1주 이후로 일정 협의하기로 하였습니다.</p>]
+
+---
+
+**[박상희]** — [2026-05-22 13:26]
+
+[<p><img src="https://graph.microsoft.com/beta/chats/19:9909663695f94b4d9f7033dad6e6e7bf@thread.v2/messages/1779423960166/hostedContents/aWQ9eF8wLWNrci1kNC1lNzQyN2FjOGY4M2VhYjI1MTQ1YTg3NjUwNDQ3NzRkNSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLWNrci1kNC1lNzQyN2FjOGY4M2VhYjI1MTQ1YTg3NjUwNDQ3NzRkNS92aWV3cy9pbWdv/$value" width="494.72049689440996" height="250" alt="이미지" itemid="0-ckr-d4-e7427ac8f83eab25145a8765044774d5"></p>]
+
+---
+
+**[박상희]** — [2026-05-22 13:25]
+
+[<p><at id="0">김연희</at>&nbsp;안녕하세요. 과장님! 온라인에 핀터걸 오픈했던데... 오프라인 일정은 어떻게 보는걸까요? &nbsp;CC <at id="1">이하영</at></p>]
+
+---
+
+**[변창현]** — [2026-05-21 10:03]
+
+[<p><at id="0">노혜미</at>&nbsp;대리님 안녕하세요!</p>
+<p>매장 vm 점검 관련해서</p>
+<p>금일 10시 30분에 홍대 FSS 방문하기로 한 일정 전달 받았는데</p>
+<p>변동 없을까요?</p>]
+
+---
+
+**[박상희]** — [2026-05-07 17:08]
+
+[<p>확인했습니다 감사합니다!</p>]
+
+---
+
+**[양윤선]** — [2026-05-07 16:11]
+
+[<attachment id="1778136516553"></attachment>
+<p>유니 포함입니다 팀장님!</p>]
+
+---
+
+
+---
+
+# Source: teams 채팅 데이터/Teams - 와키윌리 소싱&소재&기획 - 2026-09-07 - 230045.md
+
+- bytes: 2125
+- sha256: b62f85fe09c48740bae07b9b449c240be41a0fc23d5ecd31bb366982370b7ca5
+
+---
+type: teams-chat
+source: Microsoft Teams
+channel: 와키윌리 소싱&기획&소재
+clipped: 2026-09-07
+platform: Microsoft Teams
+tags:
+  - teams
+  - auto-backup
+---
+
+# 와키윌리 소싱&기획&소재
+
+> 백업일: 2026-09-07
+> 자동 백업 by Power Automate
+
+---
+
+
+**[성현진]** — [2026-09-07 11:55]
+
+[<p>안녕하세요! 잘부탁드립니다:)</p>]
+
+---
+
+**[박희현]** — [2026-09-07 11:16]
+
+[<p><span style="font-size:inherit">안녕하세요</span></p>
+<p><span style="font-size:inherit">소싱팀 신규 입사자 조장희 과장님 초대하였습니다.</span></p>
+<p><span style="font-size:inherit">&nbsp;</span></p>]
+
+---
+
+**[]** — [2026-09-07 11:16]
+
+[<systemEventMessage/>]
+
+---
+
+**[박희현]** — [2026-09-04 13:56]
+
+[<p><at id="0">정경화</at>과장님 / <at id="1">고보민</at>대리님</p>
+<p>부림 - 3팩 리오더건 벌크시트 접수되어 보민 대리님 자리 위에 올려두었습니다.</p>
+<p>9/29 납기로 현재 재단 대기중인 상태라 지급으로 코멘트 전달 부탁드리겠습니다.</p>]
+
+---
+
+**[고보민]** — [2026-09-04 11:07]
+
+[<p>네 맞아요!</p>]
+
+---
+
+**[김연희]** — [2026-09-04 10:56]
+
+[<attachment id="1788483836559"></attachment>
+<p><at id="0">고보민</at>대리님, 묶어서 가는건 맞는거죠?&nbsp;</p>]
+
+---
+
+**[박희현]** — [2026-09-04 10:46]
+
+[<p>넵 ~</p>]
+
+---
+
+**[고보민]** — [2026-09-04 10:43]
+
+[<p>안녕하세요 이거 제가 오픈에이에 확인할게요!</p>]
+
+---
+
+**[박희현]** — [2026-09-04 10:03]
+
+[<p>안녕하세요 대리님 <at id="0">고보민</at></p>
+<p>WA2604PT73 - 우먼즈 SPOT 건</p>
+<p>기모쭈리라 오픈에이 진행 예정인데, 납기로 인해 UNI - WA2604CR01 와 컬러 동일하게 가는 것으로 사전 소통하였는데</p>
+<p>오픈에이에서 받은 8% GRAY 컬러 브로스 넘버가 유니 품번과 상이하다고 합니다.</p>
+<p>&nbsp;</p>
+<p>WA2604CR01 과 동일하게 갈수 있도록 수정 부탁드립니다.</p>
+<p>&nbsp;</p>
+<p>유니 - WA2604CR01&nbsp;</p>
+<p>BROS BA08<br>
+&nbsp;</p>
+<p>우먼 - WA2604PT73</p>
+<p>BROS B11B(PT73)</p>]
+
+---
+
+
+---
+
+# Source: teams 채팅 데이터/Teams - 와키윌리 온라인 전용 상품 TF팀 - 2026-09-07 - 080111.md
+
+- bytes: 22812
+- sha256: 0449f7b28e4f56b40aaad2e79f54c08311196c759ab80fdcdddfa1dd3190ca09
+
+---
+type: teams-chat
+source: Microsoft Teams
+channel: 와키윌리 온라인 전용 상품 TF 팀
+clipped: 2026-09-07
+platform: Microsoft Teams
+tags:
+  - teams
+  - auto-backup
+---
+
+# 와키윌리 온라인 전용 상품 TF 팀
+
+> 백업일: 2026-09-07
+> 자동 백업 by Power Automate
+
+---
+
+
+**[김솔이]** — [2026-08-21 13:06]
+
+[<p><at id="0">변창현</at>&nbsp;안녕하세요! 26FW 의류에 업데이트 해주시면 됩니다!&nbsp;</p>]
+
+---
+
+**[변창현]** — [2026-08-20 17:05]
+
+[<p>안녕하세요!</p>
+<p>&nbsp;</p>
+<p>26FW 상품 설명서 관련 문의드립니다</p>
+<p>&nbsp;</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:49b876f9f7014476818282dd46fc625a@thread.v2/messages/1787213131927/hostedContents/aWQ9eF8wLXNrci1kMy03ODcwNThjNWViYzBiMGJhZWM3Zjg3YTFkNTNmNmI5Yix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMy03ODcwNThjNWViYzBiMGJhZWM3Zjg3YTFkNTNmNmI5Yi92aWV3cy9pbWdv/$value" width="504.1782729805014" height="250" alt="이미지" itemid="0-skr-d3-787058c5ebc0b0baec7f87a1d53f6b9b"></p>
+<p>&nbsp;</p>
+<p>현재 상품부에서는 추가 업데이트 건 "26FW 의류"에 진행하고 있는데</p>
+<p>&nbsp;</p>
+<p>"온라인 수정" 시트는 그대로 두고</p>
+<p>"26FW 의류" 시트에 업데이트 진행하면 될까요?</p>]
+
+---
+
+**[김솔이]** — [2026-07-30 16:04]
+
+[<p>넵 알겠습니다!</p>]
+
+---
+
+**[이하영]** — [2026-07-30 16:04]
+
+[<attachment id="1785394920758"></attachment>
+<p>네 맞습니다!</p>]
+
+---
+
+**[김솔이]** — [2026-07-30 16:02]
+
+[<p><at id="0">이하영</at>&nbsp;그로서리 전상품 50% 맞을까요??</p>]
+
+---
+
+**[이하영]** — [2026-07-30 16:01]
+
+[<p><at id="0">김솔이</at></p>
+<p>안녕하세요 솔이님, 그로서리 상품 &nbsp;FSS 운영중인 할인율과 동일하게 50%로 변경 부탁드립니다.</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:49b876f9f7014476818282dd46fc625a@thread.v2/messages/1785394869530/hostedContents/aWQ9eF8wLXNrci1kNC03YWUwN2ZmOTFjMDQ3OWI3M2U4MDAyYzYwOGFmYmY0OSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC03YWUwN2ZmOTFjMDQ3OWI3M2U4MDAyYzYwOGFmYmY0OS92aWV3cy9pbWdv/$value" width="504.90998363338787" height="250" alt="이미지" itemid="0-skr-d4-7ae07ff91c0479b73e8002c608afbf49"></p>]
+
+---
+
+**[임강영]** — [2026-07-30 10:13]
+
+[<p><img src="https://graph.microsoft.com/beta/chats/19:49b876f9f7014476818282dd46fc625a@thread.v2/messages/1785373980464/hostedContents/aWQ9eF8wLXNrci1kMS1iOGEyN2QwYTcxYzY2MWI4Y2M3MTI5ZmQxYjYxMmIxOSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS1iOGEyN2QwYTcxYzY2MWI4Y2M3MTI5ZmQxYjYxMmIxOS92aWV3cy9pbWdv/$value" width="510.78582434514635" height="250" alt="이미지" itemid="0-skr-d1-b8a27d0a71c661b8cc7129fd1b612b19"><img src="https://graph.microsoft.com/beta/chats/19:49b876f9f7014476818282dd46fc625a@thread.v2/messages/1785373980464/hostedContents/aWQ9eF8wLXNrci1kMS0yOThmM2FlNmFkZWUwNTQ1ZTZhZTFjYTc3ZmYzNmZjNix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS0yOThmM2FlNmFkZWUwNTQ1ZTZhZTFjYTc3ZmYzNmZjNi92aWV3cy9pbWdv/$value" width="701.9543973941368" height="250" alt="이미지" itemid="0-skr-d1-298f3ae6adee0545e6ae1ca77ff36fc6"><img src="https://graph.microsoft.com/beta/chats/19:49b876f9f7014476818282dd46fc625a@thread.v2/messages/1785373980464/hostedContents/aWQ9eF8wLXNrci1kMy1lMWI5ZmQxNTBjNzhhZWM5MWJmZmU1ZGFiMTVlN2ZlNix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMy1lMWI5ZmQxNTBjNzhhZWM5MWJmZmU1ZGFiMTVlN2ZlNi92aWV3cy9pbWdv/$value" width="375" height="250" alt="이미지" itemid="0-skr-d3-e1b9fd150c78aec91bffe5dab15e7fe6"></p>
+<p>&nbsp;</p>
+<p>안녕하세요, 공홈 보다가 문의사항이 있어서 메시지 남깁니다!</p>
+<p>혹시 위 아이템들과 같은 뒷판 그래픽 티셔츠들은 썸네일컷에서 뒷면 그래픽을 보여줄 수 있는 방법이 있을까요?&nbsp;</p>]
+
+---
+
+**[변창현]** — [2026-07-27 18:22]
+
+[<attachment id="1785144135347"></attachment>
+<p>네 감사합니다!</p>]
+
+---
+
+**[김민조]** — [2026-07-27 18:22]
+
+[<p>안녕하세요&nbsp;</p>
+<attachment id="1785140257966"></attachment>
+<p>&nbsp;</p>
+<p>현재 등록 진행 중이며, <strong>익일 오픈될 수 있도록 준비하겠습니다 !</strong></p>]
+
+---
+
+**[변창현]** — [2026-07-27 17:17]
+
+[<p><at id="0">김민조</at>&nbsp;대리님 안녕하세요</p>
+<p>무신사/29CM 아트 그로서리 제품 업로드 확인 부탁드립니다!</p>]
+
+---
+
+**[변창현]** — [2026-07-27 11:51]
+
+[<p><at id="0">김솔이</at>&nbsp;안녕하세요!</p>
+<p>아직 인플루언서 컨텐츠 이미지 사용 여부는 회신을 못 받았습니다</p>
+<p>&nbsp;</p>
+<p>우선 업로드 먼저 진행 후</p>
+<p>사용 가능하면 그때 추가하는 방향으로 진행 부탁드립니다!</p>]
+
+---
+
+**[변창현]** — [2026-07-22 19:20]
+
+[<attachment id="1784708932674"></attachment>
+<p>무신사/29CM도 명일 업로드 부탁드립니다!</p>
+<p>&nbsp;</p>
+<p>현재 마케팅팀에 인플루언서 촬영 컨텐츠 이미지 사용 여부 문의해 놓은 상태여서</p>
+<p>해당 건도 확인되면 공유드리겠습니다!</p>]
+
+---
+
+**[김솔이]** — [2026-07-22 17:28]
+
+[<p><at id="0">변창현</at>그로서리 상품 자사몰만 판매해야 하는걸까요??</p>]
+
+---
+
+**[김솔이]** — [2026-07-22 17:21]
+
+[<p><at id="0">변창현</at>&nbsp;그로서리 등록 완료입니다!</p>]
+
+---
+
+**[변창현]** — [2026-07-22 10:33]
+
+[<attachment id="1784611905371"></attachment>
+<p>안녕하세요! <at id="0">김솔이</at></p>
+<p>금일 업로드 완료 예정으로 확인했습니다!</p>]
+
+---
+
+**[김솔이]** — [2026-07-21 14:31]
+
+[<p><at id="0">변창현</at>&nbsp;넵 내일 상세 공유 주신다고 하십니다!</p>]
+
+---
+
+**[변창현]** — [2026-07-21 09:35]
+
+[<attachment id="1784516275500"></attachment>
+<p><at id="0">김솔이</at>&nbsp;안녕하세요!</p>
+<p>명일까지는 등록될 수 있을까요?</p>]
+
+---
+
+**[김솔이]** — [2026-07-20 11:57]
+
+[<p><at id="0">변창현</at>&nbsp;안녕하세요! 아직 상세페이지 전달 받지 못해서 금주중으로 등록할 수 있도록 하겠습니다.</p>]
+
+---
+
+**[변창현]** — [2026-07-16 18:26]
+
+[<attachment id="1784013371498"></attachment>
+<p>안녕하세요!</p>
+<p>&nbsp;</p>
+<p>온라인 등록 예정일 어떻게 될까요?</p>]
+
+---
+
+**[변창현]** — [2026-07-14 18:32]
+
+[<p><at id="0">김솔이</at>&nbsp;<at id="1">김민조</at></p>
+<p>26FW - 반팔티셔츠 ST 스타일</p>
+<p>7월 입고 건도 있어서 온라인 촬영도 확인 부탁드립니다!</p>
+<p>&nbsp;</p>
+<p>* 현재 수납 샘플 입고 완료 건</p>
+<p>WA2603ST12</p>
+<p>WA2603ST14</p>
+<p>&nbsp;</p>
+<p><a href="https://barrelsco.sharepoint.com/:x:/s/MD616/IQD3QBVwesFNQLODYCFvpWJ1AX9g8DiM3lfmjQ8SyTbralk?e=QZl2zs" itemtype="http://schema.skype.com/HyperLink/Files" rel="noreferrer noopener" title="https://barrelsco.sharepoint.com/:x:/s/MD616/IQD3QBVwesFNQLODYCFvpWJ1AX9g8DiM3lfmjQ8SyTbralk?e=QZl2zs" target="_blank" itemid="701540F7-C17A-404D-B383-60216FA56275">◎26FW 상품설명서_260526.xlsx</a></p><attachment id="701540F7-C17A-404D-B383-60216FA56275"></attachment>]
+
+---
+
+**[김솔이]** — [2026-07-14 16:16]
+
+[<p><at id="0">변창현</at>&nbsp;안녕하세요! 온라인 등록 하겠습니다~!</p>]
+
+---
+
+**[변창현]** — [2026-07-14 16:09]
+
+[<p><img src="https://graph.microsoft.com/beta/chats/19:49b876f9f7014476818282dd46fc625a@thread.v2/messages/1784012958976/hostedContents/aWQ9eF8wLXNrci1kNC05OWFiOGFhZGI4ZmFmZTVlMTZhNWFkMWE1OGNlMDUxMyx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC05OWFiOGFhZGI4ZmFmZTVlMTZhNWFkMWE1OGNlMDUxMy92aWV3cy9pbWdv/$value" width="549.8737373737374" height="250" alt="이미지" itemid="0-skr-d4-99ab8aadb8fafe5e16a5ad1a58ce0513"></p>]
+
+---
+
+**[변창현]** — [2026-07-14 16:08]
+
+[<p><at id="0">김솔이</at>&nbsp;<at id="1">김민조</at>&nbsp;안녕하세요!</p>
+<p>26ss 아트 그로서리 상품 온라인 업로드 진행하려고 하는데</p>
+<p>확인 부탁드립니다!</p>
+<p>&nbsp;</p>
+<p><a href="https://barrelsco.sharepoint.com/:x:/s/MD616/IQBJ-fys5OdORoGApBtOlcY1AbFIjU_-sS0lEUe2E4v9yu0?e=bfGIan" itemtype="http://schema.skype.com/HyperLink/Files" rel="noreferrer noopener" title="https://barrelsco.sharepoint.com/:x:/s/MD616/IQBJ-fys5OdORoGApBtOlcY1AbFIjU_-sS0lEUe2E4v9yu0?e=bfGIan" target="_blank" itemid="ACFCF949-E7E4-464E-8180-A41B4E95C635">◎26SS 상품설명서_작성중.xlsx</a></p><attachment id="ACFCF949-E7E4-464E-8180-A41B4E95C635"></attachment>]
+
+---
+
+**[김솔이]** — [2026-07-06 11:43]
+
+[<p><at id="0">변창현</at>&nbsp;안녕하세요! WA2602ST46,WA2601LT18 해당 상품 수요일 오전 이미지 수급받아 금주 수요일에 등록 예정입니다!</p>
+<p>&nbsp;</p>]
+
+---
+
+**[변창현]** — [2026-07-06 11:20]
+
+[<p><strong>3. 소재 변경 리오더 건들&nbsp;</strong></p>
+<p><strong>소재 내용 수정해서 새로 업로드가 되어야 하는데,</strong></p>
+<p><strong>기존 건에 품번만 변경된 걸로 보입니다.</strong></p>
+<p>&nbsp;</p>
+<p><span style="background-color:#E5F18F"><strong>내용 수정 필요합니다!</strong></span></p>
+<p>&nbsp;</p>
+<p>EX)</p>
+<p><span style="font-size:inherit">WA2602ST47 (WA2602ST16 소재 변경 리오더로, 기존 <strong>CP이중지 -&gt; 20수 싱글</strong> 변경)</span></p>
+<p>WA2602ST38 (WA2620ST11 소재 변경 리오더로, 기존 <strong>폰테 -&gt; 20수 싱글</strong> 변경)</p>
+<p>&nbsp;</p>
+<p>소재 변경 리오더 스타일</p>
+<p><span style="font-size:inherit">WA2602ST38 (WA2602ST11 소재 변경 리오더)</span></p>
+<p><span style="font-size:inherit">WA2602ST39 (WA2602ST15 소재 변경 리오더)</span></p>
+<p><span style="font-size:inherit">WA2602ST47 (WA2602ST16 소재 변경 리오더)</span></p>
+<p><span style="font-size:inherit">WA2602ST48 (WA2602ST19 소재 변경 리오더)</span></p>
+<p>WA2602ST49 (WA2602ST18 소재 변경 리오더)</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:49b876f9f7014476818282dd46fc625a@thread.v2/messages/1783304450229/hostedContents/aWQ9eF8wLXNrci1kMi1hZTE0Y2Y0YTc2NTkwMzNhNDlkOTY3YTc2OWNkZGI0Zix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMi1hZTE0Y2Y0YTc2NTkwMzNhNDlkOTY3YTc2OWNkZGI0Zi92aWV3cy9pbWdv/$value" width="336.1504907306434" height="250" alt="이미지" itemid="0-skr-d2-ae14cf4a7659033a49d967a769cddb4f"><img src="https://graph.microsoft.com/beta/chats/19:49b876f9f7014476818282dd46fc625a@thread.v2/messages/1783304450229/hostedContents/aWQ9eF8wLXNrci1kMi01NTM3OWRkMTA0YTA2N2ZiZjNmM2M0NjQ0NjQ3Y2NhOSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMi01NTM3OWRkMTA0YTA2N2ZiZjNmM2M0NjQ0NjQ3Y2NhOS92aWV3cy9pbWdv/$value" width="307.5692963752665" height="250" alt="이미지" itemid="0-skr-d2-55379dd104a067fbf3f3c4644647cca9"></p>]
+
+---
+
+**[변창현]** — [2026-07-06 11:06]
+
+[<p><at id="0">김솔이</at>&nbsp;<at id="1">김민조</at></p>
+<p>안녕하세요!</p>
+<p>&nbsp;</p>
+<p><strong>1. 온라인 업로드 확인 부탁드립니다</strong></p>
+<p>WA2602ST46,</p>
+<p>WA2601LT18</p>
+<p>&nbsp;</p>
+<p><strong>2. 먼작귀 무신사 오프라인(홍대/대구) &nbsp;일정 변동된 게 맞는지 확인 부탁드립니다</strong></p>
+<p>기존 7/27 -&gt; 변경 8/7</p>]
+
+---
+
+**[김연희]** — [2026-07-02 16:16]
+
+[<p>5스타일 구성은 했는데, 컨텐츠 촬영 우먼스 3스타일 기준이면, 유니 2스타일은 어떻게 들어가는걸로 계획하고 계신건지 공유 부탁드립니다.&nbsp;</p>]
+
+---
+
+**[]** — [2026-07-02 16:16]
+
+[<systemEventMessage/>]
+
+---
+
+**[김연희]** — [2026-07-02 16:15]
+
+[<p>어제 사업부장님이랑 얘기드릴때, 무신사 쪽이랑 협의 잘 안되는 부분 있으면 TF에서 자체 판단하에 매장 판매로 돌려도 된다고도 하셨어요.&nbsp;</p>]
+
+---
+
+**[김연희]** — [2026-07-02 16:15]
+
+[<attachment id="1782956500069"></attachment>
+<p>저 궁금한게 있습니다. 이거 처음에 온라인팀에서 요청하실때 무신사 에디토리얼 같은거 들어가려면 최소 5스타일은 되어야한다 하셔서, 일부러 무리해서 우먼스 3, 유니 2 스타일로 구성한거였는데, 지금 상황을 보니 유니쪽은 컨텐츠 촬영도 못들어가는것 같던데, 그럼 무신사 단독으로는 들어가는건가요? 상황이 어떻게 되는건지.. 중간공유를 못받아서 이해가 안되는 부분들이 있습니다.&nbsp;</p>]
+
+---
+
+**[변창현]** — [2026-07-02 13:49]
+
+[]
+
+---
+
+**[변창현]** — [2026-07-02 10:46]
+
+[<attachment id="1782955578047"></attachment>
+<p>감사합니다!</p>
+<p>&nbsp;</p>
+<p>WA2601LT18도 ST46 업로드 이후에 진행 부탁드립니다!&nbsp;<at id="0">김솔이</at>&nbsp;<at id="1">김민조</at></p>]
+
+---
+
+**[채예진]** — [2026-07-02 10:41]
+
+[<p><span style="font-size:inherit">안녕하세요 </span><at id="0">김연희</at>&nbsp;<span style="font-size:inherit">과장님 회신 늦어져서 죄송합니다.</span></p>
+<p>&nbsp;</p>
+<p><span style="font-size:inherit">무신사 에디션 건은 이전에 전달드린 7/13일자에서 인플루언서 이미지 수급 및 누끼 촬영 수급 지연으로 일정이 밀려, <strong>7/20</strong>일자로 변경하여 발매 진행할 예정입니다. 사전에 미리 전달드렸어야 했는데 안내가 늦어져 죄송합니다. 기획전 오픈전 할인율 및 진행리스트 관련해 품의 상신 예정입니다.&nbsp;</span></p>
+<p><span style="font-size:inherit">기획전은 이전에 말씀드린 무신사 에디션 구좌 동일 진행할 예정이며 기획전 오픈시 빠른 매출 전환을 위해 무신사 풀필먼트&nbsp; MFS 투입 예정입니다.&nbsp;&nbsp;&nbsp;</span></p>
+<p>&nbsp;</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px"><span style="font-size:inherit">추가로 제가 익일 퇴사 예정으로 이후건들은 기존 와키윌리 담당하셨었던 커버낫 온라인팀 김민조 대리님께서 이어서 맡아주시기로 하였습니다. 그동안 바쁜 일정속에서 업무에 도움 주셔서 감사했습니다.</span></p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">&nbsp;</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px"><span style="font-size:inherit">온라인 소통은 추후 아래 담당자분들과 소통 부탁드리겠습니다&nbsp;</span><emoji id="relieved" alt="😌" title="안도한"></emoji></p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px">&nbsp;</p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px"><span style="font-size:inherit">와키윌리 외부몰 (무신사, 29CM) - </span><at id="1">김민조</at><span style="font-size:inherit">&nbsp;대리</span></p>
+<p style="margin-bottom:0px; margin-left:0; margin-top:0px"><span style="font-size:inherit">와키윌리 자사몰 - </span><at id="2">김솔이</at><span style="font-size:inherit">&nbsp;사원</span></p>]
+
+---
+
+**[채예진]** — [2026-07-02 10:26]
+
+[<attachment id="1782954999278"></attachment>
+<p>안녕하세요 대리님 ! 온라인에 해당건 발매 내용에 대해 전달받은건이 없어 촬영전인 상태입니다 금일중으로 출고처리하여 발매 진행하도록 하겠습니다.&nbsp;</p>]
+
+---
+
+**[김연희]** — [2026-07-02 10:17]
+
+[<p>안녕하세요, 무신사 단독으로 요청하셨던 WA2602STM1,2,5,6,7 무신사와 진행 어떻게 되고 있는지, 일정과 진행상황 공유 요청 드립니다.&nbsp;</p>]
+
+---
+
+**[변창현]** — [2026-07-02 10:16]
+
+[<p><at id="0">김솔이</at>&nbsp;<at id="1">채예진</at>&nbsp;<at id="2">박하연</at></p>
+<p>안녕하세요!</p>
+<p><span style="font-size:inherit"><strong>WA2602ST46 업로드 확인 부탁드립니다.</strong></span></p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:49b876f9f7014476818282dd46fc625a@thread.v2/messages/1782954999278/hostedContents/aWQ9eF8wLXNrci1kMy04NWQxYWFmYWVmNmI2NDQ2ZmExODM4NWMxYmZlZWJjZCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMy04NWQxYWFmYWVmNmI2NDQ2ZmExODM4NWMxYmZlZWJjZC92aWV3cy9pbWdv/$value" width="781.2" height="250" alt="이미지" itemid="0-skr-d3-85d1aafaef6b6446fa18385c1bfeebcd"></p>
+<p>&nbsp;</p>
+<p>제이홉 착장 건이여서 인스타 언급 진행하려고 하는데, 아직 업로드 전이여서요!</p>]
+
+---
+
+**[]** — [2026-06-30 18:17]
+
+[<systemEventMessage/>]
+
+---
+
+**[채예진]** — [2026-06-22 11:24]
+
+[<p>FW 상품설명서 전달 주시면 기재된 발매 일정들 맞춰서 껴서 진행해야할것 같습니다! 상품설명서 금주중으로 전달 예정이라고 듣긴 했는데 시트 전달주시면 나머지 FW 품번 일정확인해서 발매 일정 전달드리도록 하겠습니다!&nbsp;</p>]
+
+---
+
+**[변창현]** — [2026-06-22 11:09]
+
+[<attachment id="1782093659786"></attachment>
+<p>안녕하세요!</p>
+<p>네 그러면 언제 출시 예정으로 알고 있으면 될까요?</p>]
+
+---
+
+**[채예진]** — [2026-06-22 11:00]
+
+[<p><at id="0">변창현</at>&nbsp;안녕하세요 대리님 해당건 금년 3월 중으로 발매 예정이었으나 납기 지연으로 5월 말 납기되어 판기에 맞추기 어렵다고 하여 FW시즌에 발매하기로 이전 온라인 전용 상품 담당하셨던 김민혁 차장님과 협의 진행했던 건이라 내용 전달드립니다!&nbsp;</p>]
+
+---
+
+**[변창현]** — [2026-06-22 10:29]
+
+[<p><at id="0">김솔이</at>&nbsp;안녕하세요! <at id="1">채예진</at>&nbsp;<at id="2">박하연</at></p>
+<p>26SS 온라인 전용 상품</p>
+<p>온라인 출시가 안된 것 같은데</p>
+<p>확인 부탁드립니다!</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:49b876f9f7014476818282dd46fc625a@thread.v2/messages/1782091746781/hostedContents/aWQ9eF8wLXNrci1kMy04YzcxOTIyOTUzZDhjN2MxMzU1OTgzMTg1YjZiNjVmMyx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMy04YzcxOTIyOTUzZDhjN2MxMzU1OTgzMTg1YjZiNjVmMy92aWV3cy9pbWdv/$value" width="651.8342391304348" height="250" alt="이미지" itemid="0-skr-d3-8c71922953d8c7c1355983185b6b65f3"></p>]
+
+---
+
+**[채예진]** — [2026-06-19 14:16]
+
+[<p><at id="0">변창현</at>&nbsp;안녕하세요 대리님 전달 감사드립니다! 리오더 소재 변경건의 경우 웹팀에서 재촬영 진행하고 있어 온라인 상품 재등록 진행시 해당 소재 내용 업데이트 하여 수정 반영해두도록 하겠습니다.&nbsp;</p>]
+
+---
+
+**[변창현]** — [2026-06-19 14:11]
+
+[<p><at id="0">채예진</at>&nbsp;안녕하세요!</p>
+<p>&nbsp;</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:49b876f9f7014476818282dd46fc625a@thread.v2/messages/1781845876390/hostedContents/aWQ9eF8wLXNrci1kMi0zZDk2ZTg5Nzc5OTIxOWE2NzAyZDRkYjJhZTM0NDM3NCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMi0zZDk2ZTg5Nzc5OTIxOWE2NzAyZDRkYjJhZTM0NDM3NC92aWV3cy9pbWdv/$value" width="533.266129032258" height="250" alt="이미지" itemid="0-skr-d2-3d96e897799219a6702d4db2ae344374"></p>
+<p>&nbsp;</p>
+<p>WA2602ST38 - WA2602ST11 소재 변경 리오더</p>
+<p>WA2602ST39 - WA2602ST15 소재 변경 리오더</p>
+<p>WA2603ST47 - WA2602ST16 소재 변경 리오더</p>
+<p>WA2602ST48 - WA2602ST19 소재 변경 리오더</p>
+<p>WA2602ST49 - WA2602ST18 소재 변경 리오더</p>
+<p>&nbsp;</p>
+<p>상기 건 소재 변경 리오더로, 기존 오더랑 다른 점 참고 부탁드립니다!</p>]
+
+---
+
+**[채예진]** — [2026-06-16 14:58]
+
+[<p>안녕하세요 대리님 전달 감사드립니다 촬영 진행 후 온라인 발매 진행하도록 하겠습니다!&nbsp;</p>]
+
+---
+
+**[]** — [2026-06-16 14:57]
+
+[<systemEventMessage/>]
+
+---
+
+**[변창현]** — [2026-06-16 13:49]
+
+[<p>안녕하세요!</p>
+<p><img src="https://graph.microsoft.com/beta/chats/19:49b876f9f7014476818282dd46fc625a@thread.v2/messages/1781585384693/hostedContents/aWQ9eF8wLWNrci1kNC0zNjVkMjAyNTNlMGQwMDIwYmI3ZGU1Zjk4MGE0MmE3Nix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLWNrci1kNC0zNjVkMjAyNTNlMGQwMDIwYmI3ZGU1Zjk4MGE0MmE3Ni92aWV3cy9pbWdv/$value" width="385.28138528138527" height="250" alt="이미지" itemid="0-ckr-d4-365d20253e0d0020bb7de5f980a42a76"><img src="https://graph.microsoft.com/beta/chats/19:49b876f9f7014476818282dd46fc625a@thread.v2/messages/1781585384693/hostedContents/aWQ9eF8wLXNrci1kNC05ZTk3Y2QwMDNiOWI3Y2UwZTc5NzQzMzAwZjY4YzdkOSx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kNC05ZTk3Y2QwMDNiOWI3Y2UwZTc5NzQzMzAwZjY4YzdkOS92aWV3cy9pbWdv/$value" width="137.55458515283843" height="250" alt="이미지" itemid="0-skr-d4-9e97cd003b9b7ce0e79743300f68c7d9"></p>
+<p>WA2602ST42</p>
+<p>WA2602ST43</p>
+<p>WA2602ST44</p>
+<p>WA2602ST45</p>
+<p>상품 설명서 업데이트했습니다 온라인 업로드 부탁드립니다!</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><a href="https://barrelsco.sharepoint.com/:x:/s/msteams_c1a9a1/IQB6c2WYmXOTR4iRHAakIlZyAckcKEYe_GCNOgCKxlKDEZE?e=q51aS1" itemtype="http://schema.skype.com/HyperLink/Files" rel="noreferrer noopener" title="https://barrelsco.sharepoint.com/:x:/s/msteams_c1a9a1/IQB6c2WYmXOTR4iRHAakIlZyAckcKEYe_GCNOgCKxlKDEZE?e=q51aS1" target="_blank" itemid="9865737A-7399-4793-8891-1C06A4225672">◎26SS 의류 상품설명서_공유용_251128.xlsx</a></p><attachment id="9865737A-7399-4793-8891-1C06A4225672"></attachment>]
+
+---
+
+**[채예진]** — [2026-06-11 14:21]
+
+[<p>안녕하세요 윤선님 넵 공유 감사드립니다!&nbsp;</p>]
+
+---
+
+**[양윤선]** — [2026-06-11 11:47]
+
+[<p>안녕하세요, 무신사 에디션 QC 샘플 사진 공유드립니다.<br>
+참고 부탁드립니다!</p><attachment id="c08c391b-6342-457f-a8d3-d35c693ee4d6"></attachment>]
+
+---
+
+**[김솔이]** — [2026-06-10 11:59]
+
+[<p><at id="0">김연희</at>&nbsp;안녕하세요 확인 후 공유 드리겠습니다!</p>]
+
+---
+
+**[김연희]** — [2026-06-10 11:56]
+
+[<p><img src="https://graph.microsoft.com/beta/chats/19:49b876f9f7014476818282dd46fc625a@thread.v2/messages/1781060189691/hostedContents/aWQ9eF8wLWNrci1kMy01ZmJkNDVjMmFkMzkxOTMxNmRiMzEzZDE0ODRmZjdjNyx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLWNrci1kMy01ZmJkNDVjMmFkMzkxOTMxNmRiMzEzZDE0ODRmZjdjNy92aWV3cy9pbWdv/$value" width="774" height="249" alt="이미지" itemid="0-ckr-d3-5fbd45c2ad3919316db313d1484ff7c7"></p>
+<p>&nbsp;핀터걸 컬렉션입니다.&nbsp;</p>]
+
+---
+
+
+---
+
+# Source: teams 채팅 데이터/Teams - 와키윌리_광복 FSS 실무자 - 2026-09-07 - 230022.md
+
+- bytes: 9067
+- sha256: 1af5fb299a0b65e067c21e132202c292d57b9a95680e82b3485f435ef99e83ef
+
+---
+type: teams-chat
+source: Microsoft Teams
+channel: 와키윌리_광복 FSS 실무자
+clipped: 2026-09-07
+platform: Microsoft Teams
+tags:
+  - teams
+  - auto-backup
+---
+
+# 와키윌리_광복 FSS 실무자
+
+> 백업일: 2026-09-07
+> 자동 백업 by Power Automate
+
+---
+
+
+**[성현진]** — [2026-09-07 17:42]
+
+[<attachment id="1788769600414"></attachment>
+<p>저도 가능하다면, 2안이 더 좋은것 같습니다!&nbsp;</p>]
+
+---
+
+**[김상민]** — [2026-09-07 17:34]
+
+[<div>영업은 2안으로 의견드립니다 <emoji id="smile" alt="🙂" title=""></emoji></div>]
+
+---
+
+**[이의뜸]** — [2026-09-07 17:29]
+
+[<p><at id="0">박상희</at>&nbsp;원이컷 사용시 소속사 컨펌 필요하여, 유관부서 의견주시면 빠르게 확인해보겠습니다.</p>]
+
+---
+
+**[박상희]** — [2026-09-07 17:26]
+
+[<p>안녕하세요. VM실 박상희입니다.&nbsp;</p>
+<p>와키윌리 광복 FSS 이미지 시안 전달드립니다.&nbsp;</p>
+<p>&nbsp;</p>
+<p>최초에는 1안 키키로 협의 되었으나, '원이' 이미지가 없어 2안도 첨부드립니다. 유관부서 검토 후 회신 부탁드립니다.&nbsp;</p>
+<p>&nbsp;</p>
+<p><at id="0">오지훈</at>&nbsp;<at id="1">김상민</at>&nbsp;<at id="2">엄혜리</at>&nbsp;<at id="3">이의뜸</at>&nbsp;<at id="4">성현진</at></p><attachment id="3bc0d625-391f-4dd3-9c56-969977fcd10d"></attachment><attachment id="c95477b9-278a-4a7a-a503-5d0fc4801b0d"></attachment>]
+
+---
+
+**[]** — [2026-09-07 17:26]
+
+[<systemEventMessage/>]
+
+---
+
+**[]** — [2026-09-07 11:38]
+
+[<systemEventMessage/>]
+
+---
+
+**[이하영]** — [2026-09-04 14:49]
+
+[<p>넵 확인감사합니다!</p>]
+
+---
+
+**[박상희]** — [2026-09-04 14:25]
+
+[<attachment id="1788497594959"></attachment>
+<p>아니요! 타공판 키링으로 진행할 예정입니다</p>]
+
+---
+
+**[이하영]** — [2026-09-04 14:13]
+
+[<p>안녕하세요. 광복 FSS 1차 가안 물량 전달드립니다.</p>
+<p>&nbsp;</p>
+<p>유니 134SKU</p>
+<p>우먼스 121SKU</p>
+<p>ACC 146SKU (신발 X / 키링 포함)</p>
+<p><strong>물량 3,255PCS &nbsp;금액 약 2.3억</strong></p>
+<p>ㄴ IMC 및 원이착장 + FSS 판매 위주로 잡다보니 우먼스 CAPA 초과가 많이 되는 상황입니다,,,<emoji id="meltingface" alt="🫠" title="녹아내리는 얼굴"></emoji></p>
+<p>&nbsp;</p>
+<p><at id="0">엄혜리</at>&nbsp;<at id="1">박상희</at>&nbsp;물량 및 DP 확인 부탁드립니다.&nbsp;</p><attachment id="0de9beb7-e8cc-46ef-8382-5bb4c5b87902"></attachment>]
+
+---
+
+**[이하영]** — [2026-09-04 13:53]
+
+[<p><at id="0">박상희</at>&nbsp;안녕하세요 팀장님, 광복점 키링 집기 어떻게 되어있을까요?&nbsp;</p>
+<p>명동처럼 대량으로 넣는 박스형태로 되어있나 해서요,,!</p>]
+
+---
+
+**[엄혜리]** — [2026-09-02 17:34]
+
+[<div>감사합니다! <emoji id="smile" alt="🙂" title=""></emoji></div>]
+
+---
+
+**[박다솜]** — [2026-09-02 17:31]
+
+[<attachment id="1788337877515"></attachment>
+<p>광복점 티저 업로드 일정 9/14 입니다 참고부탁드립니다~</p>]
+
+---
+
+**[이의뜸]** — [2026-09-02 17:31]
+
+[<p>자사 SNS 콘텐츠 발행 및 광복점 인플루언서 초청 메인으로 진행예정입니다.</p>]
+
+---
+
+**[이의뜸]** — [2026-09-02 17:30]
+
+[<attachment id="1788249052241"></attachment>
+<p>네네 가능합니다~! 해당 내용 녹여서 콘텐츠 준비하도록 하겠습니다.</p>]
+
+---
+
+**[이의뜸]** — [2026-09-02 11:23]
+
+[<p>네 감사합니다~!</p>]
+
+---
+
+**[박희현]** — [2026-09-02 11:21]
+
+[<attachment id="1788315069123"></attachment>
+<p>입고 전에 따로 드릴 예정입니다~&nbsp;</p>]
+
+---
+
+**[이의뜸]** — [2026-09-02 11:11]
+
+[<p>마케팅용 수량 따로 빼주시는거죠? 혹시 출고요청 해야될까요?!&nbsp;</p>
+<attachment id="1788311446905"></attachment>]
+
+---
+
+**[이의뜸]** — [2026-09-02 11:09]
+
+[<p>감사합니다 <emoji id="smile" alt="🙂" title="웃는 표정"></emoji></p>]
+
+---
+
+**[박희현]** — [2026-09-02 10:10]
+
+[<attachment id="1788310437623"></attachment>
+<p>요청주신 날짜까지 L 사이즈 5장씩 전달 드릴 수 있도록 하겠습니다.</p>
+<p>일정 변동 있을 경우 사전 공유 드리겠습니다.</p>]
+
+---
+
+**[이의뜸]** — [2026-09-02 09:53]
+
+[<p>안녕하세요~! 네 라지 사이즈 요청드립니다.</p>]
+
+---
+
+**[변창현]** — [2026-09-02 09:52]
+
+[<attachment id="1788250702973"></attachment>
+<p><at id="0">이의뜸</at>&nbsp;과장님 안녕하세요</p>
+<p>사이즈는 기준 사이즈 "L"로만 문의주시는 걸까요?</p>]
+
+---
+
+**[박희현]** — [2026-09-02 09:50]
+
+[<attachment id="1788250603626"></attachment>
+<p>안녕하세요 대리님</p>
+<p>회신이 늦었습니다.</p>
+<p>&nbsp;</p>
+<p>협력사에 문의하였고 진행하면서 최대한 당겨보겠다고는 합니다.</p>
+<p>차주에 한번 더 업데이트 드리도록 하겠습니다.</p>]
+
+---
+
+**[박희현]** — [2026-09-02 09:49]
+
+[<attachment id="1788250702973"></attachment>
+<p>안녕하세요 과장님</p>
+<p>회신이 늦었습니다.&nbsp;</p>
+<p>협력사랑 확인하고 업데이트 드리도록 하겠습니다.</p>]
+
+---
+
+**[정수지]** — [2026-09-02 09:49]
+
+[<attachment id="1788252425045"></attachment>
+<p>과장님, 일단 업체 확인해보고 말씀 드리겠습니다!</p>]
+
+---
+
+**[이의뜸]** — [2026-09-01 17:47]
+
+[<p>16일까지 받을 수 있을까요? 일정 어렵다면 광복점으로 입고 후 저희가 수령해도 괜찮습니다.</p>]
+
+---
+
+**[정수지]** — [2026-09-01 17:34]
+
+[<attachment id="1788250702973"></attachment>
+<p>언제까지 전달 드려야 하나요??</p>]
+
+---
+
+**[이의뜸]** — [2026-09-01 17:18]
+
+[<p>안녕하세요~! 광복점 오픈 관련하여 콘텐츠 제작용으로 익스클루시브 제품(티셔츠, 모자) 스타일당 5개씩 받을 수 있을가요? (촬영 후 시딩 진행)</p>
+<attachment id="1787120227328"></attachment>]
+
+---
+
+**[변창현]** — [2026-09-01 17:16]
+
+[<attachment id="1788249176267"></attachment>
+<p><at id="0">박희현</at>&nbsp;과장님 안녕하세요</p>
+<p>&nbsp;</p>
+<p>WA2603STG1~4 9/18 입고 예정 건</p>
+<p>&nbsp;</p>
+<p>9/17 입고로 당길 수 있는지 확인되시면&nbsp;</p>
+<p>해당 단톡방에 내용 공유 부탁드립니다!!</p>]
+
+---
+
+**[정수지]** — [2026-09-01 17:03]
+
+[<attachment id="1788249176267"></attachment>
+<p>안녕하세요, 과장님</p>
+<p>모자 2SKU : 저번에 공유 드렸던 상황에서 아직 변동은 없습니다.. 어패럴과 동일하게 9/18에 물류 입고 예정입니다.</p>
+<p>변동 사항 있으면 공유 드리겠습니다/</p>]
+
+---
+
+**[]** — [2026-09-01 17:00]
+
+[<systemEventMessage/>]
+
+---
+
+**[엄혜리]** — [2026-09-01 16:59]
+
+[<div>넵 그럼 최종 납기 일정 확정되면 공유 부탁드리겠습니다! <emoji id="smile" alt="🙂" title=""></emoji></div>]
+
+---
+
+**[변창현]** — [2026-09-01 16:58]
+
+[<attachment id="1788249052241"></attachment>
+<p><at id="0">엄혜리</at>&nbsp;과장님 안녕하세요</p>
+<p>&nbsp;</p>
+<p>1) 광복점 단독 티셔츠 4SKU는</p>
+<p>현재 입고 예정일이 9/18이여서 오픈 일정에 맞춰서 판매는 불가해 보입니다.</p>
+<p>&nbsp;</p>
+<p>납기는 당겨보려고 확인 중이여서</p>
+<p>입고 일정 당겨지면 공유드리겠습니다!</p>]
+
+---
+
+**[엄혜리]** — [2026-09-01 16:52]
+
+[<div><at id="0">변창현</at>, <at id="1">정수지</at><br>
+<br>
+추가로 광복점 오픈 시 단독상품으로 운영 예정인 아래 상품들 오픈 일정에 맞춰 매장 입고 및 판매 시작이 가능한지 확인 부탁드립니다.<br>
+<br>
+1)광복점 단독 티셔츠 4SKU<br>
+2)광복점 단독 모자 2SKU</div>]
+
+---
+
+**[엄혜리]** — [2026-09-01 16:50]
+
+[<div><at id="0">이의뜸</at>과장님~<br>
+9/18 광복점 오픈에 맞춰 진행 예정인 아래 프로모션 및 단독상품함께 홍보 콘텐츠로 노출하여 바이럴 진행 가능한지 확인 부탁드립니다.<br>
+<br>
+1)브랜드데이 전품목 10% 할인<br>
+2)구매 고객 대상 광복점 마그넷 4종 중 1종 랜덤 증정<br>
+3)7만원 이상 구매 시 원이 포토카드 2종 중 1종 랜덤 증정<br>
+4)15만원 이상 구매 시 에코백 5종 중 1종 랜덤 증정<br>
+5)광복점 단독상품 티셔츠 4SKU, 모자 2SKU</div>]
+
+---
+
+**[박상희]** — [2026-09-01 16:32]
+
+[<p><img src="https://graph.microsoft.com/beta/chats/19:a6412b95c7cc41ba84d1584782d18a72@thread.v2/messages/1788247945338/hostedContents/aWQ9eF8wLXNrci1kMi0wMzQ1MmVmZDI0MDZiNTc5NDk3NmYzOTVhZTRlZjkzYyx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMi0wMzQ1MmVmZDI0MDZiNTc5NDk3NmYzOTVhZTRlZjkzYy92aWV3cy9pbWdv/$value" width="266.85934489402695" height="250" alt="이미지" itemid="0-skr-d2-03452efd2406b5794976f395ae4ef93c"></p>
+<p><at id="0">모든 사용자</at>&nbsp;안녕하세요! 광복 오픈 관련 메일로 스케쥴 전달드렸으나, 리마인드차 전달드립니다!&nbsp;</p>
+<p>최종 오픈일은 9/18(금) 이니 참고 바랍니다!</p>]
+
+---
+
+
+---
+
+# Source: teams 채팅 데이터/Teams - 카테고리팀 QR-다이마루 이너 - 2026-09-07 - 230054.md
+
+- bytes: 8725
+- sha256: 518a5f86c69b1c1aa2bd7ce8bb4692024ba9f7a0a46c3711e5aae8f82e28354c
+
+---
+type: teams-chat
+source: Microsoft Teams
+channel: 카테고리팀 QR-다이마루 이너
+clipped: 2026-09-07
+platform: Microsoft Teams
+tags:
+  - teams
+  - auto-backup
+---
+
+# 카테고리팀 QR-다이마루 이너
+
+> 백업일: 2026-09-07
+> 자동 백업 by Power Automate
+
+---
+
+
+**[임강영]** — [2026-07-14 10:08]
+
+[<p>호... 그럼 50% 적용 시점은 언제인가욤?&nbsp;</p>]
+
+---
+
+**[배용준]** — [2026-07-14 10:07]
+
+[<p>넵넵</p>]
+
+---
+
+**[배용준]** — [2026-07-14 10:07]
+
+[<p>어이쿠</p>]
+
+---
+
+**[변창현]** — [2026-07-14 09:59]
+
+[<p>8월 초부터 먼작귀로 VM이 바껴서 2주 안에 빨리 파려고 하신 것 같네요..</p>
+<p>어제 FSS 전체 6장 팔렸어요ㅠ</p>]
+
+---
+
+**[한병현]** — [2026-07-14 09:55]
+
+[<attachment id="1783932394498"></attachment>
+<p>판매시기 고려해서 그런거 같아요~</p>
+<p>벌써 7월 중순이라서... 영업-사업부장까지 협의 된 내용이라고 합니다.</p>]
+
+---
+
+**[배용준]** — [2026-07-13 17:46]
+
+[<p>성수에서 안팔렸다고 너무 빨리 50프로 후려치는느낌나서요&nbsp;</p>]
+
+---
+
+**[배용준]** — [2026-07-13 17:46]
+
+[<p>3개플레그쉽까지 금토일 까지보고 그 다음주 &nbsp;50프로로 넘기면안됄가요?</p>]
+
+---
+
+**[신민석]** — [2026-07-13 17:43]
+
+[<p>비가 와서 그런가요</p>]
+
+---
+
+**[변창현]** — [2026-07-13 17:39]
+
+[<p>음.. 수량 보셨어요? 27장 팔았어요..</p>]
+
+---
+
+**[배용준]** — [2026-07-13 17:22]
+
+[<p>아직4일판매했는데&nbsp;</p>]
+
+---
+
+**[배용준]** — [2026-07-13 17:22]
+
+[<p>할인 50프로 심한거같습니다</p>]
+
+---
+
+**[변창현]** — [2026-07-13 17:22]
+
+[<p>네 우선은 그렇고 온라인도 내일 확장할지 물어보려구요</p>]
+
+---
+
+**[임강영]** — [2026-07-13 16:59]
+
+[<p>성수. 홍대. 명동</p>]
+
+---
+
+**[임강영]** — [2026-07-13 16:59]
+
+[<p>매장은 플래그십에서만 계속 판매인가용?&nbsp;</p>]
+
+---
+
+**[배용준]** — [2026-07-13 16:57]
+
+[<p>갑자기요?</p>]
+
+---
+
+**[배용준]** — [2026-07-13 16:57]
+
+[<p>네?</p>]
+
+---
+
+**[변창현]** — [2026-07-13 16:47]
+
+[<p>아트그로서리 50% 할인 한대요..ㅎㅎ</p>]
+
+---
+
+**[임강영]** — [2026-07-13 15:20]
+
+[<p>넵 감사합니다 !!</p>]
+
+---
+
+**[변창현]** — [2026-07-13 15:19]
+
+[<p>내일 영업이랑 미팅이 있어서 얘기해볼게요</p>]
+
+---
+
+**[임강영]** — [2026-07-13 15:16]
+
+[<p>8월에 치이카와 오픈이 있어서 그 전에 신속하게 온라인 오픈이나 해외매장쪽 소통해보는것도 좋은 방법일 것 같습니다</p>]
+
+---
+
+**[임강영]** — [2026-07-13 15:11]
+
+[<p>넵</p>]
+
+---
+
+**[변창현]** — [2026-07-13 15:02]
+
+[<p>네 우선 명동/홍대까지도 추가 판매채널 늘려서&nbsp;</p>
+<p>반응 보고 없으면 판매채널을 늘려야될텐데</p>
+<p>&nbsp;</p>
+<p>오프라인은 VM 연출이 없으면 판매로 끌어내기가 쉽지 않을 것 같긴 하네요ㅠ</p>]
+
+---
+
+**[권순범]** — [2026-07-13 15:01]
+
+[<p>판매가 저조하면 온라인 오픈을 생각해봐야 될것 같습니다!</p>]
+
+---
+
+**[변창현]** — [2026-07-13 15:01]
+
+[<attachment id="fbac06b5-a604-45df-9756-41bd30ce750e"></attachment><attachment id="f186bb29-103a-4e79-ac53-87dc105137ef"></attachment><attachment id="bb3e4055-9862-44be-801e-9a46c95ec6e7"></attachment><attachment id="0455cc56-74e4-42c7-9b10-e76a999a4f01"></attachment><attachment id="abd6fed2-8007-4c95-a743-3497c746a313"></attachment>]
+
+---
+
+**[임강영]** — [2026-07-13 14:45]
+
+[<p>영업에서 긍정적으로 봐주셔서 수량도 늘렸는데ㅎㅎ......</p>]
+
+---
+
+**[임강영]** — [2026-07-13 14:44]
+
+[<p>와우.. 너무 처참한데 어떡하죵..</p>]
+
+---
+
+**[권순범]** — [2026-07-13 10:02]
+
+[<p>안녕하세요. 4일 팝업간 판매수량 데이터 공유드립니다.</p>]
+
+---
+
+**[권순범]** — [2026-07-13 10:02]
+
+[<attachment id="6ac49c99-0fda-450f-b7ea-b82406a21061"></attachment>]
+
+---
+
+**[권순범]** — [2026-07-10 10:03]
+
+[<p>넵</p>
+<p>&nbsp;</p>
+<p>&lt;프로모터 이해 설명용&gt;</p>
+<p>1. 과일/채소를 판매하는 <strong>그로서리</strong>와 <strong>아트샵</strong>이 결합된 <strong>미학적인 그로서리 컨셉</strong>입니다.<br>
+* 아트 그로서리</p>
+<p>&nbsp;</p>
+<p>2. 때문에 <strong>기존 과일과 다른 색감으로 변주</strong>를 줬고, <strong>위트 있는 슬로건</strong>으로 과일/채소를 표현했습니다.</p>
+<p>&nbsp;</p>
+<p>3. 그로서리 형태를 가져가되, 컬러감이나 주변 소품을 아트적 요소로 연출했습니다.</p>
+<p>&nbsp;</p>
+<p>&lt;응대용&gt;</p>
+<p>과일/채소를 귀여운 <strong>아트로 표현한</strong> <strong>그로서리 컨셉</strong>입니다.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>]
+
+---
+
+**[변창현]** — [2026-07-10 09:59]
+
+[<p>이렇게 전달할까요</p>]
+
+---
+
+**[변창현]** — [2026-07-10 09:59]
+
+[<p>오리지널 컬러가 아닌 점에 대해 다소 의아해하는 고객 반응에 대해서는</p>
+<p>프로모터분이 하기와 같이 설명해주면 좋을 것 같습니다.</p>
+<p>&nbsp;</p>
+<p>1. 과일/채소를 판매하는 <strong>그로서리</strong>와 <strong>아트샵</strong>이 결합된 <strong>미학적인 그로서리 컨셉</strong>입니다.<br>
+* 아트 그로서리</p>
+<p>&nbsp;</p>
+<p>2. 때문에 <strong>기존 과일과 다른 색감으로 변주</strong>를 줬고, <strong>위트 있는 슬로건</strong>으로 과일/채소를 표현했습니다.</p>
+<p>&nbsp;</p>
+<p>3. 그로서리 형태를 가져가되, 컬러감이나 주변 소품을 아트적 요소로 연출했습니다.</p>]
+
+---
+
+**[권순범]** — [2026-07-10 09:57]
+
+[<p>차후 온라인 오픈 계획도 확인해주시면 좋을 것 같아요</p>]
+
+---
+
+**[임강영]** — [2026-07-10 09:56]
+
+[<p>ㅎ... 담주에 재고 바로 전국으로 풀어야겠네욤...</p>]
+
+---
+
+**[권순범]** — [2026-07-10 09:55]
+
+[<p>많이 안팔릴 것 같아요 ㅠ</p>]
+
+---
+
+**[변창현]** — [2026-07-10 09:52]
+
+[<p>6장.. ㅎㅎ</p>]
+
+---
+
+**[임강영]** — [2026-07-10 09:44]
+
+[<p><emoji id="smilingfacewithtear" alt="🥲" title="눈물을 흘리는 웃는 얼굴"></emoji></p>]
+
+---
+
+**[권순범]** — [2026-07-10 09:37]
+
+[<p><img src="https://graph.microsoft.com/beta/chats/19:ec78a79669a346c395c5634eacd764e3@thread.v2/messages/1783643838226/hostedContents/aWQ9eF8wLXNrci1kMS04ZTBlZjllZGIwOTg5ZTAxNmVkYThiYzVlMzk4OTkwZix0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS04ZTBlZjllZGIwOTg5ZTAxNmVkYThiYzVlMzk4OTkwZi92aWV3cy9pbWdv/$value" width="449.8997995991984" height="250" alt="이미지" itemid="0-skr-d1-8e0ef9edb0989e016eda8bc5e398990f"></p>
+<p>어제자 코멘트 전달드립니다.</p>]
+
+---
+
+**[배용준]** — [2026-07-09 18:37]
+
+[<p>고생하셨습니다~</p>]
+
+---
+
+**[변창현]** — [2026-07-09 17:24]
+
+[<p>다들 잘해주셨는데 비가 와서 아쉽네요ㅠ</p>]
+
+---
+
+**[]** — [2026-07-09 17:18]
+
+[<systemEventMessage/>]
+
+---
+
+**[임강영]** — [2026-07-09 17:17]
+
+[<p>수고 많으셨습니다!!!</p>]
+
+---
+
+**[임강영]** — [2026-07-09 17:17]
+
+[<p>다들 수도 많으셨습니다 ㅜ&nbsp;</p>]
+
+---
+
+**[변창현]** — [2026-07-09 17:17]
+
+[<attachment id="e4098368-f3a6-462b-8dd6-c103cbd7e791"></attachment>]
+
+---
+
+**[변창현]** — [2026-07-09 17:16]
+
+[<attachment id="dfa65c64-812b-48aa-8d50-df90c81b3c86"></attachment><attachment id="8b4ac27d-6ade-4e54-b93b-99dea7b7fae8"></attachment><attachment id="b270e9c2-962b-41fd-a89d-bd75a3b7f404"></attachment><attachment id="a458b847-a3b7-42f9-a85e-3da036953fec"></attachment><attachment id="1b20c603-753b-4351-8abc-130fd30ae644"></attachment><attachment id="b3116dda-8f0b-4fac-baaa-bc199258d251"></attachment><attachment id="737135c0-bbe0-4b37-9645-953f5d926c49"></attachment><attachment id="30538608-8926-4077-ae10-1d726daef980"></attachment><attachment id="14856d35-f938-4e53-8226-61028cc079e8"></attachment><attachment id="7d0d51e6-1484-47f2-af18-ea4134a4c653"></attachment>]
+
+---
+
+**[임강영]** — [2026-07-09 17:11]
+
+[<p>아 귀엽네요 ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ</p>]
+
+---
+
+**[임강영]** — [2026-07-09 17:09]
+
+[<p>오 공유 감사합니다!</p>]
+
+---
+
+**[권순범]** — [2026-07-09 17:09]
+
+[영상으로 전달드려여]
+
+---
+
+**[권순범]** — [2026-07-09 17:09]
+
+[<div><a href="https://www.instagram.com/reel/Daj9lMeyc5a/?igsh=MXdtd2hrcnBqOW1hcw==">https://www.instagram.com/reel/Daj9lMeyc5a/?igsh=MXdtd2hrcnBqOW1hcw==</a></div>]
+
+---
+
+**[임강영]** — [2026-07-09 17:08]
+
+[<attachment id="1783584512160"></attachment>
+<p>오!!</p>]
+
+---
+
+**[임강영]** — [2026-07-09 17:08]
+
+[<p>혹시 사진 찍으신거 있으실까요?</p>]
+
+---
+
+
+---
+
+# Source: teams 채팅 데이터/Teams - UNI 스쿼드 - 2026-09-07 - 230041.md
+
+- bytes: 4197
+- sha256: ce8c9e3e0743cccf70dbea74c1dc74a07d0de0d8a2592b4732b3201ac4190f04
+
+---
+type: teams-chat
+source: Microsoft Teams
+channel: UNI 스쿼드
+clipped: 2026-09-07
+platform: Microsoft Teams
+tags:
+  - teams
+  - auto-backup
+---
+
+# UNI 스쿼드
+
+> 백업일: 2026-09-07
+> 자동 백업 by Power Automate
+
+---
+
+
+**[권순범]** — [2026-09-07 18:40]
+
+[<p>안녕하세요. 뉴베이직 디테일 개발 관련 참고 브랜드를 공유드립니다.</p>
+<p>&nbsp;</p>
+<p>매드해피는 후드 및 지퍼 라인에 스티치 디테일과 배색 포인트를 시그니처로 활용하고 있으며,&nbsp;</p>
+<p>이를 기반으로 LA를 중심으로 글로벌 라이징 중인 브랜드입니다.&nbsp;</p>
+<p>최근 압구정 도산에 플래그십 스토어를 오픈했습니다.</p>
+<p>&nbsp;</p>
+<p>단순 베이직이 아닌 디테일 포인트가 가미된 제품 개발은 타 브랜드와의 차별화에 효과적일 것으로 판단되어 레퍼런스로 전달드리니&nbsp;</p>
+<p>제품 디벨롭 시 참고해 주시면 감사하겠습니다.</p>
+<p>&nbsp;</p>
+<p><a href="https://www.madhappy.com/en-kr/collections/mens-hoodies?page=5" itemtype="http://schema.skype.com/HyperLink" rel="noreferrer noopener" title="https://www.madhappy.com/en-kr/collections/mens-hoodies?page=5" target="_blank" itemid="1beabd44-7127-474c-8bf2-827f11c3aae6">https://www.madhappy.com/en-kr/collections/mens-hoodies?page=5</a></p>]
+
+---
+
+**[한병현]** — [2026-09-07 18:26]
+
+[]
+
+---
+
+**[한병현]** — [2026-09-07 16:29]
+
+[<attachment id="90bd620c-9cf9-4af5-8acc-84cca2a761d2"></attachment>]
+
+---
+
+**[김호진]** — [2026-09-07 14:56]
+
+[<p>안녕하세요 5층 1번회의실 참석 부탁드립니다!</p>]
+
+---
+
+**[김호진]** — [2026-09-04 16:19]
+
+[<p>공지가 늦어진 점은 양해 부탁드리겠고 첫 자리인만큼 가급적 전원 참석해주시면 좋겠습니다~ 혹시 다른 업무나 개인 일정으로 참석이 어려우신 분들은 미리 말씀 부탁드릴게요!</p>
+<p>&nbsp;</p>
+<p>금요일 잘 마무리하시고, 다음주에 뵙겠습니다~</p>]
+
+---
+
+**[김호진]** — [2026-09-04 16:19]
+
+[<p>다음주 첫회의에서 함께 토론해보고 싶은 주제는 아래와 같습니다.</p>
+<p>&nbsp;</p>
+<p>1. 뉴베이직의 정의<br>
+- UNI 스쿼드의 첫번째 미션은 '뉴베이직의 재설계'입니다. 뉴베이직을 재설계 하기 위해서 각자가 생각하는 뉴베이직의 정의에 대해 생각해보고 의견을 취합하는 시간을 가져보려고 합니다</p>
+<p>&nbsp;</p>
+<p>2. UNI 스쿼드에서 보완하면 좋을점<br>
+- 첨부 드리는 27SS MAP을 참고하시어, UNI에서 어떤점을 보완하면 좋을지, 어떤 아이템을 새롭게 시도해 보면 좋을지, 어떤 브랜드를 벤치마킹하면 좋을지 등 자유롭게 토론해 보았으면 합니다.<br>
+&nbsp;</p><attachment id="c858b7a0-a4b0-41d3-8ddd-ba3ac8a40704"></attachment>]
+
+---
+
+**[김호진]** — [2026-09-04 16:18]
+
+[<p>안녕하세요 소싱팀 김호진 과장입니다!&nbsp;</p>
+<p>다름이 아니오라, 이번 9월부터 새롭게 시작하는 프로젝트인 'UNI 스쿼드' 운영차 단체방을 개설하였습니다!</p>
+<p>&nbsp;</p>
+<p>첫 번째 스쿼드 미팅을 가볍게 진행하려고 합니다.<br>
+- 일시 = 9/7(월) 오후 3시~4시<br>
+- 장소 = 5층 1층 회의실</p>
+<p>&nbsp;</p>
+<p>이번 자리는 멤버들끼리 서로 간단히 인사 나누고, 앞으로 우리 스쿼드가 어떤 방향으로 가면 좋을지 가볍게 이야기해보는 시간으로 생각해주시면 될 것 같습니다.</p>
+<p><img itemid="0-skr-d1-78ddce8797c2ca327a9c240ecec21b28" src="https://graph.microsoft.com/beta/chats/19:b696074077174bd19bae49fca5956d92@thread.v2/messages/1788506313496/hostedContents/aWQ9eF8wLXNrci1kMS03OGRkY2U4Nzk3YzJjYTMyN2E5YzI0MGVjZWMyMWIyOCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLXNrci1kMS03OGRkY2U4Nzk3YzJjYTMyN2E5YzI0MGVjZWMyMWIyOC92aWV3cy9pbWdv/$value" alt="이미지" width="506.32911392405066" height="250"></p><attachment id="b764d872-2d01-42fd-908b-b745e6e0c223"></attachment>]
+
+---
+
+**[]** — [2026-09-04 16:18]
+
+[<systemEventMessage/>]
+
+---
+
+**[]** — [2026-09-04 16:18]
+
+[<systemEventMessage/>]
+
+---
+
+
+---
+
+# Source: teams 채팅 데이터/Teams - WA 마케팅&기획 - 2026-09-07 - 230015.md
+
+- bytes: 1132
+- sha256: f5f5828294b88eca0c492ce1dfcf4cd36fcb8f6ebc92732f42c132da551a08de
+
+---
+type: teams-chat
+source: Microsoft Teams
+channel: WA 마케팅&기획
+clipped: 2026-09-07
+platform: Microsoft Teams
+tags:
+  - teams
+  - auto-backup
+---
+
+# WA 마케팅&기획
+
+> 백업일: 2026-09-07
+> 자동 백업 by Power Automate
+
+---
+
+
+**[권순범]** — [2026-09-03 11:16]
+
+[<p>안녕하세요. 위에 내용 확인 안되었으면 제가 보고 진행하겠습니다~</p>]
+
+---
+
+**[권순범]** — [2026-09-01 13:24]
+
+[<p><img src="https://graph.microsoft.com/beta/chats/19:bba340d1fd0e4edbbd9b67471ffb0213@thread.v2/messages/1788236683473/hostedContents/aWQ9eF8wLWNrci1kMS0wNDBlMTg0Njg1YzZlOWNjNThkNGQ2NGIyNWI4YmViMCx0eXBlPTEsdXJsPWh0dHBzOi8va3ItcHJvZC5hc3luY2d3LnRlYW1zLm1pY3Jvc29mdC5jb20vdjEvb2JqZWN0cy8wLWNrci1kMS0wNDBlMTg0Njg1YzZlOWNjNThkNGQ2NGIyNWI4YmViMC92aWV3cy9pbWdv/$value" width="132.64058679706602" height="250" alt="이미지" itemid="0-ckr-d1-040e184685c6e9cc58d4d64b25b8beb0"></p>
+<p>이번 원이 겨울 촬영떄 수급할 아이템 부츠컷이랑 입힐 타이트+크롭 형태의 티셔츠 선정 부탁드려요~!</p>]
+
+---
+
+**[권순범]** — [2026-09-01 13:24]
+
+[<p>안녕하세요!</p>]
+
+---
