@@ -4,7 +4,7 @@ export type EditorialGender = (typeof editorialGenders)[number];
 export const editorialMentionTypes = ["ITEM", "SUB_ITEM", "DETAIL", "MATERIAL", "COLOR", "STYLE", "BRAND", "COLLAB", "IP"] as const;
 export type EditorialMentionType = (typeof editorialMentionTypes)[number];
 
-export const editorialSources = ["VISLA", "HYPEBEAST_KR", "EYESMAG", "NONLABEL", "ESQUIRE_KR"] as const;
+export const editorialSources = ["VISLA", "HYPEBEAST_KR", "EYESMAG", "NONLABEL", "ESQUIRE_KR", "HARPERSBAZAAR_KR"] as const;
 export type EditorialSource = (typeof editorialSources)[number];
 
 export type EditorialSourceConfig = {
@@ -80,5 +80,17 @@ export const editorialSourceConfigs: Record<EditorialSource, EditorialSourceConf
     genderAvailable: false,
     role: ["MENSWEAR", "LIFESTYLE", "FASHION_NEWS"],
     description: "Official Esquire Korea public sitemap (10,000 dated article URLs, no login) plus public article pages. Selected 2026-09-07 for having the highest direct-attribute density found in a source audit (10% vs ~3-5% for existing sources), from a menswear/lifestyle angle that complements the streetwear-leaning existing corpus."
+  },
+  HARPERSBAZAAR_KR: {
+    source: "HARPERSBAZAAR_KR",
+    country: "KOREA",
+    sourceType: "EDITORIAL",
+    signalType: "EDITORIAL",
+    feedUrl: "https://www.harpersbazaar.co.kr/sitemap/sitemap.xml",
+    targetUrl: "https://www.harpersbazaar.co.kr/fashion",
+    collectionMethod: "PUBLIC_NEWS_SITEMAP",
+    genderAvailable: false,
+    role: ["WOMENSWEAR", "STYLING", "FASHION_NEWS"],
+    description: "Official Harper's Bazaar Korea public whole-site sitemap (same technical platform as ESQUIRE_KR: /article/<id> URLs, atc_body_cont body container, JSON-LD dates) plus public article pages. Selected 2026-09-09 for a cross-source independent-signal audit after a 20-article real-extractor probe measured a 40% Direct Attribute Rate (vs. ESQUIRE_KR's 10%) driven by its item+color/material outfit-styling article format ('이럴 땐 이런 아이템' shoppable callouts), including real evidence that independently confirms the existing 체크 SHIRT and 니트 CARDIGAN bundles from unrelated brands/products."
   }
 };

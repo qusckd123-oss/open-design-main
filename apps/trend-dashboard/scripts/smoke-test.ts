@@ -9,7 +9,7 @@ import { bundleEvidenceStrength, countIndependentEvidenceClusters, getAttributeB
 import { contentBlocksFromStoredText, resolveEvidenceImage, type ContentBlock } from "../src/collectors/editorial/image-relation";
 import { attributeBarWidthPercent } from "../src/lib/attribute-visual";
 import { composeBundleName } from "../src/lib/korean-labels";
-import { classifyFashionRelevance, EditorialRateLimitedError, getHypebeastFashionEntries, parseArticlePage, parseEsquireKrArticlePage, parseEsquireKrBody, parseEsquireKrSitemap, parseEyesmagRichBody, parseGenericSitemap, parseHypebeastListing, parseHypebeastRichBody, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
+import { classifyFashionRelevance, EditorialRateLimitedError, getHypebeastFashionEntries, parseArticlePage, parseEsquireKrArticlePage, parseEsquireKrBody, parseEsquireKrSitemap, parseEyesmagRichBody, parseGenericSitemap, parseHarpersBazaarKrArticlePage, parseHarpersBazaarKrBody, parseHarpersBazaarKrSitemap, parseHypebeastListing, parseHypebeastRichBody, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
 import { extractProductNameColorRelations, findDescriptionCandidates } from "../src/collectors/product-reference/attributes";
 import { extractProductObjectRelations, resolveSpecificItem } from "../src/collectors/product-reference/object-relations";
 import { frozenEditorialRules } from "../src/collectors/product-reference/frozen-editorial-vocabulary";
@@ -763,6 +763,67 @@ function verifyEditorialBodyParsers() {
     new Date("2026-08-15T00:00:00+09:00").toISOString(),
     "Without JSON-LD, the article:published_time meta tag must be used as a fallback date source."
   );
+
+  // HARPERSBAZAAR_KR sitemap: same shape as ESQUIRE_KR (a whole-site flat
+  // file mixing dated /article/<id> entries with static category pages), but
+  // this platform's category pages are touched daily (lastmod always
+  // "today"), which a real 2026-09-09 probe found would otherwise dominate a
+  // naive "most recent" sort - only /article/<id> entries must survive.
+  const hbSitemapXml = `<?xml version="1.0" encoding="UTF-8"?><urlset>
+    <url><loc>https://www.harpersbazaar.co.kr/article/1909328</loc><lastmod>2026-09-08</lastmod></url>
+    <url><loc>https://www.harpersbazaar.co.kr/article/64093</loc><lastmod>2022-02-23</lastmod></url>
+    <url><loc>https://www.harpersbazaar.co.kr/fashion/news</loc><lastmod>2026-09-09</lastmod></url>
+  </urlset>`;
+  const hbSitemap = parseHarpersBazaarKrSitemap(hbSitemapXml);
+  assert.equal(hbSitemap.length, 2, "Only /article/<id> entries must be returned; the daily-touched static /fashion/news page must be excluded.");
+  assert.equal(hbSitemap[0]?.url, "https://www.harpersbazaar.co.kr/article/1909328");
+  assert.equal(parseHarpersBazaarKrSitemap("<urlset></urlset>").length, 0, "An empty sitemap must yield no entries.");
+
+  // HARPERSBAZAAR_KR body: same atc_body_cont container as ESQUIRE_KR, but a
+  // real 2026-09-09 probe found this platform ALSO embeds a site-wide
+  // "related reading" recirculation widget ("이 기사도 흥미로우실 거예요!") inside
+  // the same container, repeating OTHER articles' headlines verbatim on
+  // every page - an early probe pass that didn't cut at this marker produced
+  // 2 false-positive relations from the exact same recirculated headline
+  // appearing on two unrelated real articles. This must be cut, not kept.
+  const hbHtml = `<html><body>
+    <div class="atc_body_cont">전체 페이지를 읽으시려면 회원가입 및 로그인을 해주세요! LOGIN <p>화이트 티셔츠와 카키 팬츠처럼 편안한 옷차림에는 체크 셔츠를 허리에 둘러 패턴을 더해도 좋다.</p>
+    <p>이 기사도 흥미로우실 거예요!</p><p>CELEBRITY 다른 기사 제목 - 절대 포함되면 안 됨</p></div>
+  </body></html>`;
+  const hbBody = parseHarpersBazaarKrBody(hbHtml);
+  assert.ok(hbBody, "HARPERSBAZAAR_KR body must be extracted from atc_body_cont.");
+  assert.ok(hbBody!.includes("체크 셔츠를 허리에 둘러"), "HARPERSBAZAAR_KR body must keep the real product/styling phrasing - the whole point of the source.");
+  assert.equal(hbBody!.startsWith("전체 페이지를"), false, "The leading login-banner chrome must be stripped from the front.");
+  assert.equal(hbBody!.includes("다른 기사 제목"), false, "HARPERSBAZAAR_KR body must stop before the site-wide recirculation-widget marker, not include another article's recirculated headline.");
+  assert.equal(parseHarpersBazaarKrBody("<html><body>no atc body here</body></html>"), null, "Missing atc_body_cont must return null, not fabricate text.");
+
+  const hbRelatedHtml = `<html><body><div class="atc_body_cont">실제 기사 본문입니다.<p>관련기사</p><p>다른 기사 제목</p></div></body></html>`;
+  assert.equal(parseHarpersBazaarKrBody(hbRelatedHtml), "실제 기사 본문입니다.", "The shared ESQUIRE_KR '관련기사' marker must also cut HARPERSBAZAAR_KR's body.");
+
+  // HARPERSBAZAAR_KR article page: canonical/date/image come from public
+  // <link rel="canonical">, JSON-LD datePublished, and og:image - no login required.
+  const hbArticleHtml = `<html><head>
+    <meta property="og:title" content="니트와 셔츠, 올가을엔 허리에 입으세요">
+    <meta property="og:image" content="https://www.harpersbazaar.co.kr/hero.jpg">
+    <link rel="canonical" href="https://www.harpersbazaar.co.kr/article/1909247">
+    <script type="application/ld+json">{"datePublished":"2026-09-07T18:00:00+09:00"}</script>
+  </head></html>`;
+  const hbArticle = parseHarpersBazaarKrArticlePage(hbArticleHtml, "https://www.harpersbazaar.co.kr/article/1909247?utm_source=x");
+  assert.equal(hbArticle.title, "니트와 셔츠, 올가을엔 허리에 입으세요");
+  assert.equal(hbArticle.canonicalUrl, "https://www.harpersbazaar.co.kr/article/1909247", "The public <link rel=canonical> must win over the fetched (possibly tracking-tagged) URL.");
+  assert.equal(hbArticle.imageUrl, "https://www.harpersbazaar.co.kr/hero.jpg");
+  assert.equal(hbArticle.publishedAt?.toISOString(), new Date("2026-09-07T18:00:00+09:00").toISOString(), "JSON-LD datePublished must be parsed.");
+
+  const hbArticleFallback = parseHarpersBazaarKrArticlePage(
+    `<html><head><meta property="article:published_time" content="2026-08-15T00:00:00+09:00"></head></html>`,
+    "https://www.harpersbazaar.co.kr/article/999"
+  );
+  assert.equal(hbArticleFallback.canonicalUrl, "https://www.harpersbazaar.co.kr/article/999", "Without a canonical link, the fetched URL must be used as a fallback.");
+  assert.equal(
+    hbArticleFallback.publishedAt?.toISOString(),
+    new Date("2026-08-15T00:00:00+09:00").toISOString(),
+    "Without JSON-LD, the article:published_time meta tag must be used as a fallback date source."
+  );
 }
 
 /**
@@ -952,6 +1013,22 @@ function verifyDirectAttributeRelations() {
   // article, ESQUIRE_KR: "에이티즈 산: 카모 볼캡").
   const camoSentence = extractDirectAttributeRelations({ title: "", text: "에이티즈 산: 카모 볼캡을 착용했다." });
   assert.ok(find(camoSentence, "BALL_CAP", "DETAIL", "CAMO"), '"카모 볼캡" must yield BALL_CAP + DETAIL:CAMO.');
+
+  // HARPERSBAZAAR_KR sample sentences (2026-09-09 cross-source independent
+  // signal audit, real 20-article probe): both independently confirm
+  // EXISTING repeated bundles from unrelated brands, not merely add new ones
+  // - the exact finding that justified selecting this source.
+  const hbCheckShirtSentence = extractDirectAttributeRelations({
+    title: "",
+    text: "화이트 티셔츠와 카키 팬츠처럼 편안한 옷차림에는 체크 셔츠를 허리에 둘러 패턴을 더해도 좋다."
+  });
+  assert.ok(find(hbCheckShirtSentence, "SHIRT", "DETAIL", "CHECK"), "The real HARPERSBAZAAR_KR sample sentence must yield SHIRT + DETAIL:CHECK, independently confirming the existing 체크 SHIRT bundle from a third, unrelated brand (엔조 블루스).");
+
+  const hbKnitCardiganSentence = extractDirectAttributeRelations({
+    title: "",
+    text: "「 이럴 땐 이런 아이템! 」 H&M 파인니트 가디건 상품 구매하기"
+  });
+  assert.ok(find(hbKnitCardiganSentence, "CARDIGAN", "MATERIAL", "KNIT"), "The real HARPERSBAZAAR_KR sample sentence must yield CARDIGAN + MATERIAL:KNIT, independently confirming the existing 니트 CARDIGAN bundle and making it multi-source for the first time.");
 }
 
 /**
@@ -1658,22 +1735,36 @@ async function verifyAttributeBundles() {
     );
   }
 
-  // Concrete real-data proof of the fix: 체크 SHIRT (2 sources, 2 clusters)
-  // must still be primary - the fix must not disturb the one bundle that was
-  // already correct - and 니트 CARDIGAN (1 source, 2 clusters - genuinely 2
-  // different products) must now sort ahead of 라글란 시퀸 긴팔 티셔츠 (1
-  // source, 1 cluster - a roundup restating its own outlet's dedicated
-  // piece), reversing the attribute-count-driven order from before this fix.
-  assert.equal(realPrimary?.displayName, "체크 SHIRT", "체크 SHIRT must remain the primary signal after the independence fix - it was already the only genuinely multi-cluster, multi-source bundle.");
+  // Concrete real-data proof the independence fix still holds after adding
+  // HARPERSBAZAAR_KR (2026-09-09 cross-source independent-signal pass): 니트
+  // CARDIGAN gained a real second source (HARPERSBAZAAR_KR's H&M/COS knit
+  // cardigan callouts, alongside HYPEBEAST_KR's existing Denim Tears x BBC
+  // and adidas x JENNIE evidence) and now has MORE independent clusters (4)
+  // than 체크 SHIRT (2) at the same sourceSpread tier (both =2) - so per the
+  // unmodified sort (sourceSpread desc, then independentEvidenceClusterCount
+  // desc), 니트 CARDIGAN correctly overtakes 체크 SHIRT as CURRENT SIGNAL.
+  // This is the sort doing exactly what it should with new independent
+  // evidence, not a change to the sort itself. 라글란 시퀸 긴팔 티셔츠 (1
+  // cluster - a roundup restating its own outlet's dedicated piece) must
+  // still sort behind both.
+  assert.equal(realPrimary?.displayName, "니트 CARDIGAN", "니트 CARDIGAN must be the primary signal once HARPERSBAZAAR_KR gives it a real second source and pushes it to 4 independent clusters - the highest in the corpus.");
   const cardiganBundle = bundles.find((bundle) => bundle.displayName === "니트 CARDIGAN");
+  const checkShirtBundle = bundles.find((bundle) => bundle.displayName === "체크 SHIRT");
   const raglanBundle = bundles.find((bundle) => bundle.displayName === "라글란 시퀸 긴팔 티셔츠");
   assert.ok(cardiganBundle, "니트 CARDIGAN bundle must exist in REAL data.");
+  assert.ok(checkShirtBundle, "체크 SHIRT bundle must exist in REAL data.");
   assert.ok(raglanBundle, "라글란 시퀸 긴팔 티셔츠 bundle must exist in REAL data.");
-  assert.equal(cardiganBundle?.independentEvidenceClusterCount, 2, "니트 CARDIGAN (Denim Tears x BBC + adidas x JENNIE - two different real products) must resolve to 2 independent clusters.");
+  assert.equal(cardiganBundle?.bundleSourceSpread, 2, "니트 CARDIGAN must be genuinely multi-source (HYPEBEAST_KR + HARPERSBAZAAR_KR) after this pass.");
+  assert.equal(cardiganBundle?.independentEvidenceClusterCount, 4, "니트 CARDIGAN (Denim Tears x BBC, adidas x JENNIE, H&M color-pairing feature, COS waist-tie feature - four different real products) must resolve to 4 independent clusters.");
+  assert.equal(checkShirtBundle?.independentEvidenceClusterCount, 2, "체크 SHIRT (Burberry + TDR) must remain at 2 independent clusters - unaffected by this pass (HARPERSBAZAAR_KR's own real CHECK+SHIRT evidence co-occurred KNIT in the same sentence window, forming a separate 니트 체크 SHIRT bundle per the exact-attribute-set bundle key rule, not a false merge into this one).");
   assert.equal(raglanBundle?.independentEvidenceClusterCount, 1, "라글란 시퀸 긴팔 티셔츠 (Supreme dedicated article + the same outlet's own roundup restating it 2 days later) must resolve to 1 independent cluster.");
   assert.ok(
-    bundles.indexOf(cardiganBundle!) < bundles.indexOf(raglanBundle!),
-    "니트 CARDIGAN (2 independent clusters) must now sort ahead of 라글란 시퀸 긴팔 티셔츠 (1 cluster) - the proven secondary-ranking contradiction this pass fixes."
+    bundles.indexOf(cardiganBundle!) < bundles.indexOf(checkShirtBundle!),
+    "니트 CARDIGAN (4 independent clusters) must sort ahead of 체크 SHIRT (2 clusters) at the same sourceSpread tier."
+  );
+  assert.ok(
+    bundles.indexOf(checkShirtBundle!) < bundles.indexOf(raglanBundle!),
+    "체크 SHIRT (2 clusters, 2 sources) must still sort ahead of 라글란 시퀸 긴팔 티셔츠 (1 cluster, 1 source)."
   );
 }
 

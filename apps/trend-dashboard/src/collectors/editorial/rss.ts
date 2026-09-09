@@ -38,6 +38,9 @@ export async function collectEditorialFeed(source: EditorialSource, limit = 30, 
   // sitemap, so (unlike HYPEBEAST_KR) it always uses it, with the same
   // 90-day active window applied whether or not --days was passed.
   if (source === "ESQUIRE_KR") return collectEsquireKr(limit, options.days ?? 90, options.skipUrls);
+  // HARPERSBAZAAR_KR shares ESQUIRE_KR's platform (whole-site sitemap, no
+  // RSS) so it follows the identical always-sitemap, always-90-day-default path.
+  if (source === "HARPERSBAZAAR_KR") return collectHarpersBazaarKr(limit, options.days ?? 90, options.skipUrls);
   const response = await fetch(config.feedUrl, {
     headers: {
       "User-Agent": "TrendSignalDashboard/0.1 (+editorial source audit)",
@@ -670,6 +673,126 @@ async function collectEsquireKr(limit: number, days: number, skipUrls: Set<strin
     } catch (error) {
       if (error instanceof EditorialRateLimitedError) {
         console.warn(`ESQUIRE_KR collection stopped early: ${error.message}`);
+        console.warn(`Returning ${posts.length} article(s) fetched before the refusal; re-run later to continue.`);
+        break;
+      }
+      continue;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+  }
+  return posts;
+}
+
+export type HarpersBazaarKrSitemapEntry = { url: string; lastmod: string };
+
+/**
+ * HARPERSBAZAAR_KR shares its exact technical platform with ESQUIRE_KR (same
+ * `/article/<id>` scheme, same `atc_body_cont` body container, same JSON-LD
+ * shape) - confirmed by direct sampling during the 2026-09-09 cross-source
+ * independent-signal audit, not assumed. Its `sitemap/sitemap.xml` mixes
+ * ~30 daily-touched static category/section pages (whose <lastmod> is always
+ * "today", which would otherwise dominate a naive sort) with ~10,000 real
+ * dated `/article/<id>` entries, so only the article pattern is kept here,
+ * exactly as ESQUIRE_KR's parser already does.
+ */
+export function parseHarpersBazaarKrSitemap(xml: string): HarpersBazaarKrSitemapEntry[] {
+  return [...xml.matchAll(/<url>\s*<loc>(https:\/\/www\.harpersbazaar\.co\.kr\/article\/\d+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)]
+    .map((match) => ({ url: match[1] ?? "", lastmod: match[2] ?? "" }))
+    .filter((entry) => entry.url);
+}
+
+/**
+ * HARPERSBAZAAR_KR article body. Same `atc_body_cont` container as
+ * ESQUIRE_KR, but this platform additionally embeds a site-wide "related
+ * reading" recirculation widget ("이 기사도 흥미로우실 거예요!" - "You might find
+ * this article interesting too!") inside the same container, immediately
+ * after the real article text. That widget repeats OTHER articles' headlines
+ * verbatim on every page, so an earlier probe pass that did not cut at this
+ * marker produced 2 false-positive direct-attribute relations (the exact
+ * same "체크 셔츠" headline card appearing to be evidence in two unrelated
+ * articles). Cutting at the first of three trailing markers - this widget
+ * header, plus ESQUIRE_KR's existing "관련기사"/"이 기사엔 이런 키워드" pair,
+ * which this platform's mid-article shoppable-product-list sections also use
+ * as a boundary - removes that false-positive risk. A leading
+ * "회원가입 및 로그인을 해주세요" banner is real UI chrome shown regardless of
+ * login state (confirmed by sampling, not a paywall), stripped from the
+ * front exactly as ESQUIRE_KR already does.
+ */
+export function parseHarpersBazaarKrBody(html: string): string | null {
+  const match = html.match(/class="atc_body_cont"[^>]*>/);
+  if (!match || match.index === undefined) return null;
+  const start = match.index + match[0].length;
+  const region = html.slice(start, Math.min(html.length, start + 30000));
+  const stopPatterns = [/이 기사도 흥미로우실/, /관련기사/, /이 기사엔 이런 키워드/];
+  let cutAt = region.length;
+  for (const pattern of stopPatterns) {
+    const found = region.match(pattern);
+    if (found?.index !== undefined) cutAt = Math.min(cutAt, found.index);
+  }
+  const text = stripHtml(region.slice(0, cutAt)).replace(/^전체 페이지를 읽으시려면 회원가입 및 로그인을 해주세요!\s*LOGIN\s*/, "");
+  return text || null;
+}
+
+export function parseHarpersBazaarKrArticlePage(html: string, fallbackUrl: string) {
+  const title = decodeEntities(stringMeta(html, "og:title")) || decodeEntities(stripHtml(html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1] ?? "").replace(/\s*\|\s*하퍼스 바자 코리아\s*$/, ""));
+  const imageUrl = stringMeta(html, "og:image") || null;
+  const canonicalMatch = html.match(/<link[^>]+rel="canonical"[^>]+href="([^"]*)"/);
+  const canonicalUrl = canonicalizeUrl(canonicalMatch?.[1] || fallbackUrl);
+  const dateMatch = html.match(/"datePublished":"([^"]*)"/) ?? html.match(/<meta[^>]+property="article:published_time"[^>]+content="([^"]*)"/);
+  const publishedAt = dateMatch?.[1] ? new Date(dateMatch[1]) : null;
+  return { title, imageUrl, canonicalUrl, publishedAt };
+}
+
+async function collectHarpersBazaarKr(limit: number, days: number, skipUrls: Set<string> = new Set()): Promise<EditorialCollectedPost[]> {
+  const config = editorialSourceConfigs.HARPERSBAZAAR_KR;
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+
+  const xml = await fetchText(config.feedUrl);
+  const entries = parseHarpersBazaarKrSitemap(xml)
+    .filter((entry) => {
+      const time = new Date(entry.lastmod).getTime();
+      return !Number.isNaN(time) && time >= cutoff;
+    })
+    .sort((a, b) => b.lastmod.localeCompare(a.lastmod));
+
+  const posts: EditorialCollectedPost[] = [];
+  for (const entry of entries) {
+    if (posts.length >= limit) break;
+    if (skipUrls.has(entry.url)) continue;
+    try {
+      const html = await fetchText(entry.url);
+      const article = parseHarpersBazaarKrArticlePage(html, entry.url);
+      // The sitemap's own <lastmod> can drift from the true publish date, so
+      // the article's own datePublished is the real window check (same
+      // reasoning as ESQUIRE_KR).
+      if (!article.publishedAt || Number.isNaN(article.publishedAt.getTime()) || article.publishedAt.getTime() < cutoff) continue;
+      const text = parseHarpersBazaarKrBody(html) || "";
+      if (!article.title || !text) continue;
+      // Category membership is not asserted here as a relevance shortcut:
+      // the whole-site sitemap mixes every section (beauty, celeb, art,
+      // lifestyle, etc.), so fashion relevance must be earned from the
+      // article's own title/body evidence, identical to ESQUIRE_KR/HYPEBEAST_KR.
+      const audienceGender = inferEditorialGender({ title: article.title, text });
+      const mentions = extractEditorialMentions({ title: article.title, text, postGender: audienceGender });
+      const fashionRelevance = classifyFashionRelevance({ title: article.title, text, mentionCount: mentions.length });
+      if (fashionRelevance === "NON_FASHION") continue;
+      posts.push({
+        source: "HARPERSBAZAAR_KR",
+        externalPostId: article.canonicalUrl,
+        url: article.canonicalUrl,
+        canonicalUrl: article.canonicalUrl,
+        title: article.title,
+        publishedAt: article.publishedAt,
+        imageUrl: article.imageUrl,
+        excerpt: text.slice(0, 280) || null,
+        text,
+        audienceGender,
+        fashionRelevance,
+        mentions
+      });
+    } catch (error) {
+      if (error instanceof EditorialRateLimitedError) {
+        console.warn(`HARPERSBAZAAR_KR collection stopped early: ${error.message}`);
         console.warn(`Returning ${posts.length} article(s) fetched before the refusal; re-run later to continue.`);
         break;
       }
