@@ -24,6 +24,14 @@ import { classifyFashionRelevance } from "../src/collectors/editorial/rss";
  *   npx tsx scripts/audit-candidate-source.ts --name THE_EDIT \
  *     --sitemap https://the-edit.co.kr/post-sitemap1.xml --limit 12 \
  *     --container "entry-content"
+ *
+ * For a specific section/category rather than a whole-site sitemap (a
+ * site-wide sitemap's most-recent N posts can be dominated by an unrelated
+ * vertical - e.g. a PR/interview series - at whatever moment you happen to
+ * sample), pass an explicit URL list instead:
+ *   npx tsx scripts/audit-candidate-source.ts --name X \
+ *     --urls-file scripts/_scratch-some-urls.txt --container "entry-content"
+ * (one URL per line; --sitemap is not required when --urls-file is given)
  */
 function argValue(name: string, fallback = "") {
   const index = process.argv.indexOf(`--${name}`);
@@ -74,20 +82,30 @@ function metaValue(html: string, key: string) {
 async function main() {
   const name = argValue("name", "CANDIDATE");
   const sitemap = argValue("sitemap");
+  const urlsFile = argValue("urls-file");
   const limit = Number(argValue("limit", "12"));
   const container = argValue("container", "entry-content");
-  if (!sitemap) throw new Error("--sitemap is required");
+  if (!sitemap && !urlsFile) throw new Error("--sitemap or --urls-file is required");
 
-  const xml = await fetchText(sitemap);
-  const entries = [...xml.matchAll(/<url>[\s\S]*?<loc>(.*?)<\/loc>[\s\S]*?(?:<lastmod>(.*?)<\/lastmod>)?[\s\S]*?<\/url>/g)]
-    .map((match) => ({ url: match[1] ?? "", lastmod: match[2] ?? "" }))
-    .filter((entry) => entry.url)
-    .sort((a, b) => (b.lastmod || "").localeCompare(a.lastmod || ""))
-    .slice(0, limit);
+  const entries = urlsFile
+    ? (await import("node:fs/promises").then((fs) => fs.readFile(urlsFile, "utf8")))
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .slice(0, limit)
+        .map((url) => ({ url, lastmod: "" }))
+    : await (async () => {
+        const xml = await fetchText(sitemap);
+        return [...xml.matchAll(/<url>[\s\S]*?<loc>(.*?)<\/loc>[\s\S]*?(?:<lastmod>(.*?)<\/lastmod>)?[\s\S]*?<\/url>/g)]
+          .map((match) => ({ url: match[1] ?? "", lastmod: match[2] ?? "" }))
+          .filter((entry) => entry.url)
+          .sort((a, b) => (b.lastmod || "").localeCompare(a.lastmod || ""))
+          .slice(0, limit);
+      })();
 
   console.log(`=== CANDIDATE: ${name} ===`);
-  console.log(`sitemap: ${sitemap}`);
-  console.log(`sampling ${entries.length} most recent articles (no DB writes)\n`);
+  console.log(urlsFile ? `urls-file: ${urlsFile}` : `sitemap: ${sitemap}`);
+  console.log(`sampling ${entries.length} articles (no DB writes)\n`);
 
   let ok = 0;
   let fashionRelevant = 0;
