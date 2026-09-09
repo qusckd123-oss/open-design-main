@@ -23,6 +23,13 @@
 - When the user asks to summarize Teams chat/channel updates through today and save decided items to memory, update `CLAUDE.md`, and push to GitHub, always also answer directly in chat with the three requested sections: `결정된 것`, `안 정해진 것`, and `다음 할 일`.
 - The final chat answer should include the substantive summary first, then briefly mention saved files, commit, and push status.
 
+## Current Teams Summary - 2026-09-09
+
+- Use `workspace/memory/current-teams-update-summary-2026-09-09.md` as the latest Teams update source. This summary is based on local Teams backup files clipped as 2026-09-08 and written locally on 2026-09-09 morning.
+- 2026-09-09 결정된 것: 금주 입고되는 스타일은 입고되는 즉시 출고 요청한다. 26FW 유니섹스 뉴베이직 스웻/후드/조거 물량은 일부 컬러 축률 이슈와 덤블 워싱으로 지연 중이지만, 기존 납기의 50% 미만이라도 우선 입고 후 잔여 물량은 순차 입고한다. 주요 기준은 `WA2603CR01` 5,500장 2026-09-15, `WA2603CR03`/`WA2603CR04`/`WA2603CRT1` 5,300장 2026-09-15, `WA2603HD01` 5,200장 2026-09-08~2026-09-29, `WA2603HZ01` 6,400장 2026-09-15, `WA2603HZ02`/`WA2603HZ04` 3,300장 2026-09-22 및 2026-10-06~2026-10-31, `WA2603PT02`/`WA2603PT03`/`WA2603PT04` 11,500장 2026-09-15, `WA2603JK03` 1,000장 2026-10-06이다. 27SS 뉴베이직/캐리오버 스타일은 2026-09-10 CAD 미팅에서 컬러 지정 후 리스트를 공유하고, 추가 CAD 스타일 수량 피드백은 정리 후 그다음 주 화~수까지 받는다. 광복 FSS 오픈물량 중 스몰 ACC 연출 공간 부족으로 요청된 소품/ACC 품번들은 제외 출고한다. 광복 FSS 파사드 이미지 교체는 컨펌 후 견적서 요청 중이다.
+- 2026-09-09 안 정해진 것: 뉴베이직 지연 물량의 잔여 입고 세부 차수와 최종 입고 완료일, `WA2603HD01`의 실제 당일 입고분/후속 입고분 배분, 추가 CAD 스타일별 최종 컬러와 수량, 급하게 작지가 필요한 스타일 목록, 광복 FSS 파사드 교체 비용, 제외 출고 ACC/소품의 최종 물류 반영 여부, 글로벌 확인 건의 O.C/대만지사 안내 반영 여부는 추가 확인이 필요하다.
+- 2026-09-09 다음 할 일: 금주 입고 스타일 입고 당일 즉시출고 요청, 26FW 유니 뉴베이직 파샬/잔여 입고 차수 확인, `WA2603HD01` 실제 입고분과 2026-09-29까지 후속 일정 확인, 2026-09-10 CAD 미팅 후 27SS 뉴베이직/캐리오버 컬러 지정 리스트 공유, 추가 CAD 스타일 수량 피드백 2026-09-15~2026-09-16 취합, 급작지 필요 스타일 선공유, 광복 FSS 제외 출고 대상 반영 확인, 파사드 견적 수령 및 비용 공유, 글로벌 확인 건의 O.C/지사 안내 반영 확인.
+
 ## Current Teams Summary - 2026-09-08
 
 - Use `workspace/memory/current-teams-update-summary-2026-09-08.md` as the latest Teams update source. This summary is based on local Teams backup files clipped as 2026-09-07 and written locally on 2026-09-08 morning.
