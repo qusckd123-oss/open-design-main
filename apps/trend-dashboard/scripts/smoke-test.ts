@@ -1802,6 +1802,31 @@ async function verifyAttributeBundles() {
     text: "시크한 블랙 빅백을 매치해 코트를 제외한 모든 이너와 액세서리를 블랙으로 통일하는 스타일링을 선보였다."
   });
   assert.equal(find(pairedThenExcluded, "COAT", "COLOR", "BLACK"), undefined, '"블랙 빅백을 매치해 코트를 제외한..." must NOT yield COAT + COLOR:BLACK - the bag being matched is a separate object, and the sentence explicitly excludes the coat from the black color scheme.');
+
+  // Fourth and fifth regression fixtures: real false positives found during
+  // the 2026-09-09 Marie Claire Korea (MCK_PUBLISHING) collection dry run,
+  // both fixed by the new PAIRING_PARTICLE boundary (a bare 에 immediately
+  // after a companion noun, distinct from the attached-particle guard above
+  // because a noun sits between the attribute word and the 에).
+  const pairedTop = extractDirectAttributeRelations({
+    title: "",
+    text: "상의 중앙에 가로로 컷아웃 디테일이 들어간 화이트 톱에 화려한 실버 시퀸 스커트를 매치했죠."
+  });
+  assert.equal(find(pairedTop, "SKIRT", "COLOR", "WHITE"), undefined, '"화이트 톱에 ... 스커트를 매치했죠" must NOT yield SKIRT + COLOR:WHITE - 화이트 describes 톱 (the companion top being paired WITH the skirt), not the skirt itself.');
+  assert.ok(find(pairedTop, "SKIRT", "DETAIL", "SEQUIN"), '"화려한 실버 시퀸 스커트" must still yield SKIRT + DETAIL:SEQUIN - a genuine adjacent modifier sitting after the 에 boundary.');
+  const wornOverPants = extractDirectAttributeRelations({
+    title: "",
+    text: "레드 팬츠 위에 묵직한 버건디 셔츠와 타이의 톤온톤 연출을 시도합니다."
+  });
+  assert.equal(find(wornOverPants, "SHIRT", "COLOR", "RED"), undefined, '"레드 팬츠 위에 묵직한 버건디 셔츠" must NOT yield SHIRT + COLOR:RED - 레드 describes 팬츠 (worn UNDER the shirt, via 위에), and the shirt itself is explicitly 버건디, not a recognized color value.');
+  // The new boundary must not over-reach into legitimate 위/아래-free adjacent
+  // modifiers that simply happen to contain an unrelated bare 에 earlier in a
+  // long window - a genuine same-clause modifier sitting AFTER the 에 must
+  // still be captured (already covered by the SEQUIN assertion above), and a
+  // real modifier with no 에 anywhere in its window must be entirely
+  // unaffected.
+  const unaffectedByPairingParticle = extractDirectAttributeRelations({ title: "", text: "카본 블랙 ELVO 백팩을 공개했다." });
+  assert.ok(find(unaffectedByPairingParticle, "BACKPACK", "COLOR", "BLACK"), '"카본 블랙 ELVO 백팩" (no 에 anywhere nearby) must still yield BACKPACK + COLOR:BLACK - PAIRING_PARTICLE must not affect windows with no pairing particle in them.');
 }
 
 /**

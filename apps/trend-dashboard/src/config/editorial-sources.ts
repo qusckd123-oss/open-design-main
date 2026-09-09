@@ -4,7 +4,7 @@ export type EditorialGender = (typeof editorialGenders)[number];
 export const editorialMentionTypes = ["ITEM", "SUB_ITEM", "DETAIL", "MATERIAL", "COLOR", "STYLE", "BRAND", "COLLAB", "IP"] as const;
 export type EditorialMentionType = (typeof editorialMentionTypes)[number];
 
-export const editorialSources = ["VISLA", "HYPEBEAST_KR", "EYESMAG", "NONLABEL", "ESQUIRE_KR", "HARPERSBAZAAR_KR", "COSMOPOLITAN_KR"] as const;
+export const editorialSources = ["VISLA", "HYPEBEAST_KR", "EYESMAG", "NONLABEL", "ESQUIRE_KR", "HARPERSBAZAAR_KR", "COSMOPOLITAN_KR", "MARIECLAIRE_KR"] as const;
 export type EditorialSource = (typeof editorialSources)[number];
 
 export type EditorialSourceConfig = {
@@ -104,5 +104,17 @@ export const editorialSourceConfigs: Record<EditorialSource, EditorialSourceConf
     genderAvailable: false,
     role: ["WOMENSWEAR", "CELEBRITY_STYLE", "FASHION_NEWS"],
     description: "Official Cosmopolitan Korea public whole-site sitemap - the same Hearst Joongang technical platform as ESQUIRE_KR/HARPERSBAZAAR_KR (identical business registration number 104-81-55280; /article/<id> URLs, atc_body_cont body container, JSON-LD dates). Selected 2026-09-09 after a 20-article real-extractor probe measured a 40% Direct Attribute Rate via celebrity street-style/outfit-comparison features, and after a publisher-family diversity audit found 2 of its 3 probe-sampled existing-bundle touches would add a publisher family (Hearst Joongang) not already supporting that bundle (데님 VEST, 체크 SHIRT), not merely deepen an already-represented family. Per that same audit, this is intended as the last Hearst Joongang source added for the current phase - ELLE_KR (same entity, weaker 20% probe density) is deliberately deferred in favor of publisher-family diversification next."
+  },
+  MARIECLAIRE_KR: {
+    source: "MARIECLAIRE_KR",
+    country: "KOREA",
+    sourceType: "EDITORIAL",
+    signalType: "EDITORIAL",
+    feedUrl: "https://www.marieclairekorea.com/category/fashion/feed/",
+    targetUrl: "https://www.marieclairekorea.com/category/fashion/",
+    collectionMethod: "PUBLIC_RSS_FEED",
+    genderAvailable: false,
+    role: ["WOMENSWEAR", "CELEBRITY_STYLE", "FASHION_NEWS"],
+    description: "Official Marie Claire Korea public FASHION-category RSS feed (paginated via ?paged=N) plus public article pages (JSON-LD articleBody). Own footer confirms operating entity MCK Publishing Co. Ltd., business registration 211-86-54814 - genuinely distinct from the Hearst Joongang (104-81-55280), Hypebeast Hong Kong, and Eyes Inc. families already in the corpus. Selected 2026-09-09 after a non-Hearst publisher-family diversity audit (docs/NON_HEARST_SOURCE_DIVERSITY_AUDIT.md) found a 25% Direct Attribute Rate (2nd-highest in the corpus) and, after a real-collection pre-pass fixed a general parser gap (a companion-garment noun immediately followed by a bare 에/위에 particle, e.g. '레드 팬츠 위에 버건디 셔츠' or '화이트 톱에 스커트를 매치했죠', bled its attribute onto the wrong item), verified real evidence that independently confirms two previously EYES_INC-only bundles (레드 SKIRT, 데님 SHORTS) from a genuinely new publisher family. See docs/MARIECLAIRE_COLLECTION_AUDIT.md for full detail."
   }
 };

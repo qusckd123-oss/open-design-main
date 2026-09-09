@@ -77,6 +77,40 @@ const COORDINATION = /[,、·・+]|와\s|과\s|및\s|그리고\s|물론이고|�
 // COORDINATION, not a new mechanism.
 const CLAUSE_BOUNDARY = /매치해|매치하여|매치하고|레이어드해|레이어드하여|코디해|코디하여|페어링해|제외한|제외하고/g;
 
+// Pairing particle: a bare 에 immediately after a companion GARMENT noun
+// ("팬츠 위에", "톱에") marks that noun as a DIFFERENT object being paired/worn
+// with our item, even with no coordination punctuation or CLAUSE_BOUNDARY verb
+// before our item - the pairing verb itself (매치했죠/걸치거나/입고 등) sits
+// AFTER the item, outside this backward-looking window, so it can't be caught
+// there. Found on real data during the 2026-09-09 Marie Claire Korea probe:
+// "...화이트 톱에 화려한 실버 시퀸 스커트를 매치했죠" (a white top PAIRED WITH a
+// sequin skirt - 화이트 describes 톱, not the skirt) and "레드 팬츠 위에 묵직한
+// 버건디 셔츠와 타이의 톤온톤 연출을 시도합니다" (a shirt worn OVER red pants -
+// 레드 describes 팬츠, not the already-explicitly-버건디 shirt). The same
+// pattern, re-run against the existing real corpus as a regression check, also
+// caught 2 pre-existing HARPERSBAZAAR_KR misattributions: "브라운 계열의
+// 레오퍼드 패턴에 레드 쇼츠" (BROWN described a companion leopard-pattern
+// garment, not the shorts) and "빈티지 그레이 나시에 선명한 레드 반바지"
+// (VINTAGE/GRAY described a companion tank top, not the shorts).
+//
+// "소재에" (a MATERIAL noun, not a garment) is explicitly excluded: unlike a
+// companion garment, "소재" describes the CURRENT item's own fabric
+// composition, not a different object being paired with it - real EYESMAG
+// data has "퀼팅 나일론 소재에 체크를 직조한 홀스슈 백팩" (a backpack made of
+// quilted NYLON material with CHECK woven onto it - both attributes correctly
+// describe the SAME backpack). A first, unguarded version of this pattern
+// wrongly stripped that NYLON, found and reverted via the same old-vs-new
+// full-corpus diff used to verify the two intended fixes above.
+//
+// Deliberately matches only a BARE 에 immediately followed by whitespace, not
+// a longer particle - "에서" (년에서/매장에서, a location, not a companion
+// object) and "에는"/"에도" (already handled by the narrower ATTACHED_PARTICLE
+// guard right after a matched attribute) both have a syllable between 에 and
+// the space, so neither matches this pattern. Applied with the same "cut at
+// the last occurrence inside the window" rule as COORDINATION/CLAUSE_BOUNDARY,
+// not a new mechanism.
+const PAIRING_PARTICLE = /(?<!소재)에\s/g;
+
 const specificItemRules = () => editorialRules.filter((rule) => rule.type === "SUB_ITEM");
 const attributeRules = () => editorialRules.filter((rule) => ATTRIBUTE_TYPES.has(rule.type));
 
@@ -211,7 +245,7 @@ function modifierWindow(segment: string, itemIndex: number): string | null {
   const raw = segment.slice(start, itemIndex);
   if (!raw.trim()) return null;
   let cut = 0;
-  for (const boundaryPattern of [COORDINATION, CLAUSE_BOUNDARY]) {
+  for (const boundaryPattern of [COORDINATION, CLAUSE_BOUNDARY, PAIRING_PARTICLE]) {
     boundaryPattern.lastIndex = 0;
     for (const boundary of raw.matchAll(boundaryPattern)) {
       cut = Math.max(cut, (boundary.index ?? 0) + boundary[0].length);

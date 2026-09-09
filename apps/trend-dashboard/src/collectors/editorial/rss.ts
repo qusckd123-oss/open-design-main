@@ -45,6 +45,15 @@ export async function collectEditorialFeed(source: EditorialSource, limit = 30, 
   // (confirmed by direct sampling, not assumed) - same always-sitemap,
   // always-90-day-default dispatch path.
   if (source === "COSMOPOLITAN_KR") return collectCosmopolitanKr(limit, options.days ?? 90, options.skipUrls);
+  // MARIECLAIRE_KR is a different technical platform (WordPress, not Hearst
+  // Joongang) with no whole-site content sitemap for magazine posts (a 2026-
+  // 09-09 probe confirmed the XML sitemap only indexes pages, not category
+  // taxonomy), so it uses its own FASHION-category RSS feed with pagination
+  // instead - scoped to the FASHION vertical from the start, unlike the
+  // whole-site-sitemap sources above, because the same probe found the
+  // whole-site sitemap's most-recent-N was dominated by an unrelated
+  // celebrity-interview campaign series at the moment of sampling.
+  if (source === "MARIECLAIRE_KR") return collectMarieClaireKr(limit, options.days ?? 90, options.skipUrls);
   const response = await fetch(config.feedUrl, {
     headers: {
       "User-Agent": "TrendSignalDashboard/0.1 (+editorial source audit)",
@@ -916,6 +925,149 @@ async function collectCosmopolitanKr(limit: number, days: number, skipUrls: Set<
     } catch (error) {
       if (error instanceof EditorialRateLimitedError) {
         console.warn(`COSMOPOLITAN_KR collection stopped early: ${error.message}`);
+        console.warn(`Returning ${posts.length} article(s) fetched before the refusal; re-run later to continue.`);
+        break;
+      }
+      continue;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+  }
+  return posts;
+}
+
+export type MarieClaireKrFeedEntry = { url: string; pubDate: string };
+
+/**
+ * MARIECLAIRE_KR's FASHION-category RSS feed. WordPress's default feed only
+ * ever returns 10 items per request, so `?paged=N` (confirmed working on this
+ * platform during the 2026-09-09 probe, unlike `/page/N/feed/` which returned
+ * nothing) is used to page back further. Each `<item>` already carries a full
+ * `<pubDate>`, which is used as an inexpensive PRE-filter before fetching each
+ * article page - the article's own JSON-LD `datePublished` remains the
+ * authoritative check applied afterward, exactly as the sitemap-based sources
+ * above treat their coarse `<lastmod>`/pre-filter date as provisional only.
+ */
+export function parseMarieClaireKrFeed(xml: string): MarieClaireKrFeedEntry[] {
+  return [...xml.matchAll(/<item>[\s\S]*?<link>(.*?)<\/link>[\s\S]*?<pubDate>(.*?)<\/pubDate>[\s\S]*?<\/item>/g)]
+    .map((match) => ({ url: decodeEntities(match[1] ?? ""), pubDate: match[2] ?? "" }))
+    .filter((entry) => entry.url);
+}
+
+/**
+ * MARIECLAIRE_KR article body. WordPress (via an SEO plugin, confirmed
+ * present on every sampled article regardless of sub-category) emits a
+ * `NewsArticle`/`Article` JSON-LD block with a plain-text `articleBody` field
+ * containing exactly the article's own prose - verified by direct sampling to
+ * already exclude related-reading widgets, footer, nav, and other site-wide
+ * chrome (those live outside the JSON-LD block entirely, not inside it), so
+ * unlike the Hearst Joongang sources above no separate stop-pattern cutoff is
+ * needed here. Falls back to the `post-content` container (this theme's own
+ * class name, confirmed present on every sampled article) only if a page ever
+ * lacks the JSON-LD block.
+ */
+export function parseMarieClaireKrBody(html: string): string | null {
+  const ld = html.match(/"articleBody"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+  if (ld?.[1]) {
+    const text = stripHtml(ld[1].replace(/\\n/g, " ").replace(/\\"/g, '"'));
+    return text || null;
+  }
+  const container = html.match(/<div[^>]+class="[^"]*\bpost-content\b[^"]*"[^>]*>/);
+  if (container?.index !== undefined) {
+    const start = container.index + container[0].length;
+    const text = stripHtml(html.slice(start, Math.min(html.length, start + 60000)));
+    return text || null;
+  }
+  return null;
+}
+
+export function parseMarieClaireKrArticlePage(html: string, fallbackUrl: string) {
+  const title = decodeEntities(stringMeta(html, "og:title")) || decodeEntities(stripHtml(html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1] ?? "").replace(/\s*[-|]\s*마리끌레르\s*코리아.*$/i, ""));
+  const imageUrl = stringMeta(html, "og:image") || null;
+  const canonicalMatch = html.match(/<link[^>]+rel="canonical"[^>]+href="([^"]*)"/);
+  const canonicalUrl = canonicalizeUrl(canonicalMatch?.[1] || fallbackUrl);
+  const dateMatch = html.match(/"datePublished":"([^"]*)"/) ?? html.match(/<meta[^>]+property="article:published_time"[^>]+content="([^"]*)"/);
+  const publishedAt = dateMatch?.[1] ? new Date(dateMatch[1]) : null;
+  return { title, imageUrl, canonicalUrl, publishedAt };
+}
+
+async function collectMarieClaireKr(limit: number, days: number, skipUrls: Set<string> = new Set()): Promise<EditorialCollectedPost[]> {
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  const feedBase = "https://www.marieclairekorea.com/category/fashion/feed/";
+
+  const entries: MarieClaireKrFeedEntry[] = [];
+  // Page back through the FASHION feed only as far as needed for `limit`
+  // candidates still inside the window, capped at 6 pages (~60 items) so a
+  // misbehaving/looping feed can never turn into unbounded requesting.
+  for (let page = 1; page <= 6 && entries.length < limit * 2; page++) {
+    const url = page === 1 ? feedBase : `${feedBase}?paged=${page}`;
+    const xml = await fetchText(url);
+    const pageEntries = parseMarieClaireKrFeed(xml);
+    if (pageEntries.length === 0) break;
+    entries.push(...pageEntries);
+    const oldestOnPage = pageEntries[pageEntries.length - 1];
+    const oldestTime = oldestOnPage ? new Date(oldestOnPage.pubDate).getTime() : NaN;
+    if (!Number.isNaN(oldestTime) && oldestTime < cutoff) break;
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+  }
+
+  const candidates = entries
+    .filter((entry) => {
+      const time = new Date(entry.pubDate).getTime();
+      return !Number.isNaN(time) && time >= cutoff;
+    })
+    .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
+
+  const posts: EditorialCollectedPost[] = [];
+  for (const entry of candidates) {
+    if (posts.length >= limit) break;
+    if (skipUrls.has(entry.url)) continue;
+    try {
+      const html = await fetchText(entry.url);
+      const article = parseMarieClaireKrArticlePage(html, entry.url);
+      // The feed's own <pubDate> can drift from the true publish date, so the
+      // article's own datePublished is the real window check (same reasoning
+      // as the sitemap-based sources above).
+      if (!article.publishedAt || Number.isNaN(article.publishedAt.getTime()) || article.publishedAt.getTime() < cutoff) continue;
+      const text = parseMarieClaireKrBody(html) || "";
+      if (!article.title || !text) continue;
+      const audienceGender = inferEditorialGender({ title: article.title, text });
+      const mentions = extractEditorialMentions({ title: article.title, text, postGender: audienceGender });
+      // The FASHION category is asserted by the feed itself (this collector
+      // only ever reads the /category/fashion/ feed), unlike the whole-site
+      // sitemap sources above where relevance must be earned from body
+      // evidence alone - but NON_FASHION is still respected if the classifier
+      // finds strong contrary evidence (e.g. a jewelry/watch sub-vertical
+      // piece with no apparel content at all).
+      const fashionRelevance = classifyFashionRelevance({ sourceCategory: "fashion", title: article.title, text, mentionCount: mentions.length });
+      if (fashionRelevance === "NON_FASHION") continue;
+      posts.push({
+        source: "MARIECLAIRE_KR",
+        externalPostId: article.canonicalUrl,
+        url: article.canonicalUrl,
+        canonicalUrl: article.canonicalUrl,
+        title: article.title,
+        publishedAt: article.publishedAt,
+        imageUrl: article.imageUrl,
+        excerpt: text.slice(0, 280) || null,
+        text,
+        audienceGender,
+        fashionRelevance,
+        mentions
+      });
+    } catch (error) {
+      if (error instanceof EditorialRateLimitedError) {
+        console.warn(`MARIECLAIRE_KR collection stopped early: ${error.message}`);
+        console.warn(`Returning ${posts.length} article(s) fetched before the refusal; re-run later to continue.`);
+        break;
+      }
+      // A 403/5xx on a single article page is treated as a host-level signal
+      // to stop, not a per-article fluke to skip past - unlike the other
+      // collectors above (which only hard-stop on 429/202/empty-body), this
+      // task's own collection rules require a full stop on 403 and repeated
+      // 5xx with no retry storm.
+      const message = error instanceof Error ? error.message : String(error);
+      if (/HTTP (403|5\d\d)/.test(message)) {
+        console.warn(`MARIECLAIRE_KR collection stopped early: ${message}`);
         console.warn(`Returning ${posts.length} article(s) fetched before the refusal; re-run later to continue.`);
         break;
       }
