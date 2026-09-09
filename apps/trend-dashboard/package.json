@@ -27,8 +27,10 @@
     "audit:specific-item-phrases": "tsx scripts/audit-specific-item-phrases.ts",
     "audit:attribute-relations": "tsx scripts/audit-attribute-relations.ts",
     "refresh:editorial-body": "tsx scripts/refresh-editorial-body.ts",
+    "refresh:editorial": "tsx scripts/refresh-editorial.ts",
     "reparse:editorial-mentions": "tsx scripts/reparse-editorial-mentions.ts",
-    "test": "tsx scripts/smoke-test.ts"
+    "test": "tsx scripts/smoke-test.ts",
+    "test:refresh-editorial": "tsx scripts/test-refresh-editorial.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.15.0",
