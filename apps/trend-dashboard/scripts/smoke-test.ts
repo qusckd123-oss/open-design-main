@@ -5,7 +5,7 @@ import { classifyMarketAttributes, validateSubItemForCategory } from "../src/col
 import { inferEditorialGender } from "../src/collectors/editorial/gender";
 import { editorialRules, extractEditorialMentions } from "../src/collectors/editorial/mentions";
 import { extractDirectAttributeRelations } from "../src/collectors/editorial/attribute-relations";
-import { bundleEvidenceStrength, getAttributeBundles, getPrimaryBundleForItem, getSpecificItemDirectAttributes, selectBundleHeroImage, selectPrimaryPlanningBundle } from "../src/services/attribute-bundle-service";
+import { bundleEvidenceStrength, countIndependentEvidenceClusters, getAttributeBundles, getPrimaryBundleForItem, getSpecificItemDirectAttributes, selectBundleHeroImage, selectPrimaryPlanningBundle } from "../src/services/attribute-bundle-service";
 import { contentBlocksFromStoredText, resolveEvidenceImage, type ContentBlock } from "../src/collectors/editorial/image-relation";
 import { attributeBarWidthPercent } from "../src/lib/attribute-visual";
 import { composeBundleName } from "../src/lib/korean-labels";
@@ -64,6 +64,7 @@ async function main() {
   verifyItemLanguageAliases();
   verifyEvidenceImageResolution();
   verifyAttributeBarWidth();
+  verifyIndependentEvidenceClusterCount();
   await verifyAttributeBundles();
   verifyPlanningDashboardHelpers();
   verifyDomesticFirstTaxonomy();
@@ -1398,11 +1399,129 @@ function verifyItemLanguageAliases() {
   assert.equal(editorialGuard.some((relation) => relation.specificItem === "TRACK_JACKET"), false, "Adding Product-Reference-only English item aliases must not affect the Editorial enumeration guard.");
 }
 
+/**
+ * INDEPENDENT EVIDENCE CLUSTER COUNT (2026-09-09 signal trust pass, see
+ * docs/EDITORIAL_SIGNAL_TRUST_AUDIT.md). Unit tests for
+ * countIndependentEvidenceClusters using synthetic inputs that model the 4
+ * real scenarios the audit actually found, so the deterministic rule itself
+ * (not just its effect on one real bundle) is pinned.
+ */
+function verifyIndependentEvidenceClusterCount() {
+  const day = (n: number) => new Date(`2026-09-${String(n).padStart(2, "0")}T00:00:00Z`);
+
+  // Different sources: always independent, regardless of breadth or date -
+  // mirrors the real 체크 SHIRT bundle (EYESMAG + HYPEBEAST_KR).
+  assert.equal(
+    countIndependentEvidenceClusters([
+      { source: "EYESMAG", publishedAt: day(1), breadth: 3 },
+      { source: "HYPEBEAST_KR", publishedAt: day(1), breadth: 3 }
+    ]),
+    2,
+    "Two different sources must always count as 2 independent clusters, even with identical dates and both roundup-shaped."
+  );
+
+  // Same source, one roundup-shaped (breadth >= 3) + one dedicated
+  // (breadth < 3), close in time: the real 라글란 시퀸/재활용 원단 pattern -
+  // collapses to 1 cluster (a restatement, not a second observation).
+  assert.equal(
+    countIndependentEvidenceClusters([
+      { source: "HYPEBEAST_KR", publishedAt: day(1), breadth: 1 },
+      { source: "HYPEBEAST_KR", publishedAt: day(3), breadth: 3 }
+    ]),
+    1,
+    "Same source, one dedicated + one roundup-shaped article 2 days apart must collapse to 1 independent cluster (same case restated)."
+  );
+
+  // Same source, BOTH dedicated (breadth < 3), close in time: the real 니트
+  // CARDIGAN pattern (Denim Tears x BBC vs. adidas x JENNIE) - stays 2
+  // clusters, since breadth never disagrees and genuinely different
+  // same-source coverage must not be penalized.
+  assert.equal(
+    countIndependentEvidenceClusters([
+      { source: "HYPEBEAST_KR", publishedAt: day(2), breadth: 2 },
+      { source: "HYPEBEAST_KR", publishedAt: day(4), breadth: 1 }
+    ]),
+    2,
+    "Same source, two dedicated (non-roundup) articles must stay 2 independent clusters - same-source coverage of genuinely different products must not be merged."
+  );
+
+  // Same source, BOTH roundup-shaped, close in time: two separate weekly
+  // digests are not presumed to be restating each other just for both being
+  // broad-coverage format - stays 2 clusters.
+  assert.equal(
+    countIndependentEvidenceClusters([
+      { source: "HYPEBEAST_KR", publishedAt: day(1), breadth: 4 },
+      { source: "HYPEBEAST_KR", publishedAt: day(8), breadth: 5 }
+    ]),
+    2,
+    "Same source, two roundup-shaped articles must stay 2 independent clusters - breadth symmetry never triggers a merge."
+  );
+
+  // Same source, breadth-asymmetric, but FAR apart in time (>7 days): too
+  // far apart to be the same news cycle - stays 2 clusters.
+  assert.equal(
+    countIndependentEvidenceClusters([
+      { source: "HYPEBEAST_KR", publishedAt: day(1), breadth: 1 },
+      { source: "HYPEBEAST_KR", publishedAt: day(9), breadth: 3 }
+    ]),
+    2,
+    "Same source, breadth-asymmetric but >7 days apart must stay 2 independent clusters - too far apart to presume restatement."
+  );
+
+  // Missing publishedAt on either side must never merge (can't establish
+  // proximity, so default to independent rather than guessing).
+  assert.equal(
+    countIndependentEvidenceClusters([
+      { source: "HYPEBEAST_KR", publishedAt: null, breadth: 1 },
+      { source: "HYPEBEAST_KR", publishedAt: day(1), breadth: 3 }
+    ]),
+    2,
+    "A missing publishedAt must never be treated as 'close enough' - stays 2 independent clusters."
+  );
+
+  // Single-article input: always exactly 1 cluster.
+  assert.equal(countIndependentEvidenceClusters([{ source: "EYESMAG", publishedAt: day(1), breadth: 1 }]), 1, "A single evidence article is always exactly 1 cluster.");
+
+  // NON-TRANSITIVITY (the exact design flaw this pass caught in its own
+  // first draft): a roundup between two UNRELATED dedicated articles must
+  // absorb into one of them without fusing the two dedicated articles
+  // together. 2 dedicated articles (breadth 1 each, 4 days apart) + 1
+  // roundup in between (breadth 4) correlated with both by date/source must
+  // produce 2 clusters (the 2 dedicated articles), not 1 - a naive
+  // transitive union-find over all pairs would wrongly collapse this to 1.
+  assert.equal(
+    countIndependentEvidenceClusters([
+      { source: "HYPEBEAST_KR", publishedAt: day(1), breadth: 1 },
+      { source: "HYPEBEAST_KR", publishedAt: day(3), breadth: 4 },
+      { source: "HYPEBEAST_KR", publishedAt: day(5), breadth: 1 }
+    ]),
+    2,
+    "A roundup sitting between two unrelated dedicated articles must absorb into one of them without transitively fusing the two dedicated articles into 1 cluster."
+  );
+}
+
 async function verifyAttributeBundles() {
   // Evidence strength stays conservative: article count alone never implies
   // breadth, and only 3+ outlets WITH recent movement may be a candidate.
   assert.equal(bundleEvidenceStrength({ articlePresence: 1, sourceSpread: 1 }), "단일 관측");
-  assert.equal(bundleEvidenceStrength({ articlePresence: 4, sourceSpread: 1 }), "반복 관측 · 특정 매체 집중", "Many articles from ONE outlet must never read as multi-source.");
+  // 2026-09-09 signal trust pass: "반복 관측" now requires
+  // independentEvidenceClusterCount to distinguish genuinely-different-cases
+  // repetition from one outlet's roundup restating its own dedicated piece
+  // (see docs/EDITORIAL_SIGNAL_TRUST_AUDIT.md, "Evidence tiers").
+  assert.equal(
+    bundleEvidenceStrength({ articlePresence: 4, sourceSpread: 1, independentEvidenceClusterCount: 4 }),
+    "반복 관측 · 서로 다른 사례",
+    "Many articles from ONE outlet, each a genuinely different case, must never read as multi-source but must read as distinct repeated cases."
+  );
+  assert.equal(
+    bundleEvidenceStrength({ articlePresence: 4, sourceSpread: 1, independentEvidenceClusterCount: 1 }),
+    "반복 관측 · 동일 사례 재언급",
+    "Many articles from ONE outlet that all collapse to the SAME real case (e.g. a roundup restating its own dedicated piece) must read as a restatement, not independent repetition."
+  );
+  // Omitting independentEvidenceClusterCount must default to trusting the
+  // raw article count (backward-compatible for any caller not yet passing
+  // it) rather than silently downgrading existing behavior.
+  assert.equal(bundleEvidenceStrength({ articlePresence: 4, sourceSpread: 1 }), "반복 관측 · 서로 다른 사례", "Without an explicit cluster count, the label must fall back to trusting articlePresence, not assume a restatement.");
   assert.equal(bundleEvidenceStrength({ articlePresence: 2, sourceSpread: 2 }), "여러 매체 동시 관찰");
   assert.equal(bundleEvidenceStrength({ articlePresence: 5, sourceSpread: 3, recentArticlePresence: 0 }), "여러 매체 동시 관찰", "Three outlets without recent movement is not yet a trend candidate.");
   assert.equal(bundleEvidenceStrength({ articlePresence: 5, sourceSpread: 3, recentArticlePresence: 2 }), "강한 트렌드 후보");
@@ -1502,27 +1621,60 @@ async function verifyAttributeBundles() {
   // the item detail page's honest empty state.
   assert.equal(await getPrimaryBundleForItem("KNIT_BEANIE", "real"), null, "KNIT_BEANIE has no direct attribute, so it must have no primary bundle to highlight.");
 
-  // Dashboard insight priority (§8): a repeated bundle beats a single-
-  // observation bundle, which beats an empty list (caller falls back to the
-  // specific-item insight only then - never fabricated here).
-  const repeated = { key: "r", specificItem: "X", displayName: "반복", directAttributes: [], bundleArticlePresence: 3, bundleSourceSpread: 1, latestObservedAt: null, evidenceArticles: [] };
-  const single = { key: "s", specificItem: "Y", displayName: "단일", directAttributes: [], bundleArticlePresence: 1, bundleSourceSpread: 1, latestObservedAt: null, evidenceArticles: [] };
-  assert.equal(selectPrimaryPlanningBundle([single, repeated])?.displayName, "반복", "A repeated bundle (>=2 articles) must be preferred over a single-observation bundle regardless of list order.");
-  assert.equal(selectPrimaryPlanningBundle([single])?.displayName, "단일", "With no repeated bundle, the single-observation bundle must still be preferred over the specific-item fallback.");
+  // Dashboard insight priority (§8): a genuinely independent repeated bundle
+  // beats a single-observation bundle, which beats an empty list (caller
+  // falls back to the specific-item insight only then - never fabricated
+  // here).
+  const repeated = { key: "r", specificItem: "X", displayName: "반복", directAttributes: [], bundleArticlePresence: 3, bundleSourceSpread: 1, independentEvidenceClusterCount: 2, latestObservedAt: null, evidenceArticles: [] };
+  const single = { key: "s", specificItem: "Y", displayName: "단일", directAttributes: [], bundleArticlePresence: 1, bundleSourceSpread: 1, independentEvidenceClusterCount: 1, latestObservedAt: null, evidenceArticles: [] };
+  assert.equal(selectPrimaryPlanningBundle([single, repeated])?.displayName, "반복", "A genuinely independent repeated bundle (>=2 clusters) must be preferred over a single-observation bundle regardless of list order.");
+  assert.equal(selectPrimaryPlanningBundle([single])?.displayName, "단일", "With no independently-repeated bundle, the single-observation bundle must still be preferred over the specific-item fallback.");
   assert.equal(selectPrimaryPlanningBundle([]), null, "With zero bundles, the caller must fall back to the specific-item insight rather than fabricating one.");
-  // Against REAL data: whenever ANY repeated bundle exists, the dashboard's
-  // primary planning bundle must be a repeated one. Asserted structurally
-  // because the corpus is re-collected over a rolling window - which specific
-  // bundle is repeated changes, the priority rule must not.
+
+  // REGRESSION GUARD (2026-09-09 signal trust pass): a bundle with 2
+  // articles that are really the SAME case restated (independentEvidenceClusterCount
+  // stays 1 - e.g. a same-source roundup restating its own dedicated piece)
+  // must NOT be preferred over a bundle with 2 articles that are genuinely 2
+  // independent cases, even though raw bundleArticlePresence ties at 2 for
+  // both. This is the exact real-data contradiction the pass found and fixed
+  // (라글란 시퀸 긴팔 티셔츠, 1 cluster, vs. 니트 CARDIGAN, 2 clusters).
+  const sameCaseRestated = { key: "sc", specificItem: "X", displayName: "동일사례", directAttributes: [{ type: "DETAIL", value: "A", articlePresence: 2, sourceSpread: 1 }, { type: "DETAIL", value: "B", articlePresence: 2, sourceSpread: 1 }], bundleArticlePresence: 2, bundleSourceSpread: 1, independentEvidenceClusterCount: 1, latestObservedAt: null, evidenceArticles: [] };
+  const distinctCases = { key: "dc", specificItem: "Y", displayName: "서로다른사례", directAttributes: [{ type: "MATERIAL", value: "C", articlePresence: 2, sourceSpread: 1 }], bundleArticlePresence: 2, bundleSourceSpread: 1, independentEvidenceClusterCount: 2, latestObservedAt: null, evidenceArticles: [] };
+  assert.equal(selectPrimaryPlanningBundle([sameCaseRestated, distinctCases])?.displayName, "서로다른사례", "A same-case-restated bundle (1 cluster) must never be preferred over a genuinely-2-cluster bundle, even with fewer raw attributes and identical article/source counts.");
+  assert.equal(selectPrimaryPlanningBundle([distinctCases, sameCaseRestated])?.displayName, "서로다른사례", "...and this must hold regardless of list order.");
+
+  // Against REAL data: whenever ANY genuinely-independent repeated bundle
+  // exists, the dashboard's primary planning bundle must be one of those,
+  // never a same-case-restated one. Asserted structurally because the corpus
+  // is re-collected over a rolling window - which specific bundle qualifies
+  // changes, the priority rule must not.
   const realPrimary = selectPrimaryPlanningBundle(bundles);
-  const realRepeated = bundles.filter((bundle) => bundle.bundleArticlePresence >= 2);
+  const realIndependentRepeats = bundles.filter((bundle) => bundle.independentEvidenceClusterCount >= 2);
   assert.ok(realPrimary, "With REAL bundles present, a primary planning bundle must be selected.");
-  if (realRepeated.length > 0) {
+  if (realIndependentRepeats.length > 0) {
     assert.ok(
-      (realPrimary?.bundleArticlePresence ?? 0) >= 2,
-      `A repeated bundle exists (${realRepeated.map((bundle) => bundle.displayName).join(", ")}), so the primary planning bundle must be repeated, got "${realPrimary?.displayName}".`
+      (realPrimary?.independentEvidenceClusterCount ?? 0) >= 2,
+      `An independently-repeated bundle exists (${realIndependentRepeats.map((bundle) => bundle.displayName).join(", ")}), so the primary planning bundle must be one of those, got "${realPrimary?.displayName}".`
     );
   }
+
+  // Concrete real-data proof of the fix: 체크 SHIRT (2 sources, 2 clusters)
+  // must still be primary - the fix must not disturb the one bundle that was
+  // already correct - and 니트 CARDIGAN (1 source, 2 clusters - genuinely 2
+  // different products) must now sort ahead of 라글란 시퀸 긴팔 티셔츠 (1
+  // source, 1 cluster - a roundup restating its own outlet's dedicated
+  // piece), reversing the attribute-count-driven order from before this fix.
+  assert.equal(realPrimary?.displayName, "체크 SHIRT", "체크 SHIRT must remain the primary signal after the independence fix - it was already the only genuinely multi-cluster, multi-source bundle.");
+  const cardiganBundle = bundles.find((bundle) => bundle.displayName === "니트 CARDIGAN");
+  const raglanBundle = bundles.find((bundle) => bundle.displayName === "라글란 시퀸 긴팔 티셔츠");
+  assert.ok(cardiganBundle, "니트 CARDIGAN bundle must exist in REAL data.");
+  assert.ok(raglanBundle, "라글란 시퀸 긴팔 티셔츠 bundle must exist in REAL data.");
+  assert.equal(cardiganBundle?.independentEvidenceClusterCount, 2, "니트 CARDIGAN (Denim Tears x BBC + adidas x JENNIE - two different real products) must resolve to 2 independent clusters.");
+  assert.equal(raglanBundle?.independentEvidenceClusterCount, 1, "라글란 시퀸 긴팔 티셔츠 (Supreme dedicated article + the same outlet's own roundup restating it 2 days later) must resolve to 1 independent cluster.");
+  assert.ok(
+    bundles.indexOf(cardiganBundle!) < bundles.indexOf(raglanBundle!),
+    "니트 CARDIGAN (2 independent clusters) must now sort ahead of 라글란 시퀸 긴팔 티셔츠 (1 cluster) - the proven secondary-ranking contradiction this pass fixes."
+  );
 }
 
 /**

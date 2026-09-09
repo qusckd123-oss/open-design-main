@@ -47,12 +47,17 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   const [data, bundles] = await Promise.all([getPlanningDashboardData(gender, scope), getAttributeBundles("real")]);
   const editorialRows = data.editorialByType[editorialType] ?? data.editorialByType.SUB_ITEM ?? [];
   const isOverseas = scope === "overseas";
-  // Same threshold bundleEvidenceStrength already uses for "반복 관측": only a
-  // genuinely repeated bundle (>=2 articles) becomes the CURRENT SIGNAL hero.
-  // With no repeated bundle, every bundle is an equally single observation,
-  // so the uniform tile grid below is used instead - never an arbitrary
-  // "biggest of equals" promotion.
-  const repeatedBundle = bundles.find((bundle) => bundle.bundleArticlePresence >= 2) ?? null;
+  // Same threshold selectPrimaryPlanningBundle uses: only a genuinely,
+  // INDEPENDENTLY repeated bundle (independentEvidenceClusterCount >= 2, not
+  // just raw article count - see docs/EDITORIAL_SIGNAL_TRUST_AUDIT.md)
+  // becomes the CURRENT SIGNAL hero. With no such bundle, every bundle is an
+  // equally single observation, so the uniform tile grid below is used
+  // instead - never an arbitrary "biggest of equals" promotion. Deliberately
+  // NOT selectPrimaryPlanningBundle itself here: that helper falls back to
+  // bundles[0] when nothing qualifies (right for a page that always wants
+  // SOME primary bundle), but this page wants null in that case, to render
+  // the grid instead of forcing a hero out of ordinary single observations.
+  const repeatedBundle = bundles.find((bundle) => bundle.independentEvidenceClusterCount >= 2) ?? null;
   const secondaryBundles = repeatedBundle ? bundles.filter((bundle) => bundle.key !== repeatedBundle.key).slice(0, 4) : [];
 
   return (

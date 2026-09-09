@@ -154,16 +154,37 @@ Because `체크 SHIRT` is the *only* bundle in the entire 29-bundle set with `bu
 
 ## Ranking change decision
 
-**Not implemented.** The one concrete contradiction found (#2 vs. #3 secondary ordering) does not affect the primary signal, which is already correct. A principled fix requires computing "independent evidence cluster count" - which, on the evidence gathered here, cannot be done with a cheap, purely-numeric proxy already in the schema: dates alone don't distinguish the two cases (both pairs are 1-8 days apart), and reliable brand/product-identity matching would require new named-entity vocabulary (e.g. tracking "Supreme," "sacai," "Denim Tears" as BRAND values) that step 24's taxonomy freeze forbids adding in this pass. A same-source-and-close-in-date heuristic without entity matching would be too blunt - it would just as easily misclassify bundle #3 (genuinely independent, same-source, close-in-date) as a duplicate. Per the brief's own conservative bar ("only if a real current-data ranking contradiction is proven" AND "no magic weighted score" AND "transparent, deterministic"), inventing a fuzzy same-story heuristic now would trade one form of untrustworthiness for another. This is documented as the audit's primary recommended follow-up (see "Next step"), not implemented today.
+**Originally not implemented; implemented in a 2026-09-09 follow-up pass** (see "Implementation (2026-09-09 follow-up)" below). The initial audit concluded a same-source-and-close-in-date heuristic without brand/entity matching would be too blunt, reasoning from a first-draft transitive (union-find) design that really did have that flaw. The follow-up pass found a non-transitive "absorption" model that avoids it entirely using only data already computed (per-post item breadth, source, date) - no new taxonomy, no entity matching, no DB field.
 
 ## Evidence tiers - recommendation
 
-Current three labels (`단일 관측`, `반복 관측 · 특정 매체 집중`, `여러 매체 동시 관찰`) are **not sufficient** as currently used: `반복 관측 · 특정 매체 집중` is applied identically to bundle #2/#4 (1 real independent observation, restated) and bundle #3 (2 real independent observations) - two evidence qualities that should not read the same to a merchandiser. Recommended additional internal distinction, to be computed once a reliable independence-cluster signal exists (see "Next step" - **not implemented in this pass**, and no UI copy was added):
+**Implemented in the 2026-09-09 follow-up pass.** Current three labels (`단일 관측`, `반복 관측 · 특정 매체 집중`, `여러 매체 동시 관찰`) were **not sufficient** as originally used: `반복 관측 · 특정 매체 집중` was applied identically to bundle #2/#4 (1 real independent observation, restated) and bundle #3 (2 real independent observations) - two evidence qualities that should not read the same to a merchandiser. The label is now split:
 
 - **반복 관측 · 동일 사례 재언급** ("repeated observation, same case restated") - for the #2/#4 pattern: same outlet, same underlying product/announcement, described more than once.
 - **반복 관측 · 서로 다른 사례** ("repeated observation, distinct cases") - for the #3 pattern: same outlet, genuinely different products, each independently reported.
 
-The brief's own suggested distinction (여러 매체 · 동일 보도 흐름 vs. 여러 매체 · 독립 관찰) is aimed at the *multi-source* tier; the current data has only one multi-source bundle (#1) and it shows no press-derivative pattern, so that specific split cannot yet be evidenced from data - the single-source tier split above is the one this audit actually found and can justify.
+The brief's own suggested distinction (여러 매체 · 동일 보도 흐름 vs. 여러 매체 · 독립 관찰) is aimed at the *multi-source* tier; the current data has only one multi-source bundle (#1) and it shows no press-derivative pattern, so that specific split is not yet evidenced from data and was not implemented - the single-source tier split above is the one this audit actually found and acted on.
+
+## Implementation (2026-09-09 follow-up)
+
+A prior conditional-controller turn initially routed to source expansion; the user corrected this - the ranking contradiction and evidence-clustering fix found above were unfinished trust work and had to be completed first (Path A), with no new source collection, no taxonomy, no DB schema change.
+
+**Signal**: `countIndependentEvidenceClusters` (`src/services/attribute-bundle-service.ts`), service-time derived, no persisted model. A post is "roundup-shaped" when its own relations span `>= 3` distinct specific items (`ROUNDUP_BREADTH_THRESHOLD`) - empirically the exact line between every dedicated REAL article (<=2 items) and the corpus's one weekly roundup plus one full campaign piece (3 items each). Two same-source evidence articles where exactly one is roundup-shaped and they are published within `7` days (`SAME_CASE_WINDOW_DAYS`) of each other are treated as one cluster (a restatement); different-source pairs are always independent; two dedicated or two roundup-shaped same-source articles never merge with each other regardless of date.
+
+**A real design flaw was caught and fixed before shipping**: the first draft used transitive union-find across all pairs in a bundle. That would let a roundup sitting between two *unrelated* dedicated articles (same source, both within its window, by coincidence) fuse them into one cluster via the roundup as a hub - exactly the shape of the real `니트 CARDIGAN` bundle if a future roundup ever restated just one of its two products. The shipped model instead only ever *absorbs* a roundup into an existing dedicated article's cluster; it never lets two dedicated articles merge with each other, even transitively through a shared roundup. Unit tests for both the correct behavior and this specific non-transitivity requirement are in `scripts/smoke-test.ts#verifyIndependentEvidenceClusterCount`.
+
+**Wiring**: `AttributeBundle.independentEvidenceClusterCount` (new field) is computed in `getAttributeBundles` and inserted as the sort's 2nd key (after `bundleSourceSpread`, before `bundleArticlePresence`). `selectPrimaryPlanningBundle` and `page.tsx`'s own hero-bundle predicate both now qualify on `independentEvidenceClusterCount >= 2` instead of raw `bundleArticlePresence >= 2`. `bundleEvidenceStrength` takes the new field (optional, defaults to trusting `articlePresence` for backward compatibility) and returns the split labels above. All 4 `AttributeBundle.tsx` call sites pass the real value through - a label/text change only, no layout/JSX/styling touched (UI remains frozen).
+
+**Result against REAL data** (re-verified after implementation, before commit):
+
+| Bundle | Articles | Sources | Independent Clusters | Label |
+|---|---|---|---|---|
+| 체크 SHIRT | 2 | 2 | 2 | 여러 매체 동시 관찰 |
+| 니트 CARDIGAN | 2 | 1 | **2** | 반복 관측 · 서로 다른 사례 |
+| 라글란 시퀸 긴팔 티셔츠 | 2 | 1 | **1** | 반복 관측 · 동일 사례 재언급 |
+| 재활용 원단 토트백 | 2 | 1 | **1** | 반복 관측 · 동일 사례 재언급 |
+
+`체크 SHIRT` remains the primary signal (unaffected, as predicted - it was already correct). `니트 CARDIGAN` now sorts ahead of `라글란 시퀸 긴팔 티셔츠`, fixing the exact secondary-ranking contradiction this audit proved. Product Reference's frozen 58/120 item-bearing regression was re-verified unchanged (this pass touched no shared code path, and `object-relations.ts`/`attributes.ts` import only the frozen snapshot, never `attribute-bundle-service.ts`).
 
 ## Press release risk
 
@@ -243,18 +264,18 @@ Reasoning, strictly from evidence/source/independence/recency (not fashion judgm
 
 ## Data safety
 
-- `EditorialPost` (REAL): 283, unchanged - this pass performed zero DB writes.
+- `EditorialPost` (REAL): 283, unchanged throughout both the audit and the follow-up implementation - zero DB writes either time.
 - `EditorialMention` (REAL): 1,025, unchanged.
 - `MarketRankingSnapshot` (REAL): 667, unchanged.
-- No reparse was run (no taxonomy/extraction code changed).
+- No reparse was run at any point (no taxonomy/extraction code changed - only ranking/sorting/labeling logic in `attribute-bundle-service.ts` and its 3 call sites).
 
 ## Validation
 
 - `npx tsc -b --noEmit`: pass.
-- `npx tsx scripts/smoke-test.ts` (`npm test`): pass, unchanged (no service/ranking/extraction code was modified - only a script's console-log labels and two docs).
-- No build run required for a docs-only pass; routes were not touched.
-- Product Reference frozen regression: not re-run (no shared code path was touched by this pass - `attribute-bundle-service.ts` and `editorial/attribute-relations.ts` were read but not edited).
+- `npx tsx scripts/smoke-test.ts` (`npm test`): pass, including the new `verifyIndependentEvidenceClusterCount` unit tests (9 synthetic scenarios, including the non-transitivity regression guard) and the extended `verifyAttributeBundles` real-data assertions (체크 SHIRT stays primary; 니트 CARDIGAN now outranks 라글란 시퀸 긴팔 티셔츠).
+- `npm run build`: pass. Required routes present: `/`, `/editorial`, `/items`, `/items/[itemType]`, `/market`.
+- Product Reference frozen regression (persisted 120-product sample): item-bearing 58/120, exact match, re-verified after the ranking/service code change - confirmed the fix touches no shared code path (`object-relations.ts`/`attributes.ts` import only `frozen-editorial-vocabulary.ts`, never `attribute-bundle-service.ts`).
 
 ## Next step
 
-Build a deterministic "independent evidence cluster" signal for repeated bundles - starting with the cheapest reliable proxy available without new taxonomy (e.g., flag an evidence article as a "roundup" when its own relation set spans an unusually high number of distinct specific items, and treat a roundup's contribution to a bundle as non-independent whenever a dedicated, single-item-focused article from the *same source* already covers that bundle within a short time window) - then use it to (a) split the `반복 관측 · 특정 매체 집중` label into "동일 사례 재언급" vs. "서로 다른 사례" as recommended above, and (b) fix the one proven secondary-ranking contradiction (라글란 시퀸 긴팔 티셔츠 outranking 니트 CARDIGAN) without touching the already-correct `체크 SHIRT` primary signal.
+None required from this pass specifically - the proven ranking contradiction is fixed, `체크 SHIRT` remains primary, and the evidence-tier label split is shipped. The audit's other disclosed-but-unactioned findings (the multi-source-tier label split, for which no current data yet provides evidence; the missed-attribute-vocabulary candidates 칼라/버튼업/실크/새틴/개버딘/코튼) remain open for a future, separately-scoped pass - neither is a trust defect, both are coverage opportunities.

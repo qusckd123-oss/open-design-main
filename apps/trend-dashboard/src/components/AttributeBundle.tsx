@@ -86,8 +86,11 @@ export function AttributeChip({ attribute }: { attribute: BundleAttribute }) {
  * CURRENT SIGNAL - the dashboard's lead story, not a card in a grid. No
  * border, no shadow, no background surface: whitespace and type scale alone
  * signal that this is the strongest thing on the page. Only rendered for a
- * genuinely REPEATED bundle (bundleArticlePresence >= 2 - the same threshold
- * bundleEvidenceStrength already uses for "반복 관측").
+ * genuinely, INDEPENDENTLY repeated bundle (independentEvidenceClusterCount
+ * >= 2 - see selectPrimaryPlanningBundle and docs/EDITORIAL_SIGNAL_TRUST_AUDIT.md;
+ * raw bundleArticlePresence >= 2 is not enough, since two same-source
+ * articles can be one dedicated piece plus that outlet's own roundup
+ * restating it).
  *
  * The composed name (bundle.displayName, "재활용 원단 토트백") is the ONE
  * dominant headline - a planner's actual final answer to "어떤 속성의 어떤
@@ -96,7 +99,7 @@ export function AttributeChip({ attribute }: { attribute: BundleAttribute }) {
  * the reader even reaches the combined name.
  */
 export function CurrentSignalHero({ bundle }: { bundle: AttributeBundle }) {
-  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread });
+  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread, independentEvidenceClusterCount: bundle.independentEvidenceClusterCount });
   const heroArticle = findHeroArticle(bundle);
 
   return (
@@ -134,7 +137,7 @@ export function CurrentSignalHero({ bundle }: { bundle: AttributeBundle }) {
  * upgraded in wording just because it sits next to CurrentSignalHero.
  */
 export function SecondaryBundleCard({ bundle }: { bundle: AttributeBundle }) {
-  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread });
+  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread, independentEvidenceClusterCount: bundle.independentEvidenceClusterCount });
   return (
     <Link href={`/items/${encodeURIComponent(bundle.specificItem)}`} className="block border-t border-line py-4 transition first:border-t-0 first:pt-0 hover:opacity-70">
       <div className="text-base font-semibold leading-snug text-ink">{bundle.displayName}</div>
@@ -153,7 +156,7 @@ export function SecondaryBundleCard({ bundle }: { bundle: AttributeBundle }) {
  * list. A thin top rule stands in for the old full border+shadow box.
  */
 export function AttributeBundleCard({ bundle }: { bundle: AttributeBundle }) {
-  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread });
+  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread, independentEvidenceClusterCount: bundle.independentEvidenceClusterCount });
   return (
     <article className="border-t-2 border-ink pt-3">
       <div className="text-lg font-semibold leading-snug text-ink">{bundle.displayName}</div>
@@ -184,7 +187,7 @@ export function AttributeBundleCard({ bundle }: { bundle: AttributeBundle }) {
  * that visual). No border box; a single bottom divider closes the block.
  */
 export function BundleHighlight({ bundle }: { bundle: AttributeBundle }) {
-  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread });
+  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread, independentEvidenceClusterCount: bundle.independentEvidenceClusterCount });
   const heroArticle = findHeroArticle(bundle);
 
   return (
