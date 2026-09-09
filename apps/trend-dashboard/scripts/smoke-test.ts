@@ -1735,37 +1735,73 @@ async function verifyAttributeBundles() {
     );
   }
 
-  // Concrete real-data proof the independence fix still holds after adding
-  // HARPERSBAZAAR_KR (2026-09-09 cross-source independent-signal pass): 니트
-  // CARDIGAN gained a real second source (HARPERSBAZAAR_KR's H&M/COS knit
-  // cardigan callouts, alongside HYPEBEAST_KR's existing Denim Tears x BBC
-  // and adidas x JENNIE evidence) and now has MORE independent clusters (4)
-  // than 체크 SHIRT (2) at the same sourceSpread tier (both =2) - so per the
-  // unmodified sort (sourceSpread desc, then independentEvidenceClusterCount
-  // desc), 니트 CARDIGAN correctly overtakes 체크 SHIRT as CURRENT SIGNAL.
-  // This is the sort doing exactly what it should with new independent
-  // evidence, not a change to the sort itself. 라글란 시퀸 긴팔 티셔츠 (1
-  // cluster - a roundup restating its own outlet's dedicated piece) must
-  // still sort behind both.
-  assert.equal(realPrimary?.displayName, "니트 CARDIGAN", "니트 CARDIGAN must be the primary signal once HARPERSBAZAAR_KR gives it a real second source and pushes it to 4 independent clusters - the highest in the corpus.");
+  // Concrete real-data proof after two 2026-09-09 passes: (1) the "attached
+  // particle" precision fix (see ATTACHED_PARTICLE in attribute-relations.ts)
+  // let HARPERSBAZAAR_KR's real CHECK+SHIRT evidence join the pure 체크
+  // SHIRT bundle instead of a separate "니트 체크 SHIRT" compound, and (2) the
+  // real COSMOPOLITAN_KR collection added a 4th real, independent CHECK+SHIRT
+  // observation ("가을 체크 못 참지! 설현, 수지, 장원영, 제니처럼 입는 4가지
+  // 방법") - unrelated celebrities/brands from EYESMAG's Burberry campaign,
+  // HYPEBEAST_KR's TDR/Garbstore collection, and HARPERSBAZAAR_KR's own
+  // waist-tie feature. 체크 SHIRT is now genuinely 4-source, 3-publisher-family
+  // (HEARST_JOONGANG, HYPEBEAST_HK, EYES_INC) - the corpus's first 3-family
+  // confirmation - with sourceSpread=4, higher than 니트 CARDIGAN's
+  // sourceSpread=2, so per the unmodified sort (sourceSpread desc first),
+  // 체크 SHIRT correctly remains/becomes CURRENT SIGNAL. This is real evidence
+  // growth producing a real ranking state, not a sort redesign.
+  assert.equal(realPrimary?.displayName, "체크 SHIRT", "체크 SHIRT must be the primary signal - genuinely 4-source after real COSMOPOLITAN_KR collection added a 4th independent CHECK+SHIRT observation.");
   const cardiganBundle = bundles.find((bundle) => bundle.displayName === "니트 CARDIGAN");
   const checkShirtBundle = bundles.find((bundle) => bundle.displayName === "체크 SHIRT");
   const raglanBundle = bundles.find((bundle) => bundle.displayName === "라글란 시퀸 긴팔 티셔츠");
   assert.ok(cardiganBundle, "니트 CARDIGAN bundle must exist in REAL data.");
   assert.ok(checkShirtBundle, "체크 SHIRT bundle must exist in REAL data.");
   assert.ok(raglanBundle, "라글란 시퀸 긴팔 티셔츠 bundle must exist in REAL data.");
-  assert.equal(cardiganBundle?.bundleSourceSpread, 2, "니트 CARDIGAN must be genuinely multi-source (HYPEBEAST_KR + HARPERSBAZAAR_KR) after this pass.");
+  assert.equal(checkShirtBundle?.bundleSourceSpread, 4, "체크 SHIRT must be genuinely 4-source (EYESMAG + HYPEBEAST_KR + HARPERSBAZAAR_KR + COSMOPOLITAN_KR) after the real Cosmopolitan Korea collection.");
+  assert.equal(checkShirtBundle?.independentEvidenceClusterCount, 4, "체크 SHIRT (Burberry, TDR, a HARPERSBAZAAR_KR waist-tie feature, and a COSMOPOLITAN_KR celebrity check-styling roundup - four unrelated brands/outlets) must resolve to 4 independent clusters.");
+  assert.equal(cardiganBundle?.bundleSourceSpread, 2, "니트 CARDIGAN remains genuinely multi-source (HYPEBEAST_KR + HARPERSBAZAAR_KR), untouched by the Cosmopolitan collection.");
   assert.equal(cardiganBundle?.independentEvidenceClusterCount, 4, "니트 CARDIGAN (Denim Tears x BBC, adidas x JENNIE, H&M color-pairing feature, COS waist-tie feature - four different real products) must resolve to 4 independent clusters.");
-  assert.equal(checkShirtBundle?.independentEvidenceClusterCount, 2, "체크 SHIRT (Burberry + TDR) must remain at 2 independent clusters - unaffected by this pass (HARPERSBAZAAR_KR's own real CHECK+SHIRT evidence co-occurred KNIT in the same sentence window, forming a separate 니트 체크 SHIRT bundle per the exact-attribute-set bundle key rule, not a false merge into this one).");
   assert.equal(raglanBundle?.independentEvidenceClusterCount, 1, "라글란 시퀸 긴팔 티셔츠 (Supreme dedicated article + the same outlet's own roundup restating it 2 days later) must resolve to 1 independent cluster.");
   assert.ok(
-    bundles.indexOf(cardiganBundle!) < bundles.indexOf(checkShirtBundle!),
-    "니트 CARDIGAN (4 independent clusters) must sort ahead of 체크 SHIRT (2 clusters) at the same sourceSpread tier."
+    bundles.indexOf(checkShirtBundle!) < bundles.indexOf(cardiganBundle!),
+    "체크 SHIRT (sourceSpread=4) must sort ahead of 니트 CARDIGAN (sourceSpread=2) - sourceSpread is the sort's first key."
   );
   assert.ok(
-    bundles.indexOf(checkShirtBundle!) < bundles.indexOf(raglanBundle!),
-    "체크 SHIRT (2 clusters, 2 sources) must still sort ahead of 라글란 시퀸 긴팔 티셔츠 (1 cluster, 1 source)."
+    bundles.indexOf(cardiganBundle!) < bundles.indexOf(raglanBundle!),
+    "니트 CARDIGAN (sourceSpread=2, 4 clusters) must still sort ahead of 라글란 시퀸 긴팔 티셔츠 (sourceSpread=1, 1 cluster)."
   );
+
+  // Regression fixture for the actual real-data failure found and fixed this
+  // pass (2026-09-09 Cosmopolitan Korea probe prerequisite): an attribute word
+  // immediately followed by an attached particle (에/에는/에도/에서/도) marks it
+  // as an independent noun phrase, not a modifier of the downstream item.
+  const find = (relations: ReturnType<typeof extractDirectAttributeRelations>, item: string, type: string, value: string) =>
+    relations.find((relation) => relation.specificItem === item && relation.attributeType === type && relation.attributeValue === value);
+  const pairedKnit = extractDirectAttributeRelations({ title: "", text: "깊은 브이넥 니트에 카키 셔츠를 레이어드해 색다른 조합을 선보였습니다." });
+  assert.equal(find(pairedKnit, "SHIRT", "MATERIAL", "KNIT"), undefined, '"니트에 카키 셔츠" must NOT yield SHIRT + MATERIAL:KNIT - 니트 is a separate garment being layered WITH the shirt, not describing it.');
+  const comparedKnit = extractDirectAttributeRelations({ title: "", text: "도톰한 니트도 허리에 묶어주면 셔츠와 또 다른 느낌을 준다." });
+  assert.equal(find(comparedKnit, "SHIRT", "MATERIAL", "KNIT"), undefined, '"니트도 ... 셔츠" must NOT yield SHIRT + MATERIAL:KNIT - 니트 and 셔츠 are being compared as alternatives, not one describing the other.');
+  // The guard must not over-reach into legitimate relative-clause modifiers
+  // that happen to use 가/이/은/는 (deliberately excluded from the particle
+  // set - see ATTACHED_PARTICLE's own comment for the real breakage a first,
+  // broader draft caused).
+  const embroideryRelativeClause = extractDirectAttributeRelations({ title: "", text: "플로럴 자수가 돋보이는 테일러드 코트를 공개했다." });
+  assert.ok(find(embroideryRelativeClause, "COAT", "DETAIL", "EMBROIDERY"), '"자수가 돋보이는 코트" must still yield COAT + DETAIL:EMBROIDERY - a legitimate relative-clause modifier, not the 에/도 pairing pattern.');
+  const blackRelativeClause = extractDirectAttributeRelations({ title: "", text: "블랙이 섞인 옴브레 플레이드 셔츠를 선보였다." });
+  assert.ok(find(blackRelativeClause, "SHIRT", "COLOR", "BLACK"), '"블랙이 섞인 셔츠" must still yield SHIRT + COLOR:BLACK - a legitimate relative-clause modifier.');
+
+  // Second and third regression fixtures found during the same 2026-09-09
+  // Cosmopolitan Korea pre-collection dry run, both real false positives
+  // caught before any DB write.
+  const notOnlyCoordination = extractDirectAttributeRelations({
+    title: "",
+    text: "이런 룩은 툭 떨어지는 데님 팬츠는 물론이고 러블리한 미니스커트와도 놀라울 정도로 완벽한 궁합을 자랑하죠."
+  });
+  assert.equal(find(notOnlyCoordination, "SKIRT", "MATERIAL", "DENIM"), undefined, '"데님 팬츠는 물론이고 ... 미니스커트" must NOT yield SKIRT + MATERIAL:DENIM - DENIM describes 팬츠, not the skirt two items later in a "not only X, but also Y" list.');
+  const pairedThenExcluded = extractDirectAttributeRelations({
+    title: "",
+    text: "시크한 블랙 빅백을 매치해 코트를 제외한 모든 이너와 액세서리를 블랙으로 통일하는 스타일링을 선보였다."
+  });
+  assert.equal(find(pairedThenExcluded, "COAT", "COLOR", "BLACK"), undefined, '"블랙 빅백을 매치해 코트를 제외한..." must NOT yield COAT + COLOR:BLACK - the bag being matched is a separate object, and the sentence explicitly excludes the coat from the black color scheme.');
 }
 
 /**

@@ -56,8 +56,26 @@ const ATTRIBUTE_TYPES = new Set(["DETAIL", "MATERIAL", "COLOR", "STYLE"]);
 const MODIFIER_WINDOW = 20;
 
 // Coordination markers. Text before the LAST of these inside the window
-// belongs to a different list element, not to this item.
-const COORDINATION = /[,、·・]|와\s|과\s|및\s|그리고\s/g;
+// belongs to a different list element, not to this item. 물론이고/뿐만
+// 아니라/뿐 아니라 ("not only X but also Y") and a bare "+" added 2026-09-09
+// after real COSMOPOLITAN_KR false positives: "데님 팬츠는 물론이고 러블리한
+// 미니스커트" (DENIM describes 팬츠, not 미니스커트 two items later in an
+// explicit "not only X, but also Y" list) and "안은진표 니트 + 체크 스커트"
+// (a common Korean fashion-editorial "itemA + itemB" outfit-combo callout -
+// 니트 is a separate top, not a material describing the check skirt), both
+// the same enumeration shape 와/과/및/그리고 already guard against.
+const COORDINATION = /[,、·・+]|와\s|과\s|및\s|그리고\s|물론이고|뿐만\s?아니라|뿐\s?아니라/g;
+
+// Clause-boundary verbs: a phrase ending in one of these pairing/exclusion
+// verbs describes a DIFFERENT object than whatever follows, even with no
+// coordination punctuation. Found on real data: COSMOPOLITAN_KR "블랙 빅백을
+// 매치해 코트를 제외한..." - the bag being matched is a separate item from the
+// coat, and the sentence goes on to explicitly EXCLUDE the coat from the
+// black color scheme ("코트를 제외한 모든 이너와 액세서리를 블랙으로 통일") -
+// the literal opposite of what a naive window match would suggest. Applied
+// with the same "cut at the last occurrence inside the window" rule as
+// COORDINATION, not a new mechanism.
+const CLAUSE_BOUNDARY = /매치해|매치하여|매치하고|레이어드해|레이어드하여|코디해|코디하여|페어링해|제외한|제외하고/g;
 
 const specificItemRules = () => editorialRules.filter((rule) => rule.type === "SUB_ITEM");
 const attributeRules = () => editorialRules.filter((rule) => ATTRIBUTE_TYPES.has(rule.type));
@@ -192,10 +210,12 @@ function modifierWindow(segment: string, itemIndex: number): string | null {
   const start = Math.max(0, itemIndex - MODIFIER_WINDOW);
   const raw = segment.slice(start, itemIndex);
   if (!raw.trim()) return null;
-  COORDINATION.lastIndex = 0;
   let cut = 0;
-  for (const boundary of raw.matchAll(COORDINATION)) {
-    cut = (boundary.index ?? 0) + boundary[0].length;
+  for (const boundaryPattern of [COORDINATION, CLAUSE_BOUNDARY]) {
+    boundaryPattern.lastIndex = 0;
+    for (const boundary of raw.matchAll(boundaryPattern)) {
+      cut = Math.max(cut, (boundary.index ?? 0) + boundary[0].length);
+    }
   }
   const window = raw.slice(cut);
   return window.trim() ? window : null;
@@ -203,6 +223,41 @@ function modifierWindow(segment: string, itemIndex: number): string | null {
 
 function containsOtherSpecificItem(window: string, currentItem: string): boolean {
   return specificItemRules().some((rule) => rule.value !== currentItem && rule.patterns.some((pattern) => pattern.test(window)));
+}
+
+/**
+ * A genuine Korean adnominal modifier sits directly before its head noun with
+ * NO particle in between ("니트 카디건", "카본 블랙 ELVO 백팩"). If the
+ * matched attribute text is instead immediately followed by 에/에는/에도/에서/도
+ * before the item, the attribute word is functioning as an independent noun
+ * phrase in its own right - a separate garment being paired with or
+ * contrasted against the item, not describing it. Found on real data during
+ * the 2026-09-09 Cosmopolitan Korea probe ("...깊은 브이넥 니트에 카키 셔츠를
+ * 레이어드해..." - a knit top LAYERED WITH a khaki shirt, not "a knit shirt")
+ * and, on closer inspection, already present undetected in the existing
+ * corpus from HARPERSBAZAAR_KR: "넉넉한 레드 니트에는 와이드 팬츠" (a knit
+ * paired WITH wide pants) and "도톰한 니트도 허리에 묶어주면 셔츠" (a knit OR a
+ * shirt tied at the waist - alternatives being compared, not "a knit shirt").
+ *
+ * 가/이/은/는 were deliberately tried and REJECTED for this guard: a first
+ * draft included them and broke real, correct, currently-valid relations -
+ * "자수가 돋보이는 테일러드 코트" (embroidery STANDS OUT ON a tailored coat)
+ * and "블랙이 섞인 옴브레 플레이드 셔츠" (black IS MIXED IN a plaid shirt) are
+ * legitimate Korean relative-clause modifiers ("[X가/이 verb-는] item"), a
+ * completely different, common, and valuable construction that must not be
+ * confused with the 에/도 pairing-or-comparison pattern above. This guard
+ * intentionally does not attempt to distinguish every possible construction
+ * (e.g. a hedge like "레드에 가까운 컬러" is a theoretical residual risk with
+ * no observed occurrence in this corpus) - it fixes only the specific,
+ * verified real failures, per the project's own precision-over-recall
+ * philosophy. It does not touch MODIFIER_WINDOW, the COORDINATION boundary,
+ * or any taxonomy rule.
+ */
+const ATTACHED_PARTICLE = /^(에는|에도|에서|도|에)(?![가-힣])/;
+
+function isGenuineModifier(window: string, matchText: string, matchIndex: number): boolean {
+  const after = window.slice(matchIndex + matchText.length);
+  return !ATTACHED_PARTICLE.test(after);
 }
 
 function matchAll(segment: string, patterns: RegExp[]): Array<{ index: number; text: string }> {
@@ -217,10 +272,12 @@ function matchAll(segment: string, patterns: RegExp[]): Array<{ index: number; t
   return hits.sort((a, b) => a.index - b.index);
 }
 
-function firstMatch(window: string, patterns: RegExp[]): string | null {
+function firstMatch(window: string, patterns: RegExp[]): { text: string; index: number } | null {
   for (const pattern of patterns) {
     const match = window.match(pattern);
-    if (match) return match[0];
+    if (match && match.index !== undefined && isGenuineModifier(window, match[0], match.index)) {
+      return { text: match[0], index: match.index };
+    }
   }
   return null;
 }

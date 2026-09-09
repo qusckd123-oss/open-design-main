@@ -4,7 +4,7 @@ export type EditorialGender = (typeof editorialGenders)[number];
 export const editorialMentionTypes = ["ITEM", "SUB_ITEM", "DETAIL", "MATERIAL", "COLOR", "STYLE", "BRAND", "COLLAB", "IP"] as const;
 export type EditorialMentionType = (typeof editorialMentionTypes)[number];
 
-export const editorialSources = ["VISLA", "HYPEBEAST_KR", "EYESMAG", "NONLABEL", "ESQUIRE_KR", "HARPERSBAZAAR_KR"] as const;
+export const editorialSources = ["VISLA", "HYPEBEAST_KR", "EYESMAG", "NONLABEL", "ESQUIRE_KR", "HARPERSBAZAAR_KR", "COSMOPOLITAN_KR"] as const;
 export type EditorialSource = (typeof editorialSources)[number];
 
 export type EditorialSourceConfig = {
@@ -92,5 +92,17 @@ export const editorialSourceConfigs: Record<EditorialSource, EditorialSourceConf
     genderAvailable: false,
     role: ["WOMENSWEAR", "STYLING", "FASHION_NEWS"],
     description: "Official Harper's Bazaar Korea public whole-site sitemap (same technical platform as ESQUIRE_KR: /article/<id> URLs, atc_body_cont body container, JSON-LD dates) plus public article pages. Selected 2026-09-09 for a cross-source independent-signal audit after a 20-article real-extractor probe measured a 40% Direct Attribute Rate (vs. ESQUIRE_KR's 10%) driven by its item+color/material outfit-styling article format ('이럴 땐 이런 아이템' shoppable callouts), including real evidence that independently confirms the existing 체크 SHIRT and 니트 CARDIGAN bundles from unrelated brands/products."
+  },
+  COSMOPOLITAN_KR: {
+    source: "COSMOPOLITAN_KR",
+    country: "KOREA",
+    sourceType: "EDITORIAL",
+    signalType: "EDITORIAL",
+    feedUrl: "https://www.cosmopolitan.co.kr/sitemap/sitemap.xml",
+    targetUrl: "https://www.cosmopolitan.co.kr/fashion",
+    collectionMethod: "PUBLIC_NEWS_SITEMAP",
+    genderAvailable: false,
+    role: ["WOMENSWEAR", "CELEBRITY_STYLE", "FASHION_NEWS"],
+    description: "Official Cosmopolitan Korea public whole-site sitemap - the same Hearst Joongang technical platform as ESQUIRE_KR/HARPERSBAZAAR_KR (identical business registration number 104-81-55280; /article/<id> URLs, atc_body_cont body container, JSON-LD dates). Selected 2026-09-09 after a 20-article real-extractor probe measured a 40% Direct Attribute Rate via celebrity street-style/outfit-comparison features, and after a publisher-family diversity audit found 2 of its 3 probe-sampled existing-bundle touches would add a publisher family (Hearst Joongang) not already supporting that bundle (데님 VEST, 체크 SHIRT), not merely deepen an already-represented family. Per that same audit, this is intended as the last Hearst Joongang source added for the current phase - ELLE_KR (same entity, weaker 20% probe density) is deliberately deferred in favor of publisher-family diversification next."
   }
 };

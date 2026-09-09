@@ -41,6 +41,10 @@ export async function collectEditorialFeed(source: EditorialSource, limit = 30, 
   // HARPERSBAZAAR_KR shares ESQUIRE_KR's platform (whole-site sitemap, no
   // RSS) so it follows the identical always-sitemap, always-90-day-default path.
   if (source === "HARPERSBAZAAR_KR") return collectHarpersBazaarKr(limit, options.days ?? 90, options.skipUrls);
+  // COSMOPOLITAN_KR is the same Hearst Joongang platform as HARPERSBAZAAR_KR
+  // (confirmed by direct sampling, not assumed) - same always-sitemap,
+  // always-90-day-default dispatch path.
+  if (source === "COSMOPOLITAN_KR") return collectCosmopolitanKr(limit, options.days ?? 90, options.skipUrls);
   const response = await fetch(config.feedUrl, {
     headers: {
       "User-Agent": "TrendSignalDashboard/0.1 (+editorial source audit)",
@@ -793,6 +797,125 @@ async function collectHarpersBazaarKr(limit: number, days: number, skipUrls: Set
     } catch (error) {
       if (error instanceof EditorialRateLimitedError) {
         console.warn(`HARPERSBAZAAR_KR collection stopped early: ${error.message}`);
+        console.warn(`Returning ${posts.length} article(s) fetched before the refusal; re-run later to continue.`);
+        break;
+      }
+      continue;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+  }
+  return posts;
+}
+
+export type CosmopolitanKrSitemapEntry = { url: string; lastmod: string };
+
+/**
+ * COSMOPOLITAN_KR shares its exact technical platform with HARPERSBAZAAR_KR
+ * and ESQUIRE_KR - same single Hearst Joongang business (identical
+ * registration number 104-81-55280, confirmed directly on each site's own
+ * footer, not inferred), same `/article/<id>` scheme, same `atc_body_cont`
+ * body container, same JSON-LD shape. A separate implementation (rather than
+ * a shared generic helper) is used deliberately, mirroring how ESQUIRE_KR and
+ * HARPERSBAZAAR_KR were already added as parallel, independently-testable
+ * implementations rather than refactored into one on discovery of the shared
+ * platform - this keeps the already-tested HARPERSBAZAAR_KR code path
+ * untouched while this new source is added. Sitemap filtering to
+ * `/article/<id>` only is required for the same reason as HARPERSBAZAAR_KR:
+ * the whole-site sitemap mixes ~10,000 real dated articles with daily-touched
+ * static category pages whose `<lastmod>` is always "today".
+ */
+export function parseCosmopolitanKrSitemap(xml: string): CosmopolitanKrSitemapEntry[] {
+  return [...xml.matchAll(/<url>\s*<loc>(https:\/\/www\.cosmopolitan\.co\.kr\/article\/\d+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)]
+    .map((match) => ({ url: match[1] ?? "", lastmod: match[2] ?? "" }))
+    .filter((entry) => entry.url);
+}
+
+/**
+ * COSMOPOLITAN_KR article body. Same `atc_body_cont` container and same
+ * three-marker cutoff as HARPERSBAZAAR_KR (the site-wide "이 기사도 흥미로우실
+ * 거예요!" recirculation widget, plus "관련기사"/"이 기사엔 이런 키워드"),
+ * confirmed present on this platform too during the 2026-09-09 pre-collection
+ * probe. This platform ALSO carries a real, per-article "10초 안에 보는 요약
+ * 기사" (10-second summary) box immediately after the login banner - unlike
+ * the recirculation widget, this box was confirmed by direct sampling to
+ * contain a genuine condensed recap of THIS article's own content (never
+ * another article's headline), so it is correctly kept as real evidence, not
+ * cut as chrome.
+ */
+export function parseCosmopolitanKrBody(html: string): string | null {
+  const match = html.match(/class="atc_body_cont"[^>]*>/);
+  if (!match || match.index === undefined) return null;
+  const start = match.index + match[0].length;
+  const region = html.slice(start, Math.min(html.length, start + 30000));
+  const stopPatterns = [/이 기사도 흥미로우실/, /관련기사/, /이 기사엔 이런 키워드/];
+  let cutAt = region.length;
+  for (const pattern of stopPatterns) {
+    const found = region.match(pattern);
+    if (found?.index !== undefined) cutAt = Math.min(cutAt, found.index);
+  }
+  const text = stripHtml(region.slice(0, cutAt)).replace(/^전체 페이지를 읽으시려면 회원가입 및 로그인을 해주세요!\s*LOGIN\s*/, "");
+  return text || null;
+}
+
+export function parseCosmopolitanKrArticlePage(html: string, fallbackUrl: string) {
+  const title = decodeEntities(stringMeta(html, "og:title")) || decodeEntities(stripHtml(html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1] ?? "").replace(/\s*\|\s*코스모폴리탄 코리아\s*$/, ""));
+  const imageUrl = stringMeta(html, "og:image") || null;
+  const canonicalMatch = html.match(/<link[^>]+rel="canonical"[^>]+href="([^"]*)"/);
+  const canonicalUrl = canonicalizeUrl(canonicalMatch?.[1] || fallbackUrl);
+  const dateMatch = html.match(/"datePublished":"([^"]*)"/) ?? html.match(/<meta[^>]+property="article:published_time"[^>]+content="([^"]*)"/);
+  const publishedAt = dateMatch?.[1] ? new Date(dateMatch[1]) : null;
+  return { title, imageUrl, canonicalUrl, publishedAt };
+}
+
+async function collectCosmopolitanKr(limit: number, days: number, skipUrls: Set<string> = new Set()): Promise<EditorialCollectedPost[]> {
+  const config = editorialSourceConfigs.COSMOPOLITAN_KR;
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+
+  const xml = await fetchText(config.feedUrl);
+  const entries = parseCosmopolitanKrSitemap(xml)
+    .filter((entry) => {
+      const time = new Date(entry.lastmod).getTime();
+      return !Number.isNaN(time) && time >= cutoff;
+    })
+    .sort((a, b) => b.lastmod.localeCompare(a.lastmod));
+
+  const posts: EditorialCollectedPost[] = [];
+  for (const entry of entries) {
+    if (posts.length >= limit) break;
+    if (skipUrls.has(entry.url)) continue;
+    try {
+      const html = await fetchText(entry.url);
+      const article = parseCosmopolitanKrArticlePage(html, entry.url);
+      // The sitemap's own <lastmod> can drift from the true publish date, so
+      // the article's own datePublished is the real window check (same
+      // reasoning as ESQUIRE_KR/HARPERSBAZAAR_KR).
+      if (!article.publishedAt || Number.isNaN(article.publishedAt.getTime()) || article.publishedAt.getTime() < cutoff) continue;
+      const text = parseCosmopolitanKrBody(html) || "";
+      if (!article.title || !text) continue;
+      // Category membership is not asserted here as a relevance shortcut:
+      // the whole-site sitemap mixes every section, so fashion relevance
+      // must be earned from the article's own title/body evidence.
+      const audienceGender = inferEditorialGender({ title: article.title, text });
+      const mentions = extractEditorialMentions({ title: article.title, text, postGender: audienceGender });
+      const fashionRelevance = classifyFashionRelevance({ title: article.title, text, mentionCount: mentions.length });
+      if (fashionRelevance === "NON_FASHION") continue;
+      posts.push({
+        source: "COSMOPOLITAN_KR",
+        externalPostId: article.canonicalUrl,
+        url: article.canonicalUrl,
+        canonicalUrl: article.canonicalUrl,
+        title: article.title,
+        publishedAt: article.publishedAt,
+        imageUrl: article.imageUrl,
+        excerpt: text.slice(0, 280) || null,
+        text,
+        audienceGender,
+        fashionRelevance,
+        mentions
+      });
+    } catch (error) {
+      if (error instanceof EditorialRateLimitedError) {
+        console.warn(`COSMOPOLITAN_KR collection stopped early: ${error.message}`);
         console.warn(`Returning ${posts.length} article(s) fetched before the refusal; re-run later to continue.`);
         break;
       }
