@@ -2,6 +2,7 @@ import { extractDirectAttributeRelations, type AttributeSourceField } from "@/co
 import { contentBlocksFromStoredText, resolveEvidenceImage, type ImageRelationKind } from "@/collectors/editorial/image-relation";
 import { prisma } from "@/db/client";
 import { composeBundleName } from "@/lib/korean-labels";
+import { editorialSourceConfigs, type EditorialSource } from "@/config/editorial-sources";
 
 /**
  * ITEM + ATTRIBUTE BUNDLES
@@ -64,6 +65,23 @@ export type AttributeBundle = {
   independentEvidenceClusterCount: number;
   latestObservedAt: Date | null;
   evidenceArticles: BundleEvidenceArticle[];
+  /**
+   * Count of distinct OPERATING COMPANIES (see `publisherFamily` on
+   * EditorialSourceConfig, config-level only - no schema/DB change) behind
+   * this bundle's sources, not the count of sources/mastheads itself. Two
+   * sources can share a `publisherFamily` (e.g. ESQUIRE_KR and
+   * HARPERSBAZAAR_KR are both Hearst Joongang), in which case
+   * `bundleSourceSpread` > `publisherFamilySpread` for that bundle - this is
+   * the exact case this field exists to surface (see the ranking tiebreak in
+   * `getAttributeBundles`'s sort, added 2026-09-09 after
+   * docs/EDITORIAL_SIGNAL_SATURATION_AUDIT.md found 화이트 SKIRT, evidence
+   * from 2 sources but 1 family, outranking every genuinely 2-family bundle
+   * in the corpus purely on cluster depth). Purely a ranking/diversity
+   * signal - never collapses or otherwise changes
+   * `independentEvidenceClusterCount`, which remains computed exactly as
+   * before, ownership-blind.
+   */
+  publisherFamilySpread: number;
 };
 
 export type BundleEvidenceStrength =
@@ -132,6 +150,18 @@ type ClusterInput = { source: string; publishedAt: Date | null; breadth: number 
  * absorption model below lets B disappear into *a* dedicated cluster
  * without ever linking A and C to each other.
  */
+/**
+ * Operating company behind an editorial source, from the config-level
+ * `publisherFamily` field on EditorialSourceConfig (no DB/schema change).
+ * Falls back to the source name itself for any source not present in
+ * `editorialSourceConfigs` (e.g. stale/sample-mode data) - safe by
+ * construction, since an unmapped source is then never spuriously counted as
+ * sharing a family with any other source, real or unmapped.
+ */
+function publisherFamilyOf(source: string): string {
+  return (editorialSourceConfigs as Record<string, { publisherFamily?: string } | undefined>)[source as EditorialSource]?.publisherFamily ?? source;
+}
+
 export function countIndependentEvidenceClusters(articles: ClusterInput[]): number {
   const dedicated = articles.filter((article) => article.breadth < ROUNDUP_BREADTH_THRESHOLD);
   const roundups = articles.filter((article) => article.breadth >= ROUNDUP_BREADTH_THRESHOLD);
@@ -292,6 +322,7 @@ export async function getAttributeBundles(dataMode = "real"): Promise<AttributeB
       }),
       bundleArticlePresence: acc.articles.size,
       bundleSourceSpread: acc.sources.size,
+      publisherFamilySpread: new Set([...acc.sources].map(publisherFamilyOf)).size,
       independentEvidenceClusterCount: countIndependentEvidenceClusters(acc.clusterInputs),
       latestObservedAt: acc.latest,
       evidenceArticles: acc.evidence.sort((a, b) => (b.publishedAt?.getTime() ?? 0) - (a.publishedAt?.getTime() ?? 0)).slice(0, 5)
@@ -299,6 +330,19 @@ export async function getAttributeBundles(dataMode = "real"): Promise<AttributeB
     .sort(
       (a, b) =>
         b.bundleSourceSpread - a.bundleSourceSpread ||
+        // Publisher-family diversity tiebreak (2026-09-09, see
+        // publisherFamilySpread doc comment above): inserted right after
+        // sourceSpread and before independentEvidenceClusterCount because
+        // that is exactly where the real, demonstrated contradiction lived -
+        // 화이트 SKIRT (sourceSpread=2, 1 family, 4 clusters) was outranking
+        // every genuinely 2-family bundle in the corpus (each sourceSpread=2,
+        // 2 families, 2 clusters) purely because cluster depth was the next
+        // tiebreak. Placing it any later would not have fixed that case.
+        // Independent evidence clustering still fully governs ordering
+        // WITHIN a tied (sourceSpread, publisherFamilySpread) pair - this is
+        // one more lexicographic key, not a collapse of clustering's role,
+        // and it never touches independentEvidenceClusterCount's own value.
+        b.publisherFamilySpread - a.publisherFamilySpread ||
         b.independentEvidenceClusterCount - a.independentEvidenceClusterCount ||
         b.bundleArticlePresence - a.bundleArticlePresence ||
         b.directAttributes.length - a.directAttributes.length ||

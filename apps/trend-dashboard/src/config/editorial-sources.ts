@@ -18,6 +18,21 @@ export type EditorialSourceConfig = {
   genderAvailable: boolean;
   role: string[];
   description: string;
+  /**
+   * The operating company behind this masthead, not the masthead name
+   * itself - two sources sharing a `publisherFamily` are the SAME business
+   * publishing under different names (verified via public business-
+   * registration evidence in each source-selection audit, never inferred
+   * from branding/layout - see docs/EDITORIAL_PUBLISHER_DIVERSITY_AUDIT.md).
+   * Config-level only, promoted from the audit-level scratch lookup used in
+   * every prior pass per that same doc's own Section 12 recommendation ("if
+   * total sources exceed roughly 10-12, promoting publisherFamily to real
+   * EditorialSource config metadata... would be worth a small, low-risk
+   * follow-up pass"). Not a DB/Prisma field - no migration, no schema
+   * change; used only as a derived, service-time ranking input (see
+   * publisherFamilySpread in attribute-bundle-service.ts).
+   */
+  publisherFamily: string;
 };
 
 export const editorialSourceConfigs: Record<EditorialSource, EditorialSourceConfig> = {
@@ -31,7 +46,8 @@ export const editorialSourceConfigs: Record<EditorialSource, EditorialSourceConf
     collectionMethod: "PUBLIC_RSS_FEED",
     genderAvailable: false,
     role: ["SUBCULTURE", "STREET", "FASHION"],
-    description: "Official VISLA Fashion category RSS feed. Useful for Korean editorial trend mentions; gender is inferred only from explicit text."
+    description: "Official VISLA Fashion category RSS feed. Useful for Korean editorial trend mentions; gender is inferred only from explicit text.",
+    publisherFamily: "VISLA_INDEPENDENT"
   },
   HYPEBEAST_KR: {
     source: "HYPEBEAST_KR",
@@ -43,7 +59,8 @@ export const editorialSourceConfigs: Record<EditorialSource, EditorialSourceConf
     collectionMethod: "PUBLIC_RSS_FEED",
     genderAvailable: false,
     role: ["FAST_FASHION_NEWS", "BRAND", "COLLAB"],
-    description: "Official Hypebeast Korea RSS feed. Fashion relevance is filtered from public article text and category/title signals."
+    description: "Official Hypebeast Korea RSS feed. Fashion relevance is filtered from public article text and category/title signals.",
+    publisherFamily: "HYPEBEAST_HK"
   },
   EYESMAG: {
     source: "EYESMAG",
@@ -55,7 +72,8 @@ export const editorialSourceConfigs: Record<EditorialSource, EditorialSourceConf
     collectionMethod: "PUBLIC_NEWS_SITEMAP",
     genderAvailable: false,
     role: ["FASHION_NEWS", "BRAND", "ITEM", "COLLAB"],
-    description: "Official EYESMAG news sitemap plus public article pages. Fashion relevance is filtered by title/body mention evidence."
+    description: "Official EYESMAG news sitemap plus public article pages. Fashion relevance is filtered by title/body mention evidence.",
+    publisherFamily: "EYES_INC"
   },
   NONLABEL: {
     source: "NONLABEL",
@@ -67,7 +85,8 @@ export const editorialSourceConfigs: Record<EditorialSource, EditorialSourceConf
     collectionMethod: "PUBLIC_HTML_LISTING",
     genderAvailable: false,
     role: ["ARCHIVE", "STYLE", "VINTAGE", "SUBCULTURE"],
-    description: "Official NONLABEL archive/fashion listing and public article pages. Useful for Korean brand/style archive trend mentions."
+    description: "Official NONLABEL archive/fashion listing and public article pages. Useful for Korean brand/style archive trend mentions.",
+    publisherFamily: "NONLABEL_INDEPENDENT"
   },
   ESQUIRE_KR: {
     source: "ESQUIRE_KR",
@@ -79,7 +98,8 @@ export const editorialSourceConfigs: Record<EditorialSource, EditorialSourceConf
     collectionMethod: "PUBLIC_NEWS_SITEMAP",
     genderAvailable: false,
     role: ["MENSWEAR", "LIFESTYLE", "FASHION_NEWS"],
-    description: "Official Esquire Korea public sitemap (10,000 dated article URLs, no login) plus public article pages. Selected 2026-09-07 for having the highest direct-attribute density found in a source audit (10% vs ~3-5% for existing sources), from a menswear/lifestyle angle that complements the streetwear-leaning existing corpus."
+    description: "Official Esquire Korea public sitemap (10,000 dated article URLs, no login) plus public article pages. Selected 2026-09-07 for having the highest direct-attribute density found in a source audit (10% vs ~3-5% for existing sources), from a menswear/lifestyle angle that complements the streetwear-leaning existing corpus.",
+    publisherFamily: "HEARST_JOONGANG"
   },
   HARPERSBAZAAR_KR: {
     source: "HARPERSBAZAAR_KR",
@@ -91,7 +111,8 @@ export const editorialSourceConfigs: Record<EditorialSource, EditorialSourceConf
     collectionMethod: "PUBLIC_NEWS_SITEMAP",
     genderAvailable: false,
     role: ["WOMENSWEAR", "STYLING", "FASHION_NEWS"],
-    description: "Official Harper's Bazaar Korea public whole-site sitemap (same technical platform as ESQUIRE_KR: /article/<id> URLs, atc_body_cont body container, JSON-LD dates) plus public article pages. Selected 2026-09-09 for a cross-source independent-signal audit after a 20-article real-extractor probe measured a 40% Direct Attribute Rate (vs. ESQUIRE_KR's 10%) driven by its item+color/material outfit-styling article format ('이럴 땐 이런 아이템' shoppable callouts), including real evidence that independently confirms the existing 체크 SHIRT and 니트 CARDIGAN bundles from unrelated brands/products."
+    description: "Official Harper's Bazaar Korea public whole-site sitemap (same technical platform as ESQUIRE_KR: /article/<id> URLs, atc_body_cont body container, JSON-LD dates) plus public article pages. Selected 2026-09-09 for a cross-source independent-signal audit after a 20-article real-extractor probe measured a 40% Direct Attribute Rate (vs. ESQUIRE_KR's 10%) driven by its item+color/material outfit-styling article format ('이럴 땐 이런 아이템' shoppable callouts), including real evidence that independently confirms the existing 체크 SHIRT and 니트 CARDIGAN bundles from unrelated brands/products.",
+    publisherFamily: "HEARST_JOONGANG"
   },
   COSMOPOLITAN_KR: {
     source: "COSMOPOLITAN_KR",
@@ -103,7 +124,8 @@ export const editorialSourceConfigs: Record<EditorialSource, EditorialSourceConf
     collectionMethod: "PUBLIC_NEWS_SITEMAP",
     genderAvailable: false,
     role: ["WOMENSWEAR", "CELEBRITY_STYLE", "FASHION_NEWS"],
-    description: "Official Cosmopolitan Korea public whole-site sitemap - the same Hearst Joongang technical platform as ESQUIRE_KR/HARPERSBAZAAR_KR (identical business registration number 104-81-55280; /article/<id> URLs, atc_body_cont body container, JSON-LD dates). Selected 2026-09-09 after a 20-article real-extractor probe measured a 40% Direct Attribute Rate via celebrity street-style/outfit-comparison features, and after a publisher-family diversity audit found 2 of its 3 probe-sampled existing-bundle touches would add a publisher family (Hearst Joongang) not already supporting that bundle (데님 VEST, 체크 SHIRT), not merely deepen an already-represented family. Per that same audit, this is intended as the last Hearst Joongang source added for the current phase - ELLE_KR (same entity, weaker 20% probe density) is deliberately deferred in favor of publisher-family diversification next."
+    description: "Official Cosmopolitan Korea public whole-site sitemap - the same Hearst Joongang technical platform as ESQUIRE_KR/HARPERSBAZAAR_KR (identical business registration number 104-81-55280; /article/<id> URLs, atc_body_cont body container, JSON-LD dates). Selected 2026-09-09 after a 20-article real-extractor probe measured a 40% Direct Attribute Rate via celebrity street-style/outfit-comparison features, and after a publisher-family diversity audit found 2 of its 3 probe-sampled existing-bundle touches would add a publisher family (Hearst Joongang) not already supporting that bundle (데님 VEST, 체크 SHIRT), not merely deepen an already-represented family. Per that same audit, this is intended as the last Hearst Joongang source added for the current phase - ELLE_KR (same entity, weaker 20% probe density) is deliberately deferred in favor of publisher-family diversification next.",
+    publisherFamily: "HEARST_JOONGANG"
   },
   MARIECLAIRE_KR: {
     source: "MARIECLAIRE_KR",
@@ -115,6 +137,7 @@ export const editorialSourceConfigs: Record<EditorialSource, EditorialSourceConf
     collectionMethod: "PUBLIC_RSS_FEED",
     genderAvailable: false,
     role: ["WOMENSWEAR", "CELEBRITY_STYLE", "FASHION_NEWS"],
-    description: "Official Marie Claire Korea public FASHION-category RSS feed (paginated via ?paged=N) plus public article pages (JSON-LD articleBody). Own footer confirms operating entity MCK Publishing Co. Ltd., business registration 211-86-54814 - genuinely distinct from the Hearst Joongang (104-81-55280), Hypebeast Hong Kong, and Eyes Inc. families already in the corpus. Selected 2026-09-09 after a non-Hearst publisher-family diversity audit (docs/NON_HEARST_SOURCE_DIVERSITY_AUDIT.md) found a 25% Direct Attribute Rate (2nd-highest in the corpus) and, after a real-collection pre-pass fixed a general parser gap (a companion-garment noun immediately followed by a bare 에/위에 particle, e.g. '레드 팬츠 위에 버건디 셔츠' or '화이트 톱에 스커트를 매치했죠', bled its attribute onto the wrong item), verified real evidence that independently confirms two previously EYES_INC-only bundles (레드 SKIRT, 데님 SHORTS) from a genuinely new publisher family. See docs/MARIECLAIRE_COLLECTION_AUDIT.md for full detail."
+    description: "Official Marie Claire Korea public FASHION-category RSS feed (paginated via ?paged=N) plus public article pages (JSON-LD articleBody). Own footer confirms operating entity MCK Publishing Co. Ltd., business registration 211-86-54814 - genuinely distinct from the Hearst Joongang (104-81-55280), Hypebeast Hong Kong, and Eyes Inc. families already in the corpus. Selected 2026-09-09 after a non-Hearst publisher-family diversity audit (docs/NON_HEARST_SOURCE_DIVERSITY_AUDIT.md) found a 25% Direct Attribute Rate (2nd-highest in the corpus) and, after a real-collection pre-pass fixed a general parser gap (a companion-garment noun immediately followed by a bare 에/위에 particle, e.g. '레드 팬츠 위에 버건디 셔츠' or '화이트 톱에 스커트를 매치했죠', bled its attribute onto the wrong item), verified real evidence that independently confirms two previously EYES_INC-only bundles (레드 SKIRT, 데님 SHORTS) from a genuinely new publisher family. See docs/MARIECLAIRE_COLLECTION_AUDIT.md for full detail.",
+    publisherFamily: "MCK_PUBLISHING"
   }
 };

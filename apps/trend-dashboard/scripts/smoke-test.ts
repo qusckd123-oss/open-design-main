@@ -1702,8 +1702,8 @@ async function verifyAttributeBundles() {
   // beats a single-observation bundle, which beats an empty list (caller
   // falls back to the specific-item insight only then - never fabricated
   // here).
-  const repeated = { key: "r", specificItem: "X", displayName: "반복", directAttributes: [], bundleArticlePresence: 3, bundleSourceSpread: 1, independentEvidenceClusterCount: 2, latestObservedAt: null, evidenceArticles: [] };
-  const single = { key: "s", specificItem: "Y", displayName: "단일", directAttributes: [], bundleArticlePresence: 1, bundleSourceSpread: 1, independentEvidenceClusterCount: 1, latestObservedAt: null, evidenceArticles: [] };
+  const repeated = { key: "r", specificItem: "X", displayName: "반복", directAttributes: [], bundleArticlePresence: 3, bundleSourceSpread: 1, publisherFamilySpread: 1, independentEvidenceClusterCount: 2, latestObservedAt: null, evidenceArticles: [] };
+  const single = { key: "s", specificItem: "Y", displayName: "단일", directAttributes: [], bundleArticlePresence: 1, bundleSourceSpread: 1, publisherFamilySpread: 1, independentEvidenceClusterCount: 1, latestObservedAt: null, evidenceArticles: [] };
   assert.equal(selectPrimaryPlanningBundle([single, repeated])?.displayName, "반복", "A genuinely independent repeated bundle (>=2 clusters) must be preferred over a single-observation bundle regardless of list order.");
   assert.equal(selectPrimaryPlanningBundle([single])?.displayName, "단일", "With no independently-repeated bundle, the single-observation bundle must still be preferred over the specific-item fallback.");
   assert.equal(selectPrimaryPlanningBundle([]), null, "With zero bundles, the caller must fall back to the specific-item insight rather than fabricating one.");
@@ -1715,10 +1715,48 @@ async function verifyAttributeBundles() {
   // independent cases, even though raw bundleArticlePresence ties at 2 for
   // both. This is the exact real-data contradiction the pass found and fixed
   // (라글란 시퀸 긴팔 티셔츠, 1 cluster, vs. 니트 CARDIGAN, 2 clusters).
-  const sameCaseRestated = { key: "sc", specificItem: "X", displayName: "동일사례", directAttributes: [{ type: "DETAIL", value: "A", articlePresence: 2, sourceSpread: 1 }, { type: "DETAIL", value: "B", articlePresence: 2, sourceSpread: 1 }], bundleArticlePresence: 2, bundleSourceSpread: 1, independentEvidenceClusterCount: 1, latestObservedAt: null, evidenceArticles: [] };
-  const distinctCases = { key: "dc", specificItem: "Y", displayName: "서로다른사례", directAttributes: [{ type: "MATERIAL", value: "C", articlePresence: 2, sourceSpread: 1 }], bundleArticlePresence: 2, bundleSourceSpread: 1, independentEvidenceClusterCount: 2, latestObservedAt: null, evidenceArticles: [] };
+  const sameCaseRestated = { key: "sc", specificItem: "X", displayName: "동일사례", directAttributes: [{ type: "DETAIL", value: "A", articlePresence: 2, sourceSpread: 1 }, { type: "DETAIL", value: "B", articlePresence: 2, sourceSpread: 1 }], bundleArticlePresence: 2, bundleSourceSpread: 1, publisherFamilySpread: 1, independentEvidenceClusterCount: 1, latestObservedAt: null, evidenceArticles: [] };
+  const distinctCases = { key: "dc", specificItem: "Y", displayName: "서로다른사례", directAttributes: [{ type: "MATERIAL", value: "C", articlePresence: 2, sourceSpread: 1 }], bundleArticlePresence: 2, bundleSourceSpread: 1, publisherFamilySpread: 1, independentEvidenceClusterCount: 2, latestObservedAt: null, evidenceArticles: [] };
   assert.equal(selectPrimaryPlanningBundle([sameCaseRestated, distinctCases])?.displayName, "서로다른사례", "A same-case-restated bundle (1 cluster) must never be preferred over a genuinely-2-cluster bundle, even with fewer raw attributes and identical article/source counts.");
   assert.equal(selectPrimaryPlanningBundle([distinctCases, sameCaseRestated])?.displayName, "서로다른사례", "...and this must hold regardless of list order.");
+
+  // REGRESSION GUARD (2026-09-09 publisher-family ranking pass): 2-source/
+  // 1-family evidence must not outrank 2-source/2-family evidence when all
+  // else is reasonably comparable. Synthetic, sort-order-only check
+  // (constructs bundle-shaped objects and re-sorts with the same 5-key logic
+  // getAttributeBundles uses, since that comparator lives inline in the
+  // async DB-backed function and cannot be unit-tested standalone) -
+  // deliberately gives the same-family bundle a HIGHER cluster count (3 vs
+  // 2) to prove publisherFamilySpread is checked BEFORE cluster count, not
+  // used only to break an exact tie.
+  const sameFamilyDeepCluster = { key: "sf", specificItem: "X", displayName: "동일가족", directAttributes: [], bundleArticlePresence: 3, bundleSourceSpread: 2, publisherFamilySpread: 1, independentEvidenceClusterCount: 3, latestObservedAt: null, evidenceArticles: [] };
+  const crossFamilyShallowCluster = { key: "cf", specificItem: "Y", displayName: "교차가족", directAttributes: [], bundleArticlePresence: 2, bundleSourceSpread: 2, publisherFamilySpread: 2, independentEvidenceClusterCount: 2, latestObservedAt: null, evidenceArticles: [] };
+  const familySortedAsc = [sameFamilyDeepCluster, crossFamilyShallowCluster].sort(
+    (a, b) =>
+      b.bundleSourceSpread - a.bundleSourceSpread ||
+      b.publisherFamilySpread - a.publisherFamilySpread ||
+      b.independentEvidenceClusterCount - a.independentEvidenceClusterCount ||
+      b.bundleArticlePresence - a.bundleArticlePresence ||
+      b.directAttributes.length - a.directAttributes.length ||
+      a.displayName.localeCompare(b.displayName)
+  );
+  assert.equal(familySortedAsc[0]?.displayName, "교차가족", "2-source/2-family evidence (교차가족) must rank ABOVE 2-source/1-family evidence (동일가족), even though 동일가족 has a deeper cluster count (3 vs 2) - publisherFamilySpread is checked before independentEvidenceClusterCount.");
+
+  // Same claim against the REAL, live sort (getAttributeBundles's actual
+  // comparator, not a replica): 화이트 SKIRT (2 sources, 1 family -
+  // HEARST_JOONGANG twice) must not rank above every genuinely 2-family
+  // bundle in the corpus.
+  const whiteSkirtBundle = bundles.find((bundle) => bundle.displayName === "화이트 SKIRT");
+  const crossFamilyBundles = bundles.filter((bundle) => bundle.bundleSourceSpread >= 2 && bundle.publisherFamilySpread >= 2);
+  if (whiteSkirtBundle && crossFamilyBundles.length > 0) {
+    assert.equal(whiteSkirtBundle.publisherFamilySpread, 1, "화이트 SKIRT must resolve to publisherFamilySpread=1 (both its sources, HARPERSBAZAAR_KR and COSMOPOLITAN_KR, are Hearst Joongang).");
+    for (const crossFamilyBundle of crossFamilyBundles) {
+      assert.ok(
+        bundles.indexOf(crossFamilyBundle) < bundles.indexOf(whiteSkirtBundle),
+        `${crossFamilyBundle.displayName} (2+ sources, 2+ families) must rank ABOVE 화이트 SKIRT (2 sources, 1 family), got indices ${bundles.indexOf(crossFamilyBundle)} vs ${bundles.indexOf(whiteSkirtBundle)}.`
+      );
+    }
+  }
 
   // Against REAL data: whenever ANY genuinely-independent repeated bundle
   // exists, the dashboard's primary planning bundle must be one of those,
@@ -1759,7 +1797,18 @@ async function verifyAttributeBundles() {
   assert.equal(checkShirtBundle?.bundleSourceSpread, 4, "체크 SHIRT must be genuinely 4-source (EYESMAG + HYPEBEAST_KR + HARPERSBAZAAR_KR + COSMOPOLITAN_KR) after the real Cosmopolitan Korea collection.");
   assert.equal(checkShirtBundle?.independentEvidenceClusterCount, 4, "체크 SHIRT (Burberry, TDR, a HARPERSBAZAAR_KR waist-tie feature, and a COSMOPOLITAN_KR celebrity check-styling roundup - four unrelated brands/outlets) must resolve to 4 independent clusters.");
   assert.equal(cardiganBundle?.bundleSourceSpread, 2, "니트 CARDIGAN remains genuinely multi-source (HYPEBEAST_KR + HARPERSBAZAAR_KR), untouched by the Cosmopolitan collection.");
-  assert.equal(cardiganBundle?.independentEvidenceClusterCount, 4, "니트 CARDIGAN (Denim Tears x BBC, adidas x JENNIE, H&M color-pairing feature, COS waist-tie feature - four different real products) must resolve to 4 independent clusters.");
+  // 2026-09-09 나/이나 coordination fix: this bundle's article count dropped
+  // from 5 to 4 and its cluster count from 4 to 3 - the removed 4th article
+  // (the same HARPERSBAZAAR_KR "waist-tie feature" this fixture used to cite
+  // as a genuine 4th independent case) was NEVER a real 니트 카디건 mention.
+  // Its real sentence, "옷차림이... 니트나 카디건, 셔츠 한 장을 허리에
+  // 둘러보자", lists 니트/카디건/셔츠 as three ALTERNATIVE garments to tie at
+  // the waist (나 = "or") - not "a knit cardigan". Fixed by the new
+  // ALTERNATION_PARTICLE guard in attribute-relations.ts. The 3 remaining
+  // clusters (Denim Tears x BBC, adidas x JENNIE, H&M color-pairing feature)
+  // are all genuine, independently-verified real products.
+  assert.equal(cardiganBundle?.bundleArticlePresence, 4, "니트 CARDIGAN must have 4 real articles after the 나/이나 coordination fix removed the false 5th ('니트나 카디건' - an alternation list, not a modifier).");
+  assert.equal(cardiganBundle?.independentEvidenceClusterCount, 3, "니트 CARDIGAN (Denim Tears x BBC, adidas x JENNIE, H&M color-pairing feature - three genuine real products) must resolve to 3 independent clusters after the 나/이나 coordination fix.");
   assert.equal(raglanBundle?.independentEvidenceClusterCount, 1, "라글란 시퀸 긴팔 티셔츠 (Supreme dedicated article + the same outlet's own roundup restating it 2 days later) must resolve to 1 independent cluster.");
   assert.ok(
     bundles.indexOf(checkShirtBundle!) < bundles.indexOf(cardiganBundle!),
@@ -1827,6 +1876,63 @@ async function verifyAttributeBundles() {
   // unaffected.
   const unaffectedByPairingParticle = extractDirectAttributeRelations({ title: "", text: "카본 블랙 ELVO 백팩을 공개했다." });
   assert.ok(find(unaffectedByPairingParticle, "BACKPACK", "COLOR", "BLACK"), '"카본 블랙 ELVO 백팩" (no 에 anywhere nearby) must still yield BACKPACK + COLOR:BLACK - PAIRING_PARTICLE must not affect windows with no pairing particle in them.');
+
+  // 나/이나 ALTERNATION_PARTICLE regression fixtures (2026-09-09 saturation-
+  // audit follow-up). "A나 B" / "A이나 B" is Korean alternative coordination
+  // ("A or B"), not A modifying B - the same class of false positive as
+  // PAIRING_PARTICLE above but the boundary particle attaches to the FIRST
+  // coordinated noun instead of appearing after the item.
+  const knitOrCardigan = extractDirectAttributeRelations({ title: "", text: "옷차림이 어딘가 허전하게 느껴진다면 니트나 카디건, 셔츠 한 장을 허리에 둘러보자." });
+  assert.equal(find(knitOrCardigan, "CARDIGAN", "MATERIAL", "KNIT"), undefined, '"니트나 카디건" (real HARPERSBAZAAR_KR sentence) must NOT yield CARDIGAN + MATERIAL:KNIT - 니트나 lists 니트 as an alternative to 카디건 ("a knit OR a cardigan"), not a modifier of it.');
+
+  // "니트나 가죽 재킷" - the exact false positive documented in
+  // docs/EDITORIAL_ITEM_TAXONOMY_AUDIT.md as left unfixed ("a shared-
+  // extraction-core gap, not an item-taxonomy gap"). LEATHER_JACKET was never
+  // shipped as a SUB_ITEM (its only candidate relation was this exact false
+  // positive), so this fixture cannot check a LEATHER_JACKET-keyed relation
+  // directly - it asserts the more general, still-meaningful claim that this
+  // sentence produces NO relation carrying MATERIAL:KNIT at all, proving the
+  // 나 boundary is honored generally, not merely for the one item this pass
+  // happened to find on CARDIGAN.
+  const knitOrLeatherJacket = extractDirectAttributeRelations({ title: "", text: "니트나 가죽 재킷 중에서 골라보세요." });
+  assert.ok(!knitOrLeatherJacket.some((relation) => relation.attributeValue === "KNIT"), '"니트나 가죽 재킷" must not produce any MATERIAL:KNIT relation - 니트나 lists 니트 as an alternative, not a modifier of whatever follows.');
+
+  // Harder case: the 나/이나 particle attaches to a noun that is NOT itself
+  // the matched attribute word (an intervening modified noun sits between the
+  // attribute and the particle) - "빈티지한 데님이나 와이드 팬츠" (real
+  // HARPERSBAZAAR_KR sentence). Both 빈티지 (STYLE, 2 syllables before 데님)
+  // and 데님 (MATERIAL, directly before 이나) must be rejected for
+  // WIDE_PANTS - both describe 데님, the OTHER 이나-coordinated alternative,
+  // not the wide pants.
+  const vintageDenimOrWidePants = extractDirectAttributeRelations({ title: "", text: "빈티지한 데님이나 와이드 팬츠를 매치해보세요." });
+  assert.equal(find(vintageDenimOrWidePants, "WIDE_PANTS", "MATERIAL", "DENIM"), undefined, '"빈티지한 데님이나 와이드 팬츠" must NOT yield WIDE_PANTS + MATERIAL:DENIM - 데님이나 lists 데님 as the alternative to 와이드 팬츠, not a modifier of it.');
+  assert.equal(find(vintageDenimOrWidePants, "WIDE_PANTS", "STYLE", "VINTAGE"), undefined, '"빈티지한 데님이나 와이드 팬츠" must NOT yield WIDE_PANTS + STYLE:VINTAGE either - 빈티지 also describes 데님 (the same alternative), not 와이드 팬츠, even though 빈티지 itself is not directly touching 이나.');
+
+  // A prior pass (docs/EDITORIAL_SIGNAL_SATURATION_AUDIT.md §17) had called
+  // "오버사이즈 화이트 탱크 톱이나 셔츠" -> SHIRT+COLOR:WHITE VALID under a
+  // narrower reading (화이트 precedes the whole 이나-coordinated pair, so it
+  // seemed to describe both alternatives). Re-examined for this pass: 탱크 톱
+  // is simply not an independently taxonomized SUB_ITEM, which is the only
+  // reason this one survived that earlier check undetected - structurally it
+  // is the same "modifier attaches to the NEARER of two 이나-coordinated
+  // nouns" pattern as the WIDE_PANTS case above. Corrected here; the
+  // saturation-audit doc's "VALID" call for this specific instance is
+  // superseded by this pass's finding, disclosed in
+  // docs/EDITORIAL_RANKING_FAMILY_DIVERSITY_AUDIT.md.
+  const whiteTankTopOrShirt = extractDirectAttributeRelations({ title: "", text: "오버사이즈 화이트 탱크 톱이나 셔츠를 무심하게 매치해보세요." });
+  assert.equal(find(whiteTankTopOrShirt, "SHIRT", "COLOR", "WHITE"), undefined, '"화이트 탱크 톱이나 셔츠" must NOT yield SHIRT + COLOR:WHITE - 화이트 modifies 탱크 톱 (the nearer 이나-coordinated alternative), not 셔츠.');
+
+  // Positive control: a legitimate adjacent modifier with no 나/이나 anywhere
+  // in its window must be entirely unaffected by the new guard.
+  const unaffectedByAlternationParticle = extractDirectAttributeRelations({ title: "", text: "카본 블랙 ELVO 백팩을 공개했다." });
+  assert.ok(find(unaffectedByAlternationParticle, "BACKPACK", "COLOR", "BLACK"), '"카본 블랙 ELVO 백팩" (no 나/이나 anywhere nearby) must still yield BACKPACK + COLOR:BLACK - ALTERNATION_PARTICLE must not affect windows with no alternation particle in them.');
+
+  // Collision guard: ALTERNATION_PARTICLE only ever scans the already-bounded
+  // (<=20 char) window between one matched attribute and one matched item,
+  // never arbitrary article text, so a 나-ending word elsewhere in the
+  // sentence (outside any modifier window) can never trigger it.
+  const naOutsideWindow = extractDirectAttributeRelations({ title: "", text: "그러나 이 브랜드는 블랙 코트를 새로 공개했다." });
+  assert.ok(find(naOutsideWindow, "COAT", "COLOR", "BLACK"), '"그러나 이 브랜드는 블랙 코트" - 그러나 ("however") sits well outside the 20-char modifier window before 코트, so it must not affect the genuine adjacent BLACK modifier.');
 }
 
 /**

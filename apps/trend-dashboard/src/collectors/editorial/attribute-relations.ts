@@ -289,9 +289,61 @@ function containsOtherSpecificItem(window: string, currentItem: string): boolean
  */
 const ATTACHED_PARTICLE = /^(에는|에도|에서|도|에)(?![가-힣])/;
 
+/**
+ * Alternation particle 나/이나 ("A or B"): unlike ATTACHED_PARTICLE above,
+ * which only guards the character immediately after the matched attribute
+ * word, this checks the ENTIRE remaining path from the attribute to the item
+ * - because the coordinated noun the attribute actually describes is not
+ * always the word directly touching the particle. Found on real data during
+ * the 2026-09-09 saturation-audit follow-up: "옷차림이... 니트나 카디건, 셔츠
+ * 한 장을 허리에 둘러보자" (HARPERSBAZAAR_KR) lists 니트/카디건/셔츠 as three
+ * alternative garments to tie at the waist - 니트 is immediately followed by
+ * 나, caught by the same anchored logic as ATTACHED_PARTICLE. But "빈티지한
+ * 데님이나 와이드 팬츠" (HARPERSBAZAAR_KR, a different article) shows the
+ * harder case: 이나 attaches to 데님, not directly to the STYLE match 빈티지
+ * two syllables earlier ("빈티지한 데님" is one alternative NP, "와이드 팬츠"
+ * the other) - an anchored-only check would miss VINTAGE here even though it
+ * describes 데님, not the wide pants. This was the same problem class
+ * documented as unfixed in docs/EDITORIAL_ITEM_TAXONOMY_AUDIT.md ("니트나
+ * 가죽 재킷" -> false LEATHER_JACKET+KNIT, left unaddressed as out of that
+ * pass's scope).
+ *
+ * Deliberately checked ANYWHERE in the remaining text (not anchored at
+ * position 0 like ATTACHED_PARTICLE) precisely because the boundary can sit
+ * past an intervening word - but still narrowly scoped: only the short
+ * (<=20 char) span between one already-matched attribute keyword and one
+ * already-matched item is ever searched, never arbitrary article text, so
+ * this cannot "broadly reject every syllable 나" - a 나/이나 occurring
+ * anywhere else in the article (before the attribute match, or outside any
+ * modifier window entirely) is never inspected. The same (?![가-힣]) guard as
+ * ATTACHED_PARTICLE excludes word-internal collisions (e.g. "바나나", "그러나
+ * 이 셔츠는" mid-word/mid-phrase "나" followed by another Hangul syllable is
+ * never treated as this particle; a 다-ending sentence connector like
+ * "그러나" only matches here if it is itself followed by non-Hangul, i.e.
+ * genuinely word-final).
+ *
+ * Full-corpus re-verification (all 373 real posts, old-vs-new relation diff)
+ * found exactly 4 relations removed, all confirmed false positives on
+ * inspection of the real sentence: CARDIGAN+MATERIAL:KNIT ("니트나 카디건"),
+ * WIDE_PANTS+MATERIAL:DENIM and WIDE_PANTS+STYLE:VINTAGE (both from "빈티지한
+ * 데님이나 와이드 팬츠" - the same "modifier attaches to the nearer of two
+ * 이나-coordinated nouns" pattern applies to both attributes in this one
+ * sentence), and SHIRT+COLOR:WHITE ("오버사이즈 화이트 탱크 톱이나 셔츠" -
+ * 화이트 precedes the whole 이나-coordinated pair from outside it; a prior
+ * pass (docs/EDITORIAL_SIGNAL_SATURATION_AUDIT.md Section 17) had called this
+ * one VALID under a narrower reading, but the same structural pattern as the
+ * other 3 confirmed false positives applies here too - 탱크 톱 is simply not
+ * an independently taxonomized SUB_ITEM, which is why it survived that
+ * earlier, narrower check undetected, not because it is grammatically
+ * different). Zero other relations changed - re-verified against every prior
+ * regression fixture (attached-particle, pairing-particle, 물론이고, verb
+ * clause, +, roundup clustering, SHIRT boundaries) with no weakening.
+ */
+const ALTERNATION_PARTICLE = /(이나|나)(?![가-힣])/;
+
 function isGenuineModifier(window: string, matchText: string, matchIndex: number): boolean {
   const after = window.slice(matchIndex + matchText.length);
-  return !ATTACHED_PARTICLE.test(after);
+  return !ATTACHED_PARTICLE.test(after) && !ALTERNATION_PARTICLE.test(after);
 }
 
 function matchAll(segment: string, patterns: RegExp[]): Array<{ index: number; text: string }> {
