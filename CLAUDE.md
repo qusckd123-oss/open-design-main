@@ -653,3 +653,12 @@
 - 2026-09-01 package-artwork working decision: current alignment is two-line typography for `STE1` and `STE4`, while `STE3` retains the KIKI design; finalize the complete `STE1`-`STE4` plan after the weekly meeting.
 - 2026-09-01 ecommerce-opening decision: because of Salesforce instability, fix own-mall openings at Tuesday 11:00, with a 10:00 pre-open for checks.
 - 2026-09-01 26WINTER content KPI decision: operate 15 looks including ALTER against 66 apparel SKUs and 60,677 pcs, targeting an additional 20% sell-through, 12,135 incremental units, KRW 1.9B incremental sales, 65% final sell-through, and KRW 6.16B final sales.
+
+## Current Teams Summary - 2026-09-10
+
+- Latest live Teams summary: `work/90_archive/workspace/memory/current-teams-update-summary-2026-09-10.md`.
+- 2026-09-10 decision: strengthen unisex pants, use small LOT/SKU-diverse tests for high-cost styles, build a clearer stripe long-sleeve T-shirt strength, reinforce hoodie/zip-up hoodie or develop new hit items, expand school-bag variations, and redesign Starfield mall VM/product composition together.
+- 2026-09-10 execution decision: close unresolved 27SS spring-item specs over the next 1–2 weeks and release BT/artwork/S/O after confirmation; styles arriving this week are to be requested for immediate shipment.
+- 2026-09-10 delivery decision: 26FW delayed unisex new-basic goods should be received in partial lots first, even below 50% of the original delivery quantity, with the balance received sequentially.
+- 2026-09-10 operational record: `WA2603HZ56` partial inbound was reported complete on 2026-09-01; 2026-09-10 Hanbaek TR/HNC and 2026-09-11 Buckscrew inbound lists were shared in Teams.
+- 2026-09-10 unresolved: final 27SS order quantities/approver, style-level remaining 26FW inbound schedule, additional-CAD colors/quantities, and concrete SKU/quantity/timeline plans for the monthly-review directions remain open.
