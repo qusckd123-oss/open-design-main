@@ -41,7 +41,7 @@ discover (per-source listing/sitemap/RSS walk, skipping already-known URLs)
 ## One-command Workflow
 
 ```bash
-npx tsx scripts/refresh-editorial.ts [--dry-run] [--source=EYESMAG] [--days=90] [--limit-per-source=30] [--json]
+npx tsx scripts/refresh-editorial.ts [--dry-run] [--source=EYESMAG] [--days=90] [--limit-per-source=30] [--json] [--help]
 # or, via package.json:
 pnpm refresh:editorial -- [flags]
 ```
@@ -51,6 +51,8 @@ pnpm refresh:editorial -- [flags]
 - **`--days=N`** - override the collection window (each collector's own default is currently 90 days if omitted).
 - **`--limit-per-source=N`** - override the per-source article cap (default 30, matching `collect:korea-editorial`'s existing default).
 - **`--json`** - also write a machine-readable report to `logs/editorial-refresh-report.json` (gitignored - `logs/` was already ignored before this pass; nothing new added to `.gitignore`).
+- **`--help` / `-h`** - print usage and exit 0. Does nothing else: no DB preflight, no network, no collector call. See "2026-09-10 Addendum" below for why this is called out explicitly.
+- **Any other/unrecognized argument** - fails fast with a non-zero exit code and prints usage, before any DB preflight, network request, or collector call. See addendum below.
 
 Console report format:
 
@@ -254,6 +256,30 @@ Validated live during this pass (see "Idempotency" and "Dry-Run Mode" above for 
 - `npx tsx scripts/smoke-test.ts`: passes unchanged - this pass touches no parser/taxonomy/ranking code path smoke-test.ts exercises.
 - Live validation (not mocked): `--dry-run --source=NONLABEL` (initially exposed the entrypoint bug), `--dry-run --source=VISLA` (confirmed the fix, zero mutation), direct `collect-korea-editorial.ts --source=NONLABEL` invocation (confirmed idempotent re-run: identical totals, 0 duplicates).
 - No build was required (no Next.js route/UI code touched); Product Reference frozen regression is unaffected (this pass's new code shares no import path with `product-reference/`, structurally verified in `test-refresh-editorial.ts`'s taxonomy-isolation check).
+
+## 2026-09-10 Addendum: CLI Argument Hardening
+
+**What happened:** an agent session ran `corepack pnpm refresh:editorial --help`, intending only to check usage. The runner's argv parsing at the time was an ad-hoc scan (`process.argv.find(...)`/`.includes(...)` against known flag names) with no "unknown argument" case at all - `--help` simply matched none of the known flags, fell through unchanged, and the runner proceeded to a full **LIVE** collection run (the default when `--dry-run` is absent), for real, against all 8 sources, exactly as if `--help` had never been typed. The run was interrupted (`TaskStop`) roughly 2m51s in, after 5 of 8 sources had completed.
+
+**Data impact (verified read-only afterward, not assumed):**
+- `EditorialPost`: 521 -> 617 (+96), all `createdAt` between 2026-09-10T00:33:37Z and 00:36:28Z. Per-source: HYPEBEAST_KR +6, EYESMAG +2, ESQUIRE_KR +30, HARPERSBAZAAR_KR +30, COSMOPOLITAN_KR +28. VISLA/NONLABEL/MARIECLAIRE_KR +0 - the interrupt landed cleanly between sources (MARIECLAIRE_KR is last in `editorialSources` order and never started), not mid-source.
+- `EditorialMention`: 2199 -> 2781 (+582 total across the run; 699 rows carry today's `createdAt`, consistent with mention-refresh-on-upsert for both new and previously-existing posts touched this run).
+- Quality, re-checked directly against the DB: 0 canonical URL duplicates (checked across the full table), 0 mention duplicates, 0 empty bodies/titles/URLs among the 96 new posts, 0 future-dated posts, bundles grew 65 -> 89 with 20 repeated (>=2 articles) - no signal collapse.
+- **`MarketRankingSnapshot` (dataMode="real"): 667, confirmed unchanged** - this runner has no code path touching Market, and the `real`-scoped population's own `createdAt` range (2026-08-28 to 2026-09-02) predates the incident entirely. (A separate, momentary false alarm during investigation - an *unfiltered* raw count of 3259 - turned out to be 667 real rows plus 2592 pre-existing `dataMode="sample"` seed rows from a single 2026-08-28 bulk load, unrelated to this incident. Documented here only so a future session doesn't re-investigate the same non-issue.)
+- **Disposition: the 96 extra posts and their mentions were kept, not reverted** - same "never discard real, legitimately-collected work" principle as the entrypoint-bug incident above. The corpus is simply ~15 hours fresher than the prior scheduled run's own report claimed.
+
+**Fix:** argv parsing was extracted out of `refresh-editorial.ts` entirely, into a new pure module, **`src/services/editorial-refresh-cli.ts`** (`parseRefreshCliArgs`, `REFRESH_CLI_USAGE`) - no prisma, no network, no `process.exit`, same rationale/pattern as `editorial-refresh-policy.ts`. It returns a discriminated union (`"help" | "error" | "run"`) that the runner's `main()` must branch on as the literal first thing it does, before any `console.log`, DB preflight, or collector call:
+- `--help` / `-h` -> print `REFRESH_CLI_USAGE` (+ the live known-sources list) and exit 0. Takes priority even if an unknown token is present alongside it, matching common CLI convention that help must always be reachable.
+- Any token that is not one of the known flags (`--dry-run`, `--json`, `--help`, `-h`, `--source=`, `--days=`, `--limit-per-source=`) -> `"error"`, printed to stderr with usage, exit code 1. This is the actual fix: what used to silently fall through to a live run now fails fast, structurally, before the function even returns to `main()`.
+- A non-numeric `--days=`/`--limit-per-source=` value is also a fail-fast error (previously would have silently produced `NaN` and been passed on to the collector).
+- All previously-supported flags (`--dry-run`, `--source=X`, `--days=N`, `--limit-per-source=N`, `--json`) parse identically to before - regression-tested explicitly, including the scheduled wrapper's exact real invocation (`--json` alone).
+
+**Validation performed (no live refresh run):**
+- `npx tsx scripts/test-refresh-editorial.ts`: new `verifyCliArgParsing()` covers the exact incident case (`--help` must be `"help"`, never `"run"`), `-h`, `--help` alongside an unknown token, unknown flags (bare and `--key=value`), non-numeric numeric-flag values, the full default set, all flags combined, and the scheduled wrapper's literal `--json`-only invocation. Passes.
+- `npx tsc -b --noEmit`: clean.
+- `--help` and an unknown flag (`--bogus-flag`) were actually executed live (safe to do now: both paths structurally return before any DB/network code runs) - confirmed exit 0 / usage text, and exit 1 / usage text + error, respectively, both instantaneous, neither triggering a collection.
+- `--dry-run` itself was **not** executed live during this hardening pass, on purpose - per its own documented behavior above, `--dry-run` still performs real network requests (only DB writes are skipped), and this pass's instruction was explicitly not to run another real refresh. Its behavior is covered by the unit test's `combined`/`wrapperInvocation` assertions instead.
+- Windows Task Scheduler entry (`Wakiwilly Trend Dashboard - Editorial Refresh`) re-checked afterward: `Ready`, enabled, next run unchanged (2026-09-14 08:30 KST). The wrapper script (`scripts/run-scheduled-refresh.ps1`) was not modified and still invokes the exact same `corepack pnpm refresh:editorial --json`.
 
 ## Next Step
 

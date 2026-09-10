@@ -2,6 +2,7 @@ import { editorialSources, type EditorialSource } from "../src/config/editorial-
 import { collectAndUpsertSource } from "./collect-korea-editorial";
 import { getEditorialRefreshSnapshot, type EditorialRefreshSnapshot } from "../src/services/editorial-refresh-snapshot";
 import { classifySourceOutcome, checkZeroResultGuard, evaluateQualityGates, worstGateLevel, type SourceCollectionOutcome } from "../src/services/editorial-refresh-policy";
+import { parseRefreshCliArgs, REFRESH_CLI_USAGE } from "../src/services/editorial-refresh-cli";
 import { prisma } from "../src/db/client";
 import { writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
@@ -23,31 +24,16 @@ import path from "node:path";
  * maintenance - see docs/EDITORIAL_REFRESH_OPERATIONS.md "Code vs Data
  * Refresh" - and this script has no code path that can touch them.
  *
- * Usage:
- *   npx tsx scripts/refresh-editorial.ts [--dry-run] [--source=EYESMAG]
- *     [--days=90] [--limit-per-source=30] [--json]
+ * Usage: see REFRESH_CLI_USAGE in ../src/services/editorial-refresh-cli.ts
+ * (single source of truth - also what `--help` prints). Argv parsing itself
+ * is in that module too: pure, fail-fast on any unrecognized flag, tested in
+ * scripts/test-refresh-editorial.ts. This runner never inspects process.argv
+ * directly.
  *
- * --dry-run          Real network discovery/fetch/parse per source, but zero
- *                     DB writes. Reports what WOULD change.
- * --source=X         Refresh only one source (recovery/testing). Omit to
- *                     refresh every configured source.
- * --days=N           Override the collection window (default: each
- *                     collector's own default, currently 90).
- * --limit-per-source=N  Override the per-source article cap (default 30).
- * --json             Also write a machine-readable report to
- *                     logs/editorial-refresh-report.json (gitignored - never
- *                     committed).
- *
- * Exit code is non-zero if any quality gate FAILs. WARN never fails the run.
+ * Exit code is non-zero if any quality gate FAILs, or if argv parsing fails.
+ * WARN never fails the run. `--help`/`-h` always exits 0 and does nothing
+ * else - no preflight, no network, no DB read or write.
  */
-
-function argValue(name: string): string | undefined {
-  const arg = process.argv.find((value) => value.startsWith(`--${name}=`));
-  return arg?.split("=").slice(1).join("=");
-}
-function hasFlag(name: string): boolean {
-  return process.argv.includes(`--${name}`);
-}
 
 function formatDelta(before: number, after: number): string {
   const sign = after > before ? "+" : after < before ? "" : "";
@@ -55,11 +41,26 @@ function formatDelta(before: number, after: number): string {
 }
 
 async function main() {
-  const dryRun = hasFlag("dry-run");
-  const sourceArg = argValue("source");
-  const days = argValue("days") ? Number(argValue("days")) : undefined;
-  const limitPerSource = argValue("limit-per-source") ? Number(argValue("limit-per-source")) : 30;
-  const writeJson = hasFlag("json");
+  // Argv parsing is the FIRST thing this runner does, before any console
+  // output, DB preflight, or collector call - this is the fail-fast
+  // boundary the 2026-09-10 incident (an unrecognized `--help` silently
+  // falling through to a full LIVE run) required. See
+  // docs/EDITORIAL_REFRESH_OPERATIONS.md.
+  const parsed = parseRefreshCliArgs(process.argv.slice(2));
+
+  if (parsed.action === "help") {
+    console.log(REFRESH_CLI_USAGE);
+    console.log(`\nKnown sources: ${editorialSources.join(", ")}`);
+    return;
+  }
+  if (parsed.action === "error") {
+    console.error(`${parsed.message}\n`);
+    console.error(REFRESH_CLI_USAGE);
+    process.exitCode = 1;
+    return;
+  }
+
+  const { dryRun, sourceArg, days, limitPerSource, writeJson } = parsed;
 
   if (sourceArg && !editorialSources.includes(sourceArg as EditorialSource)) {
     console.error(`Unknown --source=${sourceArg}. Known sources: ${editorialSources.join(", ")}`);

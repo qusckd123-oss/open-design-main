@@ -10,6 +10,7 @@ import {
   type SourceCollectionOutcome
 } from "../src/services/editorial-refresh-policy";
 import type { EditorialRefreshSnapshot } from "../src/services/editorial-refresh-snapshot";
+import { parseRefreshCliArgs } from "../src/services/editorial-refresh-cli";
 
 /**
  * Tests for the editorial refresh runner's PURE decision logic
@@ -174,13 +175,80 @@ function verifyNoTaxonomyOrCodeMutationBoundary() {
   assert.ok(!policyModuleSource.includes('from "../collectors/editorial/mentions"'), "the refresh policy module must never import the taxonomy rule array directly - it only classifies outcomes, never touches parsing rules.");
 }
 
+function verifyCliArgParsing() {
+  // Regression test for the 2026-09-10 incident: `--help` was typed to check
+  // usage, was silently ignored by the old ad-hoc argv scan, and fell
+  // through to a full LIVE collection run. This is the exact case that must
+  // never regress.
+  const help = parseRefreshCliArgs(["--help"]);
+  assert.equal(help.action, "help", "--help must be recognized as help, never fall through to a run.");
+
+  const shortHelp = parseRefreshCliArgs(["-h"]);
+  assert.equal(shortHelp.action, "help", "-h must behave the same as --help.");
+
+  // --help must win even if paired with an otherwise-unrecognized token -
+  // help must always be reachable, per common CLI convention.
+  const helpWithJunk = parseRefreshCliArgs(["--help", "--totally-bogus"]);
+  assert.equal(helpWithJunk.action, "help", "--help must take priority over any other/unknown token present alongside it.");
+
+  // Any unrecognized flag must fail fast (non-"run" action), not silently
+  // default to a live run - this is the actual fix for the incident.
+  const unknown = parseRefreshCliArgs(["--totally-bogus"]);
+  assert.equal(unknown.action, "error", "an unrecognized flag must be a fail-fast error, never fall through to run.");
+  if (unknown.action === "error") {
+    assert.ok(unknown.message.includes("--totally-bogus"), "the error message should name the offending argument.");
+  }
+
+  const unknownWithValue = parseRefreshCliArgs(["--not-a-real-flag=5"]);
+  assert.equal(unknownWithValue.action, "error", "an unrecognized `--key=value` flag must also fail fast.");
+
+  // No args -> the existing default behavior, unchanged.
+  const defaults = parseRefreshCliArgs([]);
+  assert.equal(defaults.action, "run");
+  if (defaults.action === "run") {
+    assert.equal(defaults.dryRun, false);
+    assert.equal(defaults.sourceArg, undefined);
+    assert.equal(defaults.days, undefined);
+    assert.equal(defaults.limitPerSource, 30, "limit-per-source default of 30 must be preserved.");
+    assert.equal(defaults.writeJson, false);
+  }
+
+  // Every previously-supported flag must still work, combined.
+  const combined = parseRefreshCliArgs(["--dry-run", "--source=EYESMAG", "--days=45", "--limit-per-source=10", "--json"]);
+  assert.equal(combined.action, "run");
+  if (combined.action === "run") {
+    assert.equal(combined.dryRun, true, "--dry-run must still be recognized.");
+    assert.equal(combined.sourceArg, "EYESMAG", "--source=X must still be recognized.");
+    assert.equal(combined.days, 45, "--days=N must still be recognized.");
+    assert.equal(combined.limitPerSource, 10, "--limit-per-source=N must still be recognized.");
+    assert.equal(combined.writeJson, true, "--json must still be recognized.");
+  }
+
+  // Non-numeric values for numeric flags must fail fast rather than produce
+  // NaN and silently corrupt downstream behavior.
+  const badDays = parseRefreshCliArgs(["--days=not-a-number"]);
+  assert.equal(badDays.action, "error", "a non-numeric --days value must fail fast.");
+  const badLimit = parseRefreshCliArgs(["--limit-per-source=not-a-number"]);
+  assert.equal(badLimit.action, "error", "a non-numeric --limit-per-source value must fail fast.");
+
+  // The exact wrapper invocation (run-scheduled-refresh.ps1: `corepack pnpm
+  // refresh:editorial --json`) must remain unaffected.
+  const wrapperInvocation = parseRefreshCliArgs(["--json"]);
+  assert.equal(wrapperInvocation.action, "run", "the scheduled wrapper's exact invocation (--json only) must still run live, unaffected by this hardening.");
+  if (wrapperInvocation.action === "run") {
+    assert.equal(wrapperInvocation.dryRun, false);
+    assert.equal(wrapperInvocation.writeJson, true);
+  }
+}
+
 async function main() {
   verifySourceClassification();
   verifyZeroResultGuard();
   verifyQualityGates();
   verifyReportShape();
   verifyNoTaxonomyOrCodeMutationBoundary();
-  console.log("Refresh runner policy tests passed: source classification, zero-result guard, quality gates, report shape, taxonomy-isolation boundary.");
+  verifyCliArgParsing();
+  console.log("Refresh runner policy tests passed: source classification, zero-result guard, quality gates, report shape, taxonomy-isolation boundary, CLI arg parsing.");
 }
 
 main().catch((error) => {
