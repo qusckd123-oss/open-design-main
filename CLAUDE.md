@@ -659,6 +659,7 @@
 - Latest live Teams summary: `work/90_archive/workspace/memory/current-teams-update-summary-2026-09-10.md`.
 - 2026-09-10 decision: strengthen unisex pants, use small LOT/SKU-diverse tests for high-cost styles, build a clearer stripe long-sleeve T-shirt strength, reinforce hoodie/zip-up hoodie or develop new hit items, expand school-bag variations, and redesign Starfield mall VM/product composition together.
 - 2026-09-10 execution decision: close unresolved 27SS spring-item specs over the next 1–2 weeks and release BT/artwork/S/O after confirmation; styles arriving this week are to be requested for immediate shipment.
+- 2026-09-10 schedule update: the 27SS CAD meeting is today at 14:00; share the color-designation list immediately after the meeting.
 - 2026-09-10 delivery decision: 26FW delayed unisex new-basic goods should be received in partial lots first, even below 50% of the original delivery quantity, with the balance received sequentially.
 - 2026-09-10 operational record: `WA2603HZ56` partial inbound was reported complete on 2026-09-01; 2026-09-10 Hanbaek TR/HNC and 2026-09-11 Buckscrew inbound lists were shared in Teams.
 - 2026-09-10 unresolved: final 27SS order quantities/approver, style-level remaining 26FW inbound schedule, additional-CAD colors/quantities, and concrete SKU/quantity/timeline plans for the monthly-review directions remain open.
