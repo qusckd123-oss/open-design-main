@@ -7,12 +7,13 @@ type GlobalFilterBarProps = {
   currentParams: Record<string, string | string[] | undefined>;
   gender: PlanningGenderFilter;
   scope: MarketScopeFilter;
+  showScope?: boolean;
 };
 
-// Shared Gender / Market Scope filter used on every primary analysis screen.
+// Shared Gender / Market Scope filter for primary analysis screens.
 // Domestic scope is the default: overseas market data is reference-only and only
 // appears once the user explicitly opts in.
-export function GlobalFilterBar({ pathname, currentParams, gender, scope }: GlobalFilterBarProps) {
+export function GlobalFilterBar({ pathname, currentParams, gender, scope, showScope = true }: GlobalFilterBarProps) {
   return (
     <div className="flex flex-wrap items-center gap-6">
       <FilterGroup label="성별">
@@ -26,17 +27,19 @@ export function GlobalFilterBar({ pathname, currentParams, gender, scope }: Glob
           </Link>
         ))}
       </FilterGroup>
-      <FilterGroup label="데이터 범위">
-        {(["domestic", "overseas"] as const).map((option) => (
-          <Link
-            key={option}
-            href={buildFilterHref(pathname, currentParams, { scope: option })}
-            className={`border-b-2 pb-0.5 text-sm font-semibold ${scope === option ? "border-ink text-ink" : "border-transparent text-muted hover:text-ink"}`}
-          >
-            {marketScopeLabel(option)}
-          </Link>
-        ))}
-      </FilterGroup>
+      {showScope ? (
+        <FilterGroup label="데이터 범위">
+          {(["domestic", "overseas"] as const).map((option) => (
+            <Link
+              key={option}
+              href={buildFilterHref(pathname, currentParams, { scope: option })}
+              className={`border-b-2 pb-0.5 text-sm font-semibold ${scope === option ? "border-ink text-ink" : "border-transparent text-muted hover:text-ink"}`}
+            >
+              {marketScopeLabel(option)}
+            </Link>
+          ))}
+        </FilterGroup>
+      ) : null}
     </div>
   );
 }

@@ -15,8 +15,9 @@ Short by design. For rules, see `AGENT_OPERATING_RULES.md`. For live numbers, se
 
 ## P2 - Product-Planning Usability
 
-- Evaluate whether the current signal set (bundles, ranking, trust tiers) is easy for a merchandising planner to actually consume and act on.
-- Only after P0 operational stability has been confirmed at least once for real (i.e., after the first scheduled run above has been observed and looks healthy).
+- User explicitly authorized safe UI-only pre-gate work on 2026-09-10 while P0 remains pending. First fix completed: `/editorial` no longer shows the no-op domestic/overseas scope toggle; gender filtering remains.
+- Next safe pre-gate candidate: unify specific-item Korean label rendering across planner-facing screens without changing taxonomy or extraction semantics.
+- Larger P2 work (trust explanation, actionability layer, broader IA changes) should still wait until P0 operational stability has been confirmed at least once for real after the scheduled run above.
 
 ## P3 - Optional Future Research
 

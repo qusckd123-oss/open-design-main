@@ -38,7 +38,7 @@ export default async function EditorialPage({ searchParams }: PageProps) {
           <h1 className="mt-2 text-3xl font-semibold text-ink">트렌드 검증</h1>
           <p className="mt-2 text-sm text-muted">HYPEBEAST KR / EYESMAG / NONLABEL / VISLA 등 국내 매거진에서 반복적으로 등장하는 상품 유형과 근거 기사를 확인합니다.</p>
         </div>
-        <GlobalFilterBar pathname="/editorial" currentParams={params} gender={gender} scope={scope} />
+        <GlobalFilterBar pathname="/editorial" currentParams={params} gender={gender} scope={scope} showScope={false} />
       </section>
 
       <section className="grid gap-3 md:grid-cols-4">

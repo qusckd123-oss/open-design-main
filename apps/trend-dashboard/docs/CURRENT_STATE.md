@@ -95,6 +95,12 @@ Refresh command: `corepack pnpm refresh:editorial --json` (run from `apps/trend-
 
 This is historical context, not an active issue - the corpus is simply ~15 hours fresher than the prior scheduled run's own report claimed, with no lingering data-quality concern.
 
+## P2 Pre-Gate Usability Work (2026-09-10)
+
+The user explicitly authorized safe UI-only P2 work before the first natural Monday P0 observation, while keeping the 2026-09-14 scheduled-run validation intact. The first change hides the misleading `데이터 범위` scope control on `/editorial`, where scope does not change Editorial results; gender filtering remains visible and unchanged. No service semantics, taxonomy, ranking, evidence clustering, schema, scheduler, or Market logic changed.
+
+During validation, the live-data smoke test exposed several stale snapshot assumptions caused by legitimate corpus growth: TRACK_JACKET now has both `셔링 디테일의 트랙 재킷` and `스포티한 트랙 재킷` as direct phrases, KNIT_BEANIE now has a real `블랙 니트 비니` bundle, and the current primary/family counts have moved beyond the old 2026-09-09 snapshot. The smoke test was hardened to assert stable structural rules and synthetic regression fixtures instead of pinning mutable REAL-corpus winners/counts. This was test maintenance only; no parser, ranking, taxonomy, or DB logic changed.
+
 ## Known Current Limitations
 
 (Carried forward, still true as of this pass - see `docs/EDITORIAL_REFRESH_OPERATIONS.md` "Current Limitations" for the full list)
