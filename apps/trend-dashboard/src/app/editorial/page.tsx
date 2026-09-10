@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { GlobalFilterBar } from "@/components/GlobalFilterBar";
 import { formatNumber } from "@/lib/format";
+import { specificItemKoreanLabel } from "@/lib/korean-labels";
 import { editorialSignalLabel, evidenceStrengthLabel, formatDateKo, formatRankChange, sourceLabel, trendTypeLabel, trendValueLabel } from "@/lib/market-ui";
 import { buildFilterHref, parseGenderParam, parseScopeParam } from "@/lib/planning-filters";
 import { getPlanningDashboardData } from "@/services/planning-dashboard-service";
@@ -74,7 +75,12 @@ function EditorialRow({ row, sourceTotal }: { row: EditorialTrendRow; sourceTota
             <span>{editorialSignalLabel(row.observation)}</span>
             <span className="font-semibold text-signal">{evidenceStrengthLabel(row)}</span>
           </div>
-          <h2 className="mt-2 text-2xl font-semibold text-ink">{trendValueLabel(row.value)}</h2>
+          {/* Same SUB_ITEM -> Korean mapping used on "/" (EditorialTrendCard)
+              and "/items" - other dimensions (DETAIL/MATERIAL/COLOR/STYLE)
+              are left as-is; this is not a general localization pass. */}
+          <h2 className="mt-2 text-2xl font-semibold text-ink">
+            {row.type === "SUB_ITEM" ? specificItemKoreanLabel(row.value) ?? trendValueLabel(row.value) : trendValueLabel(row.value)}
+          </h2>
           <div className="mt-4 grid gap-3 sm:grid-cols-4">
             <Metric label="등장 기사" value={`${formatNumber(row.articlePresence)}개`} />
             <Metric label="등장 매체" value={`${row.sourceSpread}/${sourceTotal}`} />

@@ -174,7 +174,15 @@ export default async function DashboardPage({ searchParams }: PageProps) {
             </div>
             {data.matrixRows.slice(0, 8).map((row) => (
               <div key={row.key} className="grid min-w-[720px] grid-cols-[1fr_1fr_1fr_1fr] gap-3 border-b border-line py-4 text-sm last:border-b-0">
-                <div className="font-semibold text-ink">{trendValueLabel(row.label)}</div>
+                {/* row.label is a raw SUB_ITEM taxonomy value when sourced
+                    from editorial (e.g. TRACK_JACKET) but an already-formatted
+                    Market label otherwise (row.store?.label) - dimension tells
+                    us which, and specificItemKoreanLabel is a no-op fallback
+                    for the latter since Market's own vocabulary never matches
+                    this dictionary's keys. */}
+                <div className="font-semibold text-ink">
+                  {row.dimension === "SUB_ITEM" ? specificItemKoreanLabel(row.label) ?? trendValueLabel(row.label) : trendValueLabel(row.label)}
+                </div>
                 <div>{row.articlePresence > 0 ? `${row.articlePresence}개 기사 · ${row.sourceSpread}/${row.sourceTotal} 매체` : "데이터 없음"}</div>
                 <div>{row.top50Presence > 0 ? `TOP20 ${row.top20Presence} · TOP50 ${row.top50Presence}` : "데이터 없음"}</div>
                 <div className="font-semibold text-signal">{row.decision}</div>

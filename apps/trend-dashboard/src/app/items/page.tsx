@@ -3,6 +3,7 @@ import { AttributeBundleCard, BundleEmptyState } from "@/components/AttributeBun
 import { GlobalFilterBar } from "@/components/GlobalFilterBar";
 import { categoryFilterOptions, categoryOfSpecificItem, matchesCategoryFilter, type BroadCategory } from "@/config/taxonomy";
 import { formatNumber } from "@/lib/format";
+import { specificItemKoreanLabel } from "@/lib/korean-labels";
 import { evidenceStrengthLabel, formatRankChange, sourceLabel, trendValueLabel } from "@/lib/market-ui";
 import { buildFilterHref, parseGenderParam, parseScopeParam, valueOf } from "@/lib/planning-filters";
 import { getAttributeBundles } from "@/services/attribute-bundle-service";
@@ -142,7 +143,11 @@ function SpecificItemCard({ card }: { card: { editorial: EditorialTrendRow; cate
         <div>
           <div className="text-xs font-semibold text-muted">{categoryFilterOptions.find((option) => option.value === card.category)?.label ?? "기타"}</div>
           <Link className="text-xl font-semibold text-ink hover:text-signal" href={store ? `/items/${encodeURIComponent(store.subItemType ?? store.itemType)}` : "#"}>
-            {trendValueLabel(editorial.value)}
+            {/* card is only ever built from SUB_ITEM editorial rows, so the
+                same specificItemKoreanLabel mapping used on "/" and the item
+                detail page applies here (TOTE_BAG -> 토트백), not a raw
+                fallback. */}
+            {specificItemKoreanLabel(editorial.value) ?? trendValueLabel(editorial.value)}
           </Link>
         </div>
         <span className="whitespace-nowrap rounded border border-line bg-canvas px-2 py-1 text-xs font-semibold text-muted">

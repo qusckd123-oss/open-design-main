@@ -16,7 +16,8 @@ Short by design. For rules, see `AGENT_OPERATING_RULES.md`. For live numbers, se
 ## P2 - Product-Planning Usability
 
 - User explicitly authorized safe UI-only pre-gate work on 2026-09-10 while P0 remains pending. First fix completed: `/editorial` no longer shows the no-op domestic/overseas scope toggle; gender filtering remains.
-- Next safe pre-gate candidate: unify specific-item Korean label rendering across planner-facing screens without changing taxonomy or extraction semantics.
+- Second fix completed (2026-09-10): unified specific-item Korean label rendering (`specificItemKoreanLabel`) across `/items`, `/editorial`, and `/`'s trend×store matrix table - these previously showed the raw English SUB_ITEM enum (e.g. `TRACK JACKET`) where `/` (EditorialTrendCard) and the item detail page already showed the Korean label (`트랙 재킷`) for the exact same data. No taxonomy/dictionary expansion; reused the existing helper and the existing SUB_ITEM-only conditional pattern already established in `EditorialTrendCard`.
+- Next safe pre-gate candidate: none currently identified after the above - re-audit for further label/IA inconsistencies only if the user requests it, otherwise larger P2 work should wait (see below).
 - Larger P2 work (trust explanation, actionability layer, broader IA changes) should still wait until P0 operational stability has been confirmed at least once for real after the scheduled run above.
 
 ## P3 - Optional Future Research
