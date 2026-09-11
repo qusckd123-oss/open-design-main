@@ -152,7 +152,7 @@ Docs/config-independent audit checking whether 8 sources the user actually refer
 - Two concrete new-action candidates surfaced, neither implemented: `COVERCHORD` as a ready, low-risk Market-source addition (independent of the Editorial P0 gate); the 4 Instagram accounts plus 1 example permalink as `MANUAL_CURATION`-tier registry candidates.
 - No code, config, schema, collector, taxonomy, ranking, or live data changed in this pass; Market(real) remained 667, EditorialPost(real)/EditorialMention(real)/Bundles remained 617/2781/89, Canonical/Mention Duplicates remained 0/0.
 
-## Market Coverchord Source Addition (2026-09-11, uncommitted, pending validation)
+## Market Coverchord Source Addition (2026-09-11, validated and committed)
 
 The user explicitly approved `docs/TREND_RESEARCH_SOURCE_REGISTRY.md` Section 10 decision 1 (Coverchord) in this session. Implemented as a small, isolated, config-only change, independent of the Editorial P0 gate:
 
@@ -162,15 +162,14 @@ The user explicitly approved `docs/TREND_RESEARCH_SOURCE_REGISTRY.md` Section 10
 - `docs/MARKET_SOURCE_AUDIT.md` updated: new `Coverchord` summary-table row (`SUPPORTED`) plus a full `### Coverchord` write-up section mirroring the existing Slam Jam/Stussy sections.
 - `docs/TREND_RESEARCH_SOURCE_REGISTRY.md` Section 10 decision 1 updated from "approve" to "approved and implemented," with a pointer back to this note.
 
-**What is NOT yet done, and why:** this session's local shell tool (`device_bash` on the user's machine) was unavailable for this entire pass, so none of the following could be performed and must happen before this is considered complete:
+**Validation completed 2026-09-11 (same session, resumed after `device_bash` recovered):**
 
-- `corepack pnpm typecheck` (required for any `src/config/*.ts` change per `AGENT_OPERATING_RULES.md` "Validation Expectations").
-- `corepack pnpm build`.
-- `git status` / verifying the working tree and live DB/scheduler state fresh (the numbers above are carried from the last verified pass, not re-derived this pass).
-- `git add` (explicit paths only) + commit + push to `origin/feature/trend-dashboard`.
-- No live `collect:market --source=COVERCHORD` run has happened - this is config only, zero rows collected yet.
-
-**Next session/step**: once local shell access is available, run `corepack pnpm typecheck` and `corepack pnpm build` on the 4 changed files (`src/config/market-sources.ts`, `src/config/market-category-map.ts`, `docs/MARKET_SOURCE_AUDIT.md`, `docs/TREND_RESEARCH_SOURCE_REGISTRY.md`), confirm `git status` shows only these 4 files changed, then explicitly stage and commit/push. Optionally, a manual `collect:market --source=COVERCHORD --category=BAG --limit=10`-style single-category dry run (real network, writes `dataMode=real` rows - this is a deliberate, human-invoked Market collection, not the gated Editorial refresh, so it is fine to run directly once validated) can confirm end-to-end behavior before wider use.
+- `git status --short` confirmed exactly the 6 expected files changed - no unexpected/unrecognized dirty-tree state, no cross-contamination with the separate OneDrive Product Planning Dashboard repo (its own concurrent Codex session's node processes were left untouched, per the Project Separation Rule).
+- `corepack pnpm typecheck` passed clean.
+- `corepack pnpm build` initially failed with `EPERM: operation not permitted, rename ... query_engine-windows.dll.node` - a Windows file-lock from the already-running 3001 dev server (PID identified precisely via `netstat -ano | findstr :3001`, confirmed as this project's own dev server by port + memory footprint before stopping only that one PID). After stopping it, `corepack pnpm build` succeeded cleanly: all 16 routes compiled, 0 errors.
+- Committed as `4c1c307` ("feat: add COVERCHORD market source (config-only, mirrors Slam Jam/Stussy)") and pushed to `origin/feature/trend-dashboard`.
+- No live `collect:market --source=COVERCHORD` run has happened yet - this is config only, zero rows collected yet. A manual `collect:market --source=COVERCHORD --category=BAG --limit=10`-style single-category run (real network, writes `dataMode=real` rows - a deliberate, human-invoked Market collection, not the gated Editorial refresh) can confirm end-to-end behavior whenever next useful.
+- The 3001 dev server was stopped to unblock `build` and has not been restarted as of this note - restart with `corepack pnpm dev` before the next UI-judgment task.
 
 ## Known Current Limitations
 
