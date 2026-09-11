@@ -23,6 +23,13 @@
 - When the user asks to summarize Teams chat/channel updates through today and save decided items to memory, update `CLAUDE.md`, and push to GitHub, always also answer directly in chat with the three requested sections: `결정된 것`, `안 정해진 것`, and `다음 할 일`.
 - The final chat answer should include the substantive summary first, then briefly mention saved files, commit, and push status.
 
+## Current Teams Summary - 2026-09-11
+
+- Use `work/90_archive/workspace/memory/current-teams-update-summary-2026-09-11.md` as the latest Teams update source. This summary is based on the latest local Teams chat/channel backups clipped through 2026-09-10 and collected on 2026-09-11 morning.
+- 2026-09-11 핵심 결정: 27SS 봄 작지는 해외 PO가 기재된 건을 전부 투입하고, 대만 전용 `WA2702ST27` 추가 컬러 200PCS는 국내 입고 없이 대만 직송한다. `CD51`/`KT62`는 위즈, `CDH1`/`KTH3`/`PTH3`는 바라크로 배정한다. 27SS 최종 해외 취합장을 공유했으며, 26FW 뉴베이직 지연 물량은 50% 미만 파샬부터 우선 입고 후 순차 입고한다. 광복 FSS 단독 티셔츠 실물 입고·촬영본 공유가 완료됐다.
+- 2026-09-11 미결: 27SS 최종 발주 수량·승인자, 봄 품번별 사양/작지/BT/아트웍/S/O 완료 여부, 추가 CAD 최종 컬러·수량, 26FW 잔여 입고 차수, 26FW 네이밍 최종안, 광복 FSS 최종 입고일과 모자 본입고가 남아 있다.
+- 2026-09-11 다음 할 일: 추가 CAD 우선순위 확정, 27SS 봄 사양 종결 및 문서 분출, `WA2702ST27` 직송 조건과 배정 품번 문서 반영, 최종 해외 취합장 대조, 26FW 입고·출고 추적, 광복 FSS 9/17~9/18 실행 확인, HNC 가먼트 다잉 테스트 결과 확인.
+
 ## Current Teams Summary - 2026-09-09
 
 - Use `workspace/memory/current-teams-update-summary-2026-09-09.md` as the latest Teams update source. This summary is based on local Teams backup files clipped as 2026-09-08 and written locally on 2026-09-09 morning.
