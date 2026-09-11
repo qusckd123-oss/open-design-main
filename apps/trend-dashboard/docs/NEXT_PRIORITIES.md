@@ -17,8 +17,9 @@ Short by design. For rules, see `AGENT_OPERATING_RULES.md`. For live numbers, se
 
 - User explicitly authorized safe UI-only pre-gate work on 2026-09-10 while P0 remains pending. First fix completed: `/editorial` no longer shows the no-op domestic/overseas scope toggle; gender filtering remains.
 - Second fix completed (2026-09-10): unified specific-item Korean label rendering (`specificItemKoreanLabel`) across `/items`, `/editorial`, and `/`'s trend×store matrix table - these previously showed the raw English SUB_ITEM enum (e.g. `TRACK JACKET`) where `/` (EditorialTrendCard) and the item detail page already showed the Korean label (`트랙 재킷`) for the exact same data. No taxonomy/dictionary expansion; reused the existing helper and the existing SUB_ITEM-only conditional pattern already established in `EditorialTrendCard`.
-- Next safe pre-gate candidate: none currently identified after the above - re-audit for further label/IA inconsistencies only if the user requests it, otherwise larger P2 work should wait (see below).
-- Larger P2 work (trust explanation, actionability layer, broader IA changes) should still wait until P0 operational stability has been confirmed at least once for real after the scheduled run above.
+- New user-directed P2 focus (2026-09-11): shift toward a **visual-first trend board** that answers “요즘 뭐가 뜨는가?” using planning-ready `ITEM + DIRECT ATTRIBUTE(S) + MOOD/STYLE CONTEXT + VISUAL EVIDENCE`, not broad category counts. See `WORK_START_HERE.md`.
+- Safe pre-gate work may include rendered-UI audit, visual-evidence architecture, existing-image reuse audit, and Instagram/editorial-Instagram feasibility research. Do not fabricate Instagram metrics or weaken direct-relation semantics.
+- Larger implementation that changes evidence semantics, collection architecture, ranking, taxonomy, or major IA should still wait for explicit review and/or the first healthy natural P0 scheduler observation.
 
 ## P3 - Optional Future Research
 
