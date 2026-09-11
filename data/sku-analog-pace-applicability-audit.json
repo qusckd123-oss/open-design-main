@@ -1,0 +1,351 @@
+{
+  "meta": {
+    "currentAppSkuCount": 439,
+    "historicalCleanSku": 348,
+    "historicalCleanStyle": 166,
+    "sellingWeekDefinition": "elapsed completed selling weeks since first positive, inclusive; history ordered oldest to newest (historyLength - firstPositiveIndex)",
+    "sourceRange": {
+      "earliest": "2025-07-06",
+      "latest": "2026-04-30",
+      "periodCount": 44
+    },
+    "sameCalendarDefinition": true
+  },
+  "applicabilityClassification": {
+    "PACE_READY": 149,
+    "PACE_NOT_YET_APPLICABLE": 254,
+    "PACE_WTD_ONLY_WAIT_FOR_FIRST_COMPLETED_WEEK": 5,
+    "PACE_W1_DISPLAY_ONLY": 31
+  },
+  "wtdOnlyAudit": {
+    "count": 5,
+    "rows": [
+      {
+        "sku": "WA2603CD65CM",
+        "styleCode": "WA2603CD65",
+        "category": "CD",
+        "color": "CM",
+        "cumulativeSalesQty": 1.0,
+        "orderQty": 1473.0,
+        "firstPositiveSalesPeriod": "2026-09-09",
+        "latestCompletedPeriod": "2026-09-06",
+        "currentWtdPeriod": "2026-09-07~2026-09-13",
+        "currentWtdQty": 1.0,
+        "calculatedSellingWeek": null,
+        "currentProgressInput": {
+          "firstPositiveIndex": null,
+          "historyLength": 10,
+          "index": null,
+          "orderQty": 1473.0,
+          "currentCumulative": null
+        },
+        "reason": "WTD_ONLY",
+        "historySalesSum": 0.0,
+        "completedHistorySalesSum": 0.0,
+        "completedPlusWtdSalesSum": 1.0,
+        "unexplainedHistoricalSales": 1.0,
+        "wtdReconciliationDelta": 0.0
+      },
+      {
+        "sku": "WA2603HZ61PI",
+        "styleCode": "WA2603HZ61",
+        "category": "HZ",
+        "color": "PI",
+        "cumulativeSalesQty": 1.0,
+        "orderQty": 739.0,
+        "firstPositiveSalesPeriod": "2026-09-09",
+        "latestCompletedPeriod": "2026-09-06",
+        "currentWtdPeriod": "2026-09-07~2026-09-13",
+        "currentWtdQty": 1.0,
+        "calculatedSellingWeek": null,
+        "currentProgressInput": {
+          "firstPositiveIndex": null,
+          "historyLength": 10,
+          "index": null,
+          "orderQty": 739.0,
+          "currentCumulative": null
+        },
+        "reason": "WTD_ONLY",
+        "historySalesSum": 0.0,
+        "completedHistorySalesSum": 0.0,
+        "completedPlusWtdSalesSum": 1.0,
+        "unexplainedHistoricalSales": 1.0,
+        "wtdReconciliationDelta": 0.0
+      },
+      {
+        "sku": "WA2603JK62BE",
+        "styleCode": "WA2603JK62",
+        "category": "JK",
+        "color": "BE",
+        "cumulativeSalesQty": 1.0,
+        "orderQty": 700.0,
+        "firstPositiveSalesPeriod": "2026-09-09",
+        "latestCompletedPeriod": "2026-09-06",
+        "currentWtdPeriod": "2026-09-07~2026-09-13",
+        "currentWtdQty": 1.0,
+        "calculatedSellingWeek": null,
+        "currentProgressInput": {
+          "firstPositiveIndex": null,
+          "historyLength": 10,
+          "index": null,
+          "orderQty": 700.0,
+          "currentCumulative": null
+        },
+        "reason": "WTD_ONLY",
+        "historySalesSum": 0.0,
+        "completedHistorySalesSum": 0.0,
+        "completedPlusWtdSalesSum": 1.0,
+        "unexplainedHistoricalSales": 1.0,
+        "wtdReconciliationDelta": 0.0
+      },
+      {
+        "sku": "WA2603PT61PI",
+        "styleCode": "WA2603PT61",
+        "category": "PT",
+        "color": "PI",
+        "cumulativeSalesQty": 1.0,
+        "orderQty": 456.0,
+        "firstPositiveSalesPeriod": "2026-09-09",
+        "latestCompletedPeriod": "2026-09-06",
+        "currentWtdPeriod": "2026-09-07~2026-09-13",
+        "currentWtdQty": 1.0,
+        "calculatedSellingWeek": null,
+        "currentProgressInput": {
+          "firstPositiveIndex": null,
+          "historyLength": 10,
+          "index": null,
+          "orderQty": 456.0,
+          "currentCumulative": null
+        },
+        "reason": "WTD_ONLY",
+        "historySalesSum": 0.0,
+        "completedHistorySalesSum": 0.0,
+        "completedPlusWtdSalesSum": 1.0,
+        "unexplainedHistoricalSales": 1.0,
+        "wtdReconciliationDelta": 0.0
+      },
+      {
+        "sku": "WA2604PT16BL",
+        "styleCode": "WA2604PT16",
+        "category": "PT",
+        "color": "BL",
+        "cumulativeSalesQty": 1.0,
+        "orderQty": 800.0,
+        "firstPositiveSalesPeriod": "2026-09-09",
+        "latestCompletedPeriod": "2026-09-06",
+        "currentWtdPeriod": "2026-09-07~2026-09-13",
+        "currentWtdQty": 1.0,
+        "calculatedSellingWeek": null,
+        "currentProgressInput": {
+          "firstPositiveIndex": null,
+          "historyLength": 10,
+          "index": null,
+          "orderQty": 800.0,
+          "currentCumulative": null
+        },
+        "reason": "WTD_ONLY",
+        "historySalesSum": 0.0,
+        "completedHistorySalesSum": 0.0,
+        "completedPlusWtdSalesSum": 1.0,
+        "unexplainedHistoricalSales": 1.0,
+        "wtdReconciliationDelta": 0.0
+      }
+    ],
+    "rule": "cumulativeSalesQty == completedHistorySalesSum + currentWtdQty; completedHistorySalesSum == 0; currentWtdQty > 0",
+    "analogPace": "NOT_APPLICABLE until first completed sales week; do not manufacture W1",
+    "classification": "WTD_ONLY / WAIT_FOR_FIRST_COMPLETED_WEEK"
+  },
+  "sellingWeekDistribution": {
+    "W2": {
+      "skuCount": 59,
+      "positiveSalesSku": 59,
+      "paceReady": 59
+    },
+    "NO_SALE": {
+      "skuCount": 254,
+      "positiveSalesSku": 0,
+      "paceReady": 0
+    },
+    "W4": {
+      "skuCount": 30,
+      "positiveSalesSku": 30,
+      "paceReady": 30
+    },
+    "W3": {
+      "skuCount": 43,
+      "positiveSalesSku": 43,
+      "paceReady": 43
+    },
+    "WTD_ONLY": {
+      "skuCount": 5,
+      "positiveSalesSku": 5,
+      "paceReady": 0
+    },
+    "W1": {
+      "skuCount": 31,
+      "positiveSalesSku": 31,
+      "paceReady": 0
+    },
+    "W5": {
+      "skuCount": 2,
+      "positiveSalesSku": 2,
+      "paceReady": 2
+    },
+    "W7": {
+      "skuCount": 9,
+      "positiveSalesSku": 9,
+      "paceReady": 9
+    },
+    "W6": {
+      "skuCount": 4,
+      "positiveSalesSku": 4,
+      "paceReady": 4
+    },
+    "W8": {
+      "skuCount": 2,
+      "positiveSalesSku": 2,
+      "paceReady": 2
+    }
+  },
+  "seasonWeekOutOfRangeAudit": {
+    "count": 0,
+    "rows": [],
+    "rootCauseCounts": {
+      "A_MATURE_W9_PLUS": 0,
+      "B_REFERENCE_TRUNCATED": 0,
+      "C_SELLING_WEEK_CALC_ERROR": 0,
+      "D_CALENDAR_ALIGNMENT": 0,
+      "E_OTHER_NO_CUMULATIVE_SALES": 0
+    }
+  },
+  "noCurrentProgressAudit": {
+    "count": 0,
+    "rows": [],
+    "positiveSalesCount": 0
+  },
+  "reconciliation": {
+    "diagnosticA_cumulativeVsCompletedOnly": {
+      "counts": {
+        "remaining_mismatch": 106,
+        "exact": 291,
+        "within_1": 42
+      },
+      "maxAbsoluteDifference": 36.0,
+      "p95AbsoluteDifference": 7.0
+    },
+    "diagnosticB_cumulativeVsCompletedPlusCurrentWtd": {
+      "counts": {
+        "exact": 439
+      },
+      "maxAbsoluteDifference": 0.0,
+      "p95AbsoluteDifference": 0.0
+    },
+    "interpretation": "Diagnostic A is informational because cumulativeSalesQty includes current WTD while completedWeeklyHistory excludes WTD. Diagnostic B is the proper reconciliation."
+  },
+  "historicalMaxSellingWeekDistribution": {
+    "W20+": 348
+  },
+  "weeklySourcePeriods": {
+    "currentMin": "2026-07-05",
+    "currentMax": "2026-09-06",
+    "uniqueCount": 10
+  },
+  "trueApplicableUniverse": {
+    "ALL_26FW_APP": 439,
+    "NOT_YET_APPLICABLE": 254,
+    "WTD_ONLY": 5,
+    "DATA_UNRESOLVED": 0,
+    "STARTED_SELLING": 185,
+    "EARLY_PACE_APPLICABLE": 149,
+    "PACE_DATA_ELIGIBLE": 149,
+    "PACE_READY": 149,
+    "PACE_FAILED": 0,
+    "PRE_SALE": 254
+  },
+  "coverageRates": {
+    "ready_all": 33.94,
+    "ready_started": 80.54,
+    "ready_early": 100.0,
+    "ready_dataeligible": 100.0
+  },
+  "categoryStartedVsReady": {
+    "CD": {
+      "total": 36,
+      "started": 27,
+      "earlyApplicable": 26,
+      "ready": 26
+    },
+    "CR": {
+      "total": 56,
+      "started": 23,
+      "earlyApplicable": 15,
+      "ready": 15
+    },
+    "DP": {
+      "total": 28,
+      "started": 0,
+      "earlyApplicable": 0,
+      "ready": 0
+    },
+    "HD": {
+      "total": 19,
+      "started": 8,
+      "earlyApplicable": 7,
+      "ready": 7
+    },
+    "HZ": {
+      "total": 47,
+      "started": 13,
+      "earlyApplicable": 7,
+      "ready": 7
+    },
+    "JK": {
+      "total": 69,
+      "started": 5,
+      "earlyApplicable": 1,
+      "ready": 1
+    },
+    "KT": {
+      "total": 20,
+      "started": 13,
+      "earlyApplicable": 11,
+      "ready": 11
+    },
+    "LT": {
+      "total": 28,
+      "started": 20,
+      "earlyApplicable": 20,
+      "ready": 20
+    },
+    "PT": {
+      "total": 77,
+      "started": 30,
+      "earlyApplicable": 21,
+      "ready": 21
+    },
+    "SH": {
+      "total": 17,
+      "started": 13,
+      "earlyApplicable": 10,
+      "ready": 10
+    },
+    "SO": {
+      "total": 4,
+      "started": 0,
+      "earlyApplicable": 0,
+      "ready": 0
+    },
+    "SR": {
+      "total": 10,
+      "started": 7,
+      "earlyApplicable": 5,
+      "ready": 5
+    },
+    "ST": {
+      "total": 28,
+      "started": 26,
+      "earlyApplicable": 26,
+      "ready": 26
+    }
+  }
+}

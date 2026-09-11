@@ -2,6 +2,8 @@ import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
+import { applyForecastV1 } from "./forecast-v1.ts";
+import { PRODUCT_GROUP_BY_CATEGORY } from "./product-metadata.ts";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SALES_DASHBOARD_URL = process.env.SALES_DASHBOARD_URL || "https://sales-dashboard-13g.pages.dev/dashboard/";
@@ -11,6 +13,28 @@ const DOC_PATH = resolve(ROOT, "docs/sales-dashboard-schema.md");
 const LATEST_PATHS = [resolve(ROOT, "data/latest.json"), resolve(ROOT, "public/data/latest.json")];
 const KNOWN_SKU = "WA2602CD52";
 const GLOBAL_NAMES = ["PMETA", "PDET", "PDPER", "ORD", "ATOM", "IMG"];
+const FORECAST_CONFIG = JSON.parse(readFileSync(resolve(ROOT, "config/forecast-v1.json"), "utf8"));
+const FORECAST_REFERENCE_PATH = resolve(ROOT, "data/forecast-reference-v1.json");
+const REORDER_SIGNAL_CONFIG = {
+  highSellThroughThreshold: 30,
+  strongVelocityQtyThreshold: 20,
+  shortStockCoverWeeksThreshold: 4,
+  trendStablePercentThreshold: 10,
+  trendRisingPercentThreshold: 15,
+  trendMinHistoryWeeks: 4,
+  trendStableSlopePctThreshold: 5,
+  trendRisingSlopePctThreshold: 8,
+  trendDecliningSlopePctThreshold: 8,
+  trendRecentVsAveragePctThreshold: 12,
+  possibleStockoutCoverWeeksThreshold: 2.5,
+  possibleStockoutSellThroughThreshold: 60,
+  possibleStockoutDropPercentThreshold: -35,
+  stockRiskCriticalCoverWeeks: 1,
+  stockRiskHighCoverWeeks: 2.5,
+  stockRiskMediumCoverWeeks: 5,
+  stockRiskHighSellThroughThreshold: 70,
+  stockRiskMediumSellThroughThreshold: 50,
+};
 
 function usage() {
   console.log(`Usage:
@@ -657,10 +681,585 @@ function readProductImages() {
   }
 }
 
+function round(value, digits = 1) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return 0;
+  return Number(number.toFixed(digits));
+}
+
+function styleGender(name) {
+  return name && (name.includes("우먼스") || name.toLowerCase().includes("women")) ? "WOMEN" : "UNISEX";
+}
+
+function sumChannels(channels, index) {
+  if (!channels || typeof channels !== "object") return 0;
+  return Object.values(channels).reduce((sum, arr) => sum + Number(Array.isArray(arr) ? arr[index] || 0 : 0), 0);
+}
+
+function productGroupForCategory(category) {
+  return PRODUCT_GROUP_BY_CATEGORY[String(category || "").toUpperCase()] || "UNMAPPED";
+}
+
+function genderGroupFor({ gender, name }) {
+  const normalized = String(gender || "").toUpperCase();
+  if (normalized === "UNISEX") return "UNISEX";
+  if (normalized === "WOMEN" || normalized === "WOMENS" || normalized === "WOMAN") return "WOMENS";
+  const productName = String(name || "").toUpperCase();
+  if (productName.includes("우먼스") || productName.includes("우먼") || productName.includes("WOMENS") || productName.includes("WOMEN")) return "WOMENS";
+  return "UNMAPPED";
+}
+
+function calculateTrend(quantities) {
+  const values = quantities.filter((value) => Number.isFinite(value));
+  if (values.length < REORDER_SIGNAL_CONFIG.trendMinHistoryWeeks) return "NEW";
+  const first = values[0];
+  const last = values.at(-1);
+  const deltas = values.slice(1).map((value, index) => value - values[index]);
+  const increaseCount = deltas.filter((delta) => delta > 0).length;
+  const average = values.reduce((sum, value) => sum + value, 0) / values.length;
+  const baseline = Math.max(1, first);
+  const changePercent = ((last - first) / baseline) * 100;
+  const xMean = (values.length - 1) / 2;
+  const yMean = average;
+  const denominator = values.reduce((sum, _value, index) => sum + (index - xMean) ** 2, 0);
+  const slope = denominator ? values.reduce((sum, value, index) => sum + (index - xMean) * (value - yMean), 0) / denominator : 0;
+  const slopePct = average ? (slope / average) * 100 : 0;
+  const recentVsAveragePct = average ? ((last - average) / average) * 100 : 0;
+  if (
+    increaseCount >= 2
+    && slopePct >= REORDER_SIGNAL_CONFIG.trendRisingSlopePctThreshold
+    && recentVsAveragePct >= REORDER_SIGNAL_CONFIG.trendRecentVsAveragePctThreshold
+  ) return "ACCELERATING";
+  if (
+    slopePct <= -REORDER_SIGNAL_CONFIG.trendDecliningSlopePctThreshold
+    && recentVsAveragePct <= -REORDER_SIGNAL_CONFIG.trendRecentVsAveragePctThreshold
+  ) return "DECLINING";
+  if (
+    Math.abs(slopePct) <= REORDER_SIGNAL_CONFIG.trendStableSlopePctThreshold
+    && Math.abs(changePercent) <= REORDER_SIGNAL_CONFIG.trendStablePercentThreshold
+  ) return "STABLE";
+  if (slopePct >= REORDER_SIGNAL_CONFIG.trendRisingSlopePctThreshold || changePercent >= REORDER_SIGNAL_CONFIG.trendRisingPercentThreshold) return "RISING";
+  if (slopePct <= -REORDER_SIGNAL_CONFIG.trendDecliningSlopePctThreshold || changePercent <= -REORDER_SIGNAL_CONFIG.trendRisingPercentThreshold) return "DECLINING";
+  return "STABLE";
+}
+
+function decideAction({ wow, sellThrough, stock }) {
+  const config = {
+    reorderSellThroughThreshold: 30,
+    reorderNearThreshold: 25,
+    promotionWowThreshold: -35,
+    promotionStockRateThreshold: 65,
+    reallocationStockThreshold: 800,
+    reallocationStockRateThreshold: 55,
+  };
+  const stockRate = Math.max(0, 100 - sellThrough);
+  let timing = "30% 전 관찰";
+  let gap = Math.round(config.reorderSellThroughThreshold - sellThrough);
+  if (sellThrough >= config.reorderSellThroughThreshold) {
+    timing = "30% 도달/초과";
+    gap = 0;
+  } else if (sellThrough >= config.reorderNearThreshold) {
+    timing = "30% 임박";
+  }
+
+  if (sellThrough >= config.reorderSellThroughThreshold) {
+    return {
+      action: "리오더 검토",
+      priority: "P1",
+      note: "30% 도달/초과 구간입니다. 판매율 30% 시점 기준으로 리오더 투입 여부와 예상 입고 시점을 우선 확인",
+      reorderTiming: timing,
+    };
+  }
+  if (sellThrough >= config.reorderNearThreshold) {
+    return {
+      action: "리오더 검토",
+      priority: "P2",
+      note: `30% 임박 구간으로 30%까지 약 ${Math.max(0, gap)}%p 남았습니다. 판매율 30% 도달 전 선제 리오더 검토`,
+      reorderTiming: timing,
+    };
+  }
+  if (wow != null && wow <= config.promotionWowThreshold && stockRate >= config.promotionStockRateThreshold) {
+    return {
+      action: "프로모션 검토",
+      priority: "P3",
+      note: "전주 대비 둔화와 높은 잔여재고율이 동시에 발생해 가격 할인/행사 검토",
+      reorderTiming: timing,
+    };
+  }
+  if (stock >= config.reallocationStockThreshold && stockRate >= config.reallocationStockRateThreshold) {
+    return {
+      action: "배분/RT 검토",
+      priority: "P2",
+      note: "잔여재고율과 절대 재고가 높아 매장 이동(RT) 또는 채널 추가 배분 검토",
+      reorderTiming: timing,
+    };
+  }
+  return {
+    action: "배분/RT 검토",
+    priority: "P3",
+    note: "금주 판매 흐름과 매장별 재고 편차 기준으로 배분 유지",
+    reorderTiming: timing,
+  };
+}
+
+async function buildLatestJsonFromConfirmedSchema(page, productImages) {
+  return page.evaluate(({ knownSku, productImages, signalConfig, productGroupByCategory }) => {
+    function sumChannels(channels, index) {
+      if (!channels || typeof channels !== "object") return 0;
+      return Object.values(channels).reduce((sum, arr) => sum + Number(Array.isArray(arr) ? arr[index] || 0 : 0), 0);
+    }
+
+    function productGroupForCategory(category) {
+      return productGroupByCategory[String(category || "").toUpperCase()] || "UNMAPPED";
+    }
+
+    function genderGroupFor({ gender, name }) {
+      const normalized = String(gender || "").toUpperCase();
+      if (normalized === "UNISEX") return "UNISEX";
+      if (normalized === "WOMEN" || normalized === "WOMENS" || normalized === "WOMAN") return "WOMENS";
+      const productName = String(name || "").toUpperCase();
+      if (productName.includes("우먼스") || productName.includes("우먼") || productName.includes("WOMENS") || productName.includes("WOMEN")) return "WOMENS";
+      return "UNMAPPED";
+    }
+
+    function styleGender(name) {
+      return name && (name.includes("우먼스") || name.toLowerCase().includes("women")) ? "WOMEN" : "UNISEX";
+    }
+
+    function choosePeriod() {
+      if (window.__PK && window.PDPER?.[window.__PK]) return window.__PK;
+      const keys = Object.keys(window.PDPER || {}).filter((key) => key.startsWith("26-"));
+      return keys.at(-1) || Object.keys(window.PDPER || {}).at(-1) || "";
+    }
+
+    function weeklySortValue(periodKey) {
+      const match = /^(\d{2})-(\d{2})W(\d+)$/i.exec(periodKey);
+      return match ? Number(match[1]) * 10000 + Number(match[2]) * 100 + Number(match[3]) : 0;
+    }
+
+    function parseWeeklyPeriod(periodKey) {
+      const match = /^(\d{2})-(\d{2})W(\d+)$/i.exec(periodKey);
+      return match ? { year: match[1], month: match[2], week: Number(match[3]) } : null;
+    }
+
+    function previousWeekPeriod(periodKey) {
+      const parsed = parseWeeklyPeriod(periodKey);
+      if (!parsed || parsed.week <= 1) return "";
+      return `${parsed.year}-${parsed.month}W${parsed.week - 1}`;
+    }
+
+    function weeklyDeltaForSku(periodKey, sku) {
+      const current = window.PDPER?.[periodKey]?.cur?.[sku];
+      if (!current) return null;
+      const previousKey = previousWeekPeriod(periodKey);
+      const previous = previousKey ? window.PDPER?.[previousKey]?.cur?.[sku] : null;
+      const rawSales = sumChannels(current, 0);
+      const rawQuantity = sumChannels(current, 2);
+      if (!previous) {
+        return { period: periodKey, sales: rawSales, quantity: rawQuantity };
+      }
+      return {
+        period: periodKey,
+        sales: Math.max(0, rawSales - sumChannels(previous, 0)),
+        quantity: Math.max(0, rawQuantity - sumChannels(previous, 2)),
+      };
+    }
+
+    function weeklyDeltaForSkuFromSequence(periodKey, sku, periods) {
+      const current = window.PDPER?.[periodKey]?.cur?.[sku];
+      if (!current) return null;
+      const periodIndex = periods.indexOf(periodKey);
+      const previousKey = periodIndex > 0 ? periods[periodIndex - 1] : "";
+      const previous = previousKey ? window.PDPER?.[previousKey]?.cur?.[sku] : null;
+      const rawSales = sumChannels(current, 0);
+      const rawQuantity = sumChannels(current, 2);
+      return {
+        period: periodKey,
+        sales: previous ? Math.max(0, rawSales - sumChannels(previous, 0)) : rawSales,
+        quantity: previous ? Math.max(0, rawQuantity - sumChannels(previous, 2)) : rawQuantity,
+      };
+    }
+
+    function recentWeeklyPeriods(currentPeriod, includeCurrent = true) {
+      const keys = Object.keys(window.PDPER || {})
+        .filter((key) => /^26-\d{2}W\d+$/i.test(key))
+        .sort((a, b) => weeklySortValue(a) - weeklySortValue(b));
+      const currentIndex = keys.indexOf(currentPeriod);
+      const end = currentIndex >= 0 ? currentIndex + (includeCurrent ? 1 : 0) : keys.length;
+      return keys.slice(Math.max(0, end - 4), end);
+    }
+
+    function linearSlope(values) {
+      const average = values.reduce((sum, value) => sum + value, 0) / values.length;
+      const xMean = (values.length - 1) / 2;
+      const denominator = values.reduce((sum, _value, index) => sum + (index - xMean) ** 2, 0);
+      const slope = denominator ? values.reduce((sum, value, index) => sum + (index - xMean) * (value - average), 0) / denominator : 0;
+      return { slope, slopePct: average ? (slope / average) * 100 : 0, average };
+    }
+
+    function classifyTrend(values) {
+      if (values.length < signalConfig.trendMinHistoryWeeks) return "NEW";
+      const first = values[0];
+      const last = values.at(-1);
+      const deltas = values.slice(1).map((value, index) => value - values[index]);
+      const increaseCount = deltas.filter((delta) => delta > 0).length;
+      const { slopePct, average } = linearSlope(values);
+      const changePercent = ((last - first) / Math.max(1, first)) * 100;
+      const recentVsAveragePct = average ? ((last - average) / average) * 100 : 0;
+      if (
+        increaseCount >= 2
+        && slopePct >= signalConfig.trendRisingSlopePctThreshold
+        && recentVsAveragePct >= signalConfig.trendRecentVsAveragePctThreshold
+      ) return "ACCELERATING";
+      if (
+        slopePct <= -signalConfig.trendDecliningSlopePctThreshold
+        && recentVsAveragePct <= -signalConfig.trendRecentVsAveragePctThreshold
+      ) return "DECLINING";
+      if (
+        Math.abs(slopePct) <= signalConfig.trendStableSlopePctThreshold
+        && Math.abs(changePercent) <= signalConfig.trendStablePercentThreshold
+      ) return "STABLE";
+      if (slopePct >= signalConfig.trendRisingSlopePctThreshold || changePercent >= signalConfig.trendRisingPercentThreshold) return "RISING";
+      if (slopePct <= -signalConfig.trendDecliningSlopePctThreshold || changePercent <= -signalConfig.trendRisingPercentThreshold) return "DECLINING";
+      return "STABLE";
+    }
+
+    function classifyStockRisk({ stockCoverWeeks, sellThrough, weighted4CompletedWeekQty }) {
+      if (!weighted4CompletedWeekQty || stockCoverWeeks == null) return "UNKNOWN";
+      if (
+        stockCoverWeeks <= signalConfig.stockRiskCriticalCoverWeeks
+        || (sellThrough >= signalConfig.stockRiskHighSellThroughThreshold && stockCoverWeeks <= 2)
+      ) return "CRITICAL";
+      if (
+        stockCoverWeeks <= signalConfig.stockRiskHighCoverWeeks
+        || (sellThrough >= signalConfig.possibleStockoutSellThroughThreshold && stockCoverWeeks <= 3.5)
+      ) return "HIGH";
+      if (
+        stockCoverWeeks <= signalConfig.stockRiskMediumCoverWeeks
+        || (sellThrough >= signalConfig.stockRiskMediumSellThroughThreshold && stockCoverWeeks <= 6)
+      ) return "MEDIUM";
+      return "LOW";
+    }
+
+    const period = choosePeriod();
+    const periodRow = window.PDPER?.[period] || {};
+    const weeklyPeriods = recentWeeklyPeriods(period, false);
+    const currentWtdPeriod = /^26-\d{2}W\d+$/i.test(period) ? period : "";
+    const allWeeklyPeriods = Object.keys(window.PDPER || {})
+      .filter((key) => /^26-\d{2}W\d+$/i.test(key))
+      .sort((a, b) => weeklySortValue(a) - weeklySortValue(b));
+    const currentPeriodIndex = allWeeklyPeriods.indexOf(period);
+    const completedForecastPeriods = currentPeriodIndex >= 0 ? allWeeklyPeriods.slice(0, currentPeriodIndex) : allWeeklyPeriods;
+    const visibleText = document.body?.innerText || "";
+    const sourceUpdatedAt = visibleText.match(/Snowflake\s*동기화:\s*(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})/)?.[1] || "";
+    const styles = [];
+
+    for (const [sku, meta] of Object.entries(window.PMETA || {})) {
+      if (!sku.startsWith("WA") || !Array.isArray(meta) || meta[6] !== "WA") continue;
+      const cur = periodRow.cur?.[sku] || {};
+      const prev = periodRow.prev?.[sku] || {};
+      const sales = sumChannels(cur, 0);
+      const priorSales = sumChannels(prev, 0);
+      const quantity = sumChannels(cur, 2);
+      const inQty = Number(meta[7] || 0);
+      const cumQty = Number(meta[8] || 0);
+      const stock = Number(meta[11] || 0) + Number(meta[12] || 0);
+      const sellThrough = Number(meta[3] || 0) * 100;
+      const image = productImages[sku] || {};
+      const completedWeeklyHistory = weeklyPeriods
+        .map((weeklyPeriod) => {
+          return weeklyDeltaForSku(weeklyPeriod, sku);
+        })
+        .filter(Boolean);
+      const forecastCompletedHistory = completedForecastPeriods
+        .map((weeklyPeriod) => weeklyDeltaForSkuFromSequence(weeklyPeriod, sku, allWeeklyPeriods))
+        .filter(Boolean);
+      const currentWtdChannels = currentWtdPeriod ? window.PDPER?.[currentWtdPeriod]?.cur?.[sku] : null;
+      const currentWtdDelta = currentWtdPeriod ? weeklyDeltaForSku(currentWtdPeriod, sku) : null;
+      const currentWtdSales = currentWtdDelta?.sales ?? (currentWtdChannels ? sumChannels(currentWtdChannels, 0) : 0);
+      const currentWtdQty = currentWtdDelta?.quantity ?? (currentWtdChannels ? sumChannels(currentWtdChannels, 2) : 0);
+      const lastCompleteWeekQty = completedWeeklyHistory.at(-1)?.quantity ?? 0;
+      const previousCompleteWeekQty = completedWeeklyHistory.length >= 2 ? completedWeeklyHistory.at(-2).quantity : null;
+      const completedWeekWow = previousCompleteWeekQty ? ((lastCompleteWeekQty - previousCompleteWeekQty) / previousCompleteWeekQty) * 100 : null;
+      const avg4CompletedWeekQty = completedWeeklyHistory.length ? completedWeeklyHistory.reduce((sum, item) => sum + item.quantity, 0) / completedWeeklyHistory.length : 0;
+      const baseWeights = [0.1, 0.2, 0.3, 0.4].slice(-completedWeeklyHistory.length);
+      const weightTotal = baseWeights.reduce((sum, value) => sum + value, 0);
+      const weighted4CompletedWeekQty = weightTotal
+        ? completedWeeklyHistory.reduce((sum, item, index) => sum + item.quantity * (baseWeights[index] / weightTotal), 0)
+        : 0;
+      const stockCoverWeeks = weighted4CompletedWeekQty ? stock / weighted4CompletedWeekQty : null;
+      const quantities = completedWeeklyHistory.map((item) => item.quantity);
+      const salesTrend = classifyTrend(quantities);
+      const stockRisk = classifyStockRisk({ stockCoverWeeks, sellThrough, weighted4CompletedWeekQty });
+      const reorderSignals = {
+        highSellThrough: sellThrough >= signalConfig.highSellThroughThreshold,
+        strongVelocity: weighted4CompletedWeekQty >= signalConfig.strongVelocityQtyThreshold,
+        shortStockCover: stockCoverWeeks != null && stockCoverWeeks <= signalConfig.shortStockCoverWeeksThreshold,
+        acceleratingSales: salesTrend === "ACCELERATING" || salesTrend === "RISING",
+      };
+      const reorderSignalScore = Object.values(reorderSignals).filter(Boolean).length;
+      const possibleStockout = stockRisk === "CRITICAL" || stockRisk === "HIGH";
+      const reorderPreviewV2 = {
+        sellThrough,
+        weighted4CompletedWeekQty,
+        lastCompleteWeekQty,
+        previousCompleteWeekQty,
+        completedWeekWow,
+        stock,
+        stockCoverWeeks,
+        salesTrend,
+        stockRisk,
+        possibleStockout,
+        historyWeeks: completedWeeklyHistory.length,
+        previewScore: 0,
+      };
+
+      const name = String(meta[10] || sku);
+      const category = String(meta[2] || sku.match(/^WA\d{4}([A-Z]{2})/)?.[1] || "ETC");
+      const gender = styleGender(name);
+
+      styles.push({
+        sku,
+        name,
+        category,
+        categoryName: category,
+        productGroup: productGroupForCategory(category),
+        season: `${meta[0] || ""}${meta[1] || ""}` || "",
+        gender,
+        genderGroup: genderGroupFor({ gender, name }),
+        sales,
+        priorSales,
+        quantity,
+        orderQty: Number(meta[5] || 0),
+        inQty,
+        cumQty,
+        stock,
+        sellThrough,
+        stockRate: Math.max(0, 100 - sellThrough),
+        wow: priorSales ? ((sales - priorSales) / priorSales) * 100 : null,
+        weeklyHistory: completedWeeklyHistory,
+        completedWeeklyHistory,
+        currentWtdPeriod,
+        currentWtdSales,
+        currentWtdQty,
+        forecastCompletedHistory,
+        srp: Number(window.PDET?.[sku]?.srp || 0),
+        currentWeekQty: lastCompleteWeekQty,
+        previousWeekQty: previousCompleteWeekQty,
+        lastCompleteWeekQty,
+        previousCompleteWeekQty,
+        qtyWow: completedWeekWow,
+        completedWeekWow,
+        avg4WeekQty: avg4CompletedWeekQty,
+        avg4CompletedWeekQty,
+        weighted4WeekQty: weighted4CompletedWeekQty,
+        weighted4CompletedWeekQty,
+        stockCoverWeeks,
+        salesTrend,
+        reorderSignals,
+        reorderSignalScore,
+        reorderPreviewV2,
+        stockRisk,
+        possibleStockout,
+        previewScore: 0,
+        isSpecialMarket: String(meta[10] || "").includes("[대만]"),
+        imageUrl: image.imageUrl || "",
+        productUrl: image.productUrl || "",
+      });
+    }
+
+    const velocityByCategory = {};
+    for (const row of styles) {
+      const key = row.category || "ETC";
+      if (!velocityByCategory[key]) velocityByCategory[key] = [];
+      velocityByCategory[key].push(row.weighted4CompletedWeekQty || 0);
+    }
+    for (const values of Object.values(velocityByCategory)) {
+      values.sort((a, b) => a - b);
+    }
+    function percentileInCategory(category, value) {
+      const values = velocityByCategory[category || "ETC"] || [];
+      if (!values.length) return 0;
+      const belowOrEqual = values.filter((item) => item <= value).length;
+      return belowOrEqual / values.length;
+    }
+    function stockUrgencyScore(row) {
+      if (row.stockCoverWeeks == null || !row.weighted4CompletedWeekQty) return 0;
+      if (row.stockCoverWeeks <= 1) return 40;
+      if (row.stockCoverWeeks >= 10) return 0;
+      return Math.max(0, Math.min(40, ((10 - row.stockCoverWeeks) / 9) * 40));
+    }
+    function sellThroughScore(value) {
+      return Math.max(0, Math.min(20, ((value - 20) / 70) * 20));
+    }
+    function trendScore(trend) {
+      return { ACCELERATING: 15, RISING: 10, STABLE: 5, DECLINING: 0, NEW: 2 }[trend] ?? 0;
+    }
+    for (const row of styles) {
+      const velocityScore = percentileInCategory(row.category, row.weighted4CompletedWeekQty || 0) * 25;
+      const score = stockUrgencyScore(row) + velocityScore + sellThroughScore(row.sellThrough || 0) + trendScore(row.salesTrend);
+      row.previewScore = Math.round(Math.max(0, Math.min(100, score)));
+      row.reorderPreviewV2.previewScore = row.previewScore;
+      row.reorderPreviewV2.stockRisk = row.stockRisk;
+    }
+
+    return {
+      period,
+      sourceUpdatedAt,
+      weeklyPeriods,
+      currentWtdPeriod,
+      styles,
+      knownSkuPresent: styles.some((row) => row.sku === knownSku),
+    };
+  }, { knownSku: KNOWN_SKU, productImages, signalConfig: REORDER_SIGNAL_CONFIG, productGroupByCategory: PRODUCT_GROUP_BY_CATEGORY });
+}
+
+function normalizeLatestPayload({ period, sourceUpdatedAt, weeklyPeriods = [], currentWtdPeriod = "", styles }) {
+  const normalizedStyles = styles.map((row) => {
+    const sales = round(row.sales);
+    const priorSales = round(row.priorSales);
+    const sellThrough = round(row.sellThrough);
+    const stockRate = round(row.stockRate);
+    const wow = row.wow == null ? null : round(row.wow);
+    const stock = Math.round(Number(row.stock || 0));
+    const decision = decideAction({ wow, sellThrough, stock });
+    const note = wow == null ? decision.note : `${decision.note} (전주 대비 ${wow >= 0 ? "+" : ""}${wow.toFixed(1)}%)`;
+    return {
+      ...row,
+      sales,
+      priorSales,
+      productGroup: row.productGroup || productGroupForCategory(row.category),
+      genderGroup: row.genderGroup || genderGroupFor({ gender: row.gender, name: row.name }),
+      quantity: Math.round(Number(row.quantity || 0)),
+      orderQty: Math.round(Number(row.orderQty || 0)),
+      inQty: Math.round(Number(row.inQty || 0)),
+      cumQty: Math.round(Number(row.cumQty || 0)),
+      stock,
+      sellThrough,
+      stockRate,
+      wow,
+      weeklyHistory: (row.weeklyHistory || []).map((item) => ({
+        period: item.period,
+        sales: round(item.sales),
+        quantity: Math.round(Number(item.quantity || 0)),
+      })),
+      completedWeeklyHistory: (row.completedWeeklyHistory || row.weeklyHistory || []).map((item) => ({
+        period: item.period,
+        sales: round(item.sales),
+        quantity: Math.round(Number(item.quantity || 0)),
+      })),
+      currentWtdPeriod: row.currentWtdPeriod || "",
+      currentWtdSales: round(row.currentWtdSales),
+      currentWtdQty: Math.round(Number(row.currentWtdQty || 0)),
+      currentWeekQty: Math.round(Number(row.currentWeekQty || 0)),
+      previousWeekQty: row.previousWeekQty == null ? null : Math.round(Number(row.previousWeekQty || 0)),
+      lastCompleteWeekQty: Math.round(Number(row.lastCompleteWeekQty || row.currentWeekQty || 0)),
+      previousCompleteWeekQty: row.previousCompleteWeekQty == null ? null : Math.round(Number(row.previousCompleteWeekQty || 0)),
+      qtyWow: row.qtyWow == null ? null : round(row.qtyWow),
+      completedWeekWow: row.completedWeekWow == null ? null : round(row.completedWeekWow),
+      avg4WeekQty: round(row.avg4WeekQty),
+      avg4CompletedWeekQty: round(row.avg4CompletedWeekQty),
+      weighted4WeekQty: round(row.weighted4WeekQty),
+      weighted4CompletedWeekQty: round(row.weighted4CompletedWeekQty),
+      stockCoverWeeks: row.stockCoverWeeks == null ? null : round(row.stockCoverWeeks),
+      salesTrend: row.salesTrend || calculateTrend((row.weeklyHistory || []).map((item) => Number(item.quantity || 0))),
+      reorderSignals: row.reorderSignals || {},
+      reorderSignalScore: Math.round(Number(row.reorderSignalScore || 0)),
+      reorderPreviewV2: row.reorderPreviewV2 ? {
+        ...row.reorderPreviewV2,
+        sellThrough: round(row.reorderPreviewV2.sellThrough),
+        weighted4CompletedWeekQty: round(row.reorderPreviewV2.weighted4CompletedWeekQty),
+        lastCompleteWeekQty: Math.round(Number(row.reorderPreviewV2.lastCompleteWeekQty || 0)),
+        previousCompleteWeekQty: row.reorderPreviewV2.previousCompleteWeekQty == null ? null : Math.round(Number(row.reorderPreviewV2.previousCompleteWeekQty || 0)),
+        completedWeekWow: row.reorderPreviewV2.completedWeekWow == null ? null : round(row.reorderPreviewV2.completedWeekWow),
+        stock: Math.round(Number(row.reorderPreviewV2.stock || 0)),
+        stockCoverWeeks: row.reorderPreviewV2.stockCoverWeeks == null ? null : round(row.reorderPreviewV2.stockCoverWeeks),
+        stockRisk: row.reorderPreviewV2.stockRisk || row.stockRisk || "UNKNOWN",
+        previewScore: Math.round(Number(row.reorderPreviewV2.previewScore || 0)),
+      } : null,
+      stockRisk: row.stockRisk || row.reorderPreviewV2?.stockRisk || "UNKNOWN",
+      possibleStockout: Boolean(row.possibleStockout),
+      previewScore: Math.round(Number(row.previewScore || 0)),
+      isSpecialMarket: Boolean(row.isSpecialMarket),
+      action: decision.action,
+      priority: decision.priority,
+      reorderTiming: decision.reorderTiming,
+      note,
+    };
+  });
+
+  const grouped = new Map();
+  for (const row of normalizedStyles) {
+    const key = row.category || "ETC";
+    const item = grouped.get(key) || {
+      category: key,
+      categoryName: row.categoryName || key,
+      season: row.season,
+      sales: 0,
+      target: 0,
+      stock: 0,
+      quantity: 0,
+    };
+    item.sales += Number(row.sales || 0);
+    item.target += Number(row.priorSales || 0);
+    item.stock += Number(row.stock || 0);
+    item.quantity += Number(row.cumQty || row.quantity || 0);
+    grouped.set(key, item);
+  }
+
+  const categories = Array.from(grouped.values()).map((row) => {
+    const denominator = row.stock + row.quantity;
+    return {
+      ...row,
+      sales: round(row.sales),
+      target: round(row.target),
+      sellThrough: denominator ? round((row.quantity / denominator) * 100) : 0,
+      stockRate: denominator ? round((row.stock / denominator) * 100) : 0,
+      wow: row.target ? round(((row.sales - row.target) / row.target) * 100) : 0,
+    };
+  }).sort((a, b) => Number(b.sales || 0) - Number(a.sales || 0));
+
+  const syncedAt = new Date().toISOString();
+  const totalSales = normalizedStyles.reduce((sum, row) => sum + Number(row.sales || 0), 0);
+  const totalPriorSales = normalizedStyles.reduce((sum, row) => sum + Number(row.priorSales || 0), 0);
+  const totalWow = totalPriorSales ? round(((totalSales - totalPriorSales) / totalPriorSales) * 100) : 0;
+
+  return {
+    meta: {
+      brand: "Wacky Willy",
+      season: "WA ALL",
+      weekLabel: period,
+      period,
+      comparePeriod: "previous matched period",
+      amountUnit: "VAT- / 백만원",
+      source: "SALES_DASHBOARD",
+      sourceUpdatedAt,
+      syncedAt,
+      weeklyPeriods,
+      currentWtdPeriod,
+      reorderSignalConfig: REORDER_SIGNAL_CONFIG,
+      forecastV1: {
+        referenceVersion: FORECAST_CONFIG.referenceVersion,
+        denominator: "PMETA[7] net receipts",
+        highSellThroughThreshold: FORECAST_CONFIG.forecast.highSellThroughThreshold,
+        currentWtdExcludedFromTrend: true,
+      },
+      targetLabel: "전년 동기간 매출",
+    },
+    categories,
+    styles: normalizedStyles.sort((a, b) => Number(b.sales || 0) - Number(a.sales || 0)),
+    summary: {
+      headline: `${period} WA 전체 STYLE 매출은 ${round(totalSales, 1).toLocaleString("ko-KR")}백만원, 전년 동기간 대비 ${totalWow >= 0 ? "+" : ""}${totalWow.toFixed(1)}%입니다.`,
+      message: "영업기획 대시보드 Snowflake 동기화 데이터를 기준으로 자동 생성했습니다.",
+    },
+  };
+}
+
 function validateCandidate(payload) {
   const errors = [];
   const warnings = [];
   if (!payload || typeof payload !== "object") errors.push("payload object is required");
+  if (!payload?.meta?.sourceUpdatedAt) errors.push("meta.sourceUpdatedAt is required");
   const styles = Array.isArray(payload?.styles) ? payload.styles : [];
   if (!styles.length) errors.push("styles must not be empty");
   const seen = new Set();
@@ -672,8 +1271,21 @@ function validateCandidate(payload) {
     for (const field of ["sales", "priorSales", "quantity", "inQty", "cumQty", "stock", "sellThrough", "stockRate"]) {
       if (!Number.isFinite(Number(row[field]))) errors.push(`${row.sku} invalid numeric field: ${field}`);
     }
-    for (const field of ["name", "category", "season", "gender", "action", "priority", "reorderTiming", "note"]) {
+    for (const field of ["name", "category", "season", "gender", "productGroup", "genderGroup", "action", "priority", "reorderTiming", "note"]) {
       if (row[field] == null || row[field] === "") errors.push(`${row.sku} missing field: ${field}`);
+    }
+    const forecast = row.forecastV1;
+    if (!forecast) errors.push(`${row.sku} missing forecastV1`);
+    if (row.productGroup === "ACC" && (forecast?.eligible !== false || forecast?.reason !== "ACC_NOT_SUPPORTED_V1")) {
+      errors.push(`${row.sku} ACC forecast must be disabled`);
+    }
+    if (row.productGroup === "APP" && forecast?.eligible !== true) errors.push(`${row.sku} APP forecast must be eligible`);
+    if ((forecast?.analogStyles || []).some((analog) => analog.styleCode === row.sku)) errors.push(`${row.sku} analog target leakage`);
+    if ((forecast?.analogStyles || []).some((analog) => analog.category !== row.category)) errors.push(`${row.sku} analog category mismatch`);
+    if (forecast?.adjustedForecastQty != null && Number(forecast.adjustedForecastQty) < Number(row.cumQty)) errors.push(`${row.sku} adjusted forecast below cumulative sales`);
+    if (forecast?.forecastSellThrough != null) {
+      const expected = Number(forecast.adjustedForecastQty) / Number(row.inQty);
+      if (!Number.isFinite(expected) || Math.abs(Number(forecast.forecastSellThrough) - expected) > 0.0001) errors.push(`${row.sku} forecast denominator mismatch`);
     }
   }
   if (!seen.has(KNOWN_SKU)) warnings.push(`${KNOWN_SKU} not present in current WA dataset`);
@@ -682,6 +1294,7 @@ function validateCandidate(payload) {
 
 function atomicWriteJson(path, payload) {
   const tmp = `${path}.tmp-${process.pid}`;
+  mkdirSync(dirname(path), { recursive: true });
   writeFileSync(tmp, JSON.stringify(payload, null, 2) + "\n", "utf8");
   renameSync(tmp, path);
 }
@@ -694,31 +1307,46 @@ async function sync() {
     const globals = await inspectGlobals(page);
     const productImages = readProductImages();
     const waCount = globals.PMETA?.waKeyCount || 0;
+    const candidate = await buildLatestJsonFromConfirmedSchema(page, productImages);
+    const forecastReference = JSON.parse(readFileSync(FORECAST_REFERENCE_PATH, "utf8"));
+    candidate.styles = applyForecastV1(candidate.styles, forecastReference, FORECAST_CONFIG);
+    const payload = normalizeLatestPayload(candidate);
+    const validation = validateCandidate(payload);
 
     mkdirSync(SNAPSHOT_DIR, { recursive: true });
     writeFileSync(
       resolve(SNAPSHOT_DIR, "sync-preflight.json"),
-      JSON.stringify({ generatedAt: new Date().toISOString(), waCount, knownSku: globals.PMETA?.knownSkuSample, productImageCount: Object.keys(productImages).length }, null, 2) + "\n",
+      JSON.stringify({
+        generatedAt: new Date().toISOString(),
+        waCount,
+        period: candidate.period,
+        sourceUpdatedAt: candidate.sourceUpdatedAt,
+        styleCount: payload.styles.length,
+        knownSkuPresent: candidate.knownSkuPresent,
+        knownSku: globals.PMETA?.knownSkuSample,
+        productImageCount: Object.keys(productImages).length,
+        validation,
+      }, null, 2) + "\n",
       "utf8",
     );
 
-    const missing = [
-      "current period sales",
-      "prior period sales",
-      "current period quantity",
-      "stock/inventory source confirmed by dashboard code",
-      "period or Snowflake freshness timestamp",
-    ];
+    if (validation.errors.length) {
+      throw new Error(`Production sync validation failed. Existing latest.json was kept unchanged: ${validation.errors.join("; ")}`);
+    }
 
-    throw new Error(
-      `Production sync stopped at Phase 5. Confirm these fields before writing latest.json: ${missing.join(", ")}. Existing latest.json was kept unchanged.`,
-    );
-
-    // Future production path:
-    // const payload = buildLatestJsonFromConfirmedSchema(...);
-    // const validation = validateCandidate(payload);
-    // if (validation.errors.length) throw new Error(validation.errors.join("; "));
-    // for (const path of LATEST_PATHS) atomicWriteJson(path, payload);
+    for (const path of LATEST_PATHS) atomicWriteJson(path, payload);
+    console.log(JSON.stringify({
+      ok: true,
+      source: "SALES_DASHBOARD",
+      period: payload.meta.period,
+      sourceUpdatedAt: payload.meta.sourceUpdatedAt,
+      syncedAt: payload.meta.syncedAt,
+      waRuntimeCount: waCount,
+      styleCount: payload.styles.length,
+      knownSku: payload.styles.find((row) => row.sku === KNOWN_SKU) || null,
+      validation,
+      written: LATEST_PATHS,
+    }, null, 2));
   } finally {
     await context.close();
   }

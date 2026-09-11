@@ -1,0 +1,42 @@
+{
+  "referenceVersion": "25FW_APP_V1",
+  "sourceFiles": {
+    "weeklySales": "25FW-weekly-sales.xlsx",
+    "inbound": "25FW-app-inbound.xlsx"
+  },
+  "appCategories": ["CD", "CR", "DP", "HD", "HZ", "JK", "KT", "LT", "OP", "PT", "SH", "SO", "SR", "SS", "ST"],
+  "cleanAnalog": {
+    "specialMarketMarkers": ["대만", "TAIWAN"],
+    "nonAdultMarkers": ["키즈", "KIDS"],
+    "minimumDecemberCumulativeSales": 50,
+    "minimumReceiptToOrderRatio": 0.9,
+    "decemberProxyDate": "2025-12-28"
+  },
+  "similarity": {
+    "nameStructuralKeywordWeight": 1.5,
+    "maxKeywordContribution": 4.0,
+    "sameGenderBonus": 1.0,
+    "launchTimingBonusMax": 1.0,
+    "launchTimingWindowWeeks": 12,
+    "priceSimilarityBonusMax": 1.0,
+    "topN": 5
+  },
+  "forecast": {
+    "highSellThroughThreshold": 0.6,
+    "minimumAnalogCount": 1,
+    "confidenceAnalogFloor": 3,
+    "confidenceCategorySampleFloor": 10,
+    "maximumTrendFactor": 1.5,
+    "trendAlpha": {
+      "W1_W4": 0,
+      "W5_W6": 0.25,
+      "W7": 0.5,
+      "W8_PLUS": 0.75
+    }
+  },
+  "keywords": [
+    "크롭", "후드집업", "후디", "후드", "맨투맨", "가디건", "니트", "데님", "플리스", "카고",
+    "셔츠", "롱슬리브", "반팔", "팬츠", "스커트", "윈드브레이커", "바람막이", "베스트", "점퍼", "자켓",
+    "블루종", "집업", "풀오버", "스웻", "조거", "와이드", "부츠컷", "카라", "그래픽", "스트라이프"
+  ]
+}

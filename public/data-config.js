@@ -3,5 +3,6 @@
 window.__WACKY_DASHBOARD_CONFIG__ = {
   "dataSource": "local",
   "remoteDataUrl": "",
-  "remoteTimeoutMs": 8000
+  "remoteTimeoutMs": 8000,
+  "REORDER_READ_ONLY": false
 };

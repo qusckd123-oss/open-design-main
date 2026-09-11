@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SKU Current Risk · Diagnostic</title>
+  <style>
+    :root { --ink:#18252a; --muted:#64747a; --line:#dbe3e4; --paper:#f3f6f3; --mint:#b8d9c8; --orange:#e88a4a; --blue:#4b7184; }
+    * { box-sizing:border-box; } body { margin:0; color:var(--ink); background:radial-gradient(circle at 80% 0%,#dcebe3 0,transparent 34%),var(--paper); font-family:Pretendard,"Malgun Gothic",sans-serif; }
+    .wrap { max-width:1500px; margin:auto; padding:28px 24px 48px; } .eyebrow { letter-spacing:.16em; text-transform:uppercase; font-size:11px; font-weight:900; color:var(--blue); }
+    h1 { margin:8px 0 5px; font-size:clamp(30px,4vw,54px); line-height:1; letter-spacing:0; } .intro { max-width:760px; color:var(--muted); line-height:1.65; }
+    .notice { margin:22px 0; padding:13px 16px; border:1px solid #c6ddd1; border-left:5px solid var(--orange); border-radius:8px; background:#fffdf7; font-size:13px; font-weight:700; }
+    .grid { display:grid; gap:12px; } .metrics { grid-template-columns:repeat(4,minmax(0,1fr)); } .metric,.panel { border:1px solid var(--line); border-radius:8px; background:rgba(255,255,255,.9); box-shadow:0 12px 30px rgba(24,37,42,.06); }
+    .metric { padding:17px; min-height:105px; } .metric small { display:block; color:var(--muted); font-weight:800; } .metric strong { display:block; margin-top:10px; font-size:29px; letter-spacing:0; } .metric span { color:var(--muted); font-size:11px; }
+    .panel { margin-top:16px; overflow:hidden; } .toolbar { display:grid; grid-template-columns:1.5fr repeat(5,minmax(120px,1fr)); gap:9px; padding:14px; border-bottom:1px solid var(--line); } input,select { width:100%; border:1px solid var(--line); border-radius:7px; padding:10px 11px; color:var(--ink); background:#f8faf8; font:inherit; font-size:13px; font-weight:700; }
+    .meta { padding:12px 14px; color:var(--muted); font-size:12px; font-weight:700; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; } .table-wrap { overflow:auto; max-height:calc(100vh - 405px); min-height:360px; } table { border-collapse:collapse; width:100%; min-width:1240px; font-size:13px; } th { position:sticky; top:0; z-index:1; background:var(--ink); color:#fff; text-align:left; padding:11px 12px; white-space:nowrap; } th button { border:0; background:none; color:inherit; padding:0; font:inherit; cursor:pointer; } td { padding:11px 12px; border-bottom:1px solid #edf1ef; white-space:nowrap; } tbody tr { cursor:pointer; } tbody tr:hover { background:#eef7f1; } .num { text-align:right; font-variant-numeric:tabular-nums; } .tag { display:inline-block; padding:4px 7px; border-radius:999px; background:#edf3f1; color:#41635a; font-size:11px; font-weight:900; } .tag.orange { background:#fff0e5; color:#a14d1d; } .tag.blue { background:#eaf1f5; color:#3e6576; } .muted { color:var(--muted); } .empty { padding:50px; text-align:center; color:var(--muted); }
+    .drawer-bg { position:fixed; inset:0; background:rgba(24,37,42,.28); opacity:0; pointer-events:none; transition:.18s; } .drawer { position:fixed; right:0; top:0; height:100%; width:min(560px,100%); padding:26px; overflow:auto; background:#fff; transform:translateX(100%); transition:.2s; box-shadow:-20px 0 50px rgba(24,37,42,.16); } body.open .drawer-bg { opacity:1; pointer-events:auto; } body.open .drawer { transform:none; } .close { float:right; border:0; background:var(--paper); border-radius:50%; width:34px; height:34px; cursor:pointer; font-size:18px; } .drawer h2 { margin:35px 0 4px; letter-spacing:0; } .facts { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:22px; } .fact { padding:12px; border:1px solid var(--line); border-radius:8px; background:#f8faf8; } .fact small { display:block; color:var(--muted); font-size:11px; font-weight:800; } .fact b { display:block; margin-top:5px; font-size:17px; } .quality { margin-top:18px; padding:13px; border-radius:8px; background:#fff5e9; color:#8c501e; font-size:12px; font-weight:800; }
+    @media (max-width:850px) { .metrics { grid-template-columns:repeat(2,1fr); } .toolbar { grid-template-columns:1fr 1fr; } .toolbar input { grid-column:span 2; } } @media (max-width:500px) { .wrap { padding:20px 14px 34px; } .metrics { grid-template-columns:1fr 1fr; gap:8px; } .metric { padding:12px; } .metric strong { font-size:23px; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="eyebrow">Wacky Willy / SKU operations</div>
+      <h1>Current Risk<br><em>diagnostic</em></h1>
+      <p class="intro">현재 SKU 운영 맥락을 한 행에서 읽는 진단 화면입니다. Legacy 완료주차 속도/커버와 별도 selling-age 속도/커버를 나란히 표시하되, 집계 신호나 우선순위에는 사용하지 않습니다.</p>
+    </header>
+    <div class="notice">DIAGNOSTIC ONLY · 관찰값과 설명용 구간만 표시합니다. 종합 위험도, 우선순위, SKU Signal, Forecast, 리오더 판단은 계산하지 않습니다.</div>
+    <section id="metrics" class="grid metrics"></section>
+    <section class="panel">
+      <div class="toolbar">
+        <input id="search" type="search" placeholder="SKU · 스타일 · 컬러 검색" />
+        <select id="group"><option value="all">전체 그룹</option><option>APP</option><option>ACC</option></select>
+        <select id="category"><option value="all">전체 복종</option></select>
+        <select id="trend"><option value="all">전체 판매 추이</option></select>
+        <select id="cover"><option value="all">전체 Stock Cover 구간</option></select>
+        <select id="inbound"><option value="all">전체 입고 완료 구간</option></select>
+      </div>
+      <div class="meta"><span id="status">데이터를 불러오는 중</span><span id="source"></span></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>SKU / 스타일</th>
+              <th>그룹</th>
+              <th>복종</th>
+              <th><button data-sort="velocity">Legacy 속도</button></th>
+              <th><button data-sort="sellingAgeVelocity">Selling-age 속도</button></th>
+              <th><button data-sort="stock">ERP 재고</button></th>
+              <th><button data-sort="inbound">입고 완료</button></th>
+              <th><button data-sort="remaining">잔여 발주</button></th>
+              <th>판매 추이</th>
+              <th><button data-sort="coverWeeks">Stock Cover</button></th>
+              <th>데이터 상태</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+  <div class="drawer-bg" id="drawerBg"></div>
+  <aside class="drawer" id="drawer">
+    <button class="close" id="close" aria-label="닫기">×</button>
+    <div class="eyebrow">row detail / independent lenses</div>
+    <h2 id="drawerTitle">-</h2>
+    <p id="drawerSub" class="muted">-</p>
+    <div id="drawerFacts" class="facts"></div>
+    <div id="drawerQuality"></div>
+  </aside>
+  <script src="js/sku-current-risk-diagnostic.js"></script>
+</body>
+</html>

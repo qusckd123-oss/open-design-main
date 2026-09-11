@@ -7,6 +7,9 @@ copyFileSync(".openai/hosting.json", "dist/.openai/hosting.json");
 
 const jsonFiles = [
   "data/latest.json",
+  "data/sku-latest.json",
+  "data/sku-current-risk-diagnostic.json",
+  "data/reorder-overrides.json",
   ...readdirSync("dist/data/archive")
     .filter((file) => file.endsWith(".json"))
     .map((file) => `data/archive/${file}`),
@@ -32,6 +35,8 @@ const jsFiles = ["data-config.js", ...collectJsFiles("dist/js").map((path) => `j
 const embeddedFiles = [
   ["index.html", "text/html; charset=utf-8", "utf8"],
   ["dashboard.html", "text/html; charset=utf-8", "utf8"],
+  ["reorder-monitor.html", "text/html; charset=utf-8", "utf8"],
+  ["sku-current-risk-diagnostic.html", "text/html; charset=utf-8", "utf8"],
   ...jsonFiles.map((path) => [path, "application/json; charset=utf-8", "utf8"]),
   ...jsFiles.map((path) => [path, "application/javascript; charset=utf-8", "utf8"]),
   ["assets/bcave_logo.png", "image/png", "base64"],

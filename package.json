@@ -11,10 +11,22 @@
     "sales:login": "node scripts/sales-dashboard.mjs login",
     "sales:inspect": "node scripts/sales-dashboard.mjs inspect",
     "sales:sync": "node scripts/sales-dashboard.mjs sync",
-    "sales:sync:build": "npm run sales:sync && npm run build"
+    "forecast:reference": "python scripts/build_forecast_reference.py",
+    "forecast:test": "node --test tests/forecast-v1.test.ts && python scripts/build_forecast_reference.py --validate-only",
+    "forecast:test:ui": "node tests/reorder-monitor-forecast.e2e.ts",
+    "sku:pace:calibrate": "python scripts/sku_analog_pace_calibration.py --write",
+    "sku:sync": "node scripts/sku-sync.ts",
+    "sku:test": "node --test tests/sku-sync.test.ts",
+    "sku:test:ui": "node tests/reorder-monitor-sku.e2e.ts",
+    "sku:sync:build": "npm run sku:sync && npm run build",
+    "sales:sync:build": "npm run sales:sync && npm run build",
+    "reorder:build:readonly": "node -e \"const cp=require('child_process');process.env.REORDER_READ_ONLY='true';cp.execSync(process.platform==='win32'?'npm.cmd run build':'npm run build',{stdio:'inherit',env:process.env});\"",
+    "reorder:start": "npm run sales:sync && npm run build && vinext start",
+    "reorder:open": "node -e \"const fs=require('fs');const cp=require('child_process');if(!fs.existsSync('dist/server')) cp.execSync(process.platform==='win32'?'npm.cmd run build':'npm run build',{stdio:'inherit'});\" && vinext start"
   },
   "dependencies": {
     "@vitejs/plugin-rsc": "^0.5.26",
+    "exceljs": "^4.4.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-server-dom-webpack": "^19.2.6",
