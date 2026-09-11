@@ -118,7 +118,7 @@ Because the standing UI freeze requires an explicit review gate, this audit does
 
 - Add an `EditorialVisualContextStrip` to the existing `CurrentSignalHero`.
 - Read only `bundle.evidenceArticles`; do not query or rank anything new.
-- Include at most three newest article hero images with publisher, date, and article link.
+- Include four to six newest unique article hero images when available (maximum six), with publisher, date, and article link.
 - Keep `BundleHeroImage` restricted to `evidenceImageUrl` (`DIRECT_BLOCK`/`ADJACENT_BLOCK`) exactly as today.
 - Add the permanent disclaimer `기사 대표 이미지 · 아이템/속성 직접 증거 아님` above the strip.
 - Render an explicit `직접 연결된 이미지 없음` state in the direct-visual lane rather than silently substituting an article hero.
@@ -184,3 +184,16 @@ Meta describes unauthorized automated collection as scraping and actively rate-l
 ## 9. Decision
 
 The current data is already sufficient to make the dashboard **more visual without weakening trust**, but only by showing article heroes as a clearly separated editorial-context strip. It is not sufficient to provide a truthful bundle hero image or visual-derived mood. The next implementation should therefore be the small, labelled context strip after review; block-level editorial images and Instagram diffusion remain separate post-P0 architecture tracks.
+
+## 10. Implementation result (2026-09-11)
+
+Approved and implemented as a UI-only vertical slice:
+
+- `EditorialVisualContextStrip` renders the current bundle's retained evidence articles only.
+- Selection preserves the existing evidence order, requires an article link, ignores missing images, removes duplicate image assets after URL query/hash normalization, and caps output at six.
+- The current real primary renders five unique linked article images.
+- Article heroes remain separate from `BundleHeroImage`; no direct-image fallback was introduced.
+- Desktop layout places the signal and five-image contact sheet together in the first viewport. Mobile places the context strip immediately after the item headline and before evidence counts.
+- Permanent copy states `기사 대표 이미지 · 아이템/속성/무드를 직접 증명하지 않음` and reiterates that the article sentence, not the image, is the direct combination evidence.
+- `typecheck`, smoke test, and production build passed; desktop/mobile rendered checks found no browser errors or page-level horizontal overflow, and all five current images loaded successfully.
+- No collector, DB/schema, ranking, taxonomy, direct-relation, Market, or scheduler change.

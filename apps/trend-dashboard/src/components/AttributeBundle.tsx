@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { ProductImage } from "@/components/ProductImage";
 import { attributeBarWidthPercent } from "@/lib/attribute-visual";
+import { selectEditorialVisualContext } from "@/lib/editorial-visual-context";
 import { attributeKoreanLabel, attributeTypeKoreanLabel } from "@/lib/korean-labels";
+import { sourceLabel } from "@/lib/market-ui";
 import { bundleEvidenceStrength, type AttributeBundle, type BundleAttribute, type BundleEvidenceArticle } from "@/services/attribute-bundle-service";
 
 /**
@@ -38,6 +40,83 @@ function BundleHeroImage({ heroArticle, alt, size }: { heroArticle: BundleEviden
         {caption}
       </span>
     </div>
+  );
+}
+
+/**
+ * Article heroes are visual context for the cited articles only. They never
+ * enter BundleHeroImage, never prove an attribute/mood, and never affect
+ * ranking. Equal-size contact-sheet tiles avoid implying that one article
+ * image is the canonical picture of the bundle.
+ */
+export function EditorialVisualContextStrip({ articles }: { articles: BundleEvidenceArticle[] }) {
+  const visuals = selectEditorialVisualContext(articles);
+
+  if (visuals.length === 0) {
+    return (
+      <section aria-labelledby="editorial-visual-context-title" className="border-l-2 border-line pl-4">
+        <p id="editorial-visual-context-title" className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">Editorial Visual Context</p>
+        <p className="mt-2 text-sm text-muted">현재 연결된 기사 대표 이미지가 없습니다.</p>
+      </section>
+    );
+  }
+
+  return (
+    <section aria-labelledby="editorial-visual-context-title" data-testid="editorial-visual-context" className="min-w-0">
+      <div className="flex flex-wrap items-end justify-between gap-2 border-b border-line pb-3">
+        <div>
+          <p id="editorial-visual-context-title" className="text-xs font-semibold uppercase tracking-[0.2em] text-signal">Editorial Visual Context</p>
+          <h3 className="mt-1 text-lg font-semibold text-ink">기사 비주얼 맥락</h3>
+        </div>
+        <p className="max-w-md text-right text-[11px] leading-relaxed text-muted">
+          기사 대표 이미지 · 아이템/속성/무드를 직접 증명하지 않음
+        </p>
+      </div>
+
+      <div className="mt-4 grid snap-x snap-mandatory grid-flow-col auto-cols-[minmax(11rem,72vw)] gap-3 overflow-x-auto pb-2 sm:grid-flow-row sm:auto-cols-auto sm:grid-cols-3 sm:overflow-visible xl:grid-cols-5">
+        {visuals.map((article, index) => {
+          const publishedAt = article.publishedAt?.toISOString().slice(0, 10) ?? "날짜 미상";
+          const publisher = sourceLabel(article.source);
+          return (
+            <a
+              key={`${article.imageUrl}:${article.url}`}
+              href={article.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group min-w-0 snap-start focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-signal"
+              aria-label={`${publisher} 기사 열기: ${article.title || "제목 없음"}`}
+            >
+              <figure>
+                <div className="relative aspect-[4/5] overflow-hidden bg-slate-200">
+                  {/* Article-level visual context only; never a bundle hero or direct-relation image. */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={article.imageUrl ?? undefined}
+                    alt={`기사 비주얼 맥락: ${article.title || publisher}`}
+                    className="h-full w-full object-cover grayscale-[12%] transition duration-300 group-hover:scale-[1.025] group-hover:grayscale-0"
+                    loading={index < 2 ? "eager" : "lazy"}
+                    fetchPriority={index === 0 ? "high" : "auto"}
+                  />
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent px-3 pb-2 pt-8 text-white">
+                    <div className="flex items-center justify-between gap-2 text-[10px] font-semibold uppercase tracking-[0.08em]">
+                      <span className="truncate">{publisher}</span>
+                      <span className="shrink-0 tabular-nums">{publishedAt}</span>
+                    </div>
+                  </div>
+                </div>
+                <figcaption className="mt-2 h-10 overflow-hidden text-xs leading-5 text-ink">
+                  {article.title || "제목 없음"}
+                </figcaption>
+              </figure>
+            </a>
+          );
+        })}
+      </div>
+
+      <p className="mt-2 text-[11px] leading-relaxed text-muted">
+        현재 신호 bundle에 실제 연결된 기사만 표시합니다. 이미지는 해당 기사의 대표 이미지이며 상품 조합의 직접 근거는 기사 문장입니다.
+      </p>
+    </section>
   );
 }
 
@@ -103,29 +182,38 @@ export function CurrentSignalHero({ bundle }: { bundle: AttributeBundle }) {
   const heroArticle = findHeroArticle(bundle);
 
   return (
-    <div>
-      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-signal">Current Signal</p>
+    <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(16rem,0.58fr)_minmax(0,1.42fr)] lg:gap-x-10 lg:gap-y-5">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-signal">Current Signal</p>
 
-      {heroArticle?.evidenceImageUrl ? (
-        <div className="mt-5 flex justify-center sm:justify-start">
-          <BundleHeroImage heroArticle={heroArticle} alt={bundle.displayName} size="lg" />
-        </div>
-      ) : null}
+        {heroArticle?.evidenceImageUrl ? (
+          <div className="mt-5 flex justify-center sm:justify-start">
+            <BundleHeroImage heroArticle={heroArticle} alt={bundle.displayName} size="lg" />
+          </div>
+        ) : null}
 
-      <h2 className="mt-4 text-4xl font-bold leading-[1.05] text-ink md:text-6xl">{bundle.displayName}</h2>
-      <p className="mt-2 text-xs font-medium uppercase tracking-[0.14em] text-muted">{englishSubtitle(bundle)}</p>
+        <h2 className="mt-4 text-4xl font-bold leading-[1.05] text-ink md:text-6xl">{bundle.displayName}</h2>
+        <p className="mt-2 text-xs font-medium uppercase tracking-[0.14em] text-muted">{englishSubtitle(bundle)}</p>
 
-      <div className="mt-5">
-        <EvidenceDots sourceSpread={bundle.bundleSourceSpread} articlePresence={bundle.bundleArticlePresence} label={strength} />
       </div>
-      <p className="mt-2 text-sm text-muted">
-        {bundle.bundleArticlePresence}개 기사 · {bundle.bundleSourceSpread}개 매체
-        {bundle.latestObservedAt ? ` · 최근 ${bundle.latestObservedAt.toISOString().slice(0, 10)}` : ""}
-      </p>
 
-      <Link className="mt-5 inline-block text-sm font-semibold text-signal" href={`/items/${encodeURIComponent(bundle.specificItem)}`}>
-        근거 보기 →
-      </Link>
+      <div className="min-w-0 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+        <EditorialVisualContextStrip articles={bundle.evidenceArticles} />
+      </div>
+
+      <div className="lg:col-start-1">
+        <div>
+          <EvidenceDots sourceSpread={bundle.bundleSourceSpread} articlePresence={bundle.bundleArticlePresence} label={strength} />
+        </div>
+        <p className="mt-2 text-sm text-muted">
+          {bundle.bundleArticlePresence}개 기사 · {bundle.bundleSourceSpread}개 매체
+          {bundle.latestObservedAt ? ` · 최근 ${bundle.latestObservedAt.toISOString().slice(0, 10)}` : ""}
+        </p>
+
+        <Link className="mt-5 inline-block text-sm font-semibold text-signal" href={`/items/${encodeURIComponent(bundle.specificItem)}`}>
+          근거 보기 →
+        </Link>
+      </div>
     </div>
   );
 }

@@ -80,12 +80,12 @@ export default async function DashboardPage({ searchParams }: PageProps) {
       {bundles.length > 0 ? (
         <section className="mt-10 border-t border-line pt-10">
           {repeatedBundle ? (
-            <div className="grid gap-10 lg:grid-cols-[1.6fr_1fr] lg:items-start">
+            <div>
               <CurrentSignalHero bundle={repeatedBundle} />
               {secondaryBundles.length > 0 ? (
-                <div>
+                <div className="mt-10 border-t border-line pt-7">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">New Observations</p>
-                  <div className="mt-4">
+                  <div className="mt-4 grid gap-x-8 md:grid-cols-2 xl:grid-cols-4">
                     {secondaryBundles.map((bundle) => <SecondaryBundleCard key={bundle.key} bundle={bundle} />)}
                   </div>
                 </div>

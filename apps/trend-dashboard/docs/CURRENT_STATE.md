@@ -2,7 +2,7 @@
 
 **This is a mutable snapshot, not policy.** For stable rules, see `AGENT_OPERATING_RULES.md`. For what to do next, see `NEXT_PRIORITIES.md`. A session reading this file should still verify live state itself before acting - see that file's "Future Short-Prompt Contract."
 
-Last verified: 2026-09-10, read-only, directly against the DB and running Task Scheduler state (not assumed from a prior report).
+Last verified: 2026-09-11, read-only, directly against the DB (a fresh Claude Code session independently re-ran typecheck/test/build and the read-only quality audit against the then-uncommitted `EditorialVisualContextStrip` work before committing it - not assumed from a prior report).
 
 ## Repo
 
@@ -112,6 +112,22 @@ Completed the required rendered-UI, existing-image, evidence-boundary, and Insta
 - All 587 fashion-relevant articles have an article-level image URL, and all 89 bundles have article-hero visual context in their retained evidence list.
 - No real bundle has a document-position-confident direct/adjacent evidence image. Article heroes are therefore safe only as clearly labelled article visual context, never as a bundle hero or direct attribute/mood proof.
 - No UI, collector, schema, taxonomy, ranking, scheduler, Market data, or DB state changed in this audit pass.
+
+## P2 Editorial Visual Context Strip (2026-09-11)
+
+The user approved the baseline audit and explicitly reopened the UI for the smallest visual-first implementation. The home `Current Signal` now renders `EditorialVisualContextStrip` from the current bundle's existing `evidenceArticles` only.
+
+- Uses four to six images when available, capped at six; the current `화이트 SKIRT` bundle exposes five unique images.
+- Removes duplicate image assets using host+path identity while preserving the existing newest-first evidence order. Image selection is UI-only and does not score or re-rank evidence.
+- Every image remains attached to its publisher/date/title/original article link and is labelled `기사 비주얼 맥락` plus `기사 대표 이미지 · 아이템/속성/무드를 직접 증명하지 않음`.
+- `BundleHeroImage` still accepts only `evidenceImageUrl` from `DIRECT_BLOCK`/`ADJACENT_BLOCK`; article heroes never enter that direct-evidence path.
+- 1280×720 rendered verification: five images, five unique image identities, five evidence-article links, all five visible in the first viewport, no page-level horizontal overflow.
+- 390×844 rendered verification: five unique images/links, strip begins at y≈687 and the first image at y≈790, so imagery appears in the first viewport; document width stays within the viewport with only the intentional inner horizontal strip scrolling.
+- Validation passed: `corepack pnpm typecheck`, `corepack pnpm test`, and `corepack pnpm build`; all five current images loaded at natural dimensions, browser console errors were empty, and the 3001 dev server was restored afterward.
+- Read-only quality audit remained 617 posts / 2781 mentions, Canonical Duplicates 0, Mention Duplicates 0, and Market(real) 667.
+- No collector, DB/schema, ranking, taxonomy, direct-relation, Market, scheduler, or live data change.
+
+**Independent commit-time re-verification (2026-09-11, separate Claude Code session):** this work was found already implemented but uncommitted in the working tree. Before committing, this session re-read the diff against `VISUAL_FIRST_TREND_BOARD_AUDIT.md`'s Section 6 contract line by line, confirmed `BundleHeroImage`/`findHeroArticle` still only accept `evidenceImageUrl`, confirmed `evidenceArticles` is still capped at 5 by the frozen bundle-service `.slice(0, 5)` (so the six-image UI cap never actually exceeds it), and confirmed the diff touches only `src/app/page.tsx`, `src/components/AttributeBundle.tsx`, the new `src/lib/editorial-visual-context.ts`, and `scripts/smoke-test.ts` - no collector/service/schema file. Re-ran `typecheck` (clean), `test` (smoke test passed), and `build` (succeeded, all 16 routes). Re-rendered the live dev server at both required viewports with Playwright (the Chrome extension was unavailable this session): at 1280×720 the current primary `화이트 SKIRT` showed all 5 unique images fully inside the first viewport (strip box y 355-713) with 0 console/page errors and no horizontal overflow (docWidth 1280 == viewportWidth 1280); at 390×844 the strip began at y≈687 and the first image at y≈790 (matching the original implementation note), 5 unique images/links, 0 console/page errors, no horizontal overflow. Re-ran `scripts/audit-editorial-quality.ts` read-only: TOTAL POSTS (real) 617, TOTAL MENTIONS (real) 2781, CANONICAL DUPLICATES 0, MENTION DUPLICATES 0, Attribute bundles 89, MarketRankingSnapshot (real) 667 - all unchanged from the documented baseline, confirming no live data moved during this review. Committed as-is with no code changes beyond this doc/state alignment pass.
 
 ## Known Current Limitations
 

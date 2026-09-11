@@ -8,6 +8,7 @@ import { extractDirectAttributeRelations } from "../src/collectors/editorial/att
 import { bundleEvidenceStrength, countIndependentEvidenceClusters, getAttributeBundles, getPrimaryBundleForItem, getSpecificItemDirectAttributes, selectBundleHeroImage, selectPrimaryPlanningBundle } from "../src/services/attribute-bundle-service";
 import { contentBlocksFromStoredText, resolveEvidenceImage, type ContentBlock } from "../src/collectors/editorial/image-relation";
 import { attributeBarWidthPercent } from "../src/lib/attribute-visual";
+import { selectEditorialVisualContext } from "../src/lib/editorial-visual-context";
 import { composeBundleName } from "../src/lib/korean-labels";
 import { classifyFashionRelevance, EditorialRateLimitedError, getHypebeastFashionEntries, parseArticlePage, parseEsquireKrArticlePage, parseEsquireKrBody, parseEsquireKrSitemap, parseEyesmagRichBody, parseGenericSitemap, parseHarpersBazaarKrArticlePage, parseHarpersBazaarKrBody, parseHarpersBazaarKrSitemap, parseHypebeastListing, parseHypebeastRichBody, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
 import { extractProductNameColorRelations, findDescriptionCandidates } from "../src/collectors/product-reference/attributes";
@@ -64,6 +65,7 @@ async function main() {
   verifyItemLanguageAliases();
   verifyEvidenceImageResolution();
   verifyAttributeBarWidth();
+  verifyEditorialVisualContextSelection();
   verifyIndependentEvidenceClusterCount();
   await verifyAttributeBundles();
   verifyPlanningDashboardHelpers();
@@ -101,6 +103,30 @@ async function main() {
   console.log(
     `Smoke test passed: marketAnalysisRows=${dashboard.summary.marketProducts}, mode=${dashboard.summary.dataMode}, sources=${dashboard.summary.sources}, items=${items.length}, naver=${featureFlags.enableNaverTrends ? "enabled" : "disabled"}.`
   );
+}
+
+function verifyEditorialVisualContextSelection() {
+  const fixtures = [
+    { imageUrl: "https://cdn.example.com/image.jpg?width=800", url: "https://example.com/article-1", id: "first" },
+    { imageUrl: "https://cdn.example.com/image.jpg?width=1200", url: "https://example.com/article-2", id: "duplicate-transform" },
+    { imageUrl: "https://cdn.example.com/second.jpg", url: "https://example.com/article-3", id: "second" },
+    { imageUrl: null, url: "https://example.com/article-4", id: "no-image" },
+    { imageUrl: "https://cdn.example.com/third.jpg", url: "", id: "no-article-link" },
+    { imageUrl: "https://cdn.example.com/fourth.jpg", url: "https://example.com/article-5", id: "fourth" },
+    { imageUrl: "https://cdn.example.com/fifth.jpg", url: "https://example.com/article-6", id: "fifth" },
+    { imageUrl: "https://cdn.example.com/sixth.jpg", url: "https://example.com/article-7", id: "sixth" },
+    { imageUrl: "https://cdn.example.com/seventh.jpg", url: "https://example.com/article-8", id: "seventh" },
+    { imageUrl: "https://cdn.example.com/eighth.jpg", url: "https://example.com/article-9", id: "eighth" },
+  ];
+
+  assert.deepEqual(
+    selectEditorialVisualContext(fixtures).map((article) => article.id),
+    ["first", "second", "fourth", "fifth", "sixth", "seventh"],
+    "Editorial visual context must preserve evidence order, require article links, and deduplicate transformed image URLs."
+  );
+  assert.equal(selectEditorialVisualContext(fixtures, 1).length, 1, "Editorial visual context must respect its display limit.");
+  assert.equal(selectEditorialVisualContext(fixtures, 0).length, 0, "Editorial visual context must allow an explicitly empty display.");
+  assert.equal(selectEditorialVisualContext(fixtures, 99).length, 6, "Editorial visual context must cap selection at six without duplicating images.");
 }
 
 async function verifyLegacyRanking() {
