@@ -44,7 +44,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   const gender = parseGenderParam(params.gender);
   const scope = parseScopeParam(params.scope);
   const editorialType = valueOf(params.editorialType) ?? "SUB_ITEM";
-  const [data, bundles] = await Promise.all([getPlanningDashboardData(gender, scope), getAttributeBundles("real")]);
+  const [data, bundles] = await Promise.all([getPlanningDashboardData(gender, scope), getAttributeBundles("real", gender)]);
   const editorialRows = data.editorialByType[editorialType] ?? data.editorialByType.SUB_ITEM ?? [];
   const isOverseas = scope === "overseas";
   // Same threshold selectPrimaryPlanningBundle uses: only a genuinely,

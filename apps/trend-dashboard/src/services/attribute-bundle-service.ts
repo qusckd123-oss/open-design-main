@@ -3,6 +3,7 @@ import { contentBlocksFromStoredText, resolveEvidenceImage, type ImageRelationKi
 import { prisma } from "@/db/client";
 import { composeBundleName } from "@/lib/korean-labels";
 import { editorialSourceConfigs, type EditorialSource } from "@/config/editorial-sources";
+import { matchesGenderFilterValue, type PlanningGenderFilter } from "@/lib/planning-filters";
 
 /**
  * ITEM + ATTRIBUTE BUNDLES
@@ -202,16 +203,26 @@ export function bundleEvidenceStrength(input: {
   return "단일 관측";
 }
 
-async function loadPostRelations(dataMode: string): Promise<PostRelations[]> {
+async function loadPostRelations(dataMode: string, gender: PlanningGenderFilter = "all"): Promise<PostRelations[]> {
   // Same relevance gate as getEditorialTrendRows, so bundle article counts
   // reconcile with the trend numbers shown next to them.
   const posts = await prisma.editorialPost.findMany({
     where: { dataMode, fashionRelevance: "FASHION_RELEVANT" },
-    select: { id: true, source: true, title: true, url: true, publishedAt: true, imageUrl: true, excerpt: true, text: true }
+    select: { id: true, source: true, title: true, url: true, publishedAt: true, imageUrl: true, excerpt: true, text: true, audienceGender: true }
   });
 
+  // Gender filter uses the SAME stored EditorialPost.audienceGender field and
+  // the SAME matchesGenderFilterValue semantics already used for the Item
+  // Signals section (getEditorialTrendRows / planning-dashboard-service) -
+  // "uni" means explicitly UNISEX evidence only, never "everyone"/"unknown".
+  // Before this fix, getAttributeBundles ignored gender entirely, so the
+  // Current Signal hero (attribute bundles) never responded to the
+  // WOMEN/UNI toggle while every other section on the page did - a real,
+  // reproduced bug (2026-09-11), not a design choice.
+  const genderFiltered = gender === "all" ? posts : posts.filter((post) => matchesGenderFilterValue(post.audienceGender, gender));
+
   const rows: PostRelations[] = [];
-  for (const post of posts) {
+  for (const post of genderFiltered) {
     const relations = extractDirectAttributeRelations(post);
     if (relations.length === 0) continue;
     const byItem = new Map<string, Array<{ type: string; value: string; evidenceText: string; sourceField: AttributeSourceField }>>();
@@ -241,8 +252,8 @@ async function loadPostRelations(dataMode: string): Promise<PostRelations[]> {
  * one multi-attribute bundle: TOTE_BAG+BIG (article 1) and TOTE_BAG+RED
  * (article 2) must not become "big red tote bag".
  */
-export async function getAttributeBundles(dataMode = "real"): Promise<AttributeBundle[]> {
-  const postRelations = await loadPostRelations(dataMode);
+export async function getAttributeBundles(dataMode = "real", gender: PlanningGenderFilter = "all"): Promise<AttributeBundle[]> {
+  const postRelations = await loadPostRelations(dataMode, gender);
 
   // Breadth (distinct specific items with a direct relation) per post,
   // computed once up front - the cheap, deterministic "is this a roundup"
@@ -355,8 +366,8 @@ export async function getAttributeBundles(dataMode = "real"): Promise<AttributeB
  * is the "[직접 속성 근거]" surface on the item detail page - strictly
  * separate from article co-occurrence.
  */
-export async function getSpecificItemDirectAttributes(specificItem: string, dataMode = "real"): Promise<BundleAttribute[]> {
-  const postRelations = await loadPostRelations(dataMode);
+export async function getSpecificItemDirectAttributes(specificItem: string, dataMode = "real", gender: PlanningGenderFilter = "all"): Promise<BundleAttribute[]> {
+  const postRelations = await loadPostRelations(dataMode, gender);
   const stats = new Map<string, { type: string; value: string; articles: Set<string>; sources: Set<string> }>();
   for (const post of postRelations) {
     for (const attribute of dedupeAttributes(post.byItem.get(specificItem) ?? [])) {
@@ -380,8 +391,8 @@ export async function getSpecificItemDirectAttributes(specificItem: string, data
  * highlight one bundle at the top of the item detail page - TOTE_BAG has
  * one (재활용 원단 토트백), TRACK_JACKET has none (direct attributes = 0).
  */
-export async function getPrimaryBundleForItem(specificItem: string, dataMode = "real"): Promise<AttributeBundle | null> {
-  const bundles = await getAttributeBundles(dataMode);
+export async function getPrimaryBundleForItem(specificItem: string, dataMode = "real", gender: PlanningGenderFilter = "all"): Promise<AttributeBundle | null> {
+  const bundles = await getAttributeBundles(dataMode, gender);
   return bundles.find((bundle) => bundle.specificItem === specificItem) ?? null;
 }
 
