@@ -1,5 +1,16 @@
 # Next Priorities
 
+Current P0: decide the production contract for confirmed domestic order quantity. Do not replace current `orderQty` until the ORDER-denominator Analog Pace impact is explicitly approved. The confirmed change would affect 304 APP SKU and 123 current PACE_READY rows; five overseas-only Special Market SKUs would have a zero domestic order denominator.
+
+Current P0 data dependency: obtain PO-keyed receipt/inbound data and market/channel-keyed ERP stock/sales data. The order workbook proves order exclusion only; it cannot numerically split current `inboundQty`, `erpStockQty`, or `cumulativeSalesQty`. Keep these areas `UNKNOWN` and do not estimate exclusions.
+
+Safe next implementation choices, requiring owner direction:
+
+1. Preserve raw `orderQty` and add a separately named domestic order fact with explicit consumer/applicability rules, or
+2. Replace `orderQty` and separately approve/rework the Analog Pace denominator contract.
+
+The overseas PO audit is complete in `docs/SKU_OVERSEAS_PO_APPLICABILITY.md`. Production SKU facts and protected STYLE behavior remain unchanged.
+
 P0 status: RESOLVED. Age-aware velocity/cover separate fields are approved and implemented in `sku-sync.ts`.
 
 SKU Signal v1 DESIGN status: COMPLETE. Read-only lifecycle/evidence state-machine simulation status: COMPLETE. Git checkpoint status: COMPLETE at `9f4948f`. Special Market/direct-ship diagnostic status: COMPLETE.

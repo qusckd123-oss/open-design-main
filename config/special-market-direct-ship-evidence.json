@@ -7,6 +7,15 @@
       "directShipStatus": "CONFIRMED_DIRECT_SHIP",
       "market": "TAIWAN",
       "evidenceType": "USER_CONFIRMED",
+      "overseasPoStatus": "OVERSEAS_PO_CONFIRMED",
+      "overseasPoEvidence": {
+        "document": "발주조회(250613_커버낫소싱) 26FW 260911.xlsx",
+        "sheet": "발주조회(250613_커버낫소싱) 26FW 260911",
+        "sourceRows": [1088, 1320],
+        "poNumbers": ["대만", "글로벌"],
+        "overseasOrderQty": 150,
+        "domesticOrderQty": 0
+      },
       "evidenceAsOf": "2026-09-11",
       "note": "Taiwan branch exclusive; all units ship directly to Taiwan, so domestic inbound, ERP on-hand, and stock cover are not domestic supply-risk evidence."
     },
@@ -15,6 +24,15 @@
       "directShipStatus": "CONFIRMED_DIRECT_SHIP",
       "market": "TAIWAN",
       "evidenceType": "COMPANY_PO_PLUS_LOGISTICS_RECORD",
+      "overseasPoStatus": "OVERSEAS_PO_CONFIRMED",
+      "overseasPoEvidence": {
+        "document": "발주조회(250613_커버낫소싱) 26FW 260911.xlsx",
+        "sheet": "발주조회(250613_커버낫소싱) 26FW 260911",
+        "sourceRows": [1089, 1321],
+        "poNumbers": ["대만", "글로벌"],
+        "overseasOrderQty": 150,
+        "domesticOrderQty": 0
+      },
       "evidenceAsOf": "2026-09-11",
       "sources": [
         {
@@ -35,6 +53,15 @@
       "directShipStatus": "CONFIRMED_DIRECT_SHIP",
       "market": "TAIWAN",
       "evidenceType": "COMPANY_PO_PLUS_LOGISTICS_RECORD",
+      "overseasPoStatus": "OVERSEAS_PO_CONFIRMED",
+      "overseasPoEvidence": {
+        "document": "발주조회(250613_커버낫소싱) 26FW 260911.xlsx",
+        "sheet": "발주조회(250613_커버낫소싱) 26FW 260911",
+        "sourceRows": [1091, 1322],
+        "poNumbers": ["대만", "글로벌"],
+        "overseasOrderQty": 150,
+        "domesticOrderQty": 0
+      },
       "evidenceAsOf": "2026-09-11",
       "sources": [
         {
@@ -55,6 +82,15 @@
       "directShipStatus": "CONFIRMED_DIRECT_SHIP",
       "market": "TAIWAN",
       "evidenceType": "COMPANY_PO_PLUS_LOGISTICS_RECORD",
+      "overseasPoStatus": "OVERSEAS_PO_CONFIRMED",
+      "overseasPoEvidence": {
+        "document": "발주조회(250613_커버낫소싱) 26FW 260911.xlsx",
+        "sheet": "발주조회(250613_커버낫소싱) 26FW 260911",
+        "sourceRows": [1092, 1323],
+        "poNumbers": ["대만", "글로벌"],
+        "overseasOrderQty": 150,
+        "domesticOrderQty": 0
+      },
       "evidenceAsOf": "2026-09-11",
       "sources": [
         {
@@ -75,6 +111,15 @@
       "directShipStatus": "CONFIRMED_DIRECT_SHIP",
       "market": "TAIWAN",
       "evidenceType": "COMPANY_PO_PLUS_LOGISTICS_RECORD",
+      "overseasPoStatus": "OVERSEAS_PO_CONFIRMED",
+      "overseasPoEvidence": {
+        "document": "발주조회(250613_커버낫소싱) 26FW 260911.xlsx",
+        "sheet": "발주조회(250613_커버낫소싱) 26FW 260911",
+        "sourceRows": [1093, 1324],
+        "poNumbers": ["대만", "글로벌"],
+        "overseasOrderQty": 150,
+        "domesticOrderQty": 0
+      },
       "evidenceAsOf": "2026-09-11",
       "sources": [
         {

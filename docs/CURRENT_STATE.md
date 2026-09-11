@@ -1,5 +1,17 @@
 ﻿# Current State
 
+## 26FW overseas PO row applicability (completed diagnostic 2026-09-11)
+
+- Read-only source audit completed for `발주조회(250613_커버낫소싱) 26FW 260911.xlsx`; the raw workbook remains outside Git. Structure: one sheet, 1,443 x 93, row-3 headers, `G 품번`, `J 발주번호`, `L 색상`, `BP 발주수량`, no PO-row inbound quantity, no blank/repeated-header data rows.
+- PO-row keyword rule identifies 717 overseas rows / 304 SKU / 146 STYLE / 24,880 units. Exclusive counts: Taiwan 169 / 15,530, Japan 288 / 4,331, Global 260 / 5,019, ORDER_ONLY 0. `수주` overlaps 399 destination rows and is not double-counted.
+- Mixed domestic+overseas: 298 SKU. Overseas-only: `WA2603CRT1BK`, `WA2603CRT1GR`, `WA2603HD11LG`, `WA2603STT1BK`, `WA2603STT1WH`, `WA2603STT2CH`.
+- Current 26FW APP remains 439 SKU. The workbook contains 438; `WA2603CR16TC` is absent. All 304 affected APP SKU exactly reconcile current `orderQty` to Excel total order, proving current `orderQty` includes overseas PO.
+- Domestic order exclusion is confirmed. Numeric inbound/ERP stock exclusion needs a PO-keyed receipt/stock source; domestic sales exclusion is not proven. No sales, inbound, stock, velocity, lifecycle, or cover quantity was changed.
+- Production order replacement stopped: it would change 304 `orderQty` values and affect 123 current PACE_READY Analog Pace rows (118 changed indices; five overseas-only Special Market rows lose the domestic order denominator). Analog Pace methodology was not changed or recalculated.
+- All five Special Market SKUs now carry separate exact-SKU `OVERSEAS_PO_CONFIRMED` evidence. Existing direct-ship statuses are retained and not inferred from the new order file.
+- Added `scripts/overseas_po_applicability.py`, `data/sku-overseas-po-applicability.json`, `tests/overseas_po_applicability_test.py`, and `docs/SKU_OVERSEAS_PO_APPLICABILITY.md`; extended the Special Market evidence registry/diagnostic without changing production behavior.
+- Verification: Python diagnostic suite 35/35, `npm.cmd run sku:test` 4/4, `npm.cmd run forecast:test` 6/6 plus reference validation, and build PASS.
+
 ## Git checkpoint (completed 2026-09-11)
 
 - Created checkpoint commit `9f4948f` (`Checkpoint validated forecast and SKU diagnostics`) from 70 explicitly reviewed files covering the verified Forecast/SKU pipeline, reproducible artifacts, read-only views, tests, and documentation through 2026-09-10.

@@ -58,6 +58,7 @@ def build_diagnostic(
         scope = market_scope(row.get("isSpecialMarket"))
         direct = evidence_by_sku.get(sku)
         direct_status = direct.get("directShipStatus") if direct else "UNKNOWN"
+        overseas_po_status = direct.get("overseasPoStatus") if direct else "UNKNOWN"
         state = state_by_sku.get(sku, {})
         quality = list(state.get("dataQuality", []))
         domestic_sensitive = sorted(
@@ -93,6 +94,8 @@ def build_diagnostic(
                 "marketScopeSource": row.get("isSpecialMarketSource"),
                 "directShipStatus": direct_status,
                 "directShipEvidence": direct,
+                "overseasPoStatus": overseas_po_status,
+                "overseasPoEvidence": direct.get("overseasPoEvidence") if direct else None,
                 "domesticCurrentRiskApplicability": applicability,
                 "domesticSupplyRiskMisclassificationPotential": misclassification,
                 "applicabilityReason": reason,
@@ -115,6 +118,7 @@ def build_diagnostic(
         if row["domesticSupplyRiskMisclassificationPotential"] in {"CONFIRMED", "POSSIBLE"}
     ]
     direct_counts = Counter(row["directShipStatus"] for row in special_rows)
+    overseas_po_counts = Counter(row["overseasPoStatus"] for row in special_rows)
     applicability_counts = Counter(row["domesticCurrentRiskApplicability"] for row in result_rows)
     market_counts = Counter(row["marketScope"] for row in result_rows)
 
@@ -132,6 +136,7 @@ def build_diagnostic(
         "contract": {
             "specialMarketMeaning": "Current metadata marker only; it does not prove direct shipment.",
             "directShipMeaning": "Exact-SKU evidence only. UNKNOWN is preserved when evidence is absent.",
+            "overseasPoMeaning": "Exact SKU/color/PO-row evidence only; it does not by itself prove direct shipment.",
             "noStylePropagation": True,
             "confirmedDirectShipEffect": "Domestic inbound, ERP on-hand, stock cover, and supply-risk interpretation are not applicable; observed demand remains separate.",
             "prohibitedInference": [
@@ -148,6 +153,7 @@ def build_diagnostic(
             "specialMarketSkuCount": len(special_rows),
             "specialMarketStyleCount": len({row["styleCode"] for row in special_rows}),
             "specialMarketDirectShipStatusCounts": dict(sorted(direct_counts.items())),
+            "specialMarketOverseasPoStatusCounts": dict(sorted(overseas_po_counts.items())),
             "domesticCurrentRiskApplicabilityCounts": dict(sorted(applicability_counts.items())),
             "confirmedMisclassificationSkuCount": sum(row["domesticSupplyRiskMisclassificationPotential"] == "CONFIRMED" for row in result_rows),
             "possibleMisclassificationSkuCount": sum(row["domesticSupplyRiskMisclassificationPotential"] == "POSSIBLE" for row in result_rows),

@@ -39,15 +39,23 @@ class ContractTest(unittest.TestCase):
             ]
         }
         self.evidence = {
-            "entries": [{"sku": "S1BK", "directShipStatus": "CONFIRMED_DIRECT_SHIP", "evidenceType": "USER_CONFIRMED"}]
+            "entries": [{
+                "sku": "S1BK",
+                "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+                "evidenceType": "USER_CONFIRMED",
+                "overseasPoStatus": "OVERSEAS_PO_CONFIRMED",
+                "overseasPoEvidence": {"sourceRows": [10]},
+            }]
         }
 
     def test_exact_sku_evidence_does_not_propagate_to_style_sibling(self):
         result = build_diagnostic(self.sku_payload, self.state_payload, self.evidence)
         rows = {row["sku"]: row for row in result["rows"]}
         self.assertEqual(rows["S1BK"]["directShipStatus"], "CONFIRMED_DIRECT_SHIP")
+        self.assertEqual(rows["S1BK"]["overseasPoStatus"], "OVERSEAS_PO_CONFIRMED")
         self.assertEqual(rows["S1BK"]["domesticCurrentRiskApplicability"], "NOT_APPLICABLE_CONFIRMED_DIRECT_SHIP")
         self.assertEqual(rows["S1GR"]["directShipStatus"], "UNKNOWN")
+        self.assertEqual(rows["S1GR"]["overseasPoStatus"], "UNKNOWN")
         self.assertEqual(rows["S1GR"]["domesticSupplyRiskMisclassificationPotential"], "POSSIBLE")
 
     def test_unknown_market_remains_unknown(self):
@@ -55,6 +63,7 @@ class ContractTest(unittest.TestCase):
         row = next(row for row in result["rows"] if row["sku"] == "S2BK")
         self.assertEqual(row["marketScope"], "UNKNOWN")
         self.assertEqual(row["directShipStatus"], "UNKNOWN")
+        self.assertEqual(row["overseasPoStatus"], "UNKNOWN")
         self.assertEqual(row["domesticSupplyRiskMisclassificationPotential"], "UNASSESSED")
 
 
@@ -74,6 +83,7 @@ class CurrentSnapshotAcceptanceTest(unittest.TestCase):
         self.assertEqual(summary["specialMarketSkuCount"], 5)
         self.assertEqual(summary["specialMarketStyleCount"], 3)
         self.assertEqual(summary["specialMarketDirectShipStatusCounts"], {"CONFIRMED_DIRECT_SHIP": 5})
+        self.assertEqual(summary["specialMarketOverseasPoStatusCounts"], {"OVERSEAS_PO_CONFIRMED": 5})
         self.assertEqual(summary["confirmedMisclassificationSkuCount"], 5)
         self.assertEqual(summary["possibleMisclassificationSkuCount"], 0)
         self.assertEqual(summary["unassessedUnknownMarketSkuCount"], 295)
@@ -86,6 +96,7 @@ class CurrentSnapshotAcceptanceTest(unittest.TestCase):
             "WA2603STT2CH",
         }:
             self.assertEqual(rows[code]["directShipStatus"], "CONFIRMED_DIRECT_SHIP")
+            self.assertEqual(rows[code]["overseasPoStatus"], "OVERSEAS_PO_CONFIRMED")
             self.assertEqual(
                 rows[code]["domesticCurrentRiskApplicability"],
                 "NOT_APPLICABLE_CONFIRMED_DIRECT_SHIP",
