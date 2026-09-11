@@ -103,6 +103,16 @@ During validation, the live-data smoke test exposed several stale snapshot assum
 
 **Second P2 fix (2026-09-10): unified specific-item Korean label rendering.** `/items` (`SpecificItemCard`) and `/editorial` (`EditorialRow`) were showing the raw English SUB_ITEM taxonomy value (via `trendValueLabel`, e.g. `TRACK JACKET`) while `/` (`EditorialTrendCard`) and the item detail page (`/items/[itemType]`) already showed the Korean label (`트랙 재킷`) via `specificItemKoreanLabel` for the exact same underlying value - the same item read differently depending on which screen a planner was on. Fixed by applying the same `specificItemKoreanLabel(value) ?? trendValueLabel(value)` fallback (reusing the existing helper, no dictionary expansion) at the three affected call sites: `src/app/items/page.tsx` (`SpecificItemCard`, always SUB_ITEM so no conditional needed), `src/app/editorial/page.tsx` (`EditorialRow`, gated on `row.type === "SUB_ITEM"` since this screen also renders DETAIL/MATERIAL/COLOR/STYLE rows that intentionally stay unmapped), and `src/app/page.tsx` (the `/`-page trend×store matrix table, gated on `row.dimension === "SUB_ITEM"`). `src/components/AttributeBundle.tsx`'s `englishSubtitle` and `/items`' `OverseasOnlyCard` (Market's own `subItemTypeLabel`/`itemTypeLabel` English vocabulary) were deliberately left untouched - both are already-correct, differently-scoped, pre-existing patterns, not instances of this bug. UI-only, content-call-site-level change; no taxonomy/extraction/ranking/schema/Market logic touched. Validated: `typecheck`, `test` (smoke), `build` all pass; read-only quality audit re-confirmed Canonical Duplicates 0, Mention Duplicates 0, Market (real) 667, EditorialPost 617 (587 FASHION_RELEVANT + 30 UNKNOWN) - unchanged from the snapshot above, confirming no live refresh ran during this pass.
 
+## P2 Visual-First Baseline Audit (2026-09-11)
+
+Completed the required rendered-UI, existing-image, evidence-boundary, and Instagram feasibility audit before any large visual-first implementation. See `docs/VISUAL_FIRST_TREND_BOARD_AUDIT.md`.
+
+- Live repo/DB/scheduler state still matches the baseline above: 617 posts, 2781 mentions, 89 bundles, current primary `화이트 SKIRT`, Canonical Duplicates 0, Mention Duplicates 0, Market(real) 667; scheduler Ready/enabled with next run 2026-09-14 08:30 KST.
+- Real rendered home at a 1280×720 viewport contains 0 images across a 2,465px document, confirming the current experience is text/count-first.
+- All 587 fashion-relevant articles have an article-level image URL, and all 89 bundles have article-hero visual context in their retained evidence list.
+- No real bundle has a document-position-confident direct/adjacent evidence image. Article heroes are therefore safe only as clearly labelled article visual context, never as a bundle hero or direct attribute/mood proof.
+- No UI, collector, schema, taxonomy, ranking, scheduler, Market data, or DB state changed in this audit pass.
+
 ## Known Current Limitations
 
 (Carried forward, still true as of this pass - see `docs/EDITORIAL_REFRESH_OPERATIONS.md` "Current Limitations" for the full list)
