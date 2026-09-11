@@ -1,5 +1,12 @@
 ﻿# Current State
 
+## Git checkpoint (completed 2026-09-11)
+
+- Created checkpoint commit `9f4948f` (`Checkpoint validated forecast and SKU diagnostics`) from 70 explicitly reviewed files covering the verified Forecast/SKU pipeline, reproducible artifacts, read-only views, tests, and documentation through 2026-09-10.
+- Raw ERP Excel, `.local-*`, credentials, browser profiles, `dist`, temporary files, and Python caches were not added. The previously tracked Python cache file was removed and `__pycache__/` / `*.pyc` are now ignored.
+- Three pre-existing, unrelated UI modifications remain intentionally outside the checkpoint: `index.html`, `public/js/dashboard.js`, and `public/js/data/normalize.js`. `index.html` contains widespread Korean text corruption and must be handled as a separate recovery scope.
+- Corrected two documentation encoding defects without changing meaning: `oldest-to-newest` and `±1`.
+
 ## Data sources and universe
 
 - Sales Dashboard STYLE data: automated sync path exists; no external sync in this work.
@@ -103,3 +110,15 @@ Known limitations: ERP metadata is wider than Sales Dashboard STYLE universe; so
 - Negative values are preserved. Missing/non-positive denominator branches and W9+ STYLE branches are covered with synthetic fixtures. No score, rank, weight, priority, timing, recommendation, quantity, action, candidate human-facing label, production schema mutation, or external sync was added.
 - Verification: focused state-machine Python tests passed 13/13; `npm.cmd run sku:test` passed 4/4; `npm.cmd run forecast:test` passed 6/6 plus reference validation. Deterministic regeneration and protected STYLE/SKU fact hashes passed. Build was not required because no public prototype asset was added.
 - Exact next task: planner evidence review of a fixed lifecycle/marker sample for wording and missingness clarity only; do not define production routing or business thresholds.
+
+## Special Market / direct-ship applicability diagnostic (completed 2026-09-11)
+
+- Added a diagnostic-only contract and reproducible artifact: `docs/SKU_SPECIAL_MARKET_APPLICABILITY_DIAGNOSTIC.md`, `scripts/sku_special_market_applicability_diagnostic.py`, `config/special-market-direct-ship-evidence.json`, and `data/sku-special-market-applicability-diagnostic.json`.
+- Current metadata contains `isSpecialMarket` only. It is derived from the STYLE product-name marker `[대만]`; no direct-shipment, destination-country, logistics-route, or domestic-receipt-applicability field exists in the retained STYLE or ERP SKU snapshot.
+- `isSpecialMarket=true` and direct shipment are explicitly separate. Direct-ship evidence is exact-SKU only and is not inferred from names, STYLE siblings, negative stock/cover, sales exceeding inbound, or missing domestic receipts.
+- User-confirmed `WA2603CRT1BK` is Taiwan-branch exclusive and entirely direct-shipped. Observed demand remains separate, while domestic inbound, ERP on-hand, Stock Cover, and domestic supply-risk interpretation are `NOT_APPLICABLE_CONFIRMED_DIRECT_SHIP`.
+- 26FW APP remains 439 SKU: Special Market 5 SKU / 3 STYLE; confirmed direct ship 1; Special Market direct-ship `UNKNOWN` 4; market scope `UNKNOWN` 295 due missing STYLE metadata joins.
+- Confirmed domestic Current Risk misclassification: `WA2603CRT1BK`. Possible cases requiring shipment evidence: `WA2603CRT1GR`, `WA2603STT1BK`, `WA2603STT1WH`, `WA2603STT2CH`. All five negative ERP stock/cover rows are in this set, but that pattern is not treated as proof of direct shipment.
+- No production risk/reorder logic, SKU Signal, threshold, priority, recommendation, Action Engine, Forecast, Analog Pace, STYLE behavior, or source snapshot was changed.
+- Verification: combined Python diagnostic suite passed 29/29; `npm.cmd run sku:test` passed 4/4; `npm.cmd run forecast:test` passed 6/6 plus forecast reference validation. The existing openpyxl default-style warning remains non-failing.
+- Next safe task: obtain authoritative SKU-level shipment-route/direct-ship evidence for the four unresolved Special Market candidates and update only the evidence registry plus diagnostic artifact. Keep `UNKNOWN` until evidence exists.

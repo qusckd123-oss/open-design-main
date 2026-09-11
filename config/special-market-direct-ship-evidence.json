@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "scope": "SKU_ONLY",
+  "entries": [
+    {
+      "sku": "WA2603CRT1BK",
+      "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+      "market": "TAIWAN",
+      "evidenceType": "USER_CONFIRMED",
+      "evidenceAsOf": "2026-09-11",
+      "note": "Taiwan branch exclusive; all units ship directly to Taiwan, so domestic inbound, ERP on-hand, and stock cover are not domestic supply-risk evidence."
+    }
+  ]
+}
