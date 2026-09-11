@@ -152,6 +152,26 @@ Docs/config-independent audit checking whether 8 sources the user actually refer
 - Two concrete new-action candidates surfaced, neither implemented: `COVERCHORD` as a ready, low-risk Market-source addition (independent of the Editorial P0 gate); the 4 Instagram accounts plus 1 example permalink as `MANUAL_CURATION`-tier registry candidates.
 - No code, config, schema, collector, taxonomy, ranking, or live data changed in this pass; Market(real) remained 667, EditorialPost(real)/EditorialMention(real)/Bundles remained 617/2781/89, Canonical/Mention Duplicates remained 0/0.
 
+## Market Coverchord Source Addition (2026-09-11, uncommitted, pending validation)
+
+The user explicitly approved `docs/TREND_RESEARCH_SOURCE_REGISTRY.md` Section 10 decision 1 (Coverchord) in this session. Implemented as a small, isolated, config-only change, independent of the Editorial P0 gate:
+
+- `src/config/market-sources.ts`: added `"COVERCHORD"` to `marketSources` and a matching `normalizeMarketSource` branch.
+- `src/config/market-category-map.ts`: added a `COVERCHORD` entry to `sourceCategoryConfigs` (`method: "SHOPIFY_PRODUCTS_JSON"`, `rankingVerified: false`, `rankingScope: "CATEGORY"`), mirroring Slam Jam/Stussy exactly. No change to `ShopifyMarketCollector`, `createMarketCollector`, the Prisma schema, Editorial code, ranking, or taxonomy - the existing generic Shopify collector picks the new source up automatically once registered.
+- Category handles were freshly verified live via read-only `products.json` fetches on 2026-09-11 (not assumed/guessed): `SHORT_SLEEVE_TSHIRT` -> `/collections/tops/products.json`, `JACKET` -> `/collections/jackets-coats/products.json`, `PANTS` -> `/collections/bottoms/products.json`, `BAG` -> `/collections/bags/products.json`, `HEADWEAR` -> `/collections/hats-caps/products.json`. `robots.txt` was fetched fresh and confirmed these plain (no-query-string) paths are allowed - only `sort_by`, `+`/`%2B`/`%2b`, combined `filter`, and `ls=` query patterns are disallowed, none of which `getSourceCategoryUrl` ever appends.
+- `docs/MARKET_SOURCE_AUDIT.md` updated: new `Coverchord` summary-table row (`SUPPORTED`) plus a full `### Coverchord` write-up section mirroring the existing Slam Jam/Stussy sections.
+- `docs/TREND_RESEARCH_SOURCE_REGISTRY.md` Section 10 decision 1 updated from "approve" to "approved and implemented," with a pointer back to this note.
+
+**What is NOT yet done, and why:** this session's local shell tool (`device_bash` on the user's machine) was unavailable for this entire pass, so none of the following could be performed and must happen before this is considered complete:
+
+- `corepack pnpm typecheck` (required for any `src/config/*.ts` change per `AGENT_OPERATING_RULES.md` "Validation Expectations").
+- `corepack pnpm build`.
+- `git status` / verifying the working tree and live DB/scheduler state fresh (the numbers above are carried from the last verified pass, not re-derived this pass).
+- `git add` (explicit paths only) + commit + push to `origin/feature/trend-dashboard`.
+- No live `collect:market --source=COVERCHORD` run has happened - this is config only, zero rows collected yet.
+
+**Next session/step**: once local shell access is available, run `corepack pnpm typecheck` and `corepack pnpm build` on the 4 changed files (`src/config/market-sources.ts`, `src/config/market-category-map.ts`, `docs/MARKET_SOURCE_AUDIT.md`, `docs/TREND_RESEARCH_SOURCE_REGISTRY.md`), confirm `git status` shows only these 4 files changed, then explicitly stage and commit/push. Optionally, a manual `collect:market --source=COVERCHORD --category=BAG --limit=10`-style single-category dry run (real network, writes `dataMode=real` rows - this is a deliberate, human-invoked Market collection, not the gated Editorial refresh, so it is fine to run directly once validated) can confirm end-to-end behavior before wider use.
+
 ## Known Current Limitations
 
 (Carried forward, still true as of this pass - see `docs/EDITORIAL_REFRESH_OPERATIONS.md` "Current Limitations" for the full list)

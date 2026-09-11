@@ -14,6 +14,7 @@ export const marketSources = [
   "HBX",
   "STUSSY",
   "BODEGA",
+  "COVERCHORD",
   "OTHER"
 ] as const;
 
@@ -36,5 +37,6 @@ export function normalizeMarketSource(value: string | null | undefined): MarketS
   if (normalized.includes("HBX")) return "HBX";
   if (normalized.includes("STUSSY")) return "STUSSY";
   if (normalized.includes("BODEGA")) return "BODEGA";
+  if (normalized.includes("COVERCHORD")) return "COVERCHORD";
   return "OTHER";
 }

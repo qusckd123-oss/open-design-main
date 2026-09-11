@@ -25,6 +25,7 @@ This audit records which sources can be collected without bypassing access contr
 | Stussy | https://www.stussy.com/collections/tees/products.json | No sales rank | Yes, collection order | Yes | Allows collection paths; `sort_by` and `limit` query blocked | Shopify public JSON | JSON | Shopify `products.json` collection order | SUPPORTED | Public JSON is accessible without query parameters. |
 | HBX | https://hbx.com/men/categories/t-shirts | Limited | Yes | Yes | Partial allow | No public ranking API found | HTML | Manual import candidate | PARTIAL | Public HTML opens, but a stable automated ranking parser was not selected. |
 | Bodega | https://bdgastore.com/collections/t-shirts/products.json | No sales rank | Yes | Yes | Allows collection paths | Shopify public JSON | JSON | Not selected | NOT_USEFUL | Tested collection returned no products for the target handle. |
+| Coverchord | https://coverchord.com/collections/tops/products.json | No sales rank | Yes, collection order | Yes | Allows collection paths; `sort_by`, `+`/`%2B`, combined `filter`, `ls=` query patterns blocked | Shopify public JSON | JSON | Shopify `products.json` collection order | SUPPORTED | Added 2026-09-11 (`docs/TREND_RESEARCH_SOURCE_REGISTRY.md` Section 3.3/8/10). Public JSON confirmed live for `tops`, `jackets-coats`, `bottoms`, `bags`, `hats-caps`; no query parameters used, matching `getSourceCategoryUrl`'s existing no-query-param behavior. |
 
 ## Supported Real Sources
 
@@ -51,6 +52,20 @@ This audit records which sources can be collected without bypassing access contr
   - `BAG`: `/collections/bags/products.json`
   - `HEADWEAR`: `/collections/headwear/products.json`
 - Important limitation: do not append `?limit=` or `sort_by` query parameters because robots.txt includes restrictions for those patterns.
+
+### Coverchord
+
+- Added 2026-09-11, approved as a small, isolated, config-only follow-up per `docs/TREND_RESEARCH_SOURCE_REGISTRY.md` Section 10 decision 1 - independent of the Editorial P0 gate.
+- Method: public Shopify collection `products.json`. Same proven technique already running for Slam Jam/Stussy - no new integration pattern.
+- Interpretation: category collection exposure order, not sales volume. Prices observed in JPY (Japanese select shop).
+- Current categories (each verified live and non-empty via a read-only fetch on 2026-09-11, no query parameters):
+  - `SHORT_SLEEVE_TSHIRT`: `/collections/tops/products.json` (broadest available top-level category handle for tees; e.g. "SUVIN COTTON TEE")
+  - `JACKET`: `/collections/jackets-coats/products.json` (e.g. "NEW NORMAL SOLOTEX SUIT JACKET")
+  - `PANTS`: `/collections/bottoms/products.json` (e.g. "AF OVER PANT - HEAVYWEIGHT COTTON RIPSTOP")
+  - `BAG`: `/collections/bags/products.json` (e.g. "BAGUETTE TOTE SMALL")
+  - `HEADWEAR`: `/collections/hats-caps/products.json` (e.g. "NY EAR CAP")
+- robots.txt confirmed (2026-09-11): `/collections/` and `/products/` are allowed for `User-agent: *`; only `sort_by`, `+`/`%2B`/`%2b`, combined `filter`, and `ls=` query patterns are disallowed. The collector's own `getSourceCategoryUrl` never appends a query string, so no disallowed pattern is ever requested.
+- The site's `collections.json` also exposes many brand/campaign/promotional collection handles (e.g. `fcp-01-tops`, `gold30-hats-caps`) not used here - only the plain top-level category handles above were selected, matching the Slam Jam/Stussy pattern of one stable handle per `RankingCategory`.
 
 ## Ranking Interpretation
 

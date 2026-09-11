@@ -81,6 +81,23 @@ export const sourceCategoryConfigs: Partial<Record<MarketSource, SourceCategoryC
       HEADWEAR: "/collections/headwear/products.json"
     }
   },
+  COVERCHORD: {
+    source: "COVERCHORD",
+    baseUrl: "https://coverchord.com",
+    method: "SHOPIFY_PRODUCTS_JSON",
+    metricType: "COLLECTION_ORDER",
+    rankingVerified: false,
+    rankingScope: "CATEGORY",
+    collectionMethod: "Public Shopify products.json collection endpoint",
+    description: "Public Shopify product collection. Product order is preserved as sourcePosition and does not represent verified bestseller ranking.",
+    categories: {
+      SHORT_SLEEVE_TSHIRT: "/collections/tops/products.json",
+      JACKET: "/collections/jackets-coats/products.json",
+      PANTS: "/collections/bottoms/products.json",
+      BAG: "/collections/bags/products.json",
+      HEADWEAR: "/collections/hats-caps/products.json"
+    }
+  },
   RAKUTEN_FASHION: {
     source: "RAKUTEN_FASHION",
     baseUrl: "https://brandavenue.rakuten.co.jp",
