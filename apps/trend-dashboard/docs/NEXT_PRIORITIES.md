@@ -4,7 +4,7 @@ Short by design. For rules, see `AGENT_OPERATING_RULES.md`. For live numbers, se
 
 ## P0 - Operations
 
-- **Validate and commit the uncommitted Coverchord Market-source config change** (2026-09-11, see `CURRENT_STATE.md` "Market Coverchord Source Addition"): once local shell access is available, run `corepack pnpm typecheck` + `corepack pnpm build`, confirm `git status` shows only the 4 expected files, then stage/commit/push. This is a completed, user-approved, config-only change blocked purely on tooling access, not on review or the P0 gate.
+- ~~Validate and commit the Coverchord Market-source config change~~ Done 2026-09-11 - typecheck/build passed, committed as `4c1c307`, pushed to `origin/feature/trend-dashboard`. See `CURRENT_STATE.md` "Market Coverchord Source Addition". Remaining optional follow-up: restart the 3001 dev server (stopped to unblock `build`) and, whenever next useful, a manual single-category `collect:market --source=COVERCHORD` run to confirm live end-to-end behavior.
 - Observe the first naturally scheduled Monday refresh (next: **2026-09-14 08:30 KST**) - don't intervene preemptively.
 - After it runs: verify logs (`apps/trend-dashboard/logs/editorial-refresh/`), verify source health (all 8 sources succeeded / any rate-limited), verify DB/signal deltas look sane (no sudden collapse, no duplicate-count regression).
 - React only to real failures - a WARN-level quality gate (e.g. a single zero-result source, or a bundle-count swing under 25%) is not a failure.
