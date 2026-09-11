@@ -4,7 +4,7 @@ P0 status: RESOLVED. Age-aware velocity/cover separate fields are approved and i
 
 SKU Signal v1 DESIGN status: COMPLETE. Read-only lifecycle/evidence state-machine simulation status: COMPLETE. Git checkpoint status: COMPLETE at `9f4948f`. Special Market/direct-ship diagnostic status: COMPLETE.
 
-Current next priority: conduct a planner evidence review on a fixed sample from each populated lifecycle and factual conflict/data-quality marker in `data/sku-signal-v1-state-machine.json`. Confirm wording and missingness clarity only; do not define routing, thresholds, ranking, recommendations, or production behavior.
+Current next priority: if implementation continues, build a separately scoped isolated read-only SKU evidence viewer from the reviewed state-machine facts. Use planner-facing copy and adjacent Special Market applicability context only; do not add routing, thresholds, ranking, recommendations, production labels, or external sync.
 
 ## P0 — Applicability and data integrity
 
@@ -30,7 +30,7 @@ Design is complete in `docs/SKU_SIGNAL_V1_DESIGN.md`. The current facts support 
 
 Evaluate EIS/API or another controlled source for future ERP SKU snapshot automation. Do not sync during ordinary analysis sessions.
 
-The direct-ship evidence task is resolved. Review a fixed sample from each populated lifecycle and factual conflict/data-quality marker in `data/sku-signal-v1-state-machine.json`. Confirm evidence wording and missingness clarity only. Do not add production SKU Signal logic, labels, priority, thresholds, reorder recommendation, Forecast changes, Analog Pace promotion, scoring, or external sync.
+The direct-ship evidence task and planner evidence review are resolved. The next safe candidate is an isolated read-only viewer that translates the reviewed facts without changing their semantics. Do not add production SKU Signal logic, labels, priority, thresholds, reorder recommendation, Forecast changes, Analog Pace promotion, scoring, or external sync.
 
 ## Special Market / direct-ship applicability (2026-09-11)
 
@@ -88,4 +88,11 @@ The direct-ship evidence task is resolved. Review a fixed sample from each popul
 - Preserved 5 negative ERP stock/cover rows and 63 negative remaining-order rows without clamping. Recorded exact legacy-versus-selling-age disagreements and raw context joins outside their applicability windows as factual markers only.
 - STYLE Forecast remains null/not-applicable on all current rows and cannot change SKU membership or lifecycle. No production behavior or protected field changed.
 - Verification passed: 13/13 focused Python tests, 4/4 SKU regressions, 6/6 Forecast regressions plus reference validation, deterministic artifact regeneration, and protected-field hash comparison. No build was required because this step added no public asset.
-- Next safe task is a planner evidence review on a fixed row sample. An isolated read-only viewer may be considered only after that review and as a separate scope.
+- Planner evidence review is complete (`docs/SKU_SIGNAL_V1_PLANNER_EVIDENCE_REVIEW.md`). Verdict: PASS for a separately scoped isolated read-only viewer with copy guardrails; no schema or production behavior change is required.
+
+## SKU Signal v1 planner evidence review completion (2026-09-11)
+
+- Fixed sample: `WA2603CD12GR`, `WA2603CD65CM`, `WA2603CR14CM`, `WA2603CD11BL`, `WA2603CRT1BK`. Together they cover every populated lifecycle and all 7 current factual conflict/data-quality markers.
+- Internal lifecycle/availability/marker enums are audit-safe but require planner-facing translation. `PRE_SALE` must not be shown as confirmed pre-launch because launch status is unknown.
+- Confirmed Special Market direct-ship scope must be shown adjacent to preserved domestic ERP anomalies in any future viewer so raw negative facts are not misread as domestic supply-risk conclusions.
+- Next safe candidate: isolated read-only evidence viewer only; no score, rank, threshold, priority, recommendation, routing, production label, or external sync.

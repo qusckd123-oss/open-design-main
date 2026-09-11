@@ -109,7 +109,7 @@ Known limitations: ERP metadata is wider than Sales Dashboard STYLE universe; so
 - Current factual markers: legacy-versus-selling-age velocity difference 133, cover difference 133, numeric Analog Pace outside W2-W8 31, raw STYLE Forecast join outside W9+ 144, negative ERP stock 5, negative cover 5, and negative raw remaining order 63.
 - Negative values are preserved. Missing/non-positive denominator branches and W9+ STYLE branches are covered with synthetic fixtures. No score, rank, weight, priority, timing, recommendation, quantity, action, candidate human-facing label, production schema mutation, or external sync was added.
 - Verification: focused state-machine Python tests passed 13/13; `npm.cmd run sku:test` passed 4/4; `npm.cmd run forecast:test` passed 6/6 plus reference validation. Deterministic regeneration and protected STYLE/SKU fact hashes passed. Build was not required because no public prototype asset was added.
-- Exact next task: planner evidence review of a fixed lifecycle/marker sample for wording and missingness clarity only; do not define production routing or business thresholds.
+- Planner evidence review completed in `docs/SKU_SIGNAL_V1_PLANNER_EVIDENCE_REVIEW.md`; fixed samples cover every populated lifecycle and every current conflict/data-quality marker. Verdict: PASS for an isolated read-only viewer with copy guardrails.
 
 ## Special Market / direct-ship applicability diagnostic (completed 2026-09-11)
 
@@ -122,4 +122,12 @@ Known limitations: ERP metadata is wider than Sales Dashboard STYLE universe; so
 - Confirmed domestic Current Risk misclassification: all five Special Market SKUs. Their observed demand remains separate, while domestic inbound, ERP on-hand, Stock Cover, and domestic supply-risk interpretation are `NOT_APPLICABLE_CONFIRMED_DIRECT_SHIP`. The negative stock/cover pattern was not used as route evidence.
 - No production risk/reorder logic, SKU Signal, threshold, priority, recommendation, Action Engine, Forecast, Analog Pace, STYLE behavior, or source snapshot was changed.
 - Verification refreshed after registry/artifact regeneration: combined Python diagnostic suite 29/29, `npm.cmd run sku:test` 4/4, and `npm.cmd run forecast:test` 6/6 plus forecast reference validation; the existing openpyxl default-style warning remains non-failing.
-- Next safe task: planner evidence review of a fixed sample from each populated lifecycle and factual conflict/data-quality marker in `data/sku-signal-v1-state-machine.json`, limited to wording and missingness clarity.
+- Next safe candidate: an isolated read-only SKU evidence viewer using the reviewed planner copy and adjacent Special Market applicability context only. No score, rank, threshold, priority, recommendation, routing, production label, or external sync.
+
+## SKU Signal v1 planner evidence review (completed 2026-09-11)
+
+- Reviewed a fixed 5-SKU sample covering PRE_SALE, WTD_ONLY, W1, W2-W8 and all 7 current conflict/data-quality markers. W9+ has no current row and remains synthetic-test-only.
+- Evidence separation and missingness are structurally sound, but raw enums are not planner-facing copy. `PRE_SALE` must not be presented as confirmed pre-launch; use “판매 미관측 · 출시 여부 미판정”.
+- Availability should render as 사용 가능 / 참고값 / 계산 불가 / 현재 단계 미적용, with concrete reasons where applicable. Raw `conflicts` enums should be translated as factual differences or out-of-window context, not errors.
+- Negative ERP stock, stock cover, and remaining order remain literal source conditions, not urgency or reorder conclusions. Confirmed Taiwan direct-ship scope must appear adjacent to domestic supply facts for the five Special Market SKUs if a viewer is built.
+- Verdict: PASS for a separately scoped isolated read-only viewer with copy guardrails. No state-machine schema or production behavior change was required.
