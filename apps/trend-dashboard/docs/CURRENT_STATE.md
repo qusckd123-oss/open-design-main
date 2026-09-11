@@ -129,6 +129,17 @@ The user approved the baseline audit and explicitly reopened the UI for the smal
 
 **Independent commit-time re-verification (2026-09-11, separate Claude Code session):** this work was found already implemented but uncommitted in the working tree. Before committing, this session re-read the diff against `VISUAL_FIRST_TREND_BOARD_AUDIT.md`'s Section 6 contract line by line, confirmed `BundleHeroImage`/`findHeroArticle` still only accept `evidenceImageUrl`, confirmed `evidenceArticles` is still capped at 5 by the frozen bundle-service `.slice(0, 5)` (so the six-image UI cap never actually exceeds it), and confirmed the diff touches only `src/app/page.tsx`, `src/components/AttributeBundle.tsx`, the new `src/lib/editorial-visual-context.ts`, and `scripts/smoke-test.ts` - no collector/service/schema file. Re-ran `typecheck` (clean), `test` (smoke test passed), and `build` (succeeded, all 16 routes). Re-rendered the live dev server at both required viewports with Playwright (the Chrome extension was unavailable this session): at 1280×720 the current primary `화이트 SKIRT` showed all 5 unique images fully inside the first viewport (strip box y 355-713) with 0 console/page errors and no horizontal overflow (docWidth 1280 == viewportWidth 1280); at 390×844 the strip began at y≈687 and the first image at y≈790 (matching the original implementation note), 5 unique images/links, 0 console/page errors, no horizontal overflow. Re-ran `scripts/audit-editorial-quality.ts` read-only: TOTAL POSTS (real) 617, TOTAL MENTIONS (real) 2781, CANONICAL DUPLICATES 0, MENTION DUPLICATES 0, Attribute bundles 89, MarketRankingSnapshot (real) 667 - all unchanged from the documented baseline, confirming no live data moved during this review. Committed as-is with no code changes beyond this doc/state alignment pass.
 
+## P2 Editorial Ordered Visual Evidence Audit (2026-09-11)
+
+Read-only architecture audit answering whether `DIRECT_BLOCK`/`ADJACENT_BLOCK` image-relation evidence can become real, and how. See `docs/EDITORIAL_ORDERED_VISUAL_EVIDENCE_AUDIT.md` for the full per-source breakdown.
+
+- Re-verified live state matched the baseline above (617 posts across the 8 sources, 89 bundles, 129 retained evidence-article references, 0 with a `DIRECT_BLOCK`/`ADJACENT_BLOCK` image).
+- Traced all 8 sources' parsers in `src/collectors/editorial/rss.ts`: every one destroys paragraph/image position at parse time (a single `stripHtml()`/flatten call per source), and none is stored raw - `EditorialPost` has no HTML/JSON field to reconstruct from.
+- Confirmed via a read-only query that 0/617 stored `text` values contain even a literal newline - the destruction is already complete for every real row on disk, not a partially-preserved signal.
+- Per-source feasibility for a future ordered-block collector: HIGH (EYESMAG - structured TipTap JSON tree already walked by existing code); MEDIUM (VISLA, HYPEBEAST_KR, the three Hearst Joongang sources, MARIECLAIRE_KR asymmetrically - text easy via JSON-LD, images hard); LOW (NONLABEL - no body-container parser exists at all yet for this source).
+- Proposed (design only, no schema/migration) a minimal `OrderedContentBlock` shape and a separate human-reviewed `EditorialVisualMoodObservation` shape, and flagged that the future block model is a genuine revision of - not a drop-in reuse of - `image-relation.ts`'s current `ContentBlock` type.
+- No code, schema, collector, taxonomy, ranking, or live data changed in this audit pass; no live network fetch was made.
+
 ## Known Current Limitations
 
 (Carried forward, still true as of this pass - see `docs/EDITORIAL_REFRESH_OPERATIONS.md` "Current Limitations" for the full list)
@@ -148,5 +159,7 @@ This file is an index, not a duplicate. For the full history and reasoning behin
 - `docs/EDITORIAL_CATEGORY_COVERAGE_GAP_AUDIT.md` - BAGS/ACCESSORIES/COAT taxonomy expansion attempt and revert, bundle-key-fragmentation mechanism.
 - `docs/EDITORIAL_SIGNAL_SATURATION_AUDIT.md` - source-expansion-paused decision.
 - `docs/EDITORIAL_ITEM_TAXONOMY_AUDIT.md` - Product Reference freeze statement; item-taxonomy coverage findings.
+- `docs/VISUAL_FIRST_TREND_BOARD_AUDIT.md` - visual-first baseline audit and the `EditorialVisualContextStrip` implementation record.
+- `docs/EDITORIAL_ORDERED_VISUAL_EVIDENCE_AUDIT.md` - per-source feasibility for real `DIRECT_BLOCK`/`ADJACENT_BLOCK` image evidence; proposed (design-only) ordered-block and human-reviewed-mood data shapes.
 - `docs/CROSS_SOURCE_INDEPENDENT_SIGNAL_AUDIT.md`, `docs/COSMOPOLITAN_COLLECTION_AUDIT.md`, `docs/MARIECLAIRE_COLLECTION_AUDIT.md`, `docs/NON_HEARST_SOURCE_DIVERSITY_AUDIT.md` - per-source collection/integration passes.
 - `docs/PRODUCT_REFERENCE_MULTIBRAND_AUDIT.md`, `docs/PRODUCT_ATTRIBUTE_REFERENCE_AUDIT.md` - Product Reference's own (frozen) history.
