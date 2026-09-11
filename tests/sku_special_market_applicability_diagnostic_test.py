@@ -59,7 +59,7 @@ class ContractTest(unittest.TestCase):
 
 
 class CurrentSnapshotAcceptanceTest(unittest.TestCase):
-    def test_current_counts_and_user_confirmed_sku(self):
+    def test_current_counts_and_confirmed_special_market_skus(self):
         import json
         from pathlib import Path
 
@@ -73,12 +73,24 @@ class CurrentSnapshotAcceptanceTest(unittest.TestCase):
         self.assertEqual(summary["skuCount"], 439)
         self.assertEqual(summary["specialMarketSkuCount"], 5)
         self.assertEqual(summary["specialMarketStyleCount"], 3)
-        self.assertEqual(summary["confirmedMisclassificationSkuCount"], 1)
-        self.assertEqual(summary["possibleMisclassificationSkuCount"], 4)
+        self.assertEqual(summary["specialMarketDirectShipStatusCounts"], {"CONFIRMED_DIRECT_SHIP": 5})
+        self.assertEqual(summary["confirmedMisclassificationSkuCount"], 5)
+        self.assertEqual(summary["possibleMisclassificationSkuCount"], 0)
         self.assertEqual(summary["unassessedUnknownMarketSkuCount"], 295)
-        row = next(row for row in result["rows"] if row["sku"] == "WA2603CRT1BK")
-        self.assertEqual(row["directShipStatus"], "CONFIRMED_DIRECT_SHIP")
-        self.assertIn("NEGATIVE_ERP_STOCK", row["domesticSupplySensitiveFacts"]["dataQualityMarkers"])
+        rows = {row["sku"]: row for row in result["rows"]}
+        for code in {
+            "WA2603CRT1BK",
+            "WA2603CRT1GR",
+            "WA2603STT1BK",
+            "WA2603STT1WH",
+            "WA2603STT2CH",
+        }:
+            self.assertEqual(rows[code]["directShipStatus"], "CONFIRMED_DIRECT_SHIP")
+            self.assertEqual(
+                rows[code]["domesticCurrentRiskApplicability"],
+                "NOT_APPLICABLE_CONFIRMED_DIRECT_SHIP",
+            )
+            self.assertIn("NEGATIVE_ERP_STOCK", rows[code]["domesticSupplySensitiveFacts"]["dataQualityMarkers"])
 
 
 if __name__ == "__main__":

@@ -9,6 +9,86 @@
       "evidenceType": "USER_CONFIRMED",
       "evidenceAsOf": "2026-09-11",
       "note": "Taiwan branch exclusive; all units ship directly to Taiwan, so domestic inbound, ERP on-hand, and stock cover are not domestic supply-risk evidence."
+    },
+    {
+      "sku": "WA2603CRT1GR",
+      "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+      "market": "TAIWAN",
+      "evidenceType": "COMPANY_PO_PLUS_LOGISTICS_RECORD",
+      "evidenceAsOf": "2026-09-11",
+      "sources": [
+        {
+          "document": "26FW 해외오더 PO_유니.xlsx",
+          "location": "상품기획안_종합!E455,M455; ERP!A1102,K1102",
+          "fact": "The exact SKU is assigned to Taiwan in the overseas-order PO."
+        },
+        {
+          "document": "teams-data-memorial-2026-09-04.md",
+          "location": "73351-73359",
+          "fact": "The company logistics record identifies WA2603CRT1 as Taiwan-exclusive and Taiwan direct shipment."
+        }
+      ],
+      "note": "Exact-SKU Taiwan PO evidence and the matching STYLE logistics record jointly confirm that this SKU's Taiwan order follows the direct-shipment route. No inference is made to SKUs absent from the PO evidence."
+    },
+    {
+      "sku": "WA2603STT1BK",
+      "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+      "market": "TAIWAN",
+      "evidenceType": "COMPANY_PO_PLUS_LOGISTICS_RECORD",
+      "evidenceAsOf": "2026-09-11",
+      "sources": [
+        {
+          "document": "26FW 해외오더 PO_유니.xlsx",
+          "location": "상품기획안_종합!E519,M519; ERP!A1105,K1105",
+          "fact": "The exact SKU is assigned to Taiwan in the overseas-order PO."
+        },
+        {
+          "document": "teams-data-memorial-2026-09-04.md",
+          "location": "73351-73359",
+          "fact": "The company logistics record identifies WA2603STT1 as Taiwan-exclusive and Taiwan direct shipment."
+        }
+      ],
+      "note": "Exact-SKU Taiwan PO evidence and the matching STYLE logistics record jointly confirm that this SKU's Taiwan order follows the direct-shipment route. No inference is made to SKUs absent from the PO evidence."
+    },
+    {
+      "sku": "WA2603STT1WH",
+      "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+      "market": "TAIWAN",
+      "evidenceType": "COMPANY_PO_PLUS_LOGISTICS_RECORD",
+      "evidenceAsOf": "2026-09-11",
+      "sources": [
+        {
+          "document": "26FW 해외오더 PO_유니.xlsx",
+          "location": "상품기획안_종합!E518,M518; ERP!A1106,K1106",
+          "fact": "The exact SKU is assigned to Taiwan in the overseas-order PO."
+        },
+        {
+          "document": "teams-data-memorial-2026-09-04.md",
+          "location": "73351-73359",
+          "fact": "The company logistics record identifies WA2603STT1 as Taiwan-exclusive and Taiwan direct shipment."
+        }
+      ],
+      "note": "Exact-SKU Taiwan PO evidence and the matching STYLE logistics record jointly confirm that this SKU's Taiwan order follows the direct-shipment route. No inference is made to SKUs absent from the PO evidence."
+    },
+    {
+      "sku": "WA2603STT2CH",
+      "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+      "market": "TAIWAN",
+      "evidenceType": "COMPANY_PO_PLUS_LOGISTICS_RECORD",
+      "evidenceAsOf": "2026-09-11",
+      "sources": [
+        {
+          "document": "26FW 해외오더 PO_유니.xlsx",
+          "location": "상품기획안_종합!E526,M526; ERP!A1107,K1107",
+          "fact": "The exact SKU is assigned to Taiwan in the overseas-order PO."
+        },
+        {
+          "document": "teams-data-memorial-2026-09-04.md",
+          "location": "73351-73359",
+          "fact": "The company logistics record identifies WA2603STT2 as Taiwan-exclusive and Taiwan direct shipment."
+        }
+      ],
+      "note": "Exact-SKU Taiwan PO evidence and the matching STYLE logistics record jointly confirm that this SKU's Taiwan order follows the direct-shipment route. No inference is made to SKUs absent from the PO evidence."
     }
   ]
 }

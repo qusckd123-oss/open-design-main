@@ -4,9 +4,7 @@ P0 status: RESOLVED. Age-aware velocity/cover separate fields are approved and i
 
 SKU Signal v1 DESIGN status: COMPLETE. Read-only lifecycle/evidence state-machine simulation status: COMPLETE. Git checkpoint status: COMPLETE at `9f4948f`. Special Market/direct-ship diagnostic status: COMPLETE.
 
-Current next priority: obtain authoritative SKU-level shipment-route/direct-ship evidence for the four unresolved Special Market candidates. Update the exact-SKU evidence registry and regenerate the diagnostic only; retain `UNKNOWN` when evidence is absent.
-
-Unresolved candidates: `WA2603CRT1GR`, `WA2603STT1BK`, `WA2603STT1WH`, `WA2603STT2CH`. Do not propagate the confirmed `WA2603CRT1BK` evidence to its STYLE sibling.
+Current next priority: conduct a planner evidence review on a fixed sample from each populated lifecycle and factual conflict/data-quality marker in `data/sku-signal-v1-state-machine.json`. Confirm wording and missingness clarity only; do not define routing, thresholds, ranking, recommendations, or production behavior.
 
 ## P0 — Applicability and data integrity
 
@@ -32,14 +30,14 @@ Design is complete in `docs/SKU_SIGNAL_V1_DESIGN.md`. The current facts support 
 
 Evaluate EIS/API or another controlled source for future ERP SKU snapshot automation. Do not sync during ordinary analysis sessions.
 
-Safe next task after direct-ship evidence resolution: review a fixed sample from each populated lifecycle and factual conflict/data-quality marker in `data/sku-signal-v1-state-machine.json`. Confirm evidence wording and missingness clarity only. Do not add production SKU Signal logic, labels, priority, thresholds, reorder recommendation, Forecast changes, Analog Pace promotion, scoring, or external sync.
+The direct-ship evidence task is resolved. Review a fixed sample from each populated lifecycle and factual conflict/data-quality marker in `data/sku-signal-v1-state-machine.json`. Confirm evidence wording and missingness clarity only. Do not add production SKU Signal logic, labels, priority, thresholds, reorder recommendation, Forecast changes, Analog Pace promotion, scoring, or external sync.
 
 ## Special Market / direct-ship applicability (2026-09-11)
 
 - Current metadata has `isSpecialMarket`, derived from `[대만]` in the STYLE product name, but no direct-ship or logistics-route field.
-- Exact-SKU user evidence confirms only `WA2603CRT1BK` as Taiwan direct ship. Its domestic inbound/on-hand/cover/supply-risk interpretation is not applicable; observed demand remains separate.
-- 26FW APP: 439 SKU; Special Market 5 SKU / 3 STYLE; confirmed direct ship 1; Special Market direct-ship `UNKNOWN` 4; market scope `UNKNOWN` 295.
-- Confirmed domestic Current Risk misclassification is 1 SKU. Four additional Special Market SKUs have the same negative ERP stock/cover pattern and are possible misclassifications, but must remain `UNKNOWN` until authoritative shipment evidence is available.
+- Exact-SKU Taiwan PO assignments plus the matching company logistics record confirm all five current Special Market SKUs as Taiwan direct ship. The four resolved SKUs are `WA2603CRT1GR`, `WA2603STT1BK`, `WA2603STT1WH`, and `WA2603STT2CH`; `WA2603CRT1BK` remains user-confirmed.
+- 26FW APP: 439 SKU; Special Market 5 SKU / 3 STYLE; confirmed direct ship 5; Special Market direct-ship `UNKNOWN` 0; market scope `UNKNOWN` 295.
+- Confirmed domestic Current Risk misclassification is 5 SKU. The 295 market-scope `UNKNOWN` rows remain a separate metadata-coverage gap and are not classified by inference.
 - Contract, evidence registry, generator, artifact, tests, and report are diagnostic-only. No production risk/reorder logic or protected behavior changed.
 - Verification: combined Python diagnostic suite 29/29, SKU regression 4/4, Forecast regression 6/6 plus reference validation.
 

@@ -32,17 +32,15 @@
     "specialMarketSkuCount": 5,
     "specialMarketStyleCount": 3,
     "specialMarketDirectShipStatusCounts": {
-      "CONFIRMED_DIRECT_SHIP": 1,
-      "UNKNOWN": 4
+      "CONFIRMED_DIRECT_SHIP": 5
     },
     "domesticCurrentRiskApplicabilityCounts": {
-      "NOT_APPLICABLE_CONFIRMED_DIRECT_SHIP": 1,
+      "NOT_APPLICABLE_CONFIRMED_DIRECT_SHIP": 5,
       "NO_SPECIAL_MARKET_EXCEPTION_EVIDENCE": 139,
-      "REVIEW_REQUIRED_DIRECT_SHIP_UNKNOWN": 4,
       "UNKNOWN_MARKET_SCOPE": 295
     },
-    "confirmedMisclassificationSkuCount": 1,
-    "possibleMisclassificationSkuCount": 4,
+    "confirmedMisclassificationSkuCount": 5,
+    "possibleMisclassificationSkuCount": 0,
     "unassessedUnknownMarketSkuCount": 295,
     "identifiedCandidateSkuCount": 5,
     "identifiedCandidateSkus": [
@@ -94,11 +92,30 @@
       "productName": "[대만] 키키 페인터스 맨투맨",
       "marketScope": "SPECIAL_MARKET",
       "marketScopeSource": "LATEST",
-      "directShipStatus": "UNKNOWN",
-      "directShipEvidence": null,
-      "domesticCurrentRiskApplicability": "REVIEW_REQUIRED_DIRECT_SHIP_UNKNOWN",
-      "domesticSupplyRiskMisclassificationPotential": "POSSIBLE",
-      "applicabilityReason": "Special Market metadata does not establish direct shipment; domestic supply interpretation requires shipment evidence.",
+      "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+      "directShipEvidence": {
+        "sku": "WA2603CRT1GR",
+        "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+        "market": "TAIWAN",
+        "evidenceType": "COMPANY_PO_PLUS_LOGISTICS_RECORD",
+        "evidenceAsOf": "2026-09-11",
+        "sources": [
+          {
+            "document": "26FW 해외오더 PO_유니.xlsx",
+            "location": "상품기획안_종합!E455,M455; ERP!A1102,K1102",
+            "fact": "The exact SKU is assigned to Taiwan in the overseas-order PO."
+          },
+          {
+            "document": "teams-data-memorial-2026-09-04.md",
+            "location": "73351-73359",
+            "fact": "The company logistics record identifies WA2603CRT1 as Taiwan-exclusive and Taiwan direct shipment."
+          }
+        ],
+        "note": "Exact-SKU Taiwan PO evidence and the matching STYLE logistics record jointly confirm that this SKU's Taiwan order follows the direct-shipment route. No inference is made to SKUs absent from the PO evidence."
+      },
+      "domesticCurrentRiskApplicability": "NOT_APPLICABLE_CONFIRMED_DIRECT_SHIP",
+      "domesticSupplyRiskMisclassificationPotential": "CONFIRMED",
+      "applicabilityReason": "Exact-SKU direct-ship evidence makes domestic inbound/on-hand/cover interpretation not applicable.",
       "demandEvidenceApplicability": "OBSERVED_DEMAND_REMAINS_SEPARATE",
       "domesticSupplySensitiveFacts": {
         "orderQty": 150,
@@ -120,11 +137,30 @@
       "productName": "[대만] 키키 붐 반팔티셔츠",
       "marketScope": "SPECIAL_MARKET",
       "marketScopeSource": "LATEST",
-      "directShipStatus": "UNKNOWN",
-      "directShipEvidence": null,
-      "domesticCurrentRiskApplicability": "REVIEW_REQUIRED_DIRECT_SHIP_UNKNOWN",
-      "domesticSupplyRiskMisclassificationPotential": "POSSIBLE",
-      "applicabilityReason": "Special Market metadata does not establish direct shipment; domestic supply interpretation requires shipment evidence.",
+      "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+      "directShipEvidence": {
+        "sku": "WA2603STT1BK",
+        "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+        "market": "TAIWAN",
+        "evidenceType": "COMPANY_PO_PLUS_LOGISTICS_RECORD",
+        "evidenceAsOf": "2026-09-11",
+        "sources": [
+          {
+            "document": "26FW 해외오더 PO_유니.xlsx",
+            "location": "상품기획안_종합!E519,M519; ERP!A1105,K1105",
+            "fact": "The exact SKU is assigned to Taiwan in the overseas-order PO."
+          },
+          {
+            "document": "teams-data-memorial-2026-09-04.md",
+            "location": "73351-73359",
+            "fact": "The company logistics record identifies WA2603STT1 as Taiwan-exclusive and Taiwan direct shipment."
+          }
+        ],
+        "note": "Exact-SKU Taiwan PO evidence and the matching STYLE logistics record jointly confirm that this SKU's Taiwan order follows the direct-shipment route. No inference is made to SKUs absent from the PO evidence."
+      },
+      "domesticCurrentRiskApplicability": "NOT_APPLICABLE_CONFIRMED_DIRECT_SHIP",
+      "domesticSupplyRiskMisclassificationPotential": "CONFIRMED",
+      "applicabilityReason": "Exact-SKU direct-ship evidence makes domestic inbound/on-hand/cover interpretation not applicable.",
       "demandEvidenceApplicability": "OBSERVED_DEMAND_REMAINS_SEPARATE",
       "domesticSupplySensitiveFacts": {
         "orderQty": 150,
@@ -146,11 +182,30 @@
       "productName": "[대만] 키키 붐 반팔티셔츠",
       "marketScope": "SPECIAL_MARKET",
       "marketScopeSource": "LATEST",
-      "directShipStatus": "UNKNOWN",
-      "directShipEvidence": null,
-      "domesticCurrentRiskApplicability": "REVIEW_REQUIRED_DIRECT_SHIP_UNKNOWN",
-      "domesticSupplyRiskMisclassificationPotential": "POSSIBLE",
-      "applicabilityReason": "Special Market metadata does not establish direct shipment; domestic supply interpretation requires shipment evidence.",
+      "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+      "directShipEvidence": {
+        "sku": "WA2603STT1WH",
+        "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+        "market": "TAIWAN",
+        "evidenceType": "COMPANY_PO_PLUS_LOGISTICS_RECORD",
+        "evidenceAsOf": "2026-09-11",
+        "sources": [
+          {
+            "document": "26FW 해외오더 PO_유니.xlsx",
+            "location": "상품기획안_종합!E518,M518; ERP!A1106,K1106",
+            "fact": "The exact SKU is assigned to Taiwan in the overseas-order PO."
+          },
+          {
+            "document": "teams-data-memorial-2026-09-04.md",
+            "location": "73351-73359",
+            "fact": "The company logistics record identifies WA2603STT1 as Taiwan-exclusive and Taiwan direct shipment."
+          }
+        ],
+        "note": "Exact-SKU Taiwan PO evidence and the matching STYLE logistics record jointly confirm that this SKU's Taiwan order follows the direct-shipment route. No inference is made to SKUs absent from the PO evidence."
+      },
+      "domesticCurrentRiskApplicability": "NOT_APPLICABLE_CONFIRMED_DIRECT_SHIP",
+      "domesticSupplyRiskMisclassificationPotential": "CONFIRMED",
+      "applicabilityReason": "Exact-SKU direct-ship evidence makes domestic inbound/on-hand/cover interpretation not applicable.",
       "demandEvidenceApplicability": "OBSERVED_DEMAND_REMAINS_SEPARATE",
       "domesticSupplySensitiveFacts": {
         "orderQty": 150,
@@ -172,11 +227,30 @@
       "productName": "[대만] 키키 요술램프 피그먼트 반팔티셔츠",
       "marketScope": "SPECIAL_MARKET",
       "marketScopeSource": "LATEST",
-      "directShipStatus": "UNKNOWN",
-      "directShipEvidence": null,
-      "domesticCurrentRiskApplicability": "REVIEW_REQUIRED_DIRECT_SHIP_UNKNOWN",
-      "domesticSupplyRiskMisclassificationPotential": "POSSIBLE",
-      "applicabilityReason": "Special Market metadata does not establish direct shipment; domestic supply interpretation requires shipment evidence.",
+      "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+      "directShipEvidence": {
+        "sku": "WA2603STT2CH",
+        "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+        "market": "TAIWAN",
+        "evidenceType": "COMPANY_PO_PLUS_LOGISTICS_RECORD",
+        "evidenceAsOf": "2026-09-11",
+        "sources": [
+          {
+            "document": "26FW 해외오더 PO_유니.xlsx",
+            "location": "상품기획안_종합!E526,M526; ERP!A1107,K1107",
+            "fact": "The exact SKU is assigned to Taiwan in the overseas-order PO."
+          },
+          {
+            "document": "teams-data-memorial-2026-09-04.md",
+            "location": "73351-73359",
+            "fact": "The company logistics record identifies WA2603STT2 as Taiwan-exclusive and Taiwan direct shipment."
+          }
+        ],
+        "note": "Exact-SKU Taiwan PO evidence and the matching STYLE logistics record jointly confirm that this SKU's Taiwan order follows the direct-shipment route. No inference is made to SKUs absent from the PO evidence."
+      },
+      "domesticCurrentRiskApplicability": "NOT_APPLICABLE_CONFIRMED_DIRECT_SHIP",
+      "domesticSupplyRiskMisclassificationPotential": "CONFIRMED",
+      "applicabilityReason": "Exact-SKU direct-ship evidence makes domestic inbound/on-hand/cover interpretation not applicable.",
       "demandEvidenceApplicability": "OBSERVED_DEMAND_REMAINS_SEPARATE",
       "domesticSupplySensitiveFacts": {
         "orderQty": 150,
@@ -2096,11 +2170,30 @@
       "productName": "[대만] 키키 페인터스 맨투맨",
       "marketScope": "SPECIAL_MARKET",
       "marketScopeSource": "LATEST",
-      "directShipStatus": "UNKNOWN",
-      "directShipEvidence": null,
-      "domesticCurrentRiskApplicability": "REVIEW_REQUIRED_DIRECT_SHIP_UNKNOWN",
-      "domesticSupplyRiskMisclassificationPotential": "POSSIBLE",
-      "applicabilityReason": "Special Market metadata does not establish direct shipment; domestic supply interpretation requires shipment evidence.",
+      "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+      "directShipEvidence": {
+        "sku": "WA2603CRT1GR",
+        "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+        "market": "TAIWAN",
+        "evidenceType": "COMPANY_PO_PLUS_LOGISTICS_RECORD",
+        "evidenceAsOf": "2026-09-11",
+        "sources": [
+          {
+            "document": "26FW 해외오더 PO_유니.xlsx",
+            "location": "상품기획안_종합!E455,M455; ERP!A1102,K1102",
+            "fact": "The exact SKU is assigned to Taiwan in the overseas-order PO."
+          },
+          {
+            "document": "teams-data-memorial-2026-09-04.md",
+            "location": "73351-73359",
+            "fact": "The company logistics record identifies WA2603CRT1 as Taiwan-exclusive and Taiwan direct shipment."
+          }
+        ],
+        "note": "Exact-SKU Taiwan PO evidence and the matching STYLE logistics record jointly confirm that this SKU's Taiwan order follows the direct-shipment route. No inference is made to SKUs absent from the PO evidence."
+      },
+      "domesticCurrentRiskApplicability": "NOT_APPLICABLE_CONFIRMED_DIRECT_SHIP",
+      "domesticSupplyRiskMisclassificationPotential": "CONFIRMED",
+      "applicabilityReason": "Exact-SKU direct-ship evidence makes domestic inbound/on-hand/cover interpretation not applicable.",
       "demandEvidenceApplicability": "OBSERVED_DEMAND_REMAINS_SEPARATE",
       "domesticSupplySensitiveFacts": {
         "orderQty": 150,
@@ -7596,11 +7689,30 @@
       "productName": "[대만] 키키 붐 반팔티셔츠",
       "marketScope": "SPECIAL_MARKET",
       "marketScopeSource": "LATEST",
-      "directShipStatus": "UNKNOWN",
-      "directShipEvidence": null,
-      "domesticCurrentRiskApplicability": "REVIEW_REQUIRED_DIRECT_SHIP_UNKNOWN",
-      "domesticSupplyRiskMisclassificationPotential": "POSSIBLE",
-      "applicabilityReason": "Special Market metadata does not establish direct shipment; domestic supply interpretation requires shipment evidence.",
+      "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+      "directShipEvidence": {
+        "sku": "WA2603STT1BK",
+        "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+        "market": "TAIWAN",
+        "evidenceType": "COMPANY_PO_PLUS_LOGISTICS_RECORD",
+        "evidenceAsOf": "2026-09-11",
+        "sources": [
+          {
+            "document": "26FW 해외오더 PO_유니.xlsx",
+            "location": "상품기획안_종합!E519,M519; ERP!A1105,K1105",
+            "fact": "The exact SKU is assigned to Taiwan in the overseas-order PO."
+          },
+          {
+            "document": "teams-data-memorial-2026-09-04.md",
+            "location": "73351-73359",
+            "fact": "The company logistics record identifies WA2603STT1 as Taiwan-exclusive and Taiwan direct shipment."
+          }
+        ],
+        "note": "Exact-SKU Taiwan PO evidence and the matching STYLE logistics record jointly confirm that this SKU's Taiwan order follows the direct-shipment route. No inference is made to SKUs absent from the PO evidence."
+      },
+      "domesticCurrentRiskApplicability": "NOT_APPLICABLE_CONFIRMED_DIRECT_SHIP",
+      "domesticSupplyRiskMisclassificationPotential": "CONFIRMED",
+      "applicabilityReason": "Exact-SKU direct-ship evidence makes domestic inbound/on-hand/cover interpretation not applicable.",
       "demandEvidenceApplicability": "OBSERVED_DEMAND_REMAINS_SEPARATE",
       "domesticSupplySensitiveFacts": {
         "orderQty": 150,
@@ -7622,11 +7734,30 @@
       "productName": "[대만] 키키 붐 반팔티셔츠",
       "marketScope": "SPECIAL_MARKET",
       "marketScopeSource": "LATEST",
-      "directShipStatus": "UNKNOWN",
-      "directShipEvidence": null,
-      "domesticCurrentRiskApplicability": "REVIEW_REQUIRED_DIRECT_SHIP_UNKNOWN",
-      "domesticSupplyRiskMisclassificationPotential": "POSSIBLE",
-      "applicabilityReason": "Special Market metadata does not establish direct shipment; domestic supply interpretation requires shipment evidence.",
+      "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+      "directShipEvidence": {
+        "sku": "WA2603STT1WH",
+        "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+        "market": "TAIWAN",
+        "evidenceType": "COMPANY_PO_PLUS_LOGISTICS_RECORD",
+        "evidenceAsOf": "2026-09-11",
+        "sources": [
+          {
+            "document": "26FW 해외오더 PO_유니.xlsx",
+            "location": "상품기획안_종합!E518,M518; ERP!A1106,K1106",
+            "fact": "The exact SKU is assigned to Taiwan in the overseas-order PO."
+          },
+          {
+            "document": "teams-data-memorial-2026-09-04.md",
+            "location": "73351-73359",
+            "fact": "The company logistics record identifies WA2603STT1 as Taiwan-exclusive and Taiwan direct shipment."
+          }
+        ],
+        "note": "Exact-SKU Taiwan PO evidence and the matching STYLE logistics record jointly confirm that this SKU's Taiwan order follows the direct-shipment route. No inference is made to SKUs absent from the PO evidence."
+      },
+      "domesticCurrentRiskApplicability": "NOT_APPLICABLE_CONFIRMED_DIRECT_SHIP",
+      "domesticSupplyRiskMisclassificationPotential": "CONFIRMED",
+      "applicabilityReason": "Exact-SKU direct-ship evidence makes domestic inbound/on-hand/cover interpretation not applicable.",
       "demandEvidenceApplicability": "OBSERVED_DEMAND_REMAINS_SEPARATE",
       "domesticSupplySensitiveFacts": {
         "orderQty": 150,
@@ -7648,11 +7779,30 @@
       "productName": "[대만] 키키 요술램프 피그먼트 반팔티셔츠",
       "marketScope": "SPECIAL_MARKET",
       "marketScopeSource": "LATEST",
-      "directShipStatus": "UNKNOWN",
-      "directShipEvidence": null,
-      "domesticCurrentRiskApplicability": "REVIEW_REQUIRED_DIRECT_SHIP_UNKNOWN",
-      "domesticSupplyRiskMisclassificationPotential": "POSSIBLE",
-      "applicabilityReason": "Special Market metadata does not establish direct shipment; domestic supply interpretation requires shipment evidence.",
+      "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+      "directShipEvidence": {
+        "sku": "WA2603STT2CH",
+        "directShipStatus": "CONFIRMED_DIRECT_SHIP",
+        "market": "TAIWAN",
+        "evidenceType": "COMPANY_PO_PLUS_LOGISTICS_RECORD",
+        "evidenceAsOf": "2026-09-11",
+        "sources": [
+          {
+            "document": "26FW 해외오더 PO_유니.xlsx",
+            "location": "상품기획안_종합!E526,M526; ERP!A1107,K1107",
+            "fact": "The exact SKU is assigned to Taiwan in the overseas-order PO."
+          },
+          {
+            "document": "teams-data-memorial-2026-09-04.md",
+            "location": "73351-73359",
+            "fact": "The company logistics record identifies WA2603STT2 as Taiwan-exclusive and Taiwan direct shipment."
+          }
+        ],
+        "note": "Exact-SKU Taiwan PO evidence and the matching STYLE logistics record jointly confirm that this SKU's Taiwan order follows the direct-shipment route. No inference is made to SKUs absent from the PO evidence."
+      },
+      "domesticCurrentRiskApplicability": "NOT_APPLICABLE_CONFIRMED_DIRECT_SHIP",
+      "domesticSupplyRiskMisclassificationPotential": "CONFIRMED",
+      "applicabilityReason": "Exact-SKU direct-ship evidence makes domestic inbound/on-hand/cover interpretation not applicable.",
       "demandEvidenceApplicability": "OBSERVED_DEMAND_REMAINS_SEPARATE",
       "domesticSupplySensitiveFacts": {
         "orderQty": 150,
