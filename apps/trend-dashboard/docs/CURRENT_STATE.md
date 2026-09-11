@@ -140,6 +140,18 @@ Read-only architecture audit answering whether `DIRECT_BLOCK`/`ADJACENT_BLOCK` i
 - Proposed (design only, no schema/migration) a minimal `OrderedContentBlock` shape and a separate human-reviewed `EditorialVisualMoodObservation` shape, and flagged that the future block model is a genuine revision of - not a drop-in reuse of - `image-relation.ts`'s current `ContentBlock` type.
 - No code, schema, collector, taxonomy, ranking, or live data changed in this audit pass; no live network fetch was made.
 
+## P2 Trend Research Source Registry (2026-09-11)
+
+Docs/config-independent audit checking whether 8 sources the user actually references for trend research (5 Instagram accounts/posts, `hbx.com/women`, Musinsa's `/content/list` magazine section, `coverchord.com`) are already reflected in this repo, and how they map onto four lanes: EDITORIAL DIRECT EVIDENCE, VISUAL DIFFUSION/STYLE CONTEXT, MARKET/ASSORTMENT, MANUAL RESEARCH ONLY. See `docs/TREND_RESEARCH_SOURCE_REGISTRY.md` for the full per-source table and design.
+
+- 5 of 8 sources (all 5 Instagram URLs, plus `coverchord.com`) had zero prior repo reference. The other 3 (`HBX`, `MUSINSA`, and the web `NONLABEL` editorial source) are registered, but for a different URL/purpose than the one given here.
+- No Instagram URL was fetched in this pass (per the user's own no-scraping/no-private-API boundary); classification for those 5 rests on the user's own account descriptions plus this repo's existing official-API feasibility research (`VISUAL_FIRST_TREND_BOARD_AUDIT.md` Section 7).
+- Three public web URLs were checked read-only (`robots.txt` + one page/JSON fetch each, the same depth already used in `docs/MARKET_SOURCE_AUDIT.md`): `hbx.com/women` is a navigation hub with no product data (a real women's category URL would need choosing separately); `musinsa.com/content/list?contentCategoryCode=019002001` is robots-restricted for automated collection (same wildcard policy as the already-known ranking page) AND client-hydrated with no server-rendered content, and is Musinsa's own in-house editorial/magazine section rather than a market-ranking page; `coverchord.com` is a Shopify storefront with a confirmed public `products.json` endpoint returning real product data - the same proven method already running for Slam Jam/Stussy.
+- Proposed (design only, no config/schema change) a `VisualDiffusionSourceConfig`/`VisualDiffusionReference` model, structurally parallel to but never merged into `EditorialMention`/ranking, plus a concrete home-screen "반복 노출된 스타일링 레퍼런스" section design extending the existing visual-first contract.
+- Explicitly flagged: the web `NONLABEL` editorial source and Instagram `@nonlabel.mag` must stay structurally separate lanes even if a human later confirms the same publisher - never let an Instagram image inherit the web source's direct-evidence trust tier.
+- Two concrete new-action candidates surfaced, neither implemented: `COVERCHORD` as a ready, low-risk Market-source addition (independent of the Editorial P0 gate); the 4 Instagram accounts plus 1 example permalink as `MANUAL_CURATION`-tier registry candidates.
+- No code, config, schema, collector, taxonomy, ranking, or live data changed in this pass; Market(real) remained 667, EditorialPost(real)/EditorialMention(real)/Bundles remained 617/2781/89, Canonical/Mention Duplicates remained 0/0.
+
 ## Known Current Limitations
 
 (Carried forward, still true as of this pass - see `docs/EDITORIAL_REFRESH_OPERATIONS.md` "Current Limitations" for the full list)
@@ -161,5 +173,7 @@ This file is an index, not a duplicate. For the full history and reasoning behin
 - `docs/EDITORIAL_ITEM_TAXONOMY_AUDIT.md` - Product Reference freeze statement; item-taxonomy coverage findings.
 - `docs/VISUAL_FIRST_TREND_BOARD_AUDIT.md` - visual-first baseline audit and the `EditorialVisualContextStrip` implementation record.
 - `docs/EDITORIAL_ORDERED_VISUAL_EVIDENCE_AUDIT.md` - per-source feasibility for real `DIRECT_BLOCK`/`ADJACENT_BLOCK` image evidence; proposed (design-only) ordered-block and human-reviewed-mood data shapes.
+- `docs/TREND_RESEARCH_SOURCE_REGISTRY.md` - repo-coverage audit and lane classification for Instagram/HBX/Musinsa-content/Coverchord sources; proposed (design-only) Visual Diffusion source model.
+- `docs/MARKET_SOURCE_AUDIT.md`, `docs/KOREA_SOURCE_AUDIT.md` - Market source feasibility/status per site, including the Slam Jam/Stussy Shopify-JSON precedent `TREND_RESEARCH_SOURCE_REGISTRY.md` extends to Coverchord.
 - `docs/CROSS_SOURCE_INDEPENDENT_SIGNAL_AUDIT.md`, `docs/COSMOPOLITAN_COLLECTION_AUDIT.md`, `docs/MARIECLAIRE_COLLECTION_AUDIT.md`, `docs/NON_HEARST_SOURCE_DIVERSITY_AUDIT.md` - per-source collection/integration passes.
 - `docs/PRODUCT_REFERENCE_MULTIBRAND_AUDIT.md`, `docs/PRODUCT_ATTRIBUTE_REFERENCE_AUDIT.md` - Product Reference's own (frozen) history.
