@@ -4,6 +4,9 @@ out/
 .next/
 .next-*/
 .tmp/
+tmp/
+_tmp*/
+.tmp_*
 .DS_Store
 *.log
 .vite
