@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { ProductImage } from "@/components/ProductImage";
+import { VisualDiffusionReferenceStrip } from "@/components/VisualDiffusionReferences";
+import { visualDiffusionReferencesForItem } from "@/config/visual-diffusion-references";
 import { attributeBarWidthPercent } from "@/lib/attribute-visual";
 import { selectEditorialVisualContext } from "@/lib/editorial-visual-context";
 import { attributeKoreanLabel, attributeTypeKoreanLabel } from "@/lib/korean-labels";
@@ -180,6 +182,11 @@ export function AttributeChip({ attribute }: { attribute: BundleAttribute }) {
 export function CurrentSignalHero({ bundle }: { bundle: AttributeBundle }) {
   const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread, independentEvidenceClusterCount: bundle.independentEvidenceClusterCount });
   const heroArticle = findHeroArticle(bundle);
+  // Pure, synchronous, in-memory config lookup (no DB/network) - see
+  // src/config/visual-diffusion-references.ts. Renders nothing (see
+  // VisualDiffusionReferenceStrip) until a reviewer actually curates an
+  // entry for this specific item, so this is currently a safe no-op.
+  const visualDiffusionItems = visualDiffusionReferencesForItem(bundle.specificItem);
 
   return (
     <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(16rem,0.58fr)_minmax(0,1.42fr)] lg:gap-x-10 lg:gap-y-5">
@@ -199,6 +206,7 @@ export function CurrentSignalHero({ bundle }: { bundle: AttributeBundle }) {
 
       <div className="min-w-0 lg:col-start-2 lg:row-span-2 lg:row-start-1">
         <EditorialVisualContextStrip articles={bundle.evidenceArticles} />
+        <VisualDiffusionReferenceStrip items={visualDiffusionItems} />
       </div>
 
       <div className="lg:col-start-1">
@@ -219,21 +227,78 @@ export function CurrentSignalHero({ bundle }: { bundle: AttributeBundle }) {
 }
 
 /**
- * A single-observation bundle, presented as a light editorial tile - title,
- * english descriptor, evidence line - separated from its neighbors by a
- * thin top divider rather than each sitting in its own bordered box. Never
- * upgraded in wording just because it sits next to CurrentSignalHero.
+ * SPECIFIC COMBINATION card (2026-09-14, replaces the old text-only
+ * SecondaryBundleCard) - a bundle below the CurrentSignalHero, presented
+ * with the SAME direct-attribute chips as AttributeBundleCard plus up to two
+ * small editorial-context thumbnails, so "New Observations" reads as
+ * concrete combinations (e.g. a specific color+item pairing) instead of a
+ * bare title/count line. This directly answers 2026-09-11 product feedback
+ * that the old text-only row was "too generic to plan from."
+ *
+ * Still never upgraded in wording just because it sits next to
+ * CurrentSignalHero - bundleEvidenceStrength is computed exactly as
+ * everywhere else, so a single-observation bundle here is honestly labelled
+ * "단일 관측", never implied to be a repeated trend.
+ *
+ * Thumbnails follow the EXACT same rules as EditorialVisualContextStrip:
+ * article-hero images only (never a bundle hero / DIRECT_BLOCK image; that
+ * stays exclusive to BundleHeroImage), each its own outbound link with
+ * source attribution, and the same permanent disclaimer. They are siblings
+ * of the item-detail Link, not nested inside it (nested <a> is invalid
+ * HTML) - clicking a thumbnail opens the source article; clicking the text
+ * opens the item detail page.
  */
-export function SecondaryBundleCard({ bundle }: { bundle: AttributeBundle }) {
+export function SpecificComboCard({ bundle }: { bundle: AttributeBundle }) {
   const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread, independentEvidenceClusterCount: bundle.independentEvidenceClusterCount });
+  const visuals = selectEditorialVisualContext(bundle.evidenceArticles, 2);
+
   return (
-    <Link href={`/items/${encodeURIComponent(bundle.specificItem)}`} className="block border-t border-line py-4 transition first:border-t-0 first:pt-0 hover:opacity-70">
-      <div className="text-base font-semibold leading-snug text-ink">{bundle.displayName}</div>
-      <div className="mt-1 text-xs font-medium uppercase tracking-[0.1em] text-muted">{englishSubtitle(bundle)}</div>
-      <div className="mt-2 text-xs text-muted">
-        {strength} · {bundle.bundleArticlePresence}기사 · {bundle.bundleSourceSpread}매체
+    <div className="border-t border-line py-4 first:border-t-0 first:pt-0">
+      <div className="flex gap-4">
+        {visuals.length > 0 ? (
+          <div className="flex shrink-0 gap-1.5">
+            {visuals.map((article) => (
+              <a
+                key={`${article.imageUrl}:${article.url}`}
+                href={article.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block h-16 w-16 shrink-0 overflow-hidden rounded bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
+                aria-label={`${sourceLabel(article.source)} 기사 열기: ${article.title || "제목 없음"}`}
+              >
+                {/* Article-level visual context only, same rule as EditorialVisualContextStrip - never a bundle hero or direct-relation image. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={article.imageUrl ?? undefined}
+                  alt={`기사 비주얼 맥락: ${article.title || sourceLabel(article.source)}`}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                />
+              </a>
+            ))}
+          </div>
+        ) : null}
+
+        <Link href={`/items/${encodeURIComponent(bundle.specificItem)}`} className="block min-w-0 flex-1 transition hover:opacity-70">
+          <div className="text-base font-semibold leading-snug text-ink">{bundle.displayName}</div>
+          <div className="mt-1 text-xs font-medium uppercase tracking-[0.1em] text-muted">{englishSubtitle(bundle)}</div>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {bundle.directAttributes.map((attribute) => (
+              <AttributeChip key={`${attribute.type}:${attribute.value}`} attribute={attribute} />
+            ))}
+          </div>
+          <div className="mt-2 text-xs text-muted">
+            {strength} · {bundle.bundleArticlePresence}개 기사 · {bundle.bundleSourceSpread}개 매체
+          </div>
+        </Link>
       </div>
-    </Link>
+
+      {visuals.length > 0 ? (
+        <p className="mt-2 text-[10px] leading-relaxed text-muted">
+          기사 비주얼 맥락 · 아이템/속성/무드를 직접 증명하지 않음
+        </p>
+      ) : null}
+    </div>
   );
 }
 

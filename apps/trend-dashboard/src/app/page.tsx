@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AttributeBundleCard, CurrentSignalHero, SecondaryBundleCard } from "@/components/AttributeBundle";
+import { AttributeBundleCard, CurrentSignalHero, SpecificComboCard } from "@/components/AttributeBundle";
 import { GlobalFilterBar } from "@/components/GlobalFilterBar";
 import { ProductImage } from "@/components/ProductImage";
 import { ProductLinkButton } from "@/components/ProductLinkButton";
@@ -58,7 +58,11 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   // SOME primary bundle), but this page wants null in that case, to render
   // the grid instead of forcing a hero out of ordinary single observations.
   const repeatedBundle = bundles.find((bundle) => bundle.independentEvidenceClusterCount >= 2) ?? null;
-  const secondaryBundles = repeatedBundle ? bundles.filter((bundle) => bundle.key !== repeatedBundle.key).slice(0, 4) : [];
+  // Raised from 4 to 6 (2026-09-14, alongside the SpecificComboCard upgrade
+  // below): the underlying data/ranking is unchanged, this only shows more of
+  // the already-sorted list so a planner sees more concrete alternatives to
+  // the single hero, not just one runner-up row.
+  const secondaryBundles = repeatedBundle ? bundles.filter((bundle) => bundle.key !== repeatedBundle.key).slice(0, 6) : [];
 
   return (
     <div>
@@ -84,9 +88,14 @@ export default async function DashboardPage({ searchParams }: PageProps) {
               <CurrentSignalHero bundle={repeatedBundle} />
               {secondaryBundles.length > 0 ? (
                 <div className="mt-10 border-t border-line pt-7">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">New Observations</p>
-                  <div className="mt-4 grid gap-x-8 md:grid-cols-2 xl:grid-cols-4">
-                    {secondaryBundles.map((bundle) => <SecondaryBundleCard key={bundle.key} bundle={bundle} />)}
+                  <SectionHeader
+                    kicker="Specific Combinations"
+                    title="구체적으로 뜨는 조합"
+                    description="가장 강한 신호 하나만으로는 기획하기 어려우니, 기사에서 직접 확인된 더 구체적인 아이템+속성 조합을 함께 보여줍니다. 관측이 아직 하나뿐인 조합은 '단일 관측'으로 정직하게 표시합니다."
+                    href="/items"
+                  />
+                  <div className="mt-4 grid gap-x-10 gap-y-1 md:grid-cols-2">
+                    {secondaryBundles.map((bundle) => <SpecificComboCard key={bundle.key} bundle={bundle} />)}
                   </div>
                 </div>
               ) : null}
