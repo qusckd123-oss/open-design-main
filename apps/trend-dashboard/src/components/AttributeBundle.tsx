@@ -5,6 +5,7 @@ import { visualDiffusionReferencesForItem } from "@/config/visual-diffusion-refe
 import { attributeBarWidthPercent } from "@/lib/attribute-visual";
 import { selectEditorialVisualContext } from "@/lib/editorial-visual-context";
 import { attributeKoreanLabel, attributeTypeKoreanLabel } from "@/lib/korean-labels";
+import { buildSignalInterpretation, type SignalInterpretation } from "@/lib/signal-interpretation";
 import { sourceLabel } from "@/lib/market-ui";
 import { bundleEvidenceStrength, type AttributeBundle, type BundleAttribute, type BundleEvidenceArticle } from "@/services/attribute-bundle-service";
 
@@ -182,6 +183,7 @@ export function AttributeChip({ attribute }: { attribute: BundleAttribute }) {
 export function CurrentSignalHero({ bundle }: { bundle: AttributeBundle }) {
   const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread, independentEvidenceClusterCount: bundle.independentEvidenceClusterCount });
   const heroArticle = findHeroArticle(bundle);
+  const interpretation = buildSignalInterpretation(bundle);
   // Pure, synchronous, in-memory config lookup (no DB/network) - see
   // src/config/visual-diffusion-references.ts. Renders nothing (see
   // VisualDiffusionReferenceStrip) until a reviewer actually curates an
@@ -191,7 +193,7 @@ export function CurrentSignalHero({ bundle }: { bundle: AttributeBundle }) {
   return (
     <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(16rem,0.58fr)_minmax(0,1.42fr)] lg:gap-x-10 lg:gap-y-5">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-signal">Current Signal</p>
+        <p className="text-xs font-semibold tracking-[0.12em] text-signal">현재 주목 신호</p>
 
         {heroArticle?.evidenceImageUrl ? (
           <div className="mt-5 flex justify-center sm:justify-start">
@@ -199,8 +201,7 @@ export function CurrentSignalHero({ bundle }: { bundle: AttributeBundle }) {
           </div>
         ) : null}
 
-        <h2 className="mt-4 text-4xl font-bold leading-[1.05] text-ink md:text-6xl">{bundle.displayName}</h2>
-        <p className="mt-2 text-xs font-medium uppercase tracking-[0.14em] text-muted">{englishSubtitle(bundle)}</p>
+        <h2 className="mt-4 text-4xl font-bold leading-[1.05] text-ink md:text-6xl">{interpretation.signalName}</h2>
 
       </div>
 
@@ -213,16 +214,35 @@ export function CurrentSignalHero({ bundle }: { bundle: AttributeBundle }) {
         <div>
           <EvidenceDots sourceSpread={bundle.bundleSourceSpread} articlePresence={bundle.bundleArticlePresence} label={strength} />
         </div>
-        <p className="mt-2 text-sm text-muted">
-          {bundle.bundleArticlePresence}개 기사 · {bundle.bundleSourceSpread}개 매체
-          {bundle.latestObservedAt ? ` · 최근 ${bundle.latestObservedAt.toISOString().slice(0, 10)}` : ""}
-        </p>
 
-        <Link className="mt-5 inline-block text-sm font-semibold text-signal" href={`/items/${encodeURIComponent(bundle.specificItem)}`}>
+        <SignalInterpretationBlock interpretation={interpretation} />
+
+        <Link className="mt-4 inline-block text-sm font-semibold text-signal" href={`/items/${encodeURIComponent(bundle.specificItem)}`}>
           근거 보기 →
         </Link>
       </div>
     </div>
+  );
+}
+
+function SignalInterpretationBlock({ interpretation }: { interpretation: SignalInterpretation }) {
+  return (
+    <section aria-label="현재 신호 해석" data-testid="signal-interpretation" className="mt-4 border-t border-line">
+      <dl className="divide-y divide-line">
+        <div className="py-3">
+          <dt className="text-[11px] font-semibold tracking-[0.08em] text-signal">관측된 사실</dt>
+          <dd className="mt-1 text-sm leading-relaxed text-ink">{interpretation.observedFact}</dd>
+        </div>
+        <div className="py-3">
+          <dt className="text-[11px] font-semibold tracking-[0.08em] text-muted">아직 확인되지 않음</dt>
+          <dd className="mt-1 text-sm leading-relaxed text-muted">{interpretation.unknowns.join(" · ")}</dd>
+        </div>
+        <div className="border-l-2 border-signal py-3 pl-3">
+          <dt className="text-[11px] font-semibold tracking-[0.08em] text-signal">기획 검토 질문</dt>
+          <dd className="mt-1 text-sm font-semibold leading-relaxed text-ink">{interpretation.planningQuestion}</dd>
+        </div>
+      </dl>
+    </section>
   );
 }
 

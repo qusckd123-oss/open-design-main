@@ -10,6 +10,7 @@ import { contentBlocksFromStoredText, resolveEvidenceImage, type ContentBlock } 
 import { attributeBarWidthPercent } from "../src/lib/attribute-visual";
 import { selectEditorialVisualContext } from "../src/lib/editorial-visual-context";
 import { composeBundleName } from "../src/lib/korean-labels";
+import { buildSignalInterpretation } from "../src/lib/signal-interpretation";
 import { classifyFashionRelevance, EditorialRateLimitedError, getHypebeastFashionEntries, parseArticlePage, parseEsquireKrArticlePage, parseEsquireKrBody, parseEsquireKrSitemap, parseEyesmagRichBody, parseGenericSitemap, parseHarpersBazaarKrArticlePage, parseHarpersBazaarKrBody, parseHarpersBazaarKrSitemap, parseHypebeastListing, parseHypebeastRichBody, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
 import { extractProductNameColorRelations, findDescriptionCandidates } from "../src/collectors/product-reference/attributes";
 import { extractProductObjectRelations, resolveSpecificItem } from "../src/collectors/product-reference/object-relations";
@@ -66,6 +67,7 @@ async function main() {
   verifyEvidenceImageResolution();
   verifyAttributeBarWidth();
   verifyEditorialVisualContextSelection();
+  verifySignalInterpretation();
   verifyIndependentEvidenceClusterCount();
   await verifyAttributeBundles();
   verifyPlanningDashboardHelpers();
@@ -136,6 +138,46 @@ function verifyEditorialVisualContextSelection() {
   assert.equal(selectEditorialVisualContext(fixtures, 1).length, 1, "Editorial visual context must respect its display limit.");
   assert.equal(selectEditorialVisualContext(fixtures, 0).length, 0, "Editorial visual context must allow an explicitly empty display.");
   assert.equal(selectEditorialVisualContext(fixtures, 99).length, 6, "Editorial visual context must cap selection at six without duplicating images.");
+}
+
+function verifySignalInterpretation() {
+  const stripe = buildSignalInterpretation({
+    specificItem: "SHIRT",
+    directAttributes: [{ type: "DETAIL", value: "STRIPE" }],
+    bundleArticlePresence: 6,
+    bundleSourceSpread: 5,
+    independentEvidenceClusterCount: 6,
+    latestObservedAt: new Date("2026-09-11T10:06:00.000Z")
+  });
+
+  assert.equal(stripe.signalName, "스트라이프 셔츠", "Lead-signal interpretation must use the Korean specific-item label, never raw SHIRT.");
+  assert.equal(
+    stripe.observedFact,
+    "“스트라이프 셔츠”의 아이템·속성 직접 관계가 6개 기사에서 확인됐습니다. 서로 다른 사례 기준 6건이 5개 매체에서 관측됐으며 최근 관측일은 2026-09-11입니다.",
+    "Observed fact must contain only existing bundle-level article, independent-case, outlet, and date fields."
+  );
+  assert.deepEqual(
+    stripe.unknowns,
+    ["스트라이프의 굵기·간격·방향", "실루엣과 핏", "소재·컬러 구성", "스타일링 무드", "판매·수요 반응"],
+    "A stripe-detail signal must expose stripe execution and absent product dimensions without repeating a generic all-signal list."
+  );
+  assert.equal(stripe.planningQuestion, "“스트라이프 셔츠” 조합을 다음 단계 상품 조사 대상으로 볼 것인가?");
+
+  const materialAndColor = buildSignalInterpretation({
+    specificItem: "SHORTS",
+    directAttributes: [
+      { type: "MATERIAL", value: "DENIM" },
+      { type: "COLOR", value: "BLACK" }
+    ],
+    bundleArticlePresence: 2,
+    bundleSourceSpread: 1,
+    independentEvidenceClusterCount: 1,
+    latestObservedAt: null
+  });
+  assert.ok(materialAndColor.unknowns.includes("데님의 중량·조직·가공"), "A verified material must yield only its unverified execution variables, not claim that material itself is unknown.");
+  assert.ok(materialAndColor.unknowns.includes("블랙의 톤·배색·적용 면적"), "A verified color must yield only its unverified expression variables, not claim that color itself is unknown.");
+  assert.ok(!materialAndColor.unknowns.includes("소재·컬러 구성"), "Known material and color dimensions must not be listed as wholly unknown.");
+  assert.ok(materialAndColor.observedFact.endsWith("최근 관측일은 확인되지 않았습니다."), "A missing latest date must stay explicitly unknown rather than be invented.");
 }
 
 async function verifyLegacyRanking() {

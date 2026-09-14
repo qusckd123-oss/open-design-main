@@ -212,6 +212,18 @@ Directly addresses the user's 2026-09-11 live feedback that the home page's sing
 - `src/components/VisualDiffusionReferences.tsx` provides the separate, permalink-only, permanently disclaimed UI lane described in `TREND_RESEARCH_SOURCE_REGISTRY.md`. `CurrentSignalHero` wires it after Editorial Visual Context, but it returns `null` while the reference list is empty; rendered desktop/mobile checks confirmed zero Visual Diffusion sections today.
 - No Instagram image is fetched, hotlinked, cached, or transformed. No Prisma schema, collector, taxonomy, ranking, bundle service, or evidence semantics changed.
 
+## P0 Product UX - Lead Signal Interpretation (2026-09-14, approved)
+
+The `CurrentSignalHero` now includes one compact, Korean-first interpretation block that keeps three meanings visibly and verbally separate:
+
+- **관측된 사실**: composed Korean item+direct-attribute name plus the existing bundle's article count, `independentEvidenceClusterCount`, media count, and latest observed date. No image, Market, ranking, or inferred product direction enters this sentence.
+- **아직 확인되지 않음**: deterministic presentation-only gaps derived from the exact attribute dimensions present or absent. A verified `DETAIL:STRIPE`, for example, leaves stripe width/spacing/direction unresolved; verified MATERIAL/COLOR values leave only execution variables such as weight/weave/finish or tone/color-blocking/application area unresolved. Missing silhouette, material/color, style, and commercial response remain explicitly unknown rather than being inferred.
+- **기획 검토 질문**: one fixed human-review question, `“{Korean item+attribute name}” 조합을 다음 단계 상품 조사 대상으로 볼 것인가?`. It is not a recommendation, forecast, or sales claim.
+
+Only the lead hero changed: the six `SpecificComboCard`s, bundle ranking, services, collectors, taxonomy, schema, Market logic, and empty Visual Diffusion reference list are untouched. The old separate hero count/date line was removed because the factual row now carries those fields, avoiding duplication. Focused smoke-test coverage asserts Korean-first naming, exact fact provenance, attribute-aware unknown generation, missing-date honesty, and non-generic material/color handling.
+
+Validation from `apps/trend-dashboard/`: `corepack pnpm typecheck`, `corepack pnpm test`, `corepack pnpm build`, and `git diff --check` passed. Playwright checks at 1440x1000 and 390x844 confirmed one lead-only interpretation block, all three semantic labels, Korean hero heading `스트라이프 셔츠`, six unchanged secondary cards, no page-level horizontal overflow, and no application console errors. The lead-only Korean fallback is explicitly accepted for this scoped change; shared display-label consistency remains a separate future cleanup so secondary-card naming is unchanged.
+
 ## Known Current Limitations
 
 (Carried forward, still true as of this pass - see `docs/EDITORIAL_REFRESH_OPERATIONS.md` "Current Limitations" for the full list)
