@@ -809,6 +809,17 @@ async function buildLatestJsonFromConfirmedSchema(page, productImages) {
       return Object.values(channels).reduce((sum, arr) => sum + Number(Array.isArray(arr) ? arr[index] || 0 : 0), 0);
     }
 
+    // Overseas channel filter (owner-confirmed 2026-09-11, see docs/NEXT_PRIORITIES.md):
+    // Sales Dashboard PDET[sku].ch / PDPER[period].cur[sku] are keyed by real channel name.
+    // "해외 사입" (overseas buying) is the confirmed overseas channel; every other key is domestic.
+    // This ONLY adds filterable diagnostic fields (overseasCumQty/hasOverseasSales/...) - it does
+    // NOT change sales/stock/stockRisk/previewScore/salesTrend or any existing production field.
+    const OVERSEAS_CHANNEL_KEYS = ["해외 사입"];
+    function channelValue(channels, keys, index) {
+      if (!channels || typeof channels !== "object") return 0;
+      return keys.reduce((sum, key) => sum + Number(Array.isArray(channels[key]) ? channels[key][index] || 0 : 0), 0);
+    }
+
     function productGroupForCategory(category) {
       return productGroupByCategory[String(category || "").toUpperCase()] || "UNMAPPED";
     }
@@ -848,35 +859,48 @@ async function buildLatestJsonFromConfirmedSchema(page, productImages) {
       return `${parsed.year}-${parsed.month}W${parsed.week - 1}`;
     }
 
-    function weeklyDeltaForSku(periodKey, sku) {
+    // domesticOnly=true subtracts OVERSEAS_CHANNEL_KEYS ("해외 사입") before taking the weekly delta,
+    // so completed-week/WTD sales trend can be shown either "전체" (all channels, unchanged default
+    // behavior) or "국내만" (domestic channels only). Does not touch the non-domestic return values.
+    function periodSalesAndQty(channels, domesticOnly) {
+      const sales = sumChannels(channels, 0);
+      const quantity = sumChannels(channels, 2);
+      if (!domesticOnly) return { sales, quantity };
+      return {
+        sales: Math.max(0, sales - channelValue(channels, OVERSEAS_CHANNEL_KEYS, 0)),
+        quantity: Math.max(0, quantity - channelValue(channels, OVERSEAS_CHANNEL_KEYS, 2)),
+      };
+    }
+
+    function weeklyDeltaForSku(periodKey, sku, domesticOnly = false) {
       const current = window.PDPER?.[periodKey]?.cur?.[sku];
       if (!current) return null;
       const previousKey = previousWeekPeriod(periodKey);
       const previous = previousKey ? window.PDPER?.[previousKey]?.cur?.[sku] : null;
-      const rawSales = sumChannels(current, 0);
-      const rawQuantity = sumChannels(current, 2);
+      const rawCurrent = periodSalesAndQty(current, domesticOnly);
       if (!previous) {
-        return { period: periodKey, sales: rawSales, quantity: rawQuantity };
+        return { period: periodKey, sales: rawCurrent.sales, quantity: rawCurrent.quantity };
       }
+      const rawPrevious = periodSalesAndQty(previous, domesticOnly);
       return {
         period: periodKey,
-        sales: Math.max(0, rawSales - sumChannels(previous, 0)),
-        quantity: Math.max(0, rawQuantity - sumChannels(previous, 2)),
+        sales: Math.max(0, rawCurrent.sales - rawPrevious.sales),
+        quantity: Math.max(0, rawCurrent.quantity - rawPrevious.quantity),
       };
     }
 
-    function weeklyDeltaForSkuFromSequence(periodKey, sku, periods) {
+    function weeklyDeltaForSkuFromSequence(periodKey, sku, periods, domesticOnly = false) {
       const current = window.PDPER?.[periodKey]?.cur?.[sku];
       if (!current) return null;
       const periodIndex = periods.indexOf(periodKey);
       const previousKey = periodIndex > 0 ? periods[periodIndex - 1] : "";
       const previous = previousKey ? window.PDPER?.[previousKey]?.cur?.[sku] : null;
-      const rawSales = sumChannels(current, 0);
-      const rawQuantity = sumChannels(current, 2);
+      const rawCurrent = periodSalesAndQty(current, domesticOnly);
+      const rawPrevious = previous ? periodSalesAndQty(previous, domesticOnly) : null;
       return {
         period: periodKey,
-        sales: previous ? Math.max(0, rawSales - sumChannels(previous, 0)) : rawSales,
-        quantity: previous ? Math.max(0, rawQuantity - sumChannels(previous, 2)) : rawQuantity,
+        sales: rawPrevious ? Math.max(0, rawCurrent.sales - rawPrevious.sales) : rawCurrent.sales,
+        quantity: rawPrevious ? Math.max(0, rawCurrent.quantity - rawPrevious.quantity) : rawCurrent.quantity,
       };
     }
 
@@ -978,6 +1002,47 @@ async function buildLatestJsonFromConfirmedSchema(page, productImages) {
       const currentWtdDelta = currentWtdPeriod ? weeklyDeltaForSku(currentWtdPeriod, sku) : null;
       const currentWtdSales = currentWtdDelta?.sales ?? (currentWtdChannels ? sumChannels(currentWtdChannels, 0) : 0);
       const currentWtdQty = currentWtdDelta?.quantity ?? (currentWtdChannels ? sumChannels(currentWtdChannels, 2) : 0);
+      const cumulativeChannels = window.PDET?.[sku]?.ch || null;
+      const overseasCumQty = channelValue(cumulativeChannels, OVERSEAS_CHANNEL_KEYS, 2);
+      const overseasCumQtyAvailable = Boolean(cumulativeChannels);
+      const domesticCumQty = overseasCumQtyAvailable ? Math.max(0, sumChannels(cumulativeChannels, 2) - overseasCumQty) : null;
+      const overseasCumSalesSharePct = overseasCumQtyAvailable && sumChannels(cumulativeChannels, 2)
+        ? Number(((overseasCumQty / sumChannels(cumulativeChannels, 2)) * 100).toFixed(1))
+        : 0;
+      const overseasCurrentWtdQty = channelValue(currentWtdChannels, OVERSEAS_CHANNEL_KEYS, 2);
+      const hasOverseasSales = overseasCumQty > 0;
+
+      // Domestic-only ("국내만") mirror of the sales-trend metrics below, requested by owner
+      // 2026-09-14 as a view toggle (not a replacement) for the reorder monitor. `stock` (가용재고)
+      // is not channel-split at the source and is intentionally reused as-is in both views.
+      const domesticWeeklyHistory = weeklyPeriods.map((weeklyPeriod) => weeklyDeltaForSku(weeklyPeriod, sku, true)).filter(Boolean);
+      const domesticCurrentWtdDelta = currentWtdPeriod ? weeklyDeltaForSku(currentWtdPeriod, sku, true) : null;
+      const domesticCurrentWtdQtyResolved = domesticCurrentWtdDelta?.quantity
+        ?? (currentWtdChannels ? Math.max(0, sumChannels(currentWtdChannels, 2) - overseasCurrentWtdQty) : 0);
+      const domesticLastCompleteWeekQty = domesticWeeklyHistory.at(-1)?.quantity ?? 0;
+      const domesticPreviousCompleteWeekQty = domesticWeeklyHistory.length >= 2 ? domesticWeeklyHistory.at(-2).quantity : null;
+      const domesticCompletedWeekWow = domesticPreviousCompleteWeekQty
+        ? ((domesticLastCompleteWeekQty - domesticPreviousCompleteWeekQty) / domesticPreviousCompleteWeekQty) * 100
+        : null;
+      const domesticAvg4CompletedWeekQty = domesticWeeklyHistory.length
+        ? domesticWeeklyHistory.reduce((sum, item) => sum + item.quantity, 0) / domesticWeeklyHistory.length
+        : 0;
+      const domesticBaseWeights = [0.1, 0.2, 0.3, 0.4].slice(-domesticWeeklyHistory.length);
+      const domesticWeightTotal = domesticBaseWeights.reduce((sum, value) => sum + value, 0);
+      const domesticWeighted4CompletedWeekQty = domesticWeightTotal
+        ? domesticWeeklyHistory.reduce((sum, item, index) => sum + item.quantity * (domesticBaseWeights[index] / domesticWeightTotal), 0)
+        : 0;
+      const domesticStockCoverWeeks = domesticWeighted4CompletedWeekQty ? stock / domesticWeighted4CompletedWeekQty : null;
+      const domesticSalesTrend = classifyTrend(domesticWeeklyHistory.map((item) => item.quantity));
+      // sellThrough approximation: domestic cumulative sales / total inbound. inQty is not
+      // channel-split at the source, so this divides a domestic numerator by a non-domestic-only
+      // denominator - a diagnostic approximation, not an exact domestic sell-through.
+      const domesticSellThrough = inQty ? (domesticCumQty / inQty) * 100 : null;
+      const domesticStockRisk = classifyStockRisk({
+        stockCoverWeeks: domesticStockCoverWeeks,
+        sellThrough: domesticSellThrough || 0,
+        weighted4CompletedWeekQty: domesticWeighted4CompletedWeekQty,
+      });
       const lastCompleteWeekQty = completedWeeklyHistory.at(-1)?.quantity ?? 0;
       const previousCompleteWeekQty = completedWeeklyHistory.length >= 2 ? completedWeeklyHistory.at(-2).quantity : null;
       const completedWeekWow = previousCompleteWeekQty ? ((lastCompleteWeekQty - previousCompleteWeekQty) / previousCompleteWeekQty) * 100 : null;
@@ -1063,6 +1128,32 @@ async function buildLatestJsonFromConfirmedSchema(page, productImages) {
         possibleStockout,
         previewScore: 0,
         isSpecialMarket: String(meta[10] || "").includes("[대만]"),
+        // Overseas channel filter fields (diagnostic-grade, owner-confirmed 2026-09-11): "해외 사입"
+        // channel quantity from the Sales Dashboard's own real channel breakdown. Does not change
+        // sales/stock/stockRisk/previewScore/salesTrend; UI-level filter only, see reorder-monitor.js.
+        overseasCumQty,
+        domesticCumQty,
+        overseasCumQtyAvailable,
+        overseasCumSalesSharePct,
+        overseasCurrentWtdQty,
+        hasOverseasSales,
+        // Domestic-only view toggle fields (owner-requested 2026-09-14): mirror of the completed-week
+        // trend metrics above, computed with the "해외 사입" channel excluded. `domesticPreviewScore`/
+        // `domesticStockRisk` are ranked within a SEPARATE domestic-only percentile pass below (see
+        // domesticVelocityByCategory) - they are not comparable 1:1 with the all-channel previewScore.
+        domesticWeeklyHistory,
+        domesticCompletedWeeklyHistory: domesticWeeklyHistory,
+        domesticCurrentWtdQty: domesticCurrentWtdQtyResolved,
+        domesticLastCompleteWeekQty,
+        domesticPreviousCompleteWeekQty,
+        domesticCompletedWeekWow,
+        domesticAvg4CompletedWeekQty,
+        domesticWeighted4CompletedWeekQty,
+        domesticStockCoverWeeks,
+        domesticSalesTrend,
+        domesticSellThrough,
+        domesticStockRisk,
+        domesticPreviewScore: 0,
         imageUrl: image.imageUrl || "",
         productUrl: image.productUrl || "",
       });
@@ -1101,6 +1192,31 @@ async function buildLatestJsonFromConfirmedSchema(page, productImages) {
       row.previewScore = Math.round(Math.max(0, Math.min(100, score)));
       row.reorderPreviewV2.previewScore = row.previewScore;
       row.reorderPreviewV2.stockRisk = row.stockRisk;
+    }
+
+    // Domestic-only view toggle: a SEPARATE percentile pass over domesticWeighted4CompletedWeekQty,
+    // so domesticPreviewScore is ranked against other domestic-only velocities (not the all-channel
+    // distribution above). Does not change previewScore/stockRisk/reorderPreviewV2.
+    const domesticVelocityByCategory = {};
+    for (const row of styles) {
+      const key = row.category || "ETC";
+      if (!domesticVelocityByCategory[key]) domesticVelocityByCategory[key] = [];
+      domesticVelocityByCategory[key].push(row.domesticWeighted4CompletedWeekQty || 0);
+    }
+    for (const values of Object.values(domesticVelocityByCategory)) {
+      values.sort((a, b) => a - b);
+    }
+    function domesticPercentileInCategory(category, value) {
+      const values = domesticVelocityByCategory[category || "ETC"] || [];
+      if (!values.length) return 0;
+      const belowOrEqual = values.filter((item) => item <= value).length;
+      return belowOrEqual / values.length;
+    }
+    for (const row of styles) {
+      const velocityScore = domesticPercentileInCategory(row.category, row.domesticWeighted4CompletedWeekQty || 0) * 25;
+      const score = stockUrgencyScore({ stockCoverWeeks: row.domesticStockCoverWeeks, weighted4CompletedWeekQty: row.domesticWeighted4CompletedWeekQty })
+        + velocityScore + sellThroughScore(row.domesticSellThrough || 0) + trendScore(row.domesticSalesTrend);
+      row.domesticPreviewScore = Math.round(Math.max(0, Math.min(100, score)));
     }
 
     return {
@@ -1181,6 +1297,27 @@ function normalizeLatestPayload({ period, sourceUpdatedAt, weeklyPeriods = [], c
       possibleStockout: Boolean(row.possibleStockout),
       previewScore: Math.round(Number(row.previewScore || 0)),
       isSpecialMarket: Boolean(row.isSpecialMarket),
+      domesticWeeklyHistory: (row.domesticWeeklyHistory || []).map((item) => ({
+        period: item.period,
+        sales: round(item.sales),
+        quantity: Math.round(Number(item.quantity || 0)),
+      })),
+      domesticCompletedWeeklyHistory: (row.domesticCompletedWeeklyHistory || row.domesticWeeklyHistory || []).map((item) => ({
+        period: item.period,
+        sales: round(item.sales),
+        quantity: Math.round(Number(item.quantity || 0)),
+      })),
+      domesticCurrentWtdQty: Math.round(Number(row.domesticCurrentWtdQty || 0)),
+      domesticLastCompleteWeekQty: Math.round(Number(row.domesticLastCompleteWeekQty || 0)),
+      domesticPreviousCompleteWeekQty: row.domesticPreviousCompleteWeekQty == null ? null : Math.round(Number(row.domesticPreviousCompleteWeekQty || 0)),
+      domesticCompletedWeekWow: row.domesticCompletedWeekWow == null ? null : round(row.domesticCompletedWeekWow),
+      domesticAvg4CompletedWeekQty: round(row.domesticAvg4CompletedWeekQty),
+      domesticWeighted4CompletedWeekQty: round(row.domesticWeighted4CompletedWeekQty),
+      domesticStockCoverWeeks: row.domesticStockCoverWeeks == null ? null : round(row.domesticStockCoverWeeks),
+      domesticSalesTrend: row.domesticSalesTrend || "NEW",
+      domesticSellThrough: row.domesticSellThrough == null ? null : round(row.domesticSellThrough),
+      domesticStockRisk: row.domesticStockRisk || "UNKNOWN",
+      domesticPreviewScore: Math.round(Number(row.domesticPreviewScore || 0)),
       action: decision.action,
       priority: decision.priority,
       reorderTiming: decision.reorderTiming,

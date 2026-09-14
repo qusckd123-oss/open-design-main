@@ -1,21 +1,28 @@
 # Next Priorities
 
-Current P0: decide the production contract for confirmed domestic order quantity. Do not replace current `orderQty` until the ORDER-denominator Analog Pace impact is explicitly approved. The confirmed change would affect 304 APP SKU and 123 current PACE_READY rows; five overseas-only Special Market SKUs would have a zero domestic order denominator.
+Immediate next step: run `npm run sales:sync` (live Sales Dashboard, local browser profile) then `npm run build`, and confirm in the browser that:
+1. The "해외 판매" filter on `/reorder-monitor.html` shows the expected badge/share for `WA2603CRT1`/`WA2603STT2`/the other confirmed Special Market SKUs, and that `해외 판매 제외` correctly drops them from the `URGENT` list. See `docs/CURRENT_STATE.md` "Reorder Monitor overseas-sales filter".
+2. The new "판매 기준: 전체 / 국내만(해외 제외)" toggle recalculates 판매율/최근완료주/4주가중속도/재고커버/판매추이/STOCK RISK/Preview Score for ALL rows (not just the 3 Taiwan-exclusive ones) when switched to "국내만", that the URGENT count and KPI tiles update accordingly, and that the drawer's history chart/label and signal list switch correctly. See `docs/CURRENT_STATE.md` "Reorder Monitor domestic sales-view toggle". A fresh sync is required first since the `domesticXxx` fields are computed at scrape time.
+3. The drawer's history chart now shows the FULL sales trend since the SKU's first positive-sales week (not just 4 weeks), its title (`판매추이 · 전체/국내만 · <start>~<end> (N주)`) updates correctly for both toggle states, and the chart legend is visible. See `docs/CURRENT_STATE.md` "Reorder Monitor full sales-trend history + FCST formula breakdown". Also a fresh sync is required (`fullWeeklyHistory`/`domesticFullWeeklyHistory` computed at scrape time) — until then the chart falls back to the old 4-week view with a "재동기화 필요" note in the title, which is expected.
+4. Open a row's forecast card and confirm the new "계산식 보기" block's numbers (Base FCST, Trend Factor, Adjusted FCST, FCST 판매율) match the numeric tiles shown just above it, and that the "FCST는 전체 채널 기준이며 판매 기준 토글의 영향을 받지 않습니다" disclosure reads correctly.
+
+No test suite covers `scripts/sales-dashboard.mjs`'s browser-evaluated code yet (it only runs inside a live Playwright page); consider adding a focused unit test for `channelValue`/the overseas split logic and the `periodSalesAndQty`/`domesticOnly` split, extracted to plain functions, if this area gets touched again.
+
+Open question for the owner (not yet resolved): now that the "판매 기준" toggle exists, does the boolean `해외 판매 제외` quick-filter (drops rows with ANY overseas sales) still need refinement — e.g. a percentage threshold — or does viewing 국내만 numbers via the toggle make that unnecessary? Revisit after the owner has used both in the live dashboard.
+
+Current P0: FULLY IMPLEMENTED on 2026-09-11. The owner-approved contract preserves raw `orderQty` unchanged and adds separately named diagnostic-grade `domesticOrderQty`, `overseasOrderQty`, `domesticOrderQtyAvailable`, and `domesticOrderQtySource` fields, evidence-joined for 26FW APP only. The local SKU outputs were regenerated and verified; actual source counts are 304 `OVERSEAS_PO_WORKBOOK_EXCLUDED`, 134 `NO_OVERSEAS_PO_ROWS_IN_WORKBOOK`, 1 `OVERSEAS_PO_SOURCE_MISSING_FOR_SKU`, and 147 `OUT_OF_EVIDENCE_SCOPE_26FW_APP_ONLY`.
+
+Analog Pace was NOT changed in this task and remains HOLD with its existing ORDER denominator. Whether ORDER-denominator Analog Pace should later switch to a domestic basis is a separate, still-open owner decision requiring explicit approval and its own recalibration/regression scope.
 
 Current P0 data dependency: obtain PO-keyed receipt/inbound data and market/channel-keyed ERP stock/sales data. The order workbook proves order exclusion only; it cannot numerically split current `inboundQty`, `erpStockQty`, or `cumulativeSalesQty`. Keep these areas `UNKNOWN` and do not estimate exclusions.
 
-Safe next implementation choices, requiring owner direction:
-
-1. Preserve raw `orderQty` and add a separately named domestic order fact with explicit consumer/applicability rules, or
-2. Replace `orderQty` and separately approve/rework the Analog Pace denominator contract.
-
-The overseas PO audit is complete in `docs/SKU_OVERSEAS_PO_APPLICABILITY.md`. Production SKU facts and protected STYLE behavior remain unchanged.
+The overseas PO audit is complete in `docs/SKU_OVERSEAS_PO_APPLICABILITY.md`. The new domestic-order fields are facts only; protected STYLE behavior and raw `orderQty` remain unchanged.
 
 P0 status: RESOLVED. Age-aware velocity/cover separate fields are approved and implemented in `sku-sync.ts`.
 
-SKU Signal v1 DESIGN status: COMPLETE. Read-only lifecycle/evidence state-machine simulation status: COMPLETE. Git checkpoint status: COMPLETE at `9f4948f`. Special Market/direct-ship diagnostic status: COMPLETE.
+SKU Signal v1 DESIGN status: COMPLETE. Read-only lifecycle/evidence state-machine simulation status: COMPLETE. Git checkpoint status: COMPLETE at `9f4948f`. Special Market/direct-ship diagnostic status: COMPLETE. Isolated read-only SKU evidence viewer status: COMPLETE and VERIFIED — user-run `npm.cmd run build`, `npm.cmd run sku:test` (4/4), `npm.cmd run forecast:test` (6/6 plus reference validation), and `node tests/sku-signal-v1-evidence.e2e.ts` (`{"ok":true,"rows":439}`) all passed against the real `vinext dev` server on 2026-09-11; see `docs/CURRENT_STATE.md`.
 
-Current next priority: if implementation continues, build a separately scoped isolated read-only SKU evidence viewer from the reviewed state-machine facts. Use planner-facing copy and adjacent Special Market applicability context only; do not add routing, thresholds, ranking, recommendations, production labels, or external sync.
+Current next priority: none currently defined for SKU Signal v1 or P0; await owner direction. The SKU Signal v1 state machine, SKU Signal v1 evidence viewer, Current Risk diagnostic, and Special Market diagnostic artifacts are now stale relative to the new `domesticOrderQty` field and may optionally be refreshed only as a separately approved future task. Do not refresh them automatically, and do not add scoring, ranking, thresholds, recommendations, reorder quantities, production labels, routing, Analog Pace changes, or external sync without explicit owner approval.
 
 ## P0 — Applicability and data integrity
 
@@ -107,3 +114,10 @@ The direct-ship evidence task and planner evidence review are resolved. The next
 - Internal lifecycle/availability/marker enums are audit-safe but require planner-facing translation. `PRE_SALE` must not be shown as confirmed pre-launch because launch status is unknown.
 - Confirmed Special Market direct-ship scope must be shown adjacent to preserved domestic ERP anomalies in any future viewer so raw negative facts are not misread as domestic supply-risk conclusions.
 - Next safe candidate: isolated read-only evidence viewer only; no score, rank, threshold, priority, recommendation, routing, production label, or external sync.
+
+## SKU Signal v1 evidence viewer completion (2026-09-11)
+
+- Added `public/sku-signal-v1-evidence.html`, `public/js/sku-signal-v1-evidence.js`, static data copies `public/data/sku-signal-v1-state-machine.json` and `public/data/sku-special-market-applicability-diagnostic.json`, and `tests/sku-signal-v1-evidence.e2e.ts`.
+- Applied the planner evidence review's exact wording guardrails for lifecycle, availability, conflict, and data-quality markers; joined the Special Market diagnostic as adjacent display-only context. No score, rank, priority, threshold, recommendation, reorder quantity, production label, routing, or external sync was added.
+- Verified by the user on 2026-09-11 against the real `vinext dev` server: `npm.cmd run build` PASS, `npm.cmd run sku:test` 4/4, `npm.cmd run forecast:test` 6/6 plus reference validation, `node tests/sku-signal-v1-evidence.e2e.ts` → `{"ok":true,"rows":439}`. See `docs/CURRENT_STATE.md`.
+- Superseded next task: none. No further safe SKU Signal v1 task is currently defined; await owner direction on P0 or on scoping any candidate human-facing vocabulary from `docs/SKU_SIGNAL_V1_DESIGN.md`.

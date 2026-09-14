@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.vinext/
+.env
+.DS_Store
+.local-sales-dashboard-profile/
+.local-sales-snapshot/
+.local-forecast-reference/
+.local-sku-source/

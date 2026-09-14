@@ -8,6 +8,17 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DEFAULT_SOURCE_DIR = resolve(ROOT, ".local-sku-source");
 const DEFAULT_LATEST_PATH = resolve(ROOT, "public/data/latest.json");
 const DEFAULT_OUTPUTS = [resolve(ROOT, "data/sku-latest.json"), resolve(ROOT, "public/data/sku-latest.json")];
+const DEFAULT_OVERSEAS_PO_EVIDENCE_PATH = resolve(ROOT, "data/sku-overseas-po-applicability.json");
+
+// domesticOrderQty consumer/applicability rule (owner-approved 2026-09-11, see docs/NEXT_PRIORITIES.md P0):
+// this is a diagnostic-grade field derived from a one-time manual overseas-PO workbook audit
+// (docs/SKU_OVERSEAS_PO_APPLICABILITY.md). It is scoped to 26FW APP only and must NOT be consumed by
+// Analog Pace, Forecast, Action Engine, priority, reorderTiming, or any other protected production
+// logic without a separate, explicit approval. `orderQty` itself remains the unchanged, protected fact.
+const DOMESTIC_ORDER_QTY_CONSUMER_RULE =
+  "Diagnostic-grade field derived from a one-time manual overseas PO workbook audit, scoped to 26FW APP only. " +
+  "Must not be consumed by Analog Pace, Forecast, Action Engine, priority, reorderTiming, or any other " +
+  "protected production logic without separate explicit approval. orderQty remains unchanged and protected.";
 
 const TREND_CONFIG = {
   minHistoryWeeks: 4,
@@ -70,6 +81,37 @@ function filenameDate(name: string) {
   if (raw.length === 6) return `20${raw.slice(0, 2)}-${raw.slice(2, 4)}-${raw.slice(4, 6)}`;
   if (raw.length === 8) return `${raw.slice(0, 4)}-${raw.slice(4, 6)}-${raw.slice(6, 8)}`;
   return "";
+}
+
+type OverseasPoEvidence = {
+  available: boolean;
+  asOf: string | null;
+  bySku: Map<string, { overseasOrderQty: number; excelTotalOrderQty: number }>;
+};
+
+/**
+ * Reads the read-only, manually generated overseas-PO diagnostic
+ * (docs/SKU_OVERSEAS_PO_APPLICABILITY.md, scripts/overseas_po_applicability.py) and returns a
+ * SKU -> overseasOrderQty lookup for the domesticOrderQty join. This never mutates orderQty and
+ * degrades gracefully (available: false) if the evidence file is absent, so a missing diagnostic
+ * artifact can never break the core ERP sync.
+ */
+function loadOverseasPoEvidence(path = DEFAULT_OVERSEAS_PO_EVIDENCE_PATH): OverseasPoEvidence {
+  if (!existsSync(path)) return { available: false, asOf: null, bySku: new Map() };
+  let payload: any;
+  try {
+    payload = JSON.parse(readFileSync(path, "utf8"));
+  } catch {
+    return { available: false, asOf: null, bySku: new Map() };
+  }
+  const bySku = new Map(
+    (payload?.currentOrderReconciliation || []).map((row: any) => [
+      String(row.sku),
+      { overseasOrderQty: numberOrZero(row.overseasOrderQty), excelTotalOrderQty: numberOrZero(row.excelTotalOrderQty) },
+    ]),
+  );
+  const asOf = filenameDate(String(payload?.source?.sourceFile || "")) || null;
+  return { available: true, asOf, bySku };
 }
 
 export function canonicalStyleCode(value: unknown) {
@@ -341,7 +383,7 @@ function createMetadataDiagnostics(styles: Record<string, any>, styleMaps: Retur
   };
 }
 
-export async function buildSkuPayload(sourcePath: string, latestPath = DEFAULT_LATEST_PATH, generatedAt = new Date().toISOString()) {
+export async function buildSkuPayload(sourcePath: string, latestPath = DEFAULT_LATEST_PATH, generatedAt = new Date().toISOString(), overseasPoEvidencePath = DEFAULT_OVERSEAS_PO_EVIDENCE_PATH) {
   const { worksheet, headerRow, weeks, fileAsOf, latestWeekDate, sourceAsOf } = await inspectWorkbook(sourcePath);
   if (!sourceAsOf) throw new Error("workbook 또는 파일명에서 sourceAsOf를 확인할 수 없습니다.");
   const warnings: string[] = [];
@@ -358,6 +400,7 @@ export async function buildSkuPayload(sourcePath: string, latestPath = DEFAULT_L
     stock: findColumn(worksheet, headerRow, "재고"),
   };
   const styleMaps = latestStyleMap(latestPath);
+  const overseasPoEvidence = loadOverseasPoEvidence(overseasPoEvidencePath);
   const completedThrough = previousSunday(sourceAsOf);
   const completedWeeks = weeks.filter((week) => week.date <= completedThrough);
   const currentWeek = weeks.find((week) => week.date > completedThrough && week.date <= sourceAsOf) || null;
@@ -428,6 +471,28 @@ export async function buildSkuPayload(sourcePath: string, latestPath = DEFAULT_L
 
     const styleMeta = styleMaps.canonical.get(canonicalStyleCode(styleCode)) as Record<string, unknown> | undefined;
     const metadata = resolveStyleMetadata(styleCode, styleMeta);
+
+    // domesticOrderQty: owner-approved 2026-09-11 (see docs/NEXT_PRIORITIES.md P0). orderQty itself is
+    // preserved unchanged; this is a separately named, diagnostic-grade fact joined from the read-only
+    // overseas-PO workbook audit, scoped to 26FW APP only. See DOMESTIC_ORDER_QTY_CONSUMER_RULE above.
+    const inOverseasEvidenceScope = metadata.season === "26FW" && metadata.productGroup === "APP";
+    let domesticOrderQty: number | null = null;
+    let overseasOrderQty: number | null = null;
+    let domesticOrderQtySource: string;
+    if (!overseasPoEvidence.available) {
+      domesticOrderQtySource = "OVERSEAS_PO_EVIDENCE_FILE_MISSING";
+    } else if (!inOverseasEvidenceScope) {
+      domesticOrderQtySource = "OUT_OF_EVIDENCE_SCOPE_26FW_APP_ONLY";
+    } else {
+      const evidence = overseasPoEvidence.bySku.get(sku);
+      if (!evidence) {
+        domesticOrderQtySource = "OVERSEAS_PO_SOURCE_MISSING_FOR_SKU";
+      } else {
+        overseasOrderQty = evidence.overseasOrderQty;
+        domesticOrderQty = round(orderQty - evidence.overseasOrderQty);
+        domesticOrderQtySource = evidence.overseasOrderQty > 0 ? "OVERSEAS_PO_WORKBOOK_EXCLUDED" : "NO_OVERSEAS_PO_ROWS_IN_WORKBOOK";
+      }
+    }
     const skuRow = {
       sku,
       styleCode,
@@ -454,6 +519,10 @@ export async function buildSkuPayload(sourcePath: string, latestPath = DEFAULT_L
       sellingAgeVelocityQtyPerWeek,
       sellingAgeStockCoverWeeks: sellingAgeVelocityQtyPerWeek != null && sellingAgeVelocityQtyPerWeek > 0 ? round(erpStockQty / sellingAgeVelocityQtyPerWeek) : null,
       salesTrend: classifySkuTrend(quantities),
+      domesticOrderQty,
+      overseasOrderQty,
+      domesticOrderQtyAvailable: domesticOrderQty != null,
+      domesticOrderQtySource,
     };
     if (!styles[styleCode]) {
       styles[styleCode] = {
@@ -489,6 +558,10 @@ export async function buildSkuPayload(sourcePath: string, latestPath = DEFAULT_L
   }
 
   const styleValues = Object.values(styles);
+  const domesticOrderQtySourceCounts: Record<string, number> = {};
+  for (const style of styleValues) for (const row of style.skus as any[]) {
+    domesticOrderQtySourceCounts[row.domesticOrderQtySource] = (domesticOrderQtySourceCounts[row.domesticOrderQtySource] || 0) + 1;
+  }
   const payload = {
     meta: {
       source: "ERP_WEEKLY_SKU",
@@ -514,8 +587,16 @@ export async function buildSkuPayload(sourcePath: string, latestPath = DEFAULT_L
       currentWtdPeriod: currentWeek ? currentWeekPeriod(sourceAsOf) : null,
       completedThrough,
       warnings,
+      domesticOrderQtyEvidence: {
+        available: overseasPoEvidence.available,
+        asOf: overseasPoEvidence.asOf,
+        sourceArtifact: "data/sku-overseas-po-applicability.json",
+        scope: "26FW APP only",
+        consumerRule: DOMESTIC_ORDER_QTY_CONSUMER_RULE,
+      },
     },
     diagnostics: {
+      domesticOrderQty: { definition: "orderQty - overseasOrderQty (evidence-joined, 26FW APP only)", sourceCounts: domesticOrderQtySourceCounts },
       sourceSellThrough: { definition: "ERP 판매 / ERP 입고 * 100", ...sourceRateChecks },
       inventoryBalance: { definition: "입고 - 누계판매 - ERP재고", ...inventoryBalance },
       productNameComparison: { erpProductNameAvailable: false, compared: 0, mismatched: 0 },
@@ -589,9 +670,14 @@ function replaceOutputsAtomically(paths: string[], contents: string) {
   }
 }
 
-export async function syncSkuData(options: { sourceDir?: string; latestPath?: string; outputs?: string[] } = {}) {
+export async function syncSkuData(options: { sourceDir?: string; latestPath?: string; outputs?: string[]; overseasPoEvidencePath?: string } = {}) {
   const selected = await selectLatestSource(options.sourceDir || DEFAULT_SOURCE_DIR);
-  const payload = await buildSkuPayload(selected.path, options.latestPath || DEFAULT_LATEST_PATH);
+  const payload = await buildSkuPayload(
+    selected.path,
+    options.latestPath || DEFAULT_LATEST_PATH,
+    new Date().toISOString(),
+    options.overseasPoEvidencePath || DEFAULT_OVERSEAS_PO_EVIDENCE_PATH,
+  );
   const contents = `${JSON.stringify(payload, null, 2)}\n`;
   JSON.parse(contents);
   replaceOutputsAtomically(options.outputs || DEFAULT_OUTPUTS, contents);

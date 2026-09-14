@@ -32,8 +32,35 @@
     sortDir: "desc",
     skuSortKey: "inboundSellThrough",
     chart: null,
-    quick: {}
+    quick: {},
+    salesView: "all"
   };
+
+  // 판매 기준 토글 (owner-requested 2026-09-14): "국내만" swaps these specific fields to their
+  // domesticXxx mirror (computed in scripts/sales-dashboard.mjs with the "해외 사입" channel
+  // excluded). 가용재고(stock)는 채널 분리가 불가능한 원본 그대로 항상 사용합니다.
+  const DOMESTIC_FIELD_MAP = {
+    sellThrough: "domesticSellThrough",
+    lastCompleteWeekQty: "domesticLastCompleteWeekQty",
+    previousCompleteWeekQty: "domesticPreviousCompleteWeekQty",
+    completedWeekWow: "domesticCompletedWeekWow",
+    weighted4CompletedWeekQty: "domesticWeighted4CompletedWeekQty",
+    currentWtdQty: "domesticCurrentWtdQty",
+    stockCoverWeeks: "domesticStockCoverWeeks",
+    salesTrend: "domesticSalesTrend",
+    stockRisk: "domesticStockRisk",
+    previewScore: "domesticPreviewScore",
+    completedWeeklyHistory: "domesticCompletedWeeklyHistory",
+    fullWeeklyHistory: "domesticFullWeeklyHistory"
+  };
+
+  function viewField(row, field) {
+    const domesticField = DOMESTIC_FIELD_MAP[field];
+    if (state.salesView === "domestic" && domesticField && row && row[domesticField] !== undefined) {
+      return row[domesticField];
+    }
+    return row ? row[field] : undefined;
+  }
 
   const riskClass = {
     CRITICAL: "risk-critical",
@@ -96,12 +123,13 @@
   }
 
   function classifyPreview(row) {
-    const score = Number(row.previewScore || 0);
-    const risk = row.stockRisk || "UNKNOWN";
-    const cover = row.stockCoverWeeks == null ? null : Number(row.stockCoverWeeks);
-    const trend = row.salesTrend || "NEW";
-    const velocity = Number(row.weighted4CompletedWeekQty || 0);
-    const sellThrough = Number(row.sellThrough || 0);
+    const score = Number(viewField(row, "previewScore") || 0);
+    const risk = viewField(row, "stockRisk") || "UNKNOWN";
+    const coverRaw = viewField(row, "stockCoverWeeks");
+    const cover = coverRaw == null ? null : Number(coverRaw);
+    const trend = viewField(row, "salesTrend") || "NEW";
+    const velocity = Number(viewField(row, "weighted4CompletedWeekQty") || 0);
+    const sellThrough = Number(viewField(row, "sellThrough") || 0);
 
     if (score >= PREVIEW_CONFIG.urgentScore || risk === "CRITICAL") return "URGENT";
     if (score >= PREVIEW_CONFIG.checkScore || risk === "HIGH" || risk === "MEDIUM") return "CHECK";
@@ -287,7 +315,11 @@
   }
 
   function getComparableValue(row, key) {
-    if (key === "previewScore") return Number(row.previewScore ?? row.reorderSignalScore ?? 0);
+    if (key === "previewScore") return Number(viewField(row, "previewScore") ?? row.reorderSignalScore ?? 0);
+    if (DOMESTIC_FIELD_MAP[key]) {
+      const value = viewField(row, key);
+      return value == null ? (key === "stockCoverWeeks" ? 999999 : 0) : Number(value);
+    }
     if (key === "stockCoverWeeks") return row.stockCoverWeeks == null ? 999999 : Number(row.stockCoverWeeks);
     if (key === "forecastSellThrough") return row.forecastSellThrough == null ? -1 : Number(row.forecastSellThrough);
     return Number(row[key] ?? 0);
@@ -316,27 +348,30 @@
     const forecast = $("forecastFilter").value;
     const eligibility = $("eligibilityFilter").value;
     const special = $("specialMarketFilter").value;
+    const overseasSales = $("overseasSalesFilter").value;
     const quick = state.quick;
 
     state.filtered = sortRows(
       state.rows.filter((row) => {
         const previewClass = classifyPreview(row);
-        const cover = row.stockCoverWeeks == null ? null : Number(row.stockCoverWeeks);
+        const coverRaw = viewField(row, "stockCoverWeeks");
+        const cover = coverRaw == null ? null : Number(coverRaw);
         return (
           (!search || String(row.sku || "").toLowerCase().includes(search) || String(row.name || "").toLowerCase().includes(search)) &&
           (productGroup === "all" || row.productGroup === productGroup) &&
           (genderGroup === "all" || row.genderGroup === genderGroup) &&
           (season === "all" || row.season === season) &&
           (category === "all" || row.category === category) &&
-          (trend === "all" || row.salesTrend === trend) &&
-          (risk === "all" || (row.stockRisk || "UNKNOWN") === risk) &&
+          (trend === "all" || viewField(row, "salesTrend") === trend) &&
+          (risk === "all" || (viewField(row, "stockRisk") || "UNKNOWN") === risk) &&
           (preview === "all" || previewClass === preview) &&
           (forecast === "all" || (row.forecastSignal || "INSUFFICIENT") === forecast) &&
           (eligibility === "all" || (eligibility === "eligible" ? row.eligiblePreview : row.reorderEligibility === eligibility)) &&
           (special === "all" || (special === "special" ? row.isSpecialMarket : !row.isSpecialMarket)) &&
-          (quick.minSellThrough == null || Number(row.sellThrough || 0) >= quick.minSellThrough) &&
+          (overseasSales === "all" || (overseasSales === "hasOverseas" ? row.hasOverseasSales === true : !row.hasOverseasSales)) &&
+          (quick.minSellThrough == null || Number(viewField(row, "sellThrough") || 0) >= quick.minSellThrough) &&
           (quick.maxCoverWeeks == null || (cover != null && cover <= quick.maxCoverWeeks))
-          && (!quick.currentLowFutureHigh || ((row.stockRisk || "UNKNOWN") === "LOW" && row.forecastSignal === "HIGH"))
+          && (!quick.currentLowFutureHigh || ((viewField(row, "stockRisk") || "UNKNOWN") === "LOW" && row.forecastSignal === "HIGH"))
         );
       })
     );
@@ -368,9 +403,9 @@
   function renderKpis() {
     const rows = state.filtered;
     const urgent = rows.filter((row) => classifyPreview(row) === "URGENT").length;
-    const stockRisk = rows.filter((row) => ["CRITICAL", "HIGH"].includes(row.stockRisk)).length;
-    const accelerating = rows.filter((row) => row.salesTrend === "ACCELERATING").length;
-    const newStyles = rows.filter((row) => row.salesTrend === "NEW").length;
+    const stockRisk = rows.filter((row) => ["CRITICAL", "HIGH"].includes(viewField(row, "stockRisk"))).length;
+    const accelerating = rows.filter((row) => viewField(row, "salesTrend") === "ACCELERATING").length;
+    const newStyles = rows.filter((row) => viewField(row, "salesTrend") === "NEW").length;
     const kpis = [
       ["전체 STYLE", `${rows.length.toLocaleString("ko-KR")} style`, "WA 전체 상품"],
       ["즉시 점검 후보", `${urgent.toLocaleString("ko-KR")} style`, "Preview URGENT"],
@@ -408,23 +443,23 @@
         return `<tr class="cursor-pointer hover:bg-paper" data-sku="${row.sku}">
           <td class="whitespace-nowrap px-3 py-3"><span class="rounded px-2 py-1 text-xs font-black ${previewClass === "URGENT" ? "risk-critical" : previewClass === "CHECK" ? "risk-high" : previewClass === "WATCH" ? "risk-medium" : "risk-unknown"}">${previewClass}</span></td>
           <td class="whitespace-nowrap px-3 py-3 font-mono text-xs font-black text-ink">${row.sku}</td>
-          <td class="min-w-[280px] px-3 py-3 font-semibold text-ink">${row.name || "-"}${state.skuByStyle[row.sku]?.skus?.length ? `<span class="ml-2 inline-block rounded border border-line bg-paper px-1.5 py-0.5 text-[10px] font-black text-slate">SKU ${state.skuByStyle[row.sku].skus.length} COLORS</span>` : ""}</td>
+          <td class="min-w-[280px] px-3 py-3 font-semibold text-ink">${row.name || "-"}${state.skuByStyle[row.sku]?.skus?.length ? `<span class="ml-2 inline-block rounded border border-line bg-paper px-1.5 py-0.5 text-[10px] font-black text-slate">SKU ${state.skuByStyle[row.sku].skus.length} COLORS</span>` : ""}${row.hasOverseasSales ? `<span class="ml-2 inline-block rounded border border-line bg-[rgba(57,91,115,.14)] px-1.5 py-0.5 text-[10px] font-black text-blue" title="해외 사입 채널 누계 ${num(row.overseasCumQty)}개 (${num(row.overseasCumSalesSharePct, 1)}%) 포함">해외판매 ${num(row.overseasCumSalesSharePct, 1)}%</span>` : ""}</td>
           <td class="whitespace-nowrap px-3 py-3 font-bold">${row.season || "-"}</td>
           <td class="whitespace-nowrap px-3 py-3 font-bold">${row.category || "-"}</td>
-          <td class="whitespace-nowrap px-3 py-3 text-right font-bold">${num(row.sellThrough, 1)}%</td>
-          <td class="whitespace-nowrap px-3 py-3 text-right font-bold">${num(row.lastCompleteWeekQty)}</td>
-          <td class="whitespace-nowrap px-3 py-3 text-right">${num(row.previousCompleteWeekQty)}</td>
-          <td class="whitespace-nowrap px-3 py-3 text-right font-bold ${Number(row.completedWeekWow || 0) >= 0 ? "text-green" : "text-red"}">${pct(row.completedWeekWow)}</td>
-          <td class="whitespace-nowrap px-3 py-3 text-right font-bold">${num(row.weighted4CompletedWeekQty, 1)}</td>
-          <td class="whitespace-nowrap px-3 py-3 text-right">${num(row.currentWtdQty)}</td>
+          <td class="whitespace-nowrap px-3 py-3 text-right font-bold">${num(viewField(row, "sellThrough"), 1)}%</td>
+          <td class="whitespace-nowrap px-3 py-3 text-right font-bold">${num(viewField(row, "lastCompleteWeekQty"))}</td>
+          <td class="whitespace-nowrap px-3 py-3 text-right">${num(viewField(row, "previousCompleteWeekQty"))}</td>
+          <td class="whitespace-nowrap px-3 py-3 text-right font-bold ${Number(viewField(row, "completedWeekWow") || 0) >= 0 ? "text-green" : "text-red"}">${pct(viewField(row, "completedWeekWow"))}</td>
+          <td class="whitespace-nowrap px-3 py-3 text-right font-bold">${num(viewField(row, "weighted4CompletedWeekQty"), 1)}</td>
+          <td class="whitespace-nowrap px-3 py-3 text-right">${num(viewField(row, "currentWtdQty"))}</td>
           <td class="whitespace-nowrap px-3 py-3 text-right">${num(row.stock)}</td>
-          <td class="whitespace-nowrap px-3 py-3 text-right font-bold">${num(row.stockCoverWeeks, 1)}</td>
-          <td class="whitespace-nowrap px-3 py-3"><span class="rounded px-2 py-1 text-xs font-black ${trendClass[row.salesTrend] || trendClass.NEW}">${row.salesTrend || "NEW"}</span></td>
-          <td class="whitespace-nowrap px-3 py-3"><span class="rounded px-2 py-1 text-xs font-black ${riskClass[row.stockRisk] || riskClass.UNKNOWN}">${row.stockRisk || "UNKNOWN"}</span></td>
+          <td class="whitespace-nowrap px-3 py-3 text-right font-bold">${num(viewField(row, "stockCoverWeeks"), 1)}</td>
+          <td class="whitespace-nowrap px-3 py-3"><span class="rounded px-2 py-1 text-xs font-black ${trendClass[viewField(row, "salesTrend")] || trendClass.NEW}">${viewField(row, "salesTrend") || "NEW"}</span></td>
+          <td class="whitespace-nowrap px-3 py-3"><span class="rounded px-2 py-1 text-xs font-black ${riskClass[viewField(row, "stockRisk")] || riskClass.UNKNOWN}">${viewField(row, "stockRisk") || "UNKNOWN"}</span></td>
           <td class="whitespace-nowrap px-3 py-3 text-right font-black text-ink">${forecastPct(row.forecastSellThrough)}</td>
           <td class="whitespace-nowrap px-3 py-3"><span class="rounded px-2 py-1 text-xs font-black ${forecastClass[forecastSignal] || forecastClass.INSUFFICIENT}">${forecastSignal}</span></td>
           <td class="whitespace-nowrap px-3 py-3">${eligibilityCell}</td>
-          <td class="whitespace-nowrap px-3 py-3 text-right text-base font-black text-ink">${num(row.previewScore)}</td>
+          <td class="whitespace-nowrap px-3 py-3 text-right text-base font-black text-ink">${num(viewField(row, "previewScore"))}</td>
         </tr>`;
       })
       .join("");
@@ -452,10 +487,20 @@
     });
   }
 
+  function syncSalesViewToggle() {
+    document.querySelectorAll(".sales-view-toggle").forEach((item) => {
+      const active = item.dataset.view === state.salesView;
+      item.classList.toggle("bg-ink", active);
+      item.classList.toggle("text-white", active);
+      item.classList.toggle("text-ink", !active);
+    });
+  }
+
   function renderAll() {
     filterRows();
     syncGroupToggle();
     syncSegmentToggle();
+    syncSalesViewToggle();
     renderKpis();
     renderReviewProgress();
     renderRows();
@@ -505,7 +550,17 @@
       <div class="mt-3 rounded-md border border-line px-3 py-3">
         <div class="flex items-center justify-between"><p class="text-xs font-black text-slate">Analog STYLE</p><p class="text-xs font-black text-ink">${num(forecast.analogStyleCount)}개</p></div>
         <ul class="mt-2 space-y-2 text-xs font-semibold">${analogs || "<li class=\"text-slate\">-</li>"}</ul>
-      </div>`;
+      </div>
+      <details class="mt-3 rounded-md border border-line bg-paper px-3 py-3 text-xs font-bold text-slate">
+        <summary class="cursor-pointer text-xs font-black text-ink">계산식 보기 (이 숫자가 어떻게 나왔는지)</summary>
+        <ol class="mt-2 list-decimal space-y-2 pl-4">
+          <li><b class="text-ink">Base FCST</b> = 현재 누적판매(${num(forecast.currentCumulativeSales)}개) ÷ Analog 평균 누적비중(${forecastPct(forecast.analogCumulativeShare)}) = <b class="text-ink">${num(forecast.baseForecastQty)}개</b><br>같은 카테고리·비슷한 성별/출시시기/가격의 상위 ${num(forecast.analogStyleCount)}개 유사 STYLE이, 같은 판매 W${num(forecast.sellingWeekNumber)}주차 시점에 최종 누적판매의 평균 몇 %를 차지했는지로 역산합니다.</li>
+          <li><b class="text-ink">Trend Factor</b> = 최근 2주 평균 ÷ 최근 4주 평균 = ${forecast.trendFactor == null ? "미적용 (완료 판매 4주 미만)" : `${num(forecast.trendFactor, 2)}x`}<br>최근 판매가 가속(1보다 큼)/둔화(1보다 작음) 중인지를 반영하는 배수이며, 과도한 왜곡을 막기 위해 상한이 걸려 있습니다.</li>
+          <li><b class="text-ink">Adjusted FCST</b> = 현재 누적판매 + (Base FCST − 현재 누적판매) × Trend Factor<sup>α</sup> = <b class="text-ink">${num(forecast.adjustedForecastQty)}개</b><br>α(alpha=${num(forecast.trendAlpha, 2)})는 판매 주차가 쌓일수록(W${num(forecast.sellingWeekNumber)}주차 기준) Trend Factor를 더 강하게 반영하도록 커지는 가중치입니다.</li>
+          <li><b class="text-ink">FCST 판매율</b> = Adjusted FCST ÷ 입고수량 = <b class="text-ink">${forecastPct(forecast.forecastSellThrough)}</b>, 신뢰도 <b class="text-ink">${forecast.forecastConfidence || "INSUFFICIENT"}</b> (분석 대상 STYLE 수·카테고리 표본 크기에 따라 자동으로 낮아질 수 있음)</li>
+        </ol>
+        <p class="mt-3 border-t border-line pt-2 text-[11px] text-slate">※ FCST는 ERP 누적판매/입고수량 기준(전체 채널, 해외 사입 포함)으로 계산되며, 위쪽 "판매 기준: 전체/국내만" 토글의 영향을 받지 않습니다.</p>
+      </details>`;
   }
 
   function renderSkuDetails(styleCode) {
@@ -561,40 +616,60 @@
         row.eligibilityMemo ? `<div class="mt-3"><span class="text-xs font-black text-slate">Memo</span><p class="mt-1 whitespace-pre-wrap">${escapeHtml(row.eligibilityMemo)}</p></div>` : ""
       ].join("");
     }
-    $("drawerWtd").textContent = `${row.currentWtdPeriod || "WTD"} ${num(row.currentWtdQty)} pcs`;
+    $("drawerWtd").textContent = `${row.currentWtdPeriod || "WTD"} ${num(viewField(row, "currentWtdQty"))} pcs${state.salesView === "domestic" ? " (국내만)" : ""}`;
     renderSkuDetails(row.sku);
     $("drawerForecast").innerHTML = renderForecastDetails(row);
     $("drawerKpis").innerHTML = [
-      detailMetric("판매율", `${num(row.sellThrough, 1)}%`),
-      detailMetric("Preview Score", num(row.previewScore), row.stockRisk || "UNKNOWN"),
-      detailMetric("4주 가중 판매속도", num(row.weighted4CompletedWeekQty, 1)),
+      detailMetric("판매율", `${num(viewField(row, "sellThrough"), 1)}%`),
+      detailMetric("Preview Score", num(viewField(row, "previewScore")), viewField(row, "stockRisk") || "UNKNOWN"),
+      detailMetric("4주 가중 판매속도", num(viewField(row, "weighted4CompletedWeekQty"), 1)),
       detailMetric("가용재고", num(row.stock)),
-      detailMetric("재고커버", `${num(row.stockCoverWeeks, 1)}주`),
-      detailMetric("완료주 WoW", pct(row.completedWeekWow), `${num(row.previousCompleteWeekQty)} → ${num(row.lastCompleteWeekQty)}`)
+      detailMetric("재고커버", `${num(viewField(row, "stockCoverWeeks"), 1)}주`),
+      detailMetric("완료주 WoW", pct(viewField(row, "completedWeekWow")), `${num(viewField(row, "previousCompleteWeekQty"))} → ${num(viewField(row, "lastCompleteWeekQty"))}`)
     ].join("");
     $("drawerSignals").innerHTML = [
-      `판매추이: ${row.salesTrend || "NEW"}`,
-      `Stock Risk: ${row.stockRisk || "UNKNOWN"}`,
+      `판매 기준: ${state.salesView === "domestic" ? "국내만 (해외 사입 제외)" : "전체 (해외 포함)"}`,
+      `판매추이: ${viewField(row, "salesTrend") || "NEW"}`,
+      `Stock Risk: ${viewField(row, "stockRisk") || "UNKNOWN"}`,
       `Forecast Signal: ${row.forecastSignal || "INSUFFICIENT"}`,
-      `현재 WTD 판매수량: ${num(row.currentWtdQty)} pcs`,
-      `이력 주차 수: ${Array.isArray(row.completedWeeklyHistory) ? row.completedWeeklyHistory.length : 0}`,
-      row.isSpecialMarket ? "특수시장 상품" : "국내 상품"
+      `현재 WTD 판매수량: ${num(viewField(row, "currentWtdQty"))} pcs`,
+      (() => {
+        const fullHistory = Array.isArray(viewField(row, "fullWeeklyHistory")) ? viewField(row, "fullWeeklyHistory") : [];
+        return fullHistory.length
+          ? `전체 판매추이: ${fullHistory[0].period} ~ ${fullHistory.at(-1).period} (${fullHistory.length}주, 판매 시작 시점부터)`
+          : "전체 판매추이: 판매 이력 없음";
+      })(),
+      row.isSpecialMarket ? "특수시장 상품" : "국내 상품",
+      row.hasOverseasSales
+        ? `해외 판매 포함(전체 누계 기준): 누계 ${num(row.overseasCumQty)}개 (${num(row.overseasCumSalesSharePct, 1)}%)${state.salesView === "all" ? " · 위 판매율/재고커버/Preview Score는 해외 판매 포함 수치입니다 (상단 '판매 기준' 토글로 국내만 볼 수 있어요)" : ""}`
+        : (row.overseasCumQtyAvailable ? "해외 판매 없음 (영업기획 채널 기준)" : "해외 판매 데이터 없음")
     ].map((text) => `<li>${text}</li>`).join("");
 
-    const history = Array.isArray(row.completedWeeklyHistory) ? row.completedWeeklyHistory : [];
+    // 전체 판매추이 (owner-requested 2026-09-14): 4주 창이 아니라 판매 시작 시점부터 전체 완료주
+    // 이력을 보여줍니다. fullWeeklyHistory가 없는(재동기화 전) 데이터는 completedWeeklyHistory(4주)로
+    // 자동 대체됩니다. 어느 쪽이든 "판매 기준"(전체/국내만) 토글이 반영된 값을 그대로 씁니다.
+    const rawHistory = viewField(row, "fullWeeklyHistory");
+    const history = Array.isArray(rawHistory) && rawHistory.length
+      ? rawHistory
+      : (Array.isArray(viewField(row, "completedWeeklyHistory")) ? viewField(row, "completedWeeklyHistory") : []);
+    const isFullHistory = Array.isArray(rawHistory) && rawHistory.length > 0;
+    const basisLabel = state.salesView === "domestic" ? "국내만(해외 제외)" : "전체(해외 포함)";
+    $("drawerHistoryTitle").textContent = history.length
+      ? `판매추이 · ${basisLabel} · ${history[0].period}~${history.at(-1).period}${isFullHistory ? " (판매 시작부터)" : " (최근 4주만 · 재동기화 필요)"}`
+      : `판매추이 · ${basisLabel} · 이력 없음`;
     const canvas = $("historyChart");
     if (state.chart) state.chart.destroy();
     state.chart = new Chart(canvas, {
       type: "bar",
       data: {
         labels: history.map((item) => item.period),
-        datasets: [{ label: "판매수량", data: history.map((item) => Number(item.quantity || 0)), backgroundColor: "#2E6B5A", borderRadius: 5 }]
+        datasets: [{ label: state.salesView === "domestic" ? "판매수량(국내만)" : "판매수량(전체)", data: history.map((item) => Number(item.quantity || 0)), backgroundColor: "#2E6B5A", borderRadius: 5 }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true }, x: { grid: { display: false } } }
+        plugins: { legend: { display: true, position: "top", labels: { boxWidth: 12, font: { weight: "bold" } } } },
+        scales: { y: { beginAtZero: true }, x: { grid: { display: false }, ticks: { maxRotation: 90, minRotation: 0 } } }
       }
     });
     document.body.classList.add("drawer-open");
@@ -625,6 +700,7 @@
       state.sortDir = "desc";
     }
     if (name === "domestic") $("specialMarketFilter").value = "domestic";
+    if (name === "excludeOverseasSales") $("overseasSalesFilter").value = "domesticOnly";
     if (name === "forecastHigh") {
       $("forecastFilter").value = "HIGH";
       state.sortKey = "forecastSellThrough";
@@ -640,7 +716,7 @@
   }
 
   function bindEvents() {
-    ["searchFilter", "productGroupFilter", "genderGroupFilter", "seasonFilter", "categoryFilter", "trendFilter", "riskFilter", "previewFilter", "forecastFilter", "eligibilityFilter", "specialMarketFilter"].forEach((id) => {
+    ["searchFilter", "productGroupFilter", "genderGroupFilter", "seasonFilter", "categoryFilter", "trendFilter", "riskFilter", "previewFilter", "forecastFilter", "eligibilityFilter", "specialMarketFilter", "overseasSalesFilter"].forEach((id) => {
       $(id).addEventListener(id === "searchFilter" ? "input" : "change", renderAll);
     });
     document.querySelectorAll(".group-toggle").forEach((button) => {
@@ -653,6 +729,16 @@
           item.classList.toggle("text-ink", !active);
         });
         renderAll();
+      });
+    });
+    document.querySelectorAll(".sales-view-toggle").forEach((button) => {
+      button.addEventListener("click", () => {
+        state.salesView = button.dataset.view === "domestic" ? "domestic" : "all";
+        renderAll();
+        if (state.activeSku) {
+          const activeRow = state.rows.find((row) => row.sku === state.activeSku);
+          if (activeRow) openDrawer(activeRow);
+        }
       });
     });
     document.querySelectorAll(".segment-toggle").forEach((button) => {
@@ -684,11 +770,18 @@
       $("clearOverrides").addEventListener("click", clearLocalOverrides);
     }
     $("resetFilters").addEventListener("click", () => {
-      ["searchFilter", "productGroupFilter", "genderGroupFilter", "seasonFilter", "categoryFilter", "trendFilter", "riskFilter", "previewFilter", "forecastFilter", "eligibilityFilter", "specialMarketFilter"].forEach((id) => {
+      ["searchFilter", "productGroupFilter", "genderGroupFilter", "seasonFilter", "categoryFilter", "trendFilter", "riskFilter", "previewFilter", "forecastFilter", "eligibilityFilter", "specialMarketFilter", "overseasSalesFilter"].forEach((id) => {
         $(id).value = id === "searchFilter" ? "" : "all";
       });
       document.querySelectorAll(".group-toggle").forEach((item) => {
         const active = item.dataset.group === "all";
+        item.classList.toggle("bg-ink", active);
+        item.classList.toggle("text-white", active);
+        item.classList.toggle("text-ink", !active);
+      });
+      state.salesView = "all";
+      document.querySelectorAll(".sales-view-toggle").forEach((item) => {
+        const active = item.dataset.view === "all";
         item.classList.toggle("bg-ink", active);
         item.classList.toggle("text-white", active);
         item.classList.toggle("text-ink", !active);

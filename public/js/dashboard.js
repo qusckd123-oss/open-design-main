@@ -56,6 +56,7 @@
       action: document.getElementById("actionFilter").value,
       category: document.getElementById("categoryFilter").value,
       gender: document.getElementById("genderFilter").value,
+      specialMarket: document.getElementById("specialMarketFilter")?.value || "all",
       sort: document.getElementById("sortFilter").value,
       search: (document.getElementById("searchFilter")?.value || "").trim().toLowerCase()
     };
@@ -73,6 +74,7 @@
         (!includeAction || f.action === "all" || row.action === f.action) &&
         (f.category === "all" || row.category === f.category) &&
         (f.gender === "all" || row.gender === f.gender) &&
+        (f.specialMarket === "all" || (f.specialMarket === "special" ? row.isSpecialMarket : !row.isSpecialMarket)) &&
         (!f.search || row.sku.toLowerCase().includes(f.search) || (row.name || "").toLowerCase().includes(f.search))
     );
     const priorityRank = { P1: 1, P2: 2, P3: 3 };
@@ -80,6 +82,9 @@
       if (f.sort === "sales") return Number(b.sales || 0) - Number(a.sales || 0);
       if (f.sort === "sellThrough") return Number(b.sellThrough || 0) - Number(a.sellThrough || 0);
       if (f.sort === "stockRate") return Metrics.resolveStockRate(b) - Metrics.resolveStockRate(a);
+      if (f.sort === "signalScore") return Number(b.previewScore ?? b.reorderSignalScore ?? 0) - Number(a.previewScore ?? a.reorderSignalScore ?? 0) || Number(a.stockCoverWeeks || 9999) - Number(b.stockCoverWeeks || 9999);
+      if (f.sort === "qtyWow") return Number(b.completedWeekWow ?? b.qtyWow ?? 0) - Number(a.completedWeekWow ?? a.qtyWow ?? 0);
+      if (f.sort === "stockCoverWeeks") return Number(a.stockCoverWeeks || 9999) - Number(b.stockCoverWeeks || 9999);
       if (f.sort === "wow") return Number(b.wow || 0) - Number(a.wow || 0);
       if (f.sort === "stock") return Number(b.stock || 0) - Number(a.stock || 0);
       return (priorityRank[a.priority] || 9) - (priorityRank[b.priority] || 9) || Number(b.sales || 0) - Number(a.sales || 0);
@@ -90,8 +95,14 @@
     return `${Number(value || 0).toLocaleString("ko-KR", { maximumFractionDigits: 1 })}백만`;
   }
   function pct(value) {
+    if (value == null) return "-";
     const number = Number(value || 0);
     return `${number > 0 ? "+" : ""}${number.toFixed(1)}%`;
+  }
+
+  function num(value, digits = 0) {
+    if (value == null || Number.isNaN(Number(value))) return "-";
+    return Number(value).toLocaleString("ko-KR", { maximumFractionDigits: digits });
   }
 
   function renderMeta() {
@@ -240,6 +251,39 @@
       .join("");
   }
 
+  function renderSignalTable() {
+    const trendClass = {
+      ACCELERATING: "badge-green",
+      RISING: "badge-green",
+      STABLE: "bg-paper text-slate",
+      DECLINING: "badge-red",
+      NEW: "badge-amber"
+    };
+    const riskClass = {
+      CRITICAL: "badge-red",
+      HIGH: "badge-amber",
+      MEDIUM: "bg-paper text-slate",
+      LOW: "bg-white text-slate",
+      UNKNOWN: "bg-paper text-slate"
+    };
+    const rows = styles(false)
+      .slice()
+      .sort((a, b) => Number(b.previewScore ?? b.reorderSignalScore ?? 0) - Number(a.previewScore ?? a.reorderSignalScore ?? 0) || Number(a.stockCoverWeeks || 9999) - Number(b.stockCoverWeeks || 9999))
+      .slice(0, 80);
+    const target = document.getElementById("signalRows");
+    if (!target) return;
+    const head = target.closest("table")?.querySelector("thead");
+    if (head) {
+      head.innerHTML = `<tr><th class="px-4 py-3">품번</th><th class="px-4 py-3">상품명</th><th class="px-4 py-3">시즌</th><th class="px-4 py-3">복종</th><th class="px-4 py-3 text-right">판매율</th><th class="px-4 py-3 text-right">최근 완료주 판매수량</th><th class="px-4 py-3 text-right">직전 완료주 판매수량</th><th class="px-4 py-3 text-right">완료주 WoW</th><th class="px-4 py-3 text-right">4주 가중 판매속도</th><th class="px-4 py-3 text-right">현재 WTD 판매수량</th><th class="px-4 py-3 text-right">가용재고</th><th class="px-4 py-3 text-right">재고커버(주)</th><th class="px-4 py-3">판매추이</th><th class="px-4 py-3">재고부족 가능성</th><th class="px-4 py-3 text-right">Preview Score</th></tr>`;
+    }
+    target.innerHTML = rows
+      .map(
+        (row) =>
+          `<tr class="hover:bg-paper"><td class="whitespace-nowrap px-4 py-3 font-mono text-xs font-black text-ink">${row.sku}</td><td class="min-w-[260px] px-4 py-3 font-semibold">${row.name}</td><td class="whitespace-nowrap px-4 py-3 font-bold text-ink">${row.season || "-"}</td><td class="whitespace-nowrap px-4 py-3 font-bold text-ink">${row.category}</td><td class="whitespace-nowrap px-4 py-3 text-right font-bold">${num(row.sellThrough, 1)}%</td><td class="whitespace-nowrap px-4 py-3 text-right font-bold">${num(row.lastCompleteWeekQty ?? row.currentWeekQty)}</td><td class="whitespace-nowrap px-4 py-3 text-right">${num(row.previousCompleteWeekQty ?? row.previousWeekQty)}</td><td class="whitespace-nowrap px-4 py-3 text-right font-bold ${Number(row.completedWeekWow ?? row.qtyWow ?? 0) >= 0 ? "text-green" : "text-red"}">${pct(row.completedWeekWow ?? row.qtyWow)}</td><td class="whitespace-nowrap px-4 py-3 text-right font-bold">${num(row.weighted4CompletedWeekQty ?? row.weighted4WeekQty, 1)}</td><td class="whitespace-nowrap px-4 py-3 text-right">${num(row.currentWtdQty)}</td><td class="whitespace-nowrap px-4 py-3 text-right">${num(row.stock)}</td><td class="whitespace-nowrap px-4 py-3 text-right font-bold">${num(row.stockCoverWeeks, 1)}</td><td class="whitespace-nowrap px-4 py-3"><span class="rounded px-2 py-1 text-xs font-black ${trendClass[row.salesTrend] || "bg-paper text-slate"}">${row.salesTrend || "-"}</span></td><td class="whitespace-nowrap px-4 py-3"><span class="rounded px-2 py-1 text-xs font-black ${riskClass[row.stockRisk] || "bg-paper text-slate"}">${row.stockRisk || "UNKNOWN"}</span></td><td class="whitespace-nowrap px-4 py-3 text-right font-black text-ink">${num(row.previewScore ?? row.reorderSignalScore)}</td></tr>`
+      )
+      .join("");
+  }
+
   function renderPriorityList() {
     const rows = styles().filter((row) => row.priority === "P1").slice(0, 6);
     document.getElementById("priorityList").innerHTML = (rows.length ? rows : styles().slice(0, 4))
@@ -314,6 +358,7 @@
     renderMeta();
     renderKpis();
     renderTable();
+    renderSignalTable();
     renderPriorityList();
     renderSummary();
     renderLaunchList();
@@ -321,7 +366,7 @@
     setActiveTab(state.activeTab);
   }
 
-  ["seasonFilter", "actionFilter", "categoryFilter", "genderFilter", "sortFilter"].forEach((id) =>
+  ["seasonFilter", "actionFilter", "categoryFilter", "genderFilter", "specialMarketFilter", "sortFilter"].forEach((id) =>
     document.getElementById(id).addEventListener("change", renderAll)
   );
   const searchInput = document.getElementById("searchFilter");

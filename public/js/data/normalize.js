@@ -4,6 +4,35 @@
 // those values are trusted as-is and never recomputed, so today's P1/P2/P3 results do not change.
 // Only when a source omits them (a future raw sales feed) does the Action Engine compute them.
 window.WackyNormalize = (function (ActionEngine) {
+  const PRODUCT_GROUP_BY_CATEGORY = {
+    CD: "APP",
+    CR: "APP",
+    DP: "APP",
+    HD: "APP",
+    HZ: "APP",
+    JK: "APP",
+    KT: "APP",
+    LT: "APP",
+    OP: "APP",
+    PT: "APP",
+    SH: "APP",
+    SO: "APP",
+    SR: "APP",
+    SS: "APP",
+    ST: "APP",
+    BG: "ACC",
+    BP: "ACC",
+    CA: "ACC",
+    CB: "ACC",
+    EC: "ACC",
+    JW: "ACC",
+    MU: "ACC",
+    SE: "ACC",
+    SK: "ACC",
+    SN: "ACC",
+    TC: "ACC"
+  };
+
   function styleCategory(sku) {
     const match = /^WA\d{4}([A-Z]{2})/.exec(sku || "");
     return match ? match[1] : "ETC";
@@ -18,6 +47,19 @@ window.WackyNormalize = (function (ActionEngine) {
 
   function styleGender(name) {
     return name && (name.includes("우먼") || name.includes("우먼스")) ? "WOMEN" : "UNISEX";
+  }
+
+  function productGroupForCategory(category) {
+    return PRODUCT_GROUP_BY_CATEGORY[String(category || "").toUpperCase()] || "UNMAPPED";
+  }
+
+  function genderGroupFor({ gender, name }) {
+    const normalized = String(gender || "").toUpperCase();
+    if (normalized === "UNISEX") return "UNISEX";
+    if (normalized === "WOMEN" || normalized === "WOMENS" || normalized === "WOMAN") return "WOMENS";
+    const productName = String(name || "").toUpperCase();
+    if (productName.includes("우먼스") || productName.includes("우먼") || productName.includes("WOMENS") || productName.includes("WOMEN")) return "WOMENS";
+    return "UNMAPPED";
   }
 
   function toNumber(value, fallback = 0) {
@@ -41,6 +83,8 @@ window.WackyNormalize = (function (ActionEngine) {
     const wow = row.wow != null
       ? toNumber(row.wow)
       : (priorSales ? Number((((sales - priorSales) / priorSales) * 100).toFixed(1)) : null);
+    const category = row.category || styleCategory(sku);
+    const gender = row.gender || styleGender(name);
 
     const hasPrecomputedAction = Boolean(row.action && row.priority);
     const decision = hasPrecomputedAction
@@ -51,10 +95,12 @@ window.WackyNormalize = (function (ActionEngine) {
       ...row,
       sku,
       name,
-      category: row.category || styleCategory(sku),
-      categoryName: row.categoryName || row.category || styleCategory(sku),
+      category,
+      categoryName: row.categoryName || category,
+      productGroup: row.productGroup || productGroupForCategory(category),
       season: row.season || styleSeason(sku),
-      gender: row.gender || styleGender(name),
+      gender,
+      genderGroup: row.genderGroup || genderGroupFor({ gender, name }),
       sales,
       priorSales,
       stock,
@@ -74,5 +120,5 @@ window.WackyNormalize = (function (ActionEngine) {
     return { ...raw, styles };
   }
 
-  return { normalizeStyle, normalizeDataset, styleCategory, styleSeason, styleGender };
+  return { normalizeStyle, normalizeDataset, styleCategory, styleSeason, styleGender, productGroupForCategory, genderGroupFor };
 })(window.WackyActionEngine);

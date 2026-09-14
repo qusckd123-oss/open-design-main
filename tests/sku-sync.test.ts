@@ -161,6 +161,73 @@ test("adds selling-age velocity and cover without changing legacy completed metr
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 
+test("joins domesticOrderQty from overseas PO evidence without changing orderQty, and degrades gracefully", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "sku-domestic-order-"));
+  try {
+    const source = join(dir, "sku 260909.xlsx");
+    const latestPath = join(dir, "latest.json");
+    const evidencePath = join(dir, "overseas-po.json");
+    const dates = ["2026-08-16", "2026-08-23", "2026-08-30", "2026-09-06", "2026-09-09"];
+    await fixture(source, dates, false, [
+      ["WA2603CD91", "BK", 600, 500, 100, 200, [0, 0, 0, 10, 5]],
+      ["WA2603CD92", "BK", 300, 300, 50, 150, [0, 0, 0, 10, 5]],
+      ["WA2603CD93", "BK", 400, 400, 40, 100, [0, 0, 0, 10, 5]],
+      ["WA2603BG91", "BK", 200, 200, 20, 50, [0, 0, 0, 10, 5]],
+    ]);
+    writeFileSync(latestPath, JSON.stringify({ styles: [] }), "utf8");
+    writeFileSync(evidencePath, JSON.stringify({
+      source: { sourceFile: "발주조회 26FW 260911.xlsx" },
+      currentOrderReconciliation: [
+        { sku: "WA2603CD91BK", excelTotalOrderQty: 600, domesticOrderQty: 500, overseasOrderQty: 100, currentOrderQty: 600, currentIncludesOverseasOrder: true },
+        { sku: "WA2603CD92BK", excelTotalOrderQty: 300, domesticOrderQty: 300, overseasOrderQty: 0, currentOrderQty: 300, currentIncludesOverseasOrder: true },
+      ],
+    }), "utf8");
+    const payload = await buildSkuPayload(source, latestPath, "2026-09-09T00:00:00.000Z", evidencePath);
+    const byStyle = (styleCode: string) => payload.styles[styleCode].skus[0] as any;
+
+    const excluded = byStyle("WA2603CD91");
+    assert.equal(excluded.orderQty, 600);
+    assert.equal(excluded.overseasOrderQty, 100);
+    assert.equal(excluded.domesticOrderQty, 500);
+    assert.equal(excluded.domesticOrderQtyAvailable, true);
+    assert.equal(excluded.domesticOrderQtySource, "OVERSEAS_PO_WORKBOOK_EXCLUDED");
+
+    const noOverseas = byStyle("WA2603CD92");
+    assert.equal(noOverseas.orderQty, 300);
+    assert.equal(noOverseas.overseasOrderQty, 0);
+    assert.equal(noOverseas.domesticOrderQty, 300);
+    assert.equal(noOverseas.domesticOrderQtySource, "NO_OVERSEAS_PO_ROWS_IN_WORKBOOK");
+
+    const missingSku = byStyle("WA2603CD93");
+    assert.equal(missingSku.orderQty, 400);
+    assert.equal(missingSku.domesticOrderQty, null);
+    assert.equal(missingSku.domesticOrderQtyAvailable, false);
+    assert.equal(missingSku.domesticOrderQtySource, "OVERSEAS_PO_SOURCE_MISSING_FOR_SKU");
+
+    const outOfScope = byStyle("WA2603BG91");
+    assert.equal(outOfScope.productGroup, "ACC");
+    assert.equal(outOfScope.orderQty, 200);
+    assert.equal(outOfScope.domesticOrderQty, null);
+    assert.equal(outOfScope.domesticOrderQtySource, "OUT_OF_EVIDENCE_SCOPE_26FW_APP_ONLY");
+
+    assert.equal(payload.meta.domesticOrderQtyEvidence.available, true);
+    assert.equal(payload.meta.domesticOrderQtyEvidence.asOf, "2026-09-11");
+    assert.deepEqual(payload.diagnostics.domesticOrderQty.sourceCounts, {
+      OVERSEAS_PO_WORKBOOK_EXCLUDED: 1,
+      NO_OVERSEAS_PO_ROWS_IN_WORKBOOK: 1,
+      OVERSEAS_PO_SOURCE_MISSING_FOR_SKU: 1,
+      OUT_OF_EVIDENCE_SCOPE_26FW_APP_ONLY: 1,
+    });
+
+    const payloadNoEvidence = await buildSkuPayload(source, latestPath, "2026-09-09T00:00:00.000Z", join(dir, "does-not-exist.json"));
+    const rowNoEvidence = payloadNoEvidence.styles.WA2603CD91.skus[0] as any;
+    assert.equal(rowNoEvidence.orderQty, 600);
+    assert.equal(rowNoEvidence.domesticOrderQty, null);
+    assert.equal(rowNoEvidence.domesticOrderQtySource, "OVERSEAS_PO_EVIDENCE_FILE_MISSING");
+    assert.equal(payloadNoEvidence.meta.domesticOrderQtyEvidence.available, false);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
 test("rejects duplicate SKU and leaves existing outputs intact on parse failure", async () => {
   const dir = mkdtempSync(join(tmpdir(), "sku-atomic-"));
   try {

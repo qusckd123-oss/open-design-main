@@ -152,17 +152,31 @@
           <button class="quick rounded-md border border-line bg-white px-3 py-2 text-xs font-black text-ink" data-quick="new" type="button">신상품</button>
           <button class="quick rounded-md border border-line bg-white px-3 py-2 text-xs font-black text-ink" data-quick="unset" type="button">상태 미설정 후보</button>
           <button class="quick rounded-md border border-line bg-white px-3 py-2 text-xs font-black text-ink" data-quick="domestic" type="button">특수시장 제외</button>
+          <button class="quick rounded-md border border-line bg-white px-3 py-2 text-xs font-black text-ink" data-quick="excludeOverseasSales" type="button">해외 판매 제외</button>
+          <div class="inline-flex overflow-hidden rounded-md border border-line bg-white" title="판매율/최근완료주/4주가중속도/재고커버/판매추이/Stock Risk/Preview Score 전부 이 기준으로 바뀝니다">
+            <button class="sales-view-toggle bg-ink px-3 py-2 text-xs font-black text-white" data-view="all" type="button">판매 기준: 전체</button>
+            <button class="sales-view-toggle px-3 py-2 text-xs font-black text-ink" data-view="domestic" type="button">판매 기준: 국내만(해외 제외)</button>
+          </div>
           <button class="quick rounded-md border border-line bg-white px-3 py-2 text-xs font-black text-ink" data-quick="forecastHigh" type="button">미래 위험 HIGH</button>
           <button class="quick rounded-md border border-line bg-white px-3 py-2 text-xs font-black text-ink" data-quick="currentLowFutureHigh" type="button">현재 LOW + 미래 HIGH</button>
           <button id="resetFilters" class="rounded-md border border-line bg-paper px-3 py-2 text-xs font-black text-slate" type="button">초기화</button>
         </div>
-        <label class="text-xs font-extrabold text-slate">특수시장
-          <select id="specialMarketFilter" class="mt-1 w-full rounded-md border border-line bg-paper px-3 py-2 text-sm font-bold text-ink">
-            <option value="all">전체</option>
-            <option value="domestic">국내</option>
-            <option value="special">특수시장</option>
-          </select>
-        </label>
+        <div class="flex flex-wrap gap-3">
+          <label class="text-xs font-extrabold text-slate">특수시장
+            <select id="specialMarketFilter" class="mt-1 w-full rounded-md border border-line bg-paper px-3 py-2 text-sm font-bold text-ink">
+              <option value="all">전체</option>
+              <option value="domestic">국내</option>
+              <option value="special">특수시장</option>
+            </select>
+          </label>
+          <label class="text-xs font-extrabold text-slate">해외 판매(영업기획 "해외 사입" 채널)
+            <select id="overseasSalesFilter" class="mt-1 w-full rounded-md border border-line bg-paper px-3 py-2 text-sm font-bold text-ink">
+              <option value="all">전체</option>
+              <option value="domesticOnly">국내만 (해외 판매 없음)</option>
+              <option value="hasOverseas">해외 판매 있음</option>
+            </select>
+          </label>
+        </div>
       </div>
       <div class="mt-4 grid gap-3 border-t border-line pt-4 lg:grid-cols-[1fr_auto] lg:items-center">
         <div>
