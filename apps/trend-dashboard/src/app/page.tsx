@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { AttributeBundleCard, CurrentSignalHero, SpecificComboCard } from "@/components/AttributeBundle";
+import { AttributeBundleCard, SelectedSignalDetail, WatchlistRow } from "@/components/AttributeBundle";
 import { GlobalFilterBar } from "@/components/GlobalFilterBar";
 import { ProductImage } from "@/components/ProductImage";
 import { ProductLinkButton } from "@/components/ProductLinkButton";
+import { Watchlist, type WatchlistItem } from "@/components/Watchlist";
 import { formatNumber } from "@/lib/format";
 import {
   compactCategory,
@@ -18,6 +19,7 @@ import {
 } from "@/lib/market-ui";
 import { editorialCoverageLabel, editorialRecentDirection } from "@/lib/editorial-momentum";
 import { specificItemKoreanLabel } from "@/lib/korean-labels";
+import { buildSignalInterpretation } from "@/lib/signal-interpretation";
 import { buildFilterHref, parseGenderParam, parseScopeParam } from "@/lib/planning-filters";
 import { getAttributeBundles } from "@/services/attribute-bundle-service";
 import { getPlanningDashboardData } from "@/services/planning-dashboard-service";
@@ -58,11 +60,37 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   // SOME primary bundle), but this page wants null in that case, to render
   // the grid instead of forcing a hero out of ordinary single observations.
   const repeatedBundle = bundles.find((bundle) => bundle.independentEvidenceClusterCount >= 2) ?? null;
-  // Raised from 4 to 6 (2026-09-14, alongside the SpecificComboCard upgrade
-  // below): the underlying data/ranking is unchanged, this only shows more of
-  // the already-sorted list so a planner sees more concrete alternatives to
-  // the single hero, not just one runner-up row.
-  const secondaryBundles = repeatedBundle ? bundles.filter((bundle) => bundle.key !== repeatedBundle.key).slice(0, 6) : [];
+  // Watchlist model (2026-09-14, approved P1 UX pass): the former separate
+  // hero + six "Specific Combinations" cards are the SAME sorted bundle list
+  // (positions 1..N) rendered two different ways - merged into one 5-signal
+  // Watchlist. repeatedBundle keeps its existing meaning unchanged (the
+  // existing "genuinely, INDEPENDENTLY repeated" gate - see
+  // docs/EDITORIAL_SIGNAL_TRUST_AUDIT.md) and stays first/default-selected,
+  // exactly like it was always the hero before; the remaining slots are the
+  // next bundles in the SAME frozen sort, unchanged. No ranking/service call
+  // changed - this is `bundles.slice(0, 5)` reordered only enough to put the
+  // existing default pick first, never a new selection rule.
+  const watchlistBundles = repeatedBundle
+    ? [repeatedBundle, ...bundles.filter((bundle) => bundle.key !== repeatedBundle.key)].slice(0, 5)
+    : [];
+  // Each row/detail pair is rendered server-side once (WatchlistRow /
+  // SelectedSignalDetail) and handed to the client-only Watchlist shell as
+  // plain ReactNode content - see src/components/Watchlist.tsx for why that
+  // boundary exists (keeps ranking/service/Prisma code out of the client
+  // bundle entirely).
+  const watchlistItems: WatchlistItem[] = watchlistBundles.map((bundle, index) => ({
+    key: bundle.key,
+    // Same Korean-first name WatchlistRow/SelectedSignalDetail render (see
+    // AttributeBundle.tsx), not raw bundle.displayName, so a screen reader
+    // announces the identical name a sighted planner sees on the row.
+    ariaLabel: `${index + 1}번째 신호: ${buildSignalInterpretation(bundle).signalName}`,
+    row: <WatchlistRow bundle={bundle} position={index + 1} />,
+    detail: <SelectedSignalDetail bundle={bundle} />
+  }));
+  // Only ever read when watchlistItems.length > 0 (see the ternary below);
+  // the "" fallback exists purely so TypeScript's indexed-access narrowing
+  // doesn't force an unnecessary runtime branch here.
+  const defaultWatchlistKey = watchlistItems[0]?.key ?? "";
 
   return (
     <div>
@@ -76,29 +104,28 @@ export default async function DashboardPage({ searchParams }: PageProps) {
       </section>
 
       {/*
-        Bundles answer "어떤 조합?" rather than "어떤 아이템?", so when a
-        genuinely repeated bundle exists it becomes the page's lead story
-        (CurrentSignalHero) rather than one card among several - the old
-        top insight box is gone; the hero itself carries that role now.
+        Bundles answer "어떤 조합?" rather than "어떤 아이템?". When a
+        genuinely repeated bundle exists, the page shows one coherent
+        "상품기획 워치리스트" - the top five bundles from the SAME frozen sort,
+        one selected at a time (default: the existing repeatedBundle pick) -
+        instead of a separate always-open hero plus a visually distinct
+        six-card block for the same underlying list (2026-09-14 approved P1
+        UX pass; see docs/CURRENT_STATE.md "P1 Watchlist").
       */}
       {bundles.length > 0 ? (
         <section className="mt-10 border-t border-line pt-10">
-          {repeatedBundle ? (
+          {watchlistItems.length > 0 ? (
             <div>
-              <CurrentSignalHero bundle={repeatedBundle} />
-              {secondaryBundles.length > 0 ? (
-                <div className="mt-10 border-t border-line pt-7">
-                  <SectionHeader
-                    kicker="Specific Combinations"
-                    title="구체적으로 관측된 조합"
-                    description="관측 강도 기준 상위 아이템+속성 조합입니다. 최근 방향은 조합 단위 비교값이 없어 판단하지 않습니다. 관측이 아직 하나뿐인 조합은 '단일 관측'으로 표시합니다."
-                    href="/items"
-                  />
-                  <div className="mt-4 grid gap-x-10 gap-y-1 md:grid-cols-2">
-                    {secondaryBundles.map((bundle) => <SpecificComboCard key={bundle.key} bundle={bundle} />)}
-                  </div>
-                </div>
-              ) : null}
+              <SectionHeader
+                kicker="Watchlist"
+                title="상품기획 워치리스트"
+                description="관측 강도(기사 수·매체 수·서로 다른 사례) 기준으로 정렬한 상위 5개 조합입니다. 최근 방향은 조합 단위 비교값이 없어 판단하지 않습니다."
+                href="/items"
+              />
+              <p className="mt-2 text-xs font-semibold text-muted">관측 근거 기준 정렬 · 성장·판매 순위 아님</p>
+              <div className="mt-6">
+                <Watchlist items={watchlistItems} defaultSelectedKey={defaultWatchlistKey} />
+              </div>
             </div>
           ) : (
             <div>
@@ -368,8 +395,8 @@ function EmptyState({ title }: { title: string }) {
 /**
  * A single small editorial intro line under the H1 - article count, scope
  * note, and confidence, replacing the old large bordered "오늘의 상품기획
- * 인사이트" box. The Primary Bundle (CurrentSignalHero, right below) now
- * carries the actual insight; this line only orients the reader in the data.
+ * 인사이트" box. The Watchlist section right below now carries the actual
+ * insight; this line only orients the reader in the data.
  */
 function buildIntroLine(data: Awaited<ReturnType<typeof getPlanningDashboardData>>) {
   // Two different numbers that must never be presented as one: everything

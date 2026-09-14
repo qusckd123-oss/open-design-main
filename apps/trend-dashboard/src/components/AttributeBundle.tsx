@@ -166,22 +166,98 @@ export function AttributeChip({ attribute }: { attribute: BundleAttribute }) {
 }
 
 /**
- * CURRENT SIGNAL - the dashboard's lead story, not a card in a grid. No
- * border, no shadow, no background surface: whitespace and type scale alone
- * signal that this is the strongest thing on the page. Only rendered for a
- * genuinely, INDEPENDENTLY repeated bundle (independentEvidenceClusterCount
- * >= 2 - see selectPrimaryPlanningBundle and docs/EDITORIAL_SIGNAL_TRUST_AUDIT.md;
- * raw bundleArticlePresence >= 2 is not enough, since two same-source
- * articles can be one dedicated piece plus that outlet's own roundup
- * restating it).
+ * WATCHLIST COMPACT ROW (2026-09-14, replaces the old SecondaryBundleCard /
+ * SpecificComboCard) - one row in the home "상품기획 워치리스트" list. Pure
+ * content, no click handling: selection lives in the client-side Watchlist
+ * shell (src/components/Watchlist.tsx), which wraps this in a button. Only
+ * the fields the approved P1 Watchlist proposal specifies for a compact row:
+ * position, Korean composed name, 관측 강도 (existing dots/label, unchanged
+ * computation), a compact article/source count line, 최신 관측, up to two
+ * existing attribute chips, and AT MOST ONE small ARTICLE_HERO thumbnail.
  *
- * The composed name (bundle.displayName, "재활용 원단 토트백") is the ONE
- * dominant headline - a planner's actual final answer to "어떤 속성의 어떤
- * 아이템인가?". It must not be preceded by a giant MATERIAL/ITEM typographic
- * breakdown that restates the same two facts as separate headlines before
- * the reader even reaches the combined name.
+ * The thumbnail's disclaimer is a PERSISTENT VISIBLE caption ("기사 이미지"),
+ * never a title-only/hover-only explanation - mobile has no dependable hover
+ * state, so a tooltip alone would silently lose the disclaimer there. The
+ * fuller canonical disclaimer sentence still rides along as a `title`
+ * attribute as a bonus for pointer users, never as the sole mechanism.
+ *
+ * Deliberately excludes FACT / UNKNOWN / PLANNING QUESTION, 최근 방향 (always
+ * "판단 불가" at this exact-bundle grain - stated once at the Watchlist
+ * section level in src/app/page.tsx instead of once per row), the English
+ * taxonomy subtitle, and any invented "why it matters" copy - all of that
+ * stays exclusive to SelectedSignalDetail below.
  */
-export function CurrentSignalHero({ bundle }: { bundle: AttributeBundle }) {
+export function WatchlistRow({ bundle, position }: { bundle: AttributeBundle; position: number }) {
+  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread, independentEvidenceClusterCount: bundle.independentEvidenceClusterCount });
+  const [thumbnail] = selectEditorialVisualContext(bundle.evidenceArticles, 1);
+  const latest = bundle.latestObservedAt?.toISOString().slice(0, 10) ?? "확인 불가";
+  // Reuses the SAME Korean-first name SelectedSignalDetail already shows
+  // (buildSignalInterpretation's composeLeadSignalName fallback) instead of
+  // the raw bundle.displayName, so a row and its own open detail never show
+  // two different names for the same bundle (e.g. "스트라이프 SHIRT" next to
+  // "스트라이프 셔츠"). Deliberately NOT a change to the shared
+  // specificItemKoreanLabel dictionary or to bundle.displayName itself - both
+  // stay exactly as they were for every other consumer (AttributeBundleCard,
+  // BundleHighlight, /items, item detail pages).
+  const { signalName } = buildSignalInterpretation(bundle);
+
+  return (
+    <div className="flex items-start gap-3">
+      <span className="w-6 shrink-0 pt-0.5 text-xs font-semibold tabular-nums text-muted" aria-hidden>
+        {String(position).padStart(2, "0")}
+      </span>
+
+      {thumbnail ? (
+        <div className="flex shrink-0 flex-col items-center gap-1">
+          {/* Article-level visual context only, never a bundle hero or direct-relation image - same rule as EditorialVisualContextStrip. Persistent visible label, not a hover-only tooltip. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={thumbnail.imageUrl ?? undefined}
+            alt="기사 대표 이미지"
+            className="h-11 w-11 rounded object-cover"
+            loading="lazy"
+            title="기사 대표 이미지 · 아이템/속성/무드를 직접 증명하지 않음"
+          />
+          <span className="text-[9px] font-semibold leading-none text-muted">기사 이미지</span>
+        </div>
+      ) : null}
+
+      <div className="min-w-0 flex-1">
+        <div className="text-base font-semibold leading-snug text-ink">{signalName}</div>
+        <div className="mt-1.5 flex flex-wrap gap-1.5">
+          {bundle.directAttributes.slice(0, 2).map((attribute) => (
+            <AttributeChip key={`${attribute.type}:${attribute.value}`} attribute={attribute} />
+          ))}
+        </div>
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
+          <EvidenceDots sourceSpread={bundle.bundleSourceSpread} articlePresence={bundle.bundleArticlePresence} label={strength} />
+          <span>{bundle.bundleArticlePresence}개 기사 · {bundle.bundleSourceSpread}개 매체</span>
+          <span>최신 {latest}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * SELECTED SIGNAL DETAIL (2026-09-14, renamed from CurrentSignalHero) - the
+ * open detail for whichever Watchlist row is currently selected (desktop: a
+ * right-hand pane beside the row list; mobile: an inline accordion panel
+ * directly beneath the selected row). Content and semantics are unchanged
+ * from the former always-on-top hero - only the outer two-column grid was
+ * flattened to a single vertical stack so this reads well inside a
+ * ~56%-width desktop pane and the mobile accordion slot without its own
+ * nested breakpoint logic. FACT / UNKNOWN / PLANNING QUESTION, the
+ * 관측강도/최근방향/최신관측 row, EditorialVisualContextStrip, and
+ * VisualDiffusionReferenceStrip are all the same content as before - this is
+ * intentionally the ONLY interpretation system on the page (see
+ * AGENT_OPERATING_RULES.md "Do not create a second interpretation system").
+ *
+ * The composed name (bundle.displayName, "재활용 원단 토트백") is still the ONE
+ * dominant headline here - a planner's actual final answer to "어떤 속성의 어떤
+ * 아이템인가?" for whichever signal they picked.
+ */
+export function SelectedSignalDetail({ bundle }: { bundle: AttributeBundle }) {
   const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread, independentEvidenceClusterCount: bundle.independentEvidenceClusterCount });
   const heroArticle = findHeroArticle(bundle);
   const interpretation = buildSignalInterpretation(bundle);
@@ -192,34 +268,30 @@ export function CurrentSignalHero({ bundle }: { bundle: AttributeBundle }) {
   const visualDiffusionItems = visualDiffusionReferencesForItem(bundle.specificItem);
 
   return (
-    <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(16rem,0.58fr)_minmax(0,1.42fr)] lg:gap-x-10 lg:gap-y-5">
-      <div>
-        <p className="text-xs font-semibold tracking-[0.12em] text-signal">현재 주목 신호</p>
+    <div className="min-w-0">
+      <p className="text-xs font-semibold tracking-[0.12em] text-signal">선택한 신호</p>
 
-        {heroArticle?.evidenceImageUrl ? (
-          <div className="mt-5 flex justify-center sm:justify-start">
-            <BundleHeroImage heroArticle={heroArticle} alt={bundle.displayName} size="lg" />
-          </div>
-        ) : null}
+      {heroArticle?.evidenceImageUrl ? (
+        <div className="mt-5 flex justify-center sm:justify-start">
+          <BundleHeroImage heroArticle={heroArticle} alt={bundle.displayName} size="lg" />
+        </div>
+      ) : null}
 
-        <h2 className="mt-4 text-4xl font-bold leading-[1.05] text-ink md:text-6xl">{interpretation.signalName}</h2>
+      <h2 className="mt-4 text-3xl font-bold leading-[1.08] text-ink md:text-4xl">{interpretation.signalName}</h2>
 
-      </div>
-
-      <div className="min-w-0 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+      <div className="mt-5">
         <EditorialVisualContextStrip articles={bundle.evidenceArticles} />
-        <VisualDiffusionReferenceStrip items={visualDiffusionItems} />
       </div>
 
-      <div className="lg:col-start-1">
-        <LeadSignalDimensions bundle={bundle} strength={strength} />
+      <LeadSignalDimensions bundle={bundle} strength={strength} />
 
-        <SignalInterpretationBlock interpretation={interpretation} />
+      <SignalInterpretationBlock interpretation={interpretation} />
 
-        <Link className="mt-4 inline-block text-sm font-semibold text-signal" href={`/items/${encodeURIComponent(bundle.specificItem)}`}>
-          근거 보기 →
-        </Link>
-      </div>
+      <VisualDiffusionReferenceStrip items={visualDiffusionItems} />
+
+      <Link className="mt-4 inline-block text-sm font-semibold text-signal" href={`/items/${encodeURIComponent(bundle.specificItem)}`}>
+        근거 보기 →
+      </Link>
     </div>
   );
 }
@@ -228,7 +300,7 @@ function LeadSignalDimensions({ bundle, strength }: { bundle: AttributeBundle; s
   const direction = editorialRecentDirection({});
   const latest = bundle.latestObservedAt?.toISOString().slice(0, 10) ?? "확인 불가";
   return (
-    <section aria-label="현재 신호 지표" data-testid="lead-signal-dimensions" className="grid grid-cols-3 divide-x divide-line border-y border-line">
+    <section aria-label="선택한 신호 지표" data-testid="lead-signal-dimensions" className="mt-6 grid grid-cols-3 divide-x divide-line border-y border-line">
       <div className="min-w-0 py-3 pr-3">
         <p className="text-[11px] font-semibold tracking-[0.08em] text-muted">관측 강도</p>
         <div className="mt-1"><EvidenceDots sourceSpread={bundle.bundleSourceSpread} articlePresence={bundle.bundleArticlePresence} label={strength} /></div>
@@ -264,82 +336,6 @@ function SignalInterpretationBlock({ interpretation }: { interpretation: SignalI
         </div>
       </dl>
     </section>
-  );
-}
-
-/**
- * SPECIFIC COMBINATION card (2026-09-14, replaces the old text-only
- * SecondaryBundleCard) - a bundle below the CurrentSignalHero, presented
- * with the SAME direct-attribute chips as AttributeBundleCard plus up to two
- * small editorial-context thumbnails, so "New Observations" reads as
- * concrete combinations (e.g. a specific color+item pairing) instead of a
- * bare title/count line. This directly answers 2026-09-11 product feedback
- * that the old text-only row was "too generic to plan from."
- *
- * Still never upgraded in wording just because it sits next to
- * CurrentSignalHero - bundleEvidenceStrength is computed exactly as
- * everywhere else, so a single-observation bundle here is honestly labelled
- * "단일 관측", never implied to be a repeated trend.
- *
- * Thumbnails follow the EXACT same rules as EditorialVisualContextStrip:
- * article-hero images only (never a bundle hero / DIRECT_BLOCK image; that
- * stays exclusive to BundleHeroImage), each its own outbound link with
- * source attribution, and the same permanent disclaimer. They are siblings
- * of the item-detail Link, not nested inside it (nested <a> is invalid
- * HTML) - clicking a thumbnail opens the source article; clicking the text
- * opens the item detail page.
- */
-export function SpecificComboCard({ bundle }: { bundle: AttributeBundle }) {
-  const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread, independentEvidenceClusterCount: bundle.independentEvidenceClusterCount });
-  const visuals = selectEditorialVisualContext(bundle.evidenceArticles, 2);
-
-  return (
-    <div className="border-t border-line py-4 first:border-t-0 first:pt-0">
-      <div className="flex gap-4">
-        {visuals.length > 0 ? (
-          <div className="flex shrink-0 gap-1.5">
-            {visuals.map((article) => (
-              <a
-                key={`${article.imageUrl}:${article.url}`}
-                href={article.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block h-16 w-16 shrink-0 overflow-hidden rounded bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
-                aria-label={`${sourceLabel(article.source)} 기사 열기: ${article.title || "제목 없음"}`}
-              >
-                {/* Article-level visual context only, same rule as EditorialVisualContextStrip - never a bundle hero or direct-relation image. */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={article.imageUrl ?? undefined}
-                  alt={`기사 비주얼 맥락: ${article.title || sourceLabel(article.source)}`}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                />
-              </a>
-            ))}
-          </div>
-        ) : null}
-
-        <Link href={`/items/${encodeURIComponent(bundle.specificItem)}`} className="block min-w-0 flex-1 transition hover:opacity-70">
-          <div className="text-base font-semibold leading-snug text-ink">{bundle.displayName}</div>
-          <div className="mt-1 text-xs font-medium uppercase tracking-[0.1em] text-muted">{englishSubtitle(bundle)}</div>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {bundle.directAttributes.map((attribute) => (
-              <AttributeChip key={`${attribute.type}:${attribute.value}`} attribute={attribute} />
-            ))}
-          </div>
-          <div className="mt-2 text-xs text-muted">
-            {strength} · {bundle.bundleArticlePresence}개 기사 · {bundle.bundleSourceSpread}개 매체
-          </div>
-        </Link>
-      </div>
-
-      {visuals.length > 0 ? (
-        <p className="mt-2 text-[10px] leading-relaxed text-muted">
-          기사 비주얼 맥락 · 아이템/속성/무드를 직접 증명하지 않음
-        </p>
-      ) : null}
-    </div>
   );
 }
 
