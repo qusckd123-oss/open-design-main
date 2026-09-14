@@ -9,6 +9,7 @@ import { bundleEvidenceStrength, countIndependentEvidenceClusters, getAttributeB
 import { contentBlocksFromStoredText, resolveEvidenceImage, type ContentBlock } from "../src/collectors/editorial/image-relation";
 import { attributeBarWidthPercent } from "../src/lib/attribute-visual";
 import { selectEditorialVisualContext } from "../src/lib/editorial-visual-context";
+import { editorialCoverageLabel, editorialRecentDirection } from "../src/lib/editorial-momentum";
 import { composeBundleName } from "../src/lib/korean-labels";
 import { buildSignalInterpretation } from "../src/lib/signal-interpretation";
 import { classifyFashionRelevance, EditorialRateLimitedError, getHypebeastFashionEntries, parseArticlePage, parseEsquireKrArticlePage, parseEsquireKrBody, parseEsquireKrSitemap, parseEyesmagRichBody, parseGenericSitemap, parseHarpersBazaarKrArticlePage, parseHarpersBazaarKrBody, parseHarpersBazaarKrSitemap, parseHypebeastListing, parseHypebeastRichBody, parseNewsSitemap, parseRssItems, parseSitemapIndex, parseVislaRichBody } from "../src/collectors/editorial/rss";
@@ -67,6 +68,7 @@ async function main() {
   verifyEvidenceImageResolution();
   verifyAttributeBarWidth();
   verifyEditorialVisualContextSelection();
+  verifyEditorialMomentumPresentation();
   verifySignalInterpretation();
   verifyIndependentEvidenceClusterCount();
   await verifyAttributeBundles();
@@ -146,15 +148,14 @@ function verifySignalInterpretation() {
     directAttributes: [{ type: "DETAIL", value: "STRIPE" }],
     bundleArticlePresence: 6,
     bundleSourceSpread: 5,
-    independentEvidenceClusterCount: 6,
-    latestObservedAt: new Date("2026-09-11T10:06:00.000Z")
+    independentEvidenceClusterCount: 6
   });
 
   assert.equal(stripe.signalName, "스트라이프 셔츠", "Lead-signal interpretation must use the Korean specific-item label, never raw SHIRT.");
   assert.equal(
     stripe.observedFact,
-    "“스트라이프 셔츠”의 아이템·속성 직접 관계가 6개 기사에서 확인됐습니다. 서로 다른 사례 기준 6건이 5개 매체에서 관측됐으며 최근 관측일은 2026-09-11입니다.",
-    "Observed fact must contain only existing bundle-level article, independent-case, outlet, and date fields."
+    "“스트라이프 셔츠”의 아이템·속성 직접 관계가 6개 기사에서 확인됐습니다. 서로 다른 사례 기준 6건이 5개 매체에서 관측됐습니다.",
+    "Observed fact must contain only existing bundle-level article, independent-case, and outlet fields; freshness is displayed separately."
   );
   assert.deepEqual(
     stripe.unknowns,
@@ -171,13 +172,37 @@ function verifySignalInterpretation() {
     ],
     bundleArticlePresence: 2,
     bundleSourceSpread: 1,
-    independentEvidenceClusterCount: 1,
-    latestObservedAt: null
+    independentEvidenceClusterCount: 1
   });
   assert.ok(materialAndColor.unknowns.includes("데님의 중량·조직·가공"), "A verified material must yield only its unverified execution variables, not claim that material itself is unknown.");
   assert.ok(materialAndColor.unknowns.includes("블랙의 톤·배색·적용 면적"), "A verified color must yield only its unverified expression variables, not claim that color itself is unknown.");
   assert.ok(!materialAndColor.unknowns.includes("소재·컬러 구성"), "Known material and color dimensions must not be listed as wholly unknown.");
-  assert.ok(materialAndColor.observedFact.endsWith("최근 관측일은 확인되지 않았습니다."), "A missing latest date must stay explicitly unknown rather than be invented.");
+}
+
+function verifyEditorialMomentumPresentation() {
+  const increasing = editorialRecentDirection({ current7dArticlePresence: 56, previous7dArticlePresence: 48, change7dArticlePresence: 8 });
+  assert.deepEqual(increasing, { state: "INCREASING", label: "증가", symbol: "↑", deltaLabel: "+8", comparisonLabel: "최근 7일 56건 · 직전 7일 48건" });
+
+  const decreasing = editorialRecentDirection({ current7dArticlePresence: 34, previous7dArticlePresence: 44, change7dArticlePresence: -10 });
+  assert.equal(decreasing.state, "DECREASING");
+  assert.equal(decreasing.label, "감소");
+  assert.ok(!`${decreasing.label} ${decreasing.deltaLabel}`.includes("뜨는"), "A declining item must never be described as 뜨는.");
+
+  const stable = editorialRecentDirection({ current7dArticlePresence: 11, previous7dArticlePresence: 11, change7dArticlePresence: 0 });
+  assert.deepEqual(stable, { state: "STABLE", label: "유지", symbol: "→", deltaLabel: "0", comparisonLabel: "최근 7일 11건 · 직전 7일 11건" });
+
+  const unavailable = editorialRecentDirection({ current7dArticlePresence: null, previous7dArticlePresence: 4, change7dArticlePresence: null });
+  assert.equal(unavailable.label, "판단 불가");
+  assert.equal(unavailable.deltaLabel, null);
+
+  const inconsistent = editorialRecentDirection({ current7dArticlePresence: 5, previous7dArticlePresence: 4, change7dArticlePresence: 9 });
+  assert.equal(inconsistent.label, "판단 불가", "An internally inconsistent comparable-window delta must never receive a direction label.");
+
+  const coverageInput = { articlePresence: 141, sourceSpread: 7 };
+  const decliningCoverageInput = { ...coverageInput, change7dArticlePresence: -10 };
+  assert.equal(editorialCoverageLabel(coverageInput), "다수 매체 공통");
+  assert.equal(editorialCoverageLabel(decliningCoverageInput), "다수 매체 공통", "Coverage wording must not change with momentum.");
+  assert.ok(!editorialCoverageLabel(coverageInput).includes("상승"), "Cumulative coverage wording must never claim recent momentum.");
 }
 
 async function verifyLegacyRanking() {
@@ -621,6 +646,16 @@ function verifyEditorialHelpers() {
   assert.equal(bag?.evidenceArticles.length, 2, "Editorial trend rows should retain evidence articles.");
   assert.equal(bag?.evidenceArticles[0]?.imageUrl, "https://example.com/bag-hero.jpg", "Evidence articles must carry the post image (newest article first) for article-card thumbnails.");
   assert.equal(bag?.evidenceArticles[1]?.imageUrl, null, "A post with no image must report imageUrl null, never a fabricated fallback.");
+  const cumulativeOrdering = aggregateEditorialMentions([
+    { type: "SUB_ITEM", value: "HIGH_COVERAGE_DECLINING", audienceGender: "UNKNOWN", confidence: 1, post: { source: "EYESMAG", url: "https://example.com/high-current", publishedAt: new Date("2026-09-14T00:00:00.000Z") } },
+    { type: "SUB_ITEM", value: "HIGH_COVERAGE_DECLINING", audienceGender: "UNKNOWN", confidence: 1, post: { source: "NONLABEL", url: "https://example.com/high-previous-1", publishedAt: new Date("2026-09-06T00:00:00.000Z") } },
+    { type: "SUB_ITEM", value: "HIGH_COVERAGE_DECLINING", audienceGender: "UNKNOWN", confidence: 1, post: { source: "VISLA", url: "https://example.com/high-previous-2", publishedAt: new Date("2026-09-05T00:00:00.000Z") } },
+    { type: "SUB_ITEM", value: "LOWER_COVERAGE_INCREASING", audienceGender: "UNKNOWN", confidence: 1, post: { source: "EYESMAG", url: "https://example.com/low-current-1", publishedAt: new Date("2026-09-14T00:00:00.000Z") } },
+    { type: "SUB_ITEM", value: "LOWER_COVERAGE_INCREASING", audienceGender: "UNKNOWN", confidence: 1, post: { source: "NONLABEL", url: "https://example.com/low-current-2", publishedAt: new Date("2026-09-13T00:00:00.000Z") } }
+  ]);
+  assert.equal(cumulativeOrdering[0]?.value, "HIGH_COVERAGE_DECLINING", "Editorial ordering must remain cumulative article-presence-first, not be re-ranked by recent direction.");
+  assert.equal(cumulativeOrdering[0]?.change7dArticlePresence, -1, "The unchanged top cumulative-coverage row may honestly be declining.");
+  assert.equal(cumulativeOrdering[1]?.change7dArticlePresence, 2, "A lower cumulative-coverage row may separately be increasing without moving ahead in the existing order.");
   const sourceBuzz = aggregateEditorialMentions([
     { type: "ITEM", value: "CAP", audienceGender: "UNKNOWN", confidence: 0.75, post: { source: "HYPEBEAST_KR", title: "Cap 1", url: "https://example.com/cap-1", publishedAt: new Date("2026-09-02T00:00:00.000Z") } },
     { type: "ITEM", value: "CAP", audienceGender: "UNKNOWN", confidence: 0.75, post: { source: "HYPEBEAST_KR", title: "Cap 2", url: "https://example.com/cap-2", publishedAt: new Date("2026-09-02T00:00:00.000Z") } }

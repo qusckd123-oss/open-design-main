@@ -224,6 +224,21 @@ Only the lead hero changed: the six `SpecificComboCard`s, bundle ranking, servic
 
 Validation from `apps/trend-dashboard/`: `corepack pnpm typecheck`, `corepack pnpm test`, `corepack pnpm build`, and `git diff --check` passed. Playwright checks at 1440x1000 and 390x844 confirmed one lead-only interpretation block, all three semantic labels, Korean hero heading `스트라이프 셔츠`, six unchanged secondary cards, no page-level horizontal overflow, and no application console errors. The lead-only Korean fallback is explicitly accepted for this scoped change; shared display-label consistency remains a separate future cleanup so secondary-card naming is unchanged.
 
+## P0 Product UX - Coverage vs Recent Direction (2026-09-14, approved)
+
+The home dashboard now keeps cumulative editorial coverage, comparable recent direction, and freshness as separate meanings. This is presentation-only; no collector, query, ranking comparator, taxonomy, schema, Market logic, or database row changed.
+
+- **Existing recent-direction metric, verified before implementation**: `EditorialTrendRow.change7dArticlePresence` is the absolute difference between distinct-article presence in two equal windows anchored to the latest `publishedAt` across the fashion-relevant editorial mention corpus: current `(anchor - 7 days, anchor]` minus previous `(anchor - 14 days, anchor - 7 days]`. It is neither percentage growth nor cumulative count. The live anchor is `2026-09-13T23:00:00.000Z`; therefore the compared UTC windows are `(2026-09-06T23:00:00Z, 2026-09-13T23:00:00Z]` and `(2026-08-30T23:00:00Z, 2026-09-06T23:00:00Z]`.
+- **Supported levels**: this metric exists for every aggregate `EditorialTrendRow`, including broad `ITEM`, specific `SUB_ITEM`, and attribute dimensions such as `DETAIL`, `MATERIAL`, `COLOR`, and `STYLE`. It does **not** exist for an exact specificItem+attribute bundle. The lead bundle therefore says `최근 방향 — 판단 불가 / 조합 단위 비교값 없음`; it never borrows the broader SHIRT direction. Its separate `최신 관측` field displays `bundle.latestObservedAt`.
+- **Classification**: only internally consistent comparable-window values are labelled: delta `> 0` = `증가`, `< 0` = `감소`, `= 0` = `유지`; missing or inconsistent current/previous/delta values = `판단 불가`. No percentage or arbitrary threshold was added.
+- **Filtered-view limitation**: the existing UNI/WOMEN filter selects aggregate rows by gender evidence but does not recompute article/source breadth or comparable windows within that gender. To avoid a false claim, those views label coverage `전체 기준` and recent direction `판단 불가 / 성별 필터 단위 비교값 없음`. No service/filter refactor was introduced.
+- **Terminology/UI**: `구체적으로 뜨는 조합` is now `구체적으로 관측된 조합`; `매거진에서 뜨는 유형` is now `관련 아이템·속성 흐름`. The related-flow description states that ordering remains cumulative article-presence-first. Each row now shows `관측 강도` (coverage label + cumulative articles/outlets) and `최근 방향` (direction + absolute delta + both window counts) in separate columns. The lead signal shows `관측 강도 / 최근 방향 / 최신 관측` above the unchanged FACT / UNKNOWN / PLANNING QUESTION structure.
+- **Ordering unchanged**: related editorial rows remain sorted by cumulative `articlePresence`, then `sourceSpread`, `mentionCount`, and label. Exact bundles retain the documented frozen six-key evidence ordering. A focused regression proves a higher-coverage declining row still stays ahead of a lower-coverage increasing row.
+
+Live default examples at implementation time: SHIRT `141 articles, 7 outlets, 56 current vs 48 previous, +8 증가`; SKIRT `96, 6, 34 vs 44, -10 감소`; VEST `36, 7, 11 vs 11, 0 유지`; CARDIGAN `29, 6, 7 vs 18, -11 감소`. These are editorial publication-count directions only, never sales, demand, store ranking, or commercial promise.
+
+Focused smoke tests cover positive, negative, zero, missing, and inconsistent direction inputs; coverage wording independence; absence of `뜨는` in a declining presentation; and unchanged cumulative ordering. Rendered desktop/mobile checks and final typecheck/test/build/diff-check validation passed before commit.
+
 ## Known Current Limitations
 
 (Carried forward, still true as of this pass - see `docs/EDITORIAL_REFRESH_OPERATIONS.md` "Current Limitations" for the full list)

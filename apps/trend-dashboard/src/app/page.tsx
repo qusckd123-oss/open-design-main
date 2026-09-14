@@ -7,8 +7,6 @@ import { formatNumber } from "@/lib/format";
 import {
   compactCategory,
   confidenceLabel,
-  editorialSignalLabel,
-  evidenceStrengthLabel,
   formatDateKo,
   formatRank,
   formatRankChange,
@@ -18,6 +16,7 @@ import {
   trendTypeLabel,
   trendValueLabel
 } from "@/lib/market-ui";
+import { editorialCoverageLabel, editorialRecentDirection } from "@/lib/editorial-momentum";
 import { specificItemKoreanLabel } from "@/lib/korean-labels";
 import { buildFilterHref, parseGenderParam, parseScopeParam } from "@/lib/planning-filters";
 import { getAttributeBundles } from "@/services/attribute-bundle-service";
@@ -47,6 +46,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   const [data, bundles] = await Promise.all([getPlanningDashboardData(gender, scope), getAttributeBundles("real", gender)]);
   const editorialRows = data.editorialByType[editorialType] ?? data.editorialByType.SUB_ITEM ?? [];
   const isOverseas = scope === "overseas";
+  const hasComparableEditorialMomentum = gender === "all";
   // Same threshold selectPrimaryPlanningBundle uses: only a genuinely,
   // INDEPENDENTLY repeated bundle (independentEvidenceClusterCount >= 2, not
   // just raw article count - see docs/EDITORIAL_SIGNAL_TRUST_AUDIT.md)
@@ -90,8 +90,8 @@ export default async function DashboardPage({ searchParams }: PageProps) {
                 <div className="mt-10 border-t border-line pt-7">
                   <SectionHeader
                     kicker="Specific Combinations"
-                    title="구체적으로 뜨는 조합"
-                    description="가장 강한 신호 하나만으로는 기획하기 어려우니, 기사에서 직접 확인된 더 구체적인 아이템+속성 조합을 함께 보여줍니다. 관측이 아직 하나뿐인 조합은 '단일 관측'으로 정직하게 표시합니다."
+                    title="구체적으로 관측된 조합"
+                    description="관측 강도 기준 상위 아이템+속성 조합입니다. 최근 방향은 조합 단위 비교값이 없어 판단하지 않습니다. 관측이 아직 하나뿐인 조합은 '단일 관측'으로 표시합니다."
                     href="/items"
                   />
                   <div className="mt-4 grid gap-x-10 gap-y-1 md:grid-cols-2">
@@ -112,7 +112,14 @@ export default async function DashboardPage({ searchParams }: PageProps) {
       ) : null}
 
       <section className="mt-14 border-t border-line pt-14">
-        <SectionHeader kicker="Item Signals" title="매거진에서 뜨는 유형" description="최근 여러 패션 매체에서 반복적으로 등장하는 상품 유형입니다." href="/editorial" />
+        <SectionHeader
+          kicker="Item Signals"
+          title="관련 아이템·속성 흐름"
+          description={hasComparableEditorialMomentum
+            ? "누적 기사 관측 수 순입니다. 관측 강도와 최근 7일 대비 직전 7일의 방향을 서로 분리해 표시합니다."
+            : "선택한 성별 근거가 있는 신호입니다. 관측 강도는 전체 기사 기준이며, 성별별 비교창이 없어 최근 방향은 판단하지 않습니다."}
+          href="/editorial"
+        />
         <div className="mt-6 flex flex-wrap gap-5 border-b border-line pb-4">
           {editorialTypes.map(([type, label]) => (
             <Link
@@ -125,7 +132,14 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           ))}
         </div>
         <div className="mt-6 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-          {editorialRows.slice(0, 6).map((row) => <EditorialTrendCard key={`${row.type}:${row.value}`} row={row} sourceTotal={data.summary.editorialSources} />)}
+          {editorialRows.slice(0, 6).map((row) => (
+            <EditorialTrendCard
+              key={`${row.type}:${row.value}`}
+              row={row}
+              sourceTotal={data.summary.editorialSources}
+              hasComparableMomentum={hasComparableEditorialMomentum}
+            />
+          ))}
           {editorialRows.length === 0 ? <EmptyState title="현재 필터에서 매거진 트렌드 근거가 부족합니다." /> : null}
         </div>
       </section>
@@ -245,23 +259,34 @@ function DomesticStoreEmptyState({ currentParams }: { currentParams: Record<stri
   );
 }
 
-function EditorialTrendCard({ row, sourceTotal }: { row: EditorialTrendRow; sourceTotal: number }) {
+function EditorialTrendCard({ row, sourceTotal, hasComparableMomentum }: { row: EditorialTrendRow; sourceTotal: number; hasComparableMomentum: boolean }) {
   // Korean-first title when this row IS a specific item (SUB_ITEM dimension)
   // - the same established mapping used everywhere else (TOTE_BAG -> 토트백).
   // Other dimensions (DETAIL/MATERIAL/COLOR/STYLE) are left as-is; this is not
   // a general localization pass.
   const label = row.type === "SUB_ITEM" ? specificItemKoreanLabel(row.value) ?? trendValueLabel(row.value) : trendValueLabel(row.value);
+  const coverage = editorialCoverageLabel(row);
+  const direction = editorialRecentDirection(hasComparableMomentum ? row : {});
+  const comparisonLabel = hasComparableMomentum ? direction.comparisonLabel : "성별 필터 단위 비교값 없음";
   return (
-    <article className="border-t-2 border-ink pt-3">
+    <article data-testid="editorial-flow-card" data-direction={direction.state} className="border-t-2 border-ink pt-3">
       <div className="text-xs font-semibold uppercase tracking-[0.1em] text-muted">{trendTypeLabel(row.type)}</div>
       <div className="mt-1 text-xl font-semibold text-ink">{label}</div>
-      <div className="mt-2 text-sm text-muted">
-        {formatNumber(row.articlePresence)}기사 · {row.sourceSpread}/{sourceTotal}매체 · 최근 7일 {formatRankChange(row.change7dArticlePresence)}
+      <div className="mt-3 grid grid-cols-2 gap-4 border-t border-line pt-3">
+        <div className="min-w-0">
+          <div className="text-[11px] font-semibold tracking-[0.08em] text-muted">관측 강도</div>
+          <div className="mt-1 text-sm font-semibold text-ink">{coverage}</div>
+          <div className="mt-0.5 text-xs text-muted">{hasComparableMomentum ? "" : "전체 기준 · "}{formatNumber(row.articlePresence)}개 기사 · {row.sourceSpread}/{sourceTotal}개 매체</div>
+        </div>
+        <div className="min-w-0">
+          <div className="text-[11px] font-semibold tracking-[0.08em] text-muted">최근 방향</div>
+          <div className="mt-1 text-sm font-semibold text-ink">
+            <span aria-hidden>{direction.symbol}</span> {direction.label}{direction.deltaLabel ? ` ${direction.deltaLabel}` : ""}
+          </div>
+          <div className="mt-0.5 text-xs leading-snug text-muted">{comparisonLabel}</div>
+        </div>
       </div>
-      <div className="mt-1 text-xs font-semibold text-signal">{evidenceStrengthLabel(row)}</div>
-      <div className="mt-1 text-xs text-muted">
-        {editorialSignalLabel(row.observation)} · UNI {row.genderSplit.UNISEX ?? 0} · WOMEN {row.genderSplit.WOMEN ?? 0}
-      </div>
+      <div className="mt-2 text-xs text-muted">UNI {row.genderSplit.UNISEX ?? 0} · WOMEN {row.genderSplit.WOMEN ?? 0}</div>
       <details className="mt-3 text-xs">
         <summary className="cursor-pointer font-semibold text-ink">근거 기사</summary>
         <div className="mt-2 space-y-2">

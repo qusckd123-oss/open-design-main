@@ -3,6 +3,7 @@ import { ProductImage } from "@/components/ProductImage";
 import { VisualDiffusionReferenceStrip } from "@/components/VisualDiffusionReferences";
 import { visualDiffusionReferencesForItem } from "@/config/visual-diffusion-references";
 import { attributeBarWidthPercent } from "@/lib/attribute-visual";
+import { editorialRecentDirection } from "@/lib/editorial-momentum";
 import { selectEditorialVisualContext } from "@/lib/editorial-visual-context";
 import { attributeKoreanLabel, attributeTypeKoreanLabel } from "@/lib/korean-labels";
 import { buildSignalInterpretation, type SignalInterpretation } from "@/lib/signal-interpretation";
@@ -211,9 +212,7 @@ export function CurrentSignalHero({ bundle }: { bundle: AttributeBundle }) {
       </div>
 
       <div className="lg:col-start-1">
-        <div>
-          <EvidenceDots sourceSpread={bundle.bundleSourceSpread} articlePresence={bundle.bundleArticlePresence} label={strength} />
-        </div>
+        <LeadSignalDimensions bundle={bundle} strength={strength} />
 
         <SignalInterpretationBlock interpretation={interpretation} />
 
@@ -222,6 +221,28 @@ export function CurrentSignalHero({ bundle }: { bundle: AttributeBundle }) {
         </Link>
       </div>
     </div>
+  );
+}
+
+function LeadSignalDimensions({ bundle, strength }: { bundle: AttributeBundle; strength: string }) {
+  const direction = editorialRecentDirection({});
+  const latest = bundle.latestObservedAt?.toISOString().slice(0, 10) ?? "확인 불가";
+  return (
+    <section aria-label="현재 신호 지표" data-testid="lead-signal-dimensions" className="grid grid-cols-3 divide-x divide-line border-y border-line">
+      <div className="min-w-0 py-3 pr-3">
+        <p className="text-[11px] font-semibold tracking-[0.08em] text-muted">관측 강도</p>
+        <div className="mt-1"><EvidenceDots sourceSpread={bundle.bundleSourceSpread} articlePresence={bundle.bundleArticlePresence} label={strength} /></div>
+      </div>
+      <div className="min-w-0 px-3 py-3">
+        <p className="text-[11px] font-semibold tracking-[0.08em] text-muted">최근 방향</p>
+        <p className="mt-1 text-sm font-semibold text-ink">{direction.symbol} {direction.label}</p>
+        <p className="mt-0.5 text-[10px] leading-snug text-muted">조합 단위 비교값 없음</p>
+      </div>
+      <div className="min-w-0 py-3 pl-3">
+        <p className="text-[11px] font-semibold tracking-[0.08em] text-muted">최신 관측</p>
+        <p className="mt-1 text-sm font-semibold tabular-nums text-ink">{latest}</p>
+      </div>
+    </section>
   );
 }
 

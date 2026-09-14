@@ -11,7 +11,6 @@ export type SignalInterpretationInput = {
   bundleArticlePresence: number;
   bundleSourceSpread: number;
   independentEvidenceClusterCount: number;
-  latestObservedAt: Date | null;
 };
 
 export type SignalInterpretation = {
@@ -76,11 +75,9 @@ function composeLeadSignalName(specificItem: string, attributes: SignalAttribute
  */
 export function buildSignalInterpretation(input: SignalInterpretationInput): SignalInterpretation {
   const signalName = composeLeadSignalName(input.specificItem, input.directAttributes);
-  const latest = input.latestObservedAt?.toISOString().slice(0, 10) ?? null;
   const observedFact =
     `“${signalName}”의 아이템·속성 직접 관계가 ${input.bundleArticlePresence}개 기사에서 확인됐습니다. ` +
-    `서로 다른 사례 기준 ${input.independentEvidenceClusterCount}건이 ${input.bundleSourceSpread}개 매체에서 관측됐으며 ` +
-    (latest ? `최근 관측일은 ${latest}입니다.` : "최근 관측일은 확인되지 않았습니다.");
+    `서로 다른 사례 기준 ${input.independentEvidenceClusterCount}건이 ${input.bundleSourceSpread}개 매체에서 관측됐습니다.`;
 
   const types = new Set(input.directAttributes.map((attribute) => attribute.type));
   const unknowns: string[] = [];
