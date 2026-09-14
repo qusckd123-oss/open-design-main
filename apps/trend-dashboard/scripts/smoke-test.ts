@@ -93,7 +93,16 @@ async function main() {
   assert.ok(items.some((row) => row.top10Presence >= 0 && row.top20Presence >= row.top10Presence && row.top50Presence >= row.top20Presence), "Item rows must expose TOP10/TOP20/TOP50 verified ranking presence.");
   assert.ok(dashboard.summary.signalConfidence === "BASELINE" || dashboard.summary.signalConfidence === "EARLY_DATA" || dashboard.summary.signalConfidence === "ACTIVE_SIGNAL", "Verified ranking signal confidence must be derived from collected snapshot dates.");
   assert.deepEqual(verifiedRankingCollectorSources().sort(), ["END", "RAKUTEN_FASHION"].sort(), "Verified-only collection must include only END and Rakuten Fashion.");
-  assert.deepEqual(assortmentCollectorSources().sort(), ["SLAM_JAM", "STUSSY"].sort(), "Assortment collection must include only Shopify assortment sources.");
+  // COVERCHORD added 2026-09-11 (see CURRENT_STATE.md "Market Coverchord
+  // Source Addition") as a third unverified Shopify assortment source,
+  // mirroring SLAM_JAM/STUSSY exactly (rankingVerified: false, method:
+  // SHOPIFY_PRODUCTS_JSON in sourceCategoryConfigs) - this expectation was
+  // never updated at the time, which is a pre-existing test gap unrelated to
+  // any change made today, caught only now because this is the first time
+  // `pnpm test` was actually run since that commit. No live COVERCHORD
+  // collection has happened yet (config only, 0 rows), so this is purely a
+  // config-list assertion, not a claim about collected data.
+  assert.deepEqual(assortmentCollectorSources().sort(), ["COVERCHORD", "SLAM_JAM", "STUSSY"].sort(), "Assortment collection must include only Shopify assortment sources.");
   const verifiedFreshness = await getSourceFreshness("real", true);
   assert.ok(verifiedFreshness.some((row) => row.source === "END"));
   assert.ok(verifiedFreshness.some((row) => row.source === "RAKUTEN_FASHION"));
