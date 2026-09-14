@@ -171,6 +171,20 @@ The user explicitly approved `docs/TREND_RESEARCH_SOURCE_REGISTRY.md` Section 10
 - No live `collect:market --source=COVERCHORD` run has happened yet - this is config only, zero rows collected yet. A manual `collect:market --source=COVERCHORD --category=BAG --limit=10`-style single-category run (real network, writes `dataMode=real` rows - a deliberate, human-invoked Market collection, not the gated Editorial refresh) can confirm end-to-end behavior whenever next useful.
 - The 3001 dev server was stopped to unblock `build` and has not been restarted as of this note - restart with `corepack pnpm dev` before the next UI-judgment task.
 
+## Trend Research Registry: Instagram MANUAL_CURATION Accounts (2026-09-14, docs-only, committed)
+
+The user approved `docs/TREND_RESEARCH_SOURCE_REGISTRY.md` Section 10 decision 3 in this session (Instagram accounts as `MANUAL_CURATION`-tier registry candidates). Implemented as a docs-only addition, independent of the Editorial P0 gate:
+
+- Added Section 11 to `docs/TREND_RESEARCH_SOURCE_REGISTRY.md`: a 6-row table of `VisualDiffusionSourceConfig`-shaped entries (`id`, `platform: INSTAGRAM`, `handle`, `profileUrl`, `role: ["STYLING_REFERENCE", "CURATION"]`, `collectionMethod: MANUAL_CURATION`, `relatedEditorialSource: null`, human `note`) - 4 accounts the user confirmed directly (`@fashion_platform_seoul`, `@jentestore`, `@_xxpick`, `@humanretrogirl`), plus 2 more this pass found and independently verified, then the user approved for registration (`@fashion_curator_seoul`, `@celeb_fashion_magazine`).
+- **No code, schema, collector, taxonomy, or ranking change** - `VisualDiffusionSourceConfig`/`VisualDiffusionReference` (Section 6) remain design-only with zero implementation in `src/` (confirmed via a fresh repo-wide search this pass); the 6 entries live only in the Markdown table.
+- **No Instagram scraping** - each of the 6 (plus 2 more candidates the user did not approve: `@styleandrich.official`, `@dailyfashion_news`) was checked via a single read-only, unauthenticated fetch of that account's own public profile bio/display-name/follower-count only, no login, no private API, no post-content scraping.
+- Every entry carries the project's standard disclaimer (사람이 직접 선별한 참고 자료 · 직접 증거 아님, 판매량 아님) and feeds no automated collector, `EditorialMention`, bundle service, or `MarketRankingSnapshot`.
+- `docs/TREND_RESEARCH_SOURCE_REGISTRY.md` Section 10 decision 3 updated from "pending approval" to "approved and registered," and `docs/NEXT_PRIORITIES.md` P2's Instagram candidate line updated to reflect the same, mirroring the Coverchord P0/P3 status-update pattern.
+
+**Validation**: docs-only change - no build required per `AGENT_OPERATING_RULES.md` "Validation Expectations." Cross-references sanity-checked against live repo state: confirmed `VisualDiffusionSourceConfig` has no code implementation anywhere in `src/` before writing entries for it, and confirmed all 6 registered accounts (plus the 2 not approved) actually exist via their own live public profile pages before including any of them.
+
+**Live-state note (incidental to this pass)**: a read-only `scripts/audit-editorial-quality.ts` run during this pass's own live-state verification (2026-09-14) showed the corpus has grown materially since the 2026-09-11 snapshot above - EditorialPost(real) 734 (up from 617), EditorialMention(real) 3455 (up from 2781), Attribute bundles 110 (up from 89), Canonical/Mention Duplicates still 0/0, Market(real) unchanged at 667. This is consistent with, and not investigated further than confirming it is consistent with, the independently scheduled 2026-09-14 08:30 KST weekly refresh noted in the Scheduler Status section above - this pass did not trigger it and did not perform the full P0 post-refresh checklist (log verification, per-source health, signal-delta sanity check) from `NEXT_PRIORITIES.md`, since that is separate, unrequested work. The table above is left as the 2026-09-11 snapshot rather than rewritten here, so whoever next does the P0 observation pass has a clean, honest before/after rather than a partially-updated table.
+
 ## Known Current Limitations
 
 (Carried forward, still true as of this pass - see `docs/EDITORIAL_REFRESH_OPERATIONS.md` "Current Limitations" for the full list)
@@ -192,7 +206,7 @@ This file is an index, not a duplicate. For the full history and reasoning behin
 - `docs/EDITORIAL_ITEM_TAXONOMY_AUDIT.md` - Product Reference freeze statement; item-taxonomy coverage findings.
 - `docs/VISUAL_FIRST_TREND_BOARD_AUDIT.md` - visual-first baseline audit and the `EditorialVisualContextStrip` implementation record.
 - `docs/EDITORIAL_ORDERED_VISUAL_EVIDENCE_AUDIT.md` - per-source feasibility for real `DIRECT_BLOCK`/`ADJACENT_BLOCK` image evidence; proposed (design-only) ordered-block and human-reviewed-mood data shapes.
-- `docs/TREND_RESEARCH_SOURCE_REGISTRY.md` - repo-coverage audit and lane classification for Instagram/HBX/Musinsa-content/Coverchord sources; proposed (design-only) Visual Diffusion source model.
+- `docs/TREND_RESEARCH_SOURCE_REGISTRY.md` - repo-coverage audit and lane classification for Instagram/HBX/Musinsa-content/Coverchord sources; proposed (design-only) Visual Diffusion source model; Section 11 holds the 6 approved Instagram `MANUAL_CURATION` registry entries.
 - `docs/MARKET_SOURCE_AUDIT.md`, `docs/KOREA_SOURCE_AUDIT.md` - Market source feasibility/status per site, including the Slam Jam/Stussy Shopify-JSON precedent `TREND_RESEARCH_SOURCE_REGISTRY.md` extends to Coverchord.
 - `docs/CROSS_SOURCE_INDEPENDENT_SIGNAL_AUDIT.md`, `docs/COSMOPOLITAN_COLLECTION_AUDIT.md`, `docs/MARIECLAIRE_COLLECTION_AUDIT.md`, `docs/NON_HEARST_SOURCE_DIVERSITY_AUDIT.md` - per-source collection/integration passes.
 - `docs/PRODUCT_REFERENCE_MULTIBRAND_AUDIT.md`, `docs/PRODUCT_ATTRIBUTE_REFERENCE_AUDIT.md` - Product Reference's own (frozen) history.
