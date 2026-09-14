@@ -37,7 +37,21 @@ export const rankingCategoryLabels: Record<RankingCategory, string> = {
 export type SourceCategoryConfig = {
   source: MarketSource;
   baseUrl: string;
-  method: "SHOPIFY_PRODUCTS_JSON" | "PUBLIC_BESTSELLER_PAGE" | "PUBLIC_RANKING_PAGE" | "HTML_RANKING" | "UNSUPPORTED";
+  /**
+   * CAFE24_CATEGORY_HTML (added 2026-09-14 for REDNAPE): a server-rendered
+   * Cafe24-platform storefront category listing page (product grid HTML,
+   * no JSON API) - narrower/truthful, not a guess at "any HTML site" and
+   * not reusing SHOPIFY_PRODUCTS_JSON (Rednape is not Shopify). No
+   * collector class exists for this method yet - createMarketCollector
+   * (src/collectors/market/index.ts) falls through to
+   * UnsupportedMarketCollector for it exactly like any other unhandled
+   * method, so registering this config implies zero collection behavior
+   * until a real parser is designed and approved separately. See
+   * docs/MARKET_SOURCE_AUDIT.md "Rednape" for the platform evidence
+   * (robots.txt Cafe24-pattern admin paths, /category//product/ URL
+   * shape).
+   */
+  method: "SHOPIFY_PRODUCTS_JSON" | "PUBLIC_BESTSELLER_PAGE" | "PUBLIC_RANKING_PAGE" | "HTML_RANKING" | "CAFE24_CATEGORY_HTML" | "UNSUPPORTED";
   metricType: MarketMetricType;
   rankingVerified: boolean;
   rankingScope: RankingScope;
@@ -96,6 +110,21 @@ export const sourceCategoryConfigs: Partial<Record<MarketSource, SourceCategoryC
       PANTS: "/collections/bottoms/products.json",
       BAG: "/collections/bags/products.json",
       HEADWEAR: "/collections/hats-caps/products.json"
+    }
+  },
+  REDNAPE: {
+    source: "REDNAPE",
+    baseUrl: "https://rednape.kr",
+    method: "CAFE24_CATEGORY_HTML",
+    metricType: "CATALOG",
+    rankingVerified: false,
+    rankingScope: "CATEGORY",
+    collectionMethod: "Public Cafe24 storefront category HTML page (server-rendered product grid); no products.json/JSON API available - HTML-parsing collector not yet implemented, see docs/MARKET_SOURCE_AUDIT.md",
+    description: "Public Cafe24-platform online shop (rednape.kr, self-described 'unisex shop'). Server-rendered category listing pages expose product name, price, color options, and images directly in raw HTML (verified via a single read-only fetch on 2026-09-14). Category/product order reflects catalog listing order, not verified ranking or bestseller status. /category/new-arrivals/23/ is a cross-item-type, recency-sorted section - mapped below only to the specific item types actually observed in the sampled listing (long-sleeve tops, pants), not to every type that section may contain. /category/accessories/45/ is mapped to BAG, mirroring the existing Slam Jam accessories-to-BAG precedent. No collector/parser exists for this source yet - this is a config-only registration with zero rows collected.",
+    categories: {
+      LONG_SLEEVE_TSHIRT: "/category/new-arrivals/23/",
+      PANTS: "/category/new-arrivals/23/",
+      BAG: "/category/accessories/45/"
     }
   },
   RAKUTEN_FASHION: {
