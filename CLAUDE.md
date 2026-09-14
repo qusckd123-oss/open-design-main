@@ -670,3 +670,14 @@
 - 2026-09-10 delivery decision: 26FW delayed unisex new-basic goods should be received in partial lots first, even below 50% of the original delivery quantity, with the balance received sequentially.
 - 2026-09-10 operational record: `WA2603HZ56` partial inbound was reported complete on 2026-09-01; 2026-09-10 Hanbaek TR/HNC and 2026-09-11 Buckscrew inbound lists were shared in Teams.
 - 2026-09-10 unresolved: final 27SS order quantities/approver, style-level remaining 26FW inbound schedule, additional-CAD colors/quantities, and concrete SKU/quantity/timeline plans for the monthly-review directions remain open.
+
+## Current Teams Summary - 2026-09-14
+
+- Latest live Teams summary: `work/90_archive/workspace/memory/current-teams-update-summary-2026-09-14.md`.
+- Scope: live Teams channel and group-chat messages through 2026-09-13; 2026-09-14 same-day messages were excluded.
+- 2026-09-14 decisions: 27SS ST01 will use two-line typography as a new basic; 26SS `WA2602ST01` KIKI-wappen stock will be re-operated for maximum sell-through without reorder; `WA2700STE1` two-pack keeps KIKI; 26SS ST01 is planned at 20%/KRW 36,000 and 27SS ST01 at KRW 39,000.
+- 2026-09-14 decisions: 27SS ACC MDP is planned at hats 7M, bags 7M, socks 3M (TTL 17M); 27SS unresolved spring specifications must close first, then BT/artwork/S/O are released; target cost rate is 22.9% versus current S1/S2 estimate in the low 24% range.
+- 2026-09-14 delivery decisions: 26FW delayed goods are received in partial lots first and sequentially thereafter; `WA2603JK21` is 9/30 and 10/13, `WA2603JK12/13` is 9/18 and 9/22, `WA2603SH14/15` is 9/18 full receipt, and `WA2603CR13` follows A-grade-first then remaining-store shipment.
+- 2026-09-14 decisions: Kim Hojin's 9/16–9/30 absence is covered by Yoo Jiwon; global reorders are batched, Taiwan reorder is not proceeding except the confirmed 10PCS; `CD51`/`KT62` go to Wiz and `CDH1`/`KTH3`/`PTH3` to Barak.
+- 2026-09-14 unresolved: final 27SS PO quantity/approver and global quantity, additional-CAD final colors/quantities/dates, ACC production source, 27SS material/spec/color FIX, remaining 26FW EX-FAC/O.C updates, and the mixed `WA2603CR16`/`WA2603CR17` style reference remain open.
+- 2026-09-14 next actions: close 27SS spring specs and release work instructions; finalize PO/LINE SHEET and ACC production details; track partial inbound and outbound results; confirm global EX-FAC/O.C responses; resolve CR16/CR17 numbering and country-level order decisions; prepare SKU-level cost-reduction/price actions.
