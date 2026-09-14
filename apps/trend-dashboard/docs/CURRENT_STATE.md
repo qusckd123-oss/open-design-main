@@ -2,7 +2,7 @@
 
 **This is a mutable snapshot, not policy.** For stable rules, see `AGENT_OPERATING_RULES.md`. For what to do next, see `NEXT_PRIORITIES.md`. A session reading this file should still verify live state itself before acting - see that file's "Future Short-Prompt Contract."
 
-Last verified: 2026-09-11, read-only, directly against the DB (a fresh Claude Code session independently re-ran typecheck/test/build and the read-only quality audit against the then-uncommitted `EditorialVisualContextStrip` work before committing it - not assumed from a prior report).
+Last verified: 2026-09-14, read-only, directly against the committed `refresh-20260914-083001.json`/`.log` machine-readable reports for the scheduled refresh (not re-derived from the DB this pass, since the refresh runner's own before/after snapshot - the same `getEditorialRefreshSnapshot()` function - already produced it fresh at refresh time).
 
 ## Repo
 
@@ -17,18 +17,18 @@ Derived via `getEditorialRefreshSnapshot()` (`src/services/editorial-refresh-sna
 
 | Metric | Value |
 |---|---|
-| EditorialPost (real) | 617 |
-| EditorialMention (real) | 2781 |
-| Direct Relation Instances | 179 |
-| Distinct Item+Attribute Pairs | 92 |
-| Bundles | 89 |
-| Independent Repeated (`independentRepeated`) | 18 |
-| Multi-source Independent (`multiSourceIndependent`) | 16 |
-| Publisher-family-diverse (`publisherFamilyDiverse`) | 10 |
-| Current Primary (`currentPrimary`) | "화이트 SKIRT" |
+| EditorialPost (real) | 734 |
+| EditorialMention (real) | 3455 |
+| Bundles | 110 |
+| Independent Repeated (`independentRepeated`) | 25 |
+| Multi-source Independent (`multiSourceIndependent`) | 20 |
+| Publisher-family-diverse (`publisherFamilyDiverse`) | 11 |
+| Current Primary (`currentPrimary`) | "스트라이프 SHIRT" |
 | Canonical Duplicates | 0 |
 | Mention Duplicates | 0 |
 | Market (`MarketRankingSnapshot`, `dataMode: "real"`) | 667 |
+
+Post-refresh as of the 2026-09-14 08:30 KST scheduled run (see "P0 Scheduled Refresh Observation" below). `Direct Relation Instances`/`Distinct Item+Attribute Pairs` aren't part of the refresh runner's own snapshot output, so they're left off this table rather than guessed - re-derive from `scripts/audit-editorial-quality.ts` if needed.
 
 **"Market" always means the `dataMode: "real"`-scoped count (667).** The raw, unfiltered `MarketRankingSnapshot` table count is 3259 - it also holds ~2,592 pre-existing `dataMode: "sample"` rows from a single 2026-08-28 bulk seed load, unrelated to production. Never report the raw count as "Market" - see the incident note below for how this was verified.
 
@@ -71,8 +71,8 @@ This is frozen ranking logic - do not redesign without explicit user request (se
 - Task: `Wakiwilly Trend Dashboard - Editorial Refresh`
 - State: `Ready`, Enabled: `True`
 - Trigger: Weekly, Monday 08:30 KST
-- Last run: 2026-09-09 18:31 KST (an ad-hoc scheduled-task test, not the regular Monday slot), result code 0 (success)
-- Next scheduled run: **2026-09-14 08:30 KST**
+- Last run: **2026-09-14 08:30 KST (the first naturally scheduled Monday run)**, result code 0 (success) - see "P0 Scheduled Refresh Observation" below. Prior run: 2026-09-09 18:31 KST (an ad-hoc scheduled-task test, not a regular Monday slot).
+- Next scheduled run: **2026-09-21 08:30 KST**
 - Settings: `MultipleInstances=IgnoreNew`, `StartWhenAvailable=True`, `WakeToRun=True`
 - Wrapper: `apps/trend-dashboard/scripts/run-scheduled-refresh.ps1` (invokes exactly `corepack pnpm refresh:editorial --json`)
 - Logs: `apps/trend-dashboard/logs/editorial-refresh/` (gitignored)
@@ -183,7 +183,15 @@ The user approved `docs/TREND_RESEARCH_SOURCE_REGISTRY.md` Section 10 decision 3
 
 **Validation**: docs-only change - no build required per `AGENT_OPERATING_RULES.md` "Validation Expectations." Cross-references sanity-checked against live repo state: confirmed `VisualDiffusionSourceConfig` has no code implementation anywhere in `src/` before writing entries for it, and confirmed all 6 registered accounts (plus the 2 not approved) actually exist via their own live public profile pages before including any of them.
 
-**Live-state note (incidental to this pass)**: a read-only `scripts/audit-editorial-quality.ts` run during this pass's own live-state verification (2026-09-14) showed the corpus has grown materially since the 2026-09-11 snapshot above - EditorialPost(real) 734 (up from 617), EditorialMention(real) 3455 (up from 2781), Attribute bundles 110 (up from 89), Canonical/Mention Duplicates still 0/0, Market(real) unchanged at 667. This is consistent with, and not investigated further than confirming it is consistent with, the independently scheduled 2026-09-14 08:30 KST weekly refresh noted in the Scheduler Status section above - this pass did not trigger it and did not perform the full P0 post-refresh checklist (log verification, per-source health, signal-delta sanity check) from `NEXT_PRIORITIES.md`, since that is separate, unrequested work. The table above is left as the 2026-09-11 snapshot rather than rewritten here, so whoever next does the P0 observation pass has a clean, honest before/after rather than a partially-updated table.
+## P0 Scheduled Refresh Observation (2026-09-14, first natural Monday run)
+
+The first naturally scheduled Windows Task Scheduler run (2026-09-14 08:30 KST, `Wakiwilly Trend Dashboard - Editorial Refresh`) fired on its own, unattended and un-intervened, exactly as `NEXT_PRIORITIES.md`'s P0 instructed ("observe... don't intervene preemptively"). This pass performed the full post-refresh checklist against the committed machine-readable reports (`logs/editorial-refresh/refresh-20260914-083001.json` / `.log`):
+
+- **Exit code 0**, ran 08:30:01 -> 08:33:22 KST (~3m21s), `Mode: LIVE`, all 8 configured sources attempted.
+- **Source health: 8/8 succeeded**, 0 failures. Per-source: `VISLA` posts=6 new=0 updated=6 mentions=37; `HYPEBEAST_KR` posts=20 new=20 updated=0 mentions=97; `EYESMAG` posts=4 new=4 updated=0 mentions=26; `NONLABEL` posts=3 new=1 updated=2 mentions=2; `ESQUIRE_KR` posts=30 new=30 updated=0 mentions=140; `HARPERSBAZAAR_KR` posts=30 new=30 updated=0 mentions=195; `COSMOPOLITAN_KR` posts=30 new=27 updated=3 mentions=188; `MARIECLAIRE_KR` posts=5 new=5 updated=0 mentions=38.
+- **DB/signal deltas, all sane**: EditorialPost 617->734 (+117 new, +11 updated), EditorialMention 2781->3455 (+674), Bundles 89->110 (+21, a 23.6% swing - under the documented 25% threshold), IndependentRepeated 18->25, MultiSourceIndependent 16->20, PublisherFamilyDiverse 10->11, Market(`dataMode:"real"`) unchanged at 667 (confirming the Editorial refresh never touches Market data), Canonical Duplicates 0->0, Mention Duplicates 0->0. Current Primary moved from "화이트 SKIRT" to "스트라이프 SHIRT" - a legitimate ranking-order consequence of new evidence, not investigated further (ranking logic itself is frozen and unchanged).
+- **Quality gates**: 6 PASS, 1 WARN (`zero-result sources: 1 source(s) returned 0 new posts`, i.e. `VISLA` - which returned 0 *new* posts but did successfully re-fetch and update all 6 existing ones, consistent with `VISLA` being this repo's lowest-volume source). Per `NEXT_PRIORITIES.md`'s own standing P0 policy ("a WARN-level quality gate, e.g. a single zero-result source... is not a failure"), this WARN required no intervention and none was taken.
+- **No code, schema, collector, taxonomy, ranking, Market, or scheduler change** in this observation pass - purely reading the refresh runner's own already-committed output and updating this handoff doc to match. This is the first real, healthy P0 observation this project has had since the scheduler was stood up - the gate `NEXT_PRIORITIES.md`'s P2 section names ("after the healthy natural P0 observation and separate review") for the next visual-first architecture step (ordered content blocks, human-reviewed visual mood observations) is now cleared, pending that separate review.
 
 ## Known Current Limitations
 
