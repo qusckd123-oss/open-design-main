@@ -2,6 +2,7 @@ import { getSourceCategoryUrl, sourceCategoryConfigs, type RankingCategory } fro
 import type { MarketSource } from "@/config/market-sources";
 import { classifyMarketAttributes } from "@/collectors/market/classification";
 import { marketCollectorUserAgent, verifyRobotsAllowed } from "@/collectors/market/robots";
+import { businessDayStart } from "@/lib/business-time";
 import type { MarketCollectedProduct, MarketCollectOptions, MarketCollectionError, MarketCollectionResult, MarketCollector } from "@/collectors/market/types";
 
 type EndHit = {
@@ -38,7 +39,7 @@ export class EndBestsellerCollector implements MarketCollector {
   async collect(options: MarketCollectOptions): Promise<MarketCollectionResult> {
     const collectedAt = new Date();
     const audienceSegment = options.audienceSegment ?? "ALL";
-    const periodDate = options.periodDate ?? startOfDay(collectedAt);
+    const periodDate = options.periodDate ?? businessDayStart(collectedAt);
     const targetUrl = getSourceCategoryUrl(this.source, options.category, options.limit);
     const baseResult = {
       source: this.source,
@@ -195,10 +196,4 @@ function imageUrl(path: string | undefined) {
 
 function numberOrNull(value: number | undefined) {
   return typeof value === "number" && Number.isFinite(value) ? Math.round(value) : null;
-}
-
-function startOfDay(date: Date) {
-  const next = new Date(date);
-  next.setHours(0, 0, 0, 0);
-  return next;
 }

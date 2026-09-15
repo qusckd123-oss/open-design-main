@@ -2,6 +2,7 @@ import { getSourceCategoryUrl, type RankingCategory } from "@/config/market-cate
 import type { MarketSource } from "@/config/market-sources";
 import { classifyMarketAttributes } from "@/collectors/market/classification";
 import { marketCollectorUserAgent, verifyRobotsAllowed } from "@/collectors/market/robots";
+import { businessDayStart } from "@/lib/business-time";
 import type { MarketCollectedProduct, MarketCollectOptions, MarketCollectionError, MarketCollectionResult, MarketCollector } from "@/collectors/market/types";
 
 type RakutenRankingListItem = {
@@ -32,7 +33,7 @@ export class RakutenFashionRankingCollector implements MarketCollector {
   async collect(options: MarketCollectOptions): Promise<MarketCollectionResult> {
     const collectedAt = new Date();
     const audienceSegment = options.audienceSegment ?? "ALL";
-    const periodDate = options.periodDate ?? startOfDay(collectedAt);
+    const periodDate = options.periodDate ?? businessDayStart(collectedAt);
     const targetUrl = getSourceCategoryUrl(this.source, options.category, options.limit);
     const baseResult = {
       source: this.source,
@@ -321,10 +322,4 @@ function decodeHtml(value: string | null) {
     .replace(/&gt;/g, ">")
     .replace(/&nbsp;/g, " ")
     .trim();
-}
-
-function startOfDay(date: Date) {
-  const next = new Date(date);
-  next.setHours(0, 0, 0, 0);
-  return next;
 }

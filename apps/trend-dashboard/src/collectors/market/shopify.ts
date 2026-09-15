@@ -2,6 +2,7 @@ import { getSourceCategoryUrl, sourceCategoryConfigs } from "@/config/market-cat
 import type { MarketSource } from "@/config/market-sources";
 import { normalizeShopifyProduct, type RawShopifyProduct } from "@/collectors/market/normalize";
 import { marketCollectorUserAgent, verifyRobotsAllowed } from "@/collectors/market/robots";
+import { businessDayStart } from "@/lib/business-time";
 import type { MarketCollectOptions, MarketCollectionError, MarketCollectionResult, MarketCollector } from "@/collectors/market/types";
 
 type ShopifyResponse = {
@@ -19,7 +20,7 @@ export class ShopifyMarketCollector implements MarketCollector {
     const config = sourceCategoryConfigs[this.source];
     const collectedAt = new Date();
     const audienceSegment = options.audienceSegment ?? "ALL";
-    const periodDate = options.periodDate ?? startOfDay(collectedAt);
+    const periodDate = options.periodDate ?? businessDayStart(collectedAt);
     const baseResult = {
       source: this.source,
       category: options.category,
@@ -113,10 +114,4 @@ export class ShopifyMarketCollector implements MarketCollector {
       };
     }
   }
-}
-
-function startOfDay(date: Date) {
-  const next = new Date(date);
-  next.setHours(0, 0, 0, 0);
-  return next;
 }

@@ -1,6 +1,7 @@
 import { getSourceCategoryUrl, sourceCategoryConfigs, type MarketMetricType, type RankingCategory, type RankingScope } from "@/config/market-category-map";
 import type { MarketSource } from "@/config/market-sources";
 import { marketCollectorUserAgent, parseRobotsAllowed, type RobotsCheck } from "@/collectors/market/robots";
+import { businessDayStart } from "@/lib/business-time";
 import type { MarketCollectedProduct, MarketCollectOptions, MarketCollectionError, MarketCollectionResult, MarketCollector } from "@/collectors/market/types";
 
 /**
@@ -488,12 +489,6 @@ function createRednapeRobotsChecker(userAgent: string): (targetUrl: string) => P
   };
 }
 
-function startOfDay(date: Date): Date {
-  const next = new Date(date);
-  next.setHours(0, 0, 0, 0);
-  return next;
-}
-
 /**
  * Live Rednape collector - BAG category only
  * (/category/accessories/45/). Any other category (e.g. LONG_SLEEVE_TSHIRT
@@ -544,7 +539,7 @@ export class Cafe24RednapeCollector implements MarketCollector {
   async collect(options: MarketCollectOptions): Promise<MarketCollectionResult> {
     const collectedAt = new Date();
     const audienceSegment = options.audienceSegment ?? "ALL";
-    const periodDate = options.periodDate ?? startOfDay(collectedAt);
+    const periodDate = options.periodDate ?? businessDayStart(collectedAt);
     const config = sourceCategoryConfigs[this.source];
     const baseResult = {
       source: this.source,

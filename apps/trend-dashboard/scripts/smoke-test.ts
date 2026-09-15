@@ -38,6 +38,7 @@ import type { CollectionResult, CollectorAdapter } from "../src/collectors/types
 import { featureFlags } from "../src/config/feature-flags";
 import { suggestColumnMapping } from "../src/config/import-mapping";
 import { prisma } from "../src/db/client";
+import { businessDayKey, businessDayStart } from "../src/lib/business-time";
 import { combinedTrendSignal, percentChange, targetAgeSignal } from "../src/lib/search-trend-signals";
 import { classifyTrend, rankChange } from "../src/lib/trend-signals";
 import { applyMarketPresenceStatuses, classifyAssortmentItemSignal, classifyItemSignal, classifyMarketSignal, classifySalesSignal, getBusinessDashboardData, getItemTrendRows, getMarketRows, getSourceFreshness, rankChangeByDays, signalConfidence, toMarketRow } from "../src/services/business-analytics-service";
@@ -83,6 +84,7 @@ async function main() {
   await verifyMarketDryRunNeverPersists();
   verifyRednapeCollectorHelpers();
   await verifyMarketCollectionPartialPersistence();
+  await verifyBusinessTimeHardening();
   verifyBusinessSignals();
 
   const dashboard = await getBusinessDashboardData();
@@ -2710,6 +2712,62 @@ async function verifyMarketCollectionPartialPersistence() {
   await prisma.marketRankingSnapshot.deleteMany({ where: { marketProduct: { externalProductId } } });
   await prisma.marketProduct.deleteMany({ where: { externalProductId } });
   await prisma.importRun.deleteMany({ where: { source: "BODEGA", fileName: "collector:TEST" } });
+}
+
+/**
+ * Proves businessDayKey/businessDayStart (src/lib/business-time.ts) match
+ * the exact examples worked through in the periodDate timezone hardening
+ * task, that they agree with the already-persisted REDNAPE row from the
+ * first live collection (read-only - no historical data is touched here),
+ * and that both functions are genuinely independent of the host/process
+ * default timezone, not merely correct on this Asia/Seoul dev machine by
+ * coincidence.
+ */
+async function verifyBusinessTimeHardening() {
+  // 1. Korea afternoon
+  assert.equal(businessDayKey(new Date("2026-09-15T05:49:18.610Z")), "2026-09-15");
+  assert.equal(businessDayStart(new Date("2026-09-15T05:49:18.610Z")).toISOString(), "2026-09-14T15:00:00.000Z");
+
+  // 2. Korea shortly after midnight
+  assert.equal(businessDayKey(new Date("2026-09-14T15:30:00.000Z")), "2026-09-15");
+  assert.equal(businessDayStart(new Date("2026-09-14T15:30:00.000Z")).toISOString(), "2026-09-14T15:00:00.000Z");
+
+  // 3. Korea just before midnight
+  assert.equal(businessDayKey(new Date("2026-09-14T14:59:59.999Z")), "2026-09-14");
+  assert.equal(businessDayStart(new Date("2026-09-14T14:59:59.999Z")).toISOString(), "2026-09-13T15:00:00.000Z");
+
+  // 4. Existing persisted REDNAPE row compatibility - READ ONLY. If the
+  // already-stored periodDate instant ever disagreed with
+  // businessDayStart(the run's own startedAt), this assertion is the stop
+  // condition the task requires - it must fail loudly, not be silently
+  // "fixed" by touching historical rows.
+  const rednapeRun = await prisma.importRun.findFirst({ where: { source: "REDNAPE", type: "MARKET" }, orderBy: { startedAt: "asc" } });
+  assert.ok(rednapeRun, "Expected the already-persisted REDNAPE ImportRun from the first live collection.");
+  const rednapeSnapshot = await prisma.marketRankingSnapshot.findFirst({ where: { source: "REDNAPE" } });
+  assert.ok(rednapeSnapshot, "Expected an already-persisted REDNAPE MarketRankingSnapshot.");
+  const recomputedPeriodDate = businessDayStart(rednapeRun!.startedAt);
+  assert.equal(
+    recomputedPeriodDate.getTime(),
+    rednapeSnapshot!.periodDate.getTime(),
+    `businessDayStart(REDNAPE ImportRun.startedAt=${rednapeRun!.startedAt.toISOString()}) must equal the already-stored REDNAPE periodDate - got ${recomputedPeriodDate.toISOString()} vs stored ${rednapeSnapshot!.periodDate.toISOString()}. A mismatch here means historical REDNAPE data must NOT be touched without further investigation.`
+  );
+
+  // 5. Host-timezone independence - force the process default timezone to
+  // UTC (verified below to actually take effect on this Node/ICU build,
+  // rather than trusting it silently), then prove both functions return
+  // byte-identical results to the Asia/Seoul-host run above.
+  const beforeKey = businessDayKey(new Date("2026-09-15T05:49:18.610Z"));
+  const beforeStart = businessDayStart(new Date("2026-09-15T05:49:18.610Z")).toISOString();
+  const originalTz = process.env.TZ;
+  process.env.TZ = "UTC";
+  try {
+    assert.equal(Intl.DateTimeFormat().resolvedOptions().timeZone, "UTC", "TZ override must actually take effect for this to be a real host-independence proof, not a no-op.");
+    assert.equal(businessDayKey(new Date("2026-09-15T05:49:18.610Z")), beforeKey, "businessDayKey must be identical regardless of host default timezone.");
+    assert.equal(businessDayStart(new Date("2026-09-15T05:49:18.610Z")).toISOString(), beforeStart, "businessDayStart must be identical regardless of host default timezone.");
+  } finally {
+    if (originalTz === undefined) delete process.env.TZ;
+    else process.env.TZ = originalTz;
+  }
 }
 
 function verifyBusinessSignals() {

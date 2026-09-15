@@ -1,4 +1,5 @@
 import type { ItemSignal, MarketSignal, RankingScope, SignalConfidence } from "@/types/business";
+import { BUSINESS_TIME_ZONE } from "@/lib/business-time";
 
 export function marketSignalLabel(signal: MarketSignal | ItemSignal | string) {
   const labels: Record<string, string> = {
@@ -85,7 +86,11 @@ export function formatRank(rank: number | null | undefined) {
 
 export function formatDateKo(value: Date | null | undefined) {
   if (!value) return "-";
-  return new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).format(value);
+  // Explicit timeZone so this renders the correct Korea business date
+  // regardless of the host/container's own timezone - previously relied
+  // implicitly on the host OS being Asia/Seoul (see business-time.ts).
+  // Produces byte-identical output to before on any Asia/Seoul host.
+  return new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: BUSINESS_TIME_ZONE }).format(value);
 }
 
 export function compactCategory(value: string | null | undefined) {

@@ -5,6 +5,7 @@ import { marketSourceAudit } from "@/config/market-source-audit";
 import { marketSources } from "@/config/market-sources";
 import { categoryOfSpecificItem } from "@/config/taxonomy";
 import { prisma } from "@/db/client";
+import { businessDayKey } from "@/lib/business-time";
 import type { ItemSignal, ItemTrendRow, MarketMetricType, MarketRow, MarketSignal, RankingScope, SalesRow, SalesSignal, SignalConfidence } from "@/types/business";
 
 type SalesFilters = { q?: string; category?: string; season?: string; signal?: string; sort?: string };
@@ -176,7 +177,7 @@ export async function getBusinessDashboardData() {
       fastRising: fastRising.length,
       newEntries: newEntries.length,
       verifiedRankingSources: unique(rankingRows.map((row) => row.source)).length,
-      verifiedRankingHistoryDays: unique(rankingRows.flatMap((row) => row.latestSeen ? [row.latestSeen.toISOString().slice(0, 10)] : [])).length,
+      verifiedRankingHistoryDays: unique(rankingRows.flatMap((row) => row.latestSeen ? [businessDayKey(row.latestSeen)] : [])).length,
       signalConfidence: signalConfidence(maxNullable(rankingRows.map((row) => row.weeksInRanking)) ?? 0),
       assortmentSources: unique(assortmentRows.map((row) => row.source)).length,
       assortmentProducts: assortmentRows.length,
@@ -312,7 +313,7 @@ export function toMarketRow(product: {
   const latestSeen = current?.periodDate ?? null;
   const isNewEntry = false;
   const presenceStatus = classifyPresenceStatus(snapshots.length);
-  const confidence = signalConfidence(unique(snapshots.map((snapshot) => snapshot.periodDate.toISOString().slice(0, 10))).length);
+  const confidence = signalConfidence(unique(snapshots.map((snapshot) => businessDayKey(snapshot.periodDate))).length);
   return {
     id: product.id,
     source: product.source,
@@ -379,7 +380,7 @@ export function applyMarketPresenceStatuses(rows: MarketRow[]) {
     const currentLatest = latestByGroup.get(key);
     if (!currentLatest || row.latestSeen > currentLatest) latestByGroup.set(key, row.latestSeen);
     const periods = periodsByGroup.get(key) ?? new Set<string>();
-    periods.add(row.latestSeen.toISOString().slice(0, 10));
+    periods.add(businessDayKey(row.latestSeen));
     periodsByGroup.set(key, periods);
   }
 
@@ -633,7 +634,7 @@ function addDays(date: Date, days: number) {
 }
 
 function sameDay(a: Date, b: Date) {
-  return a.toISOString().slice(0, 10) === b.toISOString().slice(0, 10);
+  return businessDayKey(a) === businessDayKey(b);
 }
 
 function unique<T>(values: Array<T | null | undefined>) {
