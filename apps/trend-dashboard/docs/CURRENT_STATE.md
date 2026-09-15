@@ -268,7 +268,7 @@ Files touched: `src/components/AttributeBundle.tsx` only (one file, ~120 lines c
 
 Validation: `corepack pnpm typecheck`, `corepack pnpm test`, `corepack pnpm build` (all 16 routes), and `git diff --check` all passed. Rendered Playwright checks at 1440x1000 and 390x844 confirmed: interpretation (FACT/UNKNOWN/PLANNING QUESTION) fully visible before any article imagery on both breakpoints; exactly up to 3 article-context thumbnails render in `SelectedSignalDetail`; the persistent disclaimer text remains visible (not tooltip-only); the 5-row Watchlist, its default selection, row-to-row selection swapping, and the mobile single-open accordion are all unchanged; no horizontal overflow (`doc width == viewport width` on both); zero console/page errors; Visual Diffusion strip still renders nothing.
 
-## Market Rednape Source Addition (2026-09-14, config-only, pending validation/commit)
+## Market Rednape Source Addition (2026-09-14, config-only, committed as `98f2ed7`)
 
 `REDNAPE` (`rednape.kr`) registered as a new `MarketSource` following the same "isolated, config-only" pattern used for `COVERCHORD` (`docs/MARKET_SOURCE_AUDIT.md` "Rednape" section carries the full platform evidence). Unlike Slam Jam/Stussy/Coverchord, Rednape has no `products.json` JSON API - it is a Cafe24-platform storefront exposing only server-rendered category/product HTML.
 
@@ -279,7 +279,19 @@ Validation: `corepack pnpm typecheck`, `corepack pnpm test`, `corepack pnpm buil
 - No Prisma schema, Editorial code, ranking logic, Visual Diffusion, or Instagram source config touched.
 - **Taxonomy/config vocabulary check (2026-09-14, before commit)**: confirmed `LONG_SLEEVE_TSHIRT`, `PANTS`, and `BAG` are pre-existing `RankingCategory` values (`market-category-map.ts` lines 9-20), already reused by Slam Jam/Coverchord/END in this same file - not an invented vocabulary. Confirmed none of the three is a canonical Editorial `SUB_ITEM`/`specificItem` value (`mentions.ts`'s SUB_ITEM list uses `LONG_SLEEVE_TEE`, `WIDE_PANTS`/`WIDE_DENIM`, and `TOTE_BAG`/`SHOULDER_BAG`/`BACKPACK`/`BODY_BAG` instead; plain `PANTS`/`BAG` exist in Editorial only at the coarser `type: "ITEM"` dimension, a third, separate vocabulary). `RankingCategory` and Editorial's `ITEM`/`SUB_ITEM` values are structurally separate types read by entirely separate code paths, so the coincidental shared English words carry no functional conflict risk.
 
-Validation: `corepack pnpm typecheck`, `corepack pnpm test`, `corepack pnpm build`, and `git diff --check` all passed (see the session report for exact output). Not yet committed - pending user review of this exact report.
+Validation: `corepack pnpm typecheck`, `corepack pnpm test`, `corepack pnpm build`, and `git diff --check` all passed (see the session report for exact output).
+
+## Market Rednape BAG Filtering Requirement (2026-09-15, docs-only, pre-implementation finding)
+
+Before writing any Rednape collector code, a read-only audit fully enumerated `/category/accessories/45/`'s live products and found the page's actual composition doesn't match the `BAG` mapping 1:1. Full evidence: `docs/MARKET_SOURCE_AUDIT.md` "Rednape `/category/accessories/45/` composition finding".
+
+- **22 products currently on the page (one page only - `?page=2` returns zero); only 5 are confirmed bags**: `593`, `586`, `509`, `440`, `45`. The other 17 are shoes, caps, belts, mufflers, a beanie, and gloves.
+- **Confirmed current bag-name suffixes** (observed directly, not invented): `에코백`, `쇼퍼백`, `로프백`, `백팩`, `크로스백`.
+- **A future Rednape BAG collector MUST gate on product name using these terms before emitting a `BAG` row, and must NOT collect the category wholesale.** Products failing the gate must be skipped entirely - never emitted as `BAG`, and never routed into `subItemType: "OTHER"` while still counting as a `BAG` row. Confirmed (by reading `src/collectors/market/classification.ts` in full) that the existing shared `classifyMarketAttributes`/`refineObservedCategory`/`bagSubItem` pipeline (also used by END/Rakuten) has no rejection mechanism for this - the gate must live in the not-yet-written Rednape-specific collector code, not in that shared file.
+- **The already-committed config remains valid and is not being changed.** `sourceCategoryConfigs.REDNAPE`'s `BAG: "/category/accessories/45/"` mapping describes a real page containing real bag products; it never claimed every product on it is a bag. The filtering requirement is collection-behavior scope for a collector that doesn't exist yet, not a config defect.
+- **Zero Rednape rows have been collected.** No collector has been designed in code or run - this is a docs-only, read-only-audit finding.
+
+No config, source, schema, or DB change in this pass - `docs/MARKET_SOURCE_AUDIT.md` and this section are the only changes.
 
 ## Known Current Limitations
 
