@@ -25,7 +25,7 @@ import { categoryOfItemType, categoryOfSpecificItem, isKnownSpecificItem, matche
 import { matchesGenderFilterValue } from "../src/lib/planning-filters";
 import { evidenceStrengthLabel, hasVerifiedMarketEvidence } from "../src/lib/market-ui";
 import { extractEndHits, inferRankingCategory, normalizeEndHit, verifyBestsellerSemantic } from "../src/collectors/market/end";
-import { isConfirmedBagProduct, normalizeRednapeProduct, type RawRednapeProduct } from "../src/collectors/market/cafe24-rednape";
+import { dedupeListingEntries, extractRednapeCanonicalUrl, extractRednapeListingEntries, extractRednapeProductJsonLd, isConfirmedBagProduct, normalizeRednapeProduct, type RawRednapeProduct, type RednapeListingEntry } from "../src/collectors/market/cafe24-rednape";
 import { normalizeShopifyProduct } from "../src/collectors/market/normalize";
 import { extractRakutenRankingItems, inferRakutenRankingCategory, normalizeRakutenRankingItem, parseRakutenItemDetails, verifyRakutenRankingSemantic } from "../src/collectors/market/rakuten-fashion";
 import { parseRobotsAllowed as parseMarketRobotsAllowed } from "../src/collectors/market/robots";
@@ -102,13 +102,14 @@ async function main() {
   // COVERCHORD added 2026-09-11 (see CURRENT_STATE.md "Market Coverchord
   // Source Addition") as a third unverified Shopify assortment source,
   // mirroring SLAM_JAM/STUSSY exactly (rankingVerified: false, method:
-  // SHOPIFY_PRODUCTS_JSON in sourceCategoryConfigs) - this expectation was
-  // never updated at the time, which is a pre-existing test gap unrelated to
-  // any change made today, caught only now because this is the first time
-  // `pnpm test` was actually run since that commit. No live COVERCHORD
-  // collection has happened yet (config only, 0 rows), so this is purely a
-  // config-list assertion, not a claim about collected data.
-  assert.deepEqual(assortmentCollectorSources().sort(), ["COVERCHORD", "SLAM_JAM", "STUSSY"].sort(), "Assortment collection must include only Shopify assortment sources.");
+  // SHOPIFY_PRODUCTS_JSON in sourceCategoryConfigs). REDNAPE added
+  // 2026-09-15 (see CURRENT_STATE.md "Market Rednape ..." sections) as a
+  // fourth unverified assortment source, but NOT a Shopify one - it uses
+  // method: CAFE24_CATEGORY_HTML, so the wording below no longer says
+  // "Shopify assortment sources" specifically. No live REDNAPE collection
+  // has happened yet (config + collector code only, 0 rows) - this is
+  // purely a config-list assertion, not a claim about collected data.
+  assert.deepEqual(assortmentCollectorSources().sort(), ["COVERCHORD", "REDNAPE", "SLAM_JAM", "STUSSY"].sort(), "Assortment collection must include only unverified assortment sources (Shopify or Cafe24 category HTML).");
   const verifiedFreshness = await getSourceFreshness("real", true);
   assert.ok(verifiedFreshness.some((row) => row.source === "END"));
   assert.ok(verifiedFreshness.some((row) => row.source === "RAKUTEN_FASHION"));
@@ -499,6 +500,146 @@ function verifyRednapeCollectorHelpers() {
     assert.equal(isConfirmedBagProduct(name), false, `"${name}" must not pass the confirmed-bag gate.`);
   }
   assert.equal(confirmedNonBagNames.length, 17, "Regression fixture must cover all 17 confirmed non-bag names from the audit.");
+
+  // --- Category listing extraction: a synthetic 2-product page mirroring the
+  // real nested-<li> structure captured in the audit (class="left"/"right"
+  // <li>s nested inside each anchorBoxId_ block) - proves the position-slice
+  // approach doesn't truncate at a nested </li>, and that the gate can be
+  // applied to listing names alone, before any detail fetch.
+  const listingFixtureHtml = `
+    <ul class="prdList grid4">
+    <li id="anchorBoxId_501" class="xans-record-">
+    <div class="box"><div class="thumbnail"><ul class="thumbnail_inner">
+    <a href="/product/테스트-크로스백/501/category/45/display/1/"><img src="//img/1.jpg" class="thumbs"></a>
+    </ul></div>
+    <div class="description"><ul class="name">
+    <li class="left"><a href="/product/테스트-크로스백/501/category/45/display/1/" class=""><span class="" style="font-size:13px;">테스트 크로스백 (2C)</span></a></li>
+    <li class="right"><button onclick="x">c</button></li>
+    </ul><ul class="info"><li class="price">10,000원</li></ul></div></div></li>
+    <li id="anchorBoxId_502" class="xans-record-">
+    <div class="box"><div class="thumbnail"><ul class="thumbnail_inner">
+    <a href="/product/테스트-벨트/502/category/45/display/1/"><img src="//img/2.jpg" class="thumbs"></a>
+    </ul></div>
+    <div class="description"><ul class="name">
+    <li class="left"><a href="/product/테스트-벨트/502/category/45/display/1/" class=""><span class="" style="font-size:13px;">테스트 벨트</span></a></li>
+    <li class="right"><button onclick="x">c</button></li>
+    </ul><ul class="info"><li class="price">20,000원</li></ul></div></div></li>
+    </ul>`;
+  const listingEntries = extractRednapeListingEntries(listingFixtureHtml, "https://rednape.kr");
+  assert.equal(listingEntries.length, 2, "Both products must be extracted despite nested <li> elements inside each block.");
+  assert.equal(listingEntries[0]?.externalProductId, "501");
+  assert.equal(listingEntries[0]?.name, "테스트 크로스백 (2C)");
+  assert.equal(listingEntries[0]?.listingPosition, 1, "First card in the listing must carry listingPosition 1.");
+  // new URL(href, baseUrl).toString() correctly percent-encodes the Korean path segment (standard URL behavior,
+  // identical over the wire to the raw form) - decode back for a readable comparison against the source href.
+  assert.equal(decodeURIComponent(listingEntries[0]?.detailUrl ?? ""), "https://rednape.kr/product/테스트-크로스백/501/category/45/display/1/");
+  assert.equal(listingEntries[1]?.externalProductId, "502");
+  assert.equal(listingEntries[1]?.name, "테스트 벨트");
+  assert.equal(listingEntries[1]?.listingPosition, 2, "Second card in the listing must carry listingPosition 2.");
+  // Applying the gate to listing-only data, before any detail request would happen:
+  assert.equal(isConfirmedBagProduct(listingEntries[0]!.name), true, "Listing name alone must be enough to gate the bag product in.");
+  assert.equal(isConfirmedBagProduct(listingEntries[1]!.name), false, "Listing name alone must be enough to gate the belt out before any detail fetch.");
+
+  // --- sourcePosition must preserve ORIGINAL listing position, never a
+  // post-filter/gated-only counter. Fixture matches the exact 5-item
+  // example from the approved correction: [loafer, beanie, eco bag, cap,
+  // shopper bag] - only the eco bag (position 3) and shopper bag (position
+  // 5) are confirmed bags, and they must keep exactly those positions,
+  // NOT be renumbered to 1/2 just because the other 3 were skipped.
+  function rednapeCard(id: string, name: string): string {
+    return `<li id="anchorBoxId_${id}" class="xans-record-"><div class="box"><div class="thumbnail"><ul class="thumbnail_inner"><a href="/product/x/${id}/"><img src="//img/${id}.jpg" class="thumbs"></a></ul></div><div class="description"><ul class="name"><li class="left"><a href="/product/x/${id}/" class=""><span class="">${name}</span></a></li><li class="right"><button onclick="x">c</button></li></ul></div></div></li>`;
+  }
+  const positionFixtureHtml = `<ul class="prdList grid4">${[
+    rednapeCard("601", "모카 스티치 스웨이드 로퍼 (2C)"), // 1: loafer - fails gate
+    rednapeCard("602", "코린 멀티 스트라이프 비니 (3C)"), // 2: beanie - fails gate
+    rednapeCard("603", "아카이브 나일론 에코백 (3C)"), // 3: eco bag - PASSES gate
+    rednapeCard("604", "썬키스트 더블자수 캡 (2C)"), // 4: cap - fails gate
+    rednapeCard("605", "더로 레디 빅 쇼퍼백 (3C)") // 5: shopper bag - PASSES gate
+  ].join("")}</ul>`;
+  const positionEntries = extractRednapeListingEntries(positionFixtureHtml, "https://rednape.kr");
+  assert.equal(positionEntries.length, 5, "All 5 cards must be extracted regardless of which pass the BAG gate.");
+  assert.deepEqual(
+    positionEntries.map((entry) => entry.listingPosition),
+    [1, 2, 3, 4, 5],
+    "Every card must carry its true listing position, independent of BAG status."
+  );
+  const gatedPositionEntries = positionEntries.filter((entry) => isConfirmedBagProduct(entry.name));
+  assert.equal(gatedPositionEntries.length, 2, "Only the eco bag and shopper bag must pass the gate.");
+  assert.equal(gatedPositionEntries[0]?.externalProductId, "603");
+  assert.equal(gatedPositionEntries[0]?.listingPosition, 3, "Eco bag must keep its true listing position 3, not be renumbered to 1.");
+  assert.equal(gatedPositionEntries[1]?.externalProductId, "605");
+  assert.equal(gatedPositionEntries[1]?.listingPosition, 5, "Shopper bag must keep its true listing position 5, not be renumbered to 2.");
+  const gatedRow1 = normalizeRednapeProduct({
+    raw: { externalProductId: gatedPositionEntries[0]!.externalProductId, name: gatedPositionEntries[0]!.name, canonicalUrl: "https://rednape.kr/product/x/603/", images: [], offers: [{ name: `${gatedPositionEntries[0]!.name} 카키`, price: 38800 }] },
+    sourcePosition: gatedPositionEntries[0]!.listingPosition,
+    audienceSegment: "ALL",
+    periodDate: new Date("2026-09-15T00:00:00.000Z"),
+    metricType: "CATALOG"
+  });
+  const gatedRow2 = normalizeRednapeProduct({
+    raw: { externalProductId: gatedPositionEntries[1]!.externalProductId, name: gatedPositionEntries[1]!.name, canonicalUrl: "https://rednape.kr/product/x/605/", images: [], offers: [{ name: `${gatedPositionEntries[1]!.name} Black`, price: 52800 }] },
+    sourcePosition: gatedPositionEntries[1]!.listingPosition,
+    audienceSegment: "ALL",
+    periodDate: new Date("2026-09-15T00:00:00.000Z"),
+    metricType: "CATALOG"
+  });
+  assert.equal(gatedRow1.sourcePosition, 3, "Emitted eco bag row must carry sourcePosition 3, matching its true listing position.");
+  assert.equal(gatedRow2.sourcePosition, 5, "Emitted shopper bag row must carry sourcePosition 5, matching its true listing position.");
+  assert.equal(gatedRow1.rank, null, "sourcePosition must never imply a verified rank.");
+  assert.equal(gatedRow1.rankingVerified, false);
+
+  // --- Cross-page running position: extractRednapeListingEntries accepts a
+  // startPosition so a page-2 call continues the same global ordinal
+  // instead of restarting at 1.
+  const page2Entries = extractRednapeListingEntries(rednapeCard("606", "토고 쉘 경량 그리드 백팩"), "https://rednape.kr", positionEntries.length + 1);
+  assert.equal(page2Entries[0]?.listingPosition, 6, "A second page's first card must continue the running ordinal from the previous page, not restart at 1.");
+
+  // --- Zero-product page: this is the exact parser-level signal the live
+  // collector's pagination stop rule keys off (`entries.length === 0`) -
+  // matches the audited real /category/accessories/45/?page=2, which
+  // returned zero products.
+  const emptyPageHtml = `<div class="prdList grid4"><p class="no-product">등록된 상품이 없습니다.</p></div>`;
+  assert.deepEqual(extractRednapeListingEntries(emptyPageHtml, "https://rednape.kr"), [], "A page with no anchorBoxId_ blocks must parse to an empty list, driving the pagination stop rule.");
+
+  // --- Duplicate product ID handling: dedupeListingEntries is the exact
+  // function the live collector's pagination loop calls per page, sharing
+  // one `seen` Set across calls so an id repeated within a page (or, in a
+  // future multi-page run, an id repeated across pages) is only kept once.
+  const dupA: RednapeListingEntry = { externalProductId: "501", name: "테스트 크로스백 (2C)", detailUrl: "https://rednape.kr/product/a/501/", listingPosition: 1 };
+  const dupA2: RednapeListingEntry = { externalProductId: "501", name: "테스트 크로스백 (2C)", detailUrl: "https://rednape.kr/product/a/501/category/45/display/2/", listingPosition: 1 };
+  const dupB: RednapeListingEntry = { externalProductId: "502", name: "테스트 벨트", detailUrl: "https://rednape.kr/product/b/502/", listingPosition: 2 };
+  const deduped = dedupeListingEntries([dupA, dupA2, dupB]);
+  assert.equal(deduped.length, 2, "A repeated externalProductId within one call must be kept only once.");
+  assert.deepEqual(deduped.map((entry) => entry.externalProductId), ["501", "502"]);
+  const sharedSeen = new Set<string>();
+  const firstPageResult = dedupeListingEntries([dupA, dupB], sharedSeen);
+  const secondPageResult = dedupeListingEntries([dupA2], sharedSeen);
+  assert.equal(firstPageResult.length, 2, "First call populates the shared seen set.");
+  assert.equal(secondPageResult.length, 0, "An id already seen on an earlier call (simulating an earlier page) must be dropped, never re-fetched.");
+
+  // --- Product detail parsing: canonical URL + Product JSON-LD, using the
+  // real captured #593 evidence (docs/MARKET_SOURCE_AUDIT.md "Rednape").
+  const detailFixtureHtml = `
+    <html><head>
+    <link rel="canonical" href="https://rednape.kr/product/아카이브-나일론-에코백-3c/593/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"레드네이프"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"아카이브 나일론 에코백 (3C)","image":["https://ecimg.cafe24img.com/pg3204b60863782020/rednape/web/product/big/20260815/8618289e341fd4df0e6f13b7b3f3d2ca.jpg"],"brand":{"@type":"Brand","name":"레드네이프"},"offers":[{"name":"아카이브 나일론 에코백 (3C) 아쿠아블루","price":38800,"priceCurrency":"KRW","availability":"InStock"},{"name":"아카이브 나일론 에코백 (3C) 브릭","price":38800,"priceCurrency":"KRW","availability":"InStock"}]}</script>
+    </head><body></body></html>`;
+  assert.equal(extractRednapeCanonicalUrl(detailFixtureHtml), "https://rednape.kr/product/아카이브-나일론-에코백-3c/593/");
+  const jsonLd = extractRednapeProductJsonLd(detailFixtureHtml);
+  assert.equal(jsonLd?.name, "아카이브 나일론 에코백 (3C)", "Must find the Product block, not the earlier Organization block.");
+  assert.equal(jsonLd?.image?.[0], "https://ecimg.cafe24img.com/pg3204b60863782020/rednape/web/product/big/20260815/8618289e341fd4df0e6f13b7b3f3d2ca.jpg");
+  assert.equal(jsonLd?.offers?.length, 2);
+  assert.equal(jsonLd?.offers?.[0]?.price, 38800);
+
+  // --- Malformed/missing Product JSON-LD: must return null, never throw -
+  // this is exactly what lets the live collector's per-product try/catch
+  // record a clean per-product error instead of an unhandled exception.
+  const malformedJsonLdHtml = `<html><head><script type="application/ld+json">{not valid json,,,</script></head></html>`;
+  assert.equal(extractRednapeProductJsonLd(malformedJsonLdHtml), null, "Malformed JSON-LD must resolve to null, not throw.");
+  const noJsonLdHtml = `<html><head><title>No structured data here</title></head></html>`;
+  assert.equal(extractRednapeProductJsonLd(noJsonLdHtml), null, "A page with no application/ld+json script at all must resolve to null.");
+  assert.equal(extractRednapeCanonicalUrl(noJsonLdHtml), null, "A page with no canonical link must resolve to null, not throw.");
 }
 
 async function verifyEndBestsellerCollectorHelpers() {

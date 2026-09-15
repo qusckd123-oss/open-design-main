@@ -1,5 +1,7 @@
-import type { MarketMetricType, RankingCategory, RankingScope } from "@/config/market-category-map";
-import type { MarketCollectedProduct } from "@/collectors/market/types";
+import { getSourceCategoryUrl, sourceCategoryConfigs, type MarketMetricType, type RankingCategory, type RankingScope } from "@/config/market-category-map";
+import type { MarketSource } from "@/config/market-sources";
+import { marketCollectorUserAgent, verifyRobotsAllowed } from "@/collectors/market/robots";
+import type { MarketCollectedProduct, MarketCollectOptions, MarketCollectionError, MarketCollectionResult, MarketCollector } from "@/collectors/market/types";
 
 /**
  * REDNAPE (rednape.kr) - source-specific pure parsing only.
@@ -198,4 +200,376 @@ export function normalizeRednapeProduct(input: {
       offerPrices: distinctPrices
     })
   };
+}
+
+/* ------------------------------------------------------------------ */
+/* Live collector - PHASE 1 (category listing) + PHASE 2 (per-product */
+/* detail) - everything below this line does real network I/O. Only  */
+/* the pure parsing functions (extractRednapeListingEntries,          */
+/* extractRednapeProductJsonLd, extractRednapeCanonicalUrl) are unit   */
+/* tested directly; Cafe24RednapeCollector itself is exercised only   */
+/* via a live --dry-run or an explicitly-approved live collection run, */
+/* never in the test suite (see AGENT_OPERATING_RULES.md "Validation  */
+/* Expectations").                                                     */
+/* ------------------------------------------------------------------ */
+
+/** One product as it appears on a category listing page, before any detail fetch. */
+export type RednapeListingEntry = {
+  /** Base numeric Cafe24 product ID, from `<li id="anchorBoxId_{id}">`. */
+  externalProductId: string;
+  /** Listing-displayed name - same string `isConfirmedBagProduct` gates on, BEFORE any detail fetch happens. */
+  name: string;
+  /** Absolute product detail URL, resolved against `baseUrl`. May carry a `/category/{n}/display/{m}/` referrer suffix - only used to fetch the detail page, never stored as the final canonical URL (that comes from the detail page's own `<link rel="canonical">`). */
+  detailUrl: string;
+  /**
+   * 1-based position in the FULL source listing (across pages), assigned
+   * from raw card order BEFORE any BAG gating or dedup - observational
+   * source metadata only, never renumbered by which products later pass
+   * `isConfirmedBagProduct`. E.g. in a 5-card listing [loafer, beanie, eco
+   * bag, cap, shopper bag], the eco bag keeps `listingPosition: 3` and the
+   * shopper bag keeps `listingPosition: 5` even though they are the only
+   * two products ever gated through to `normalizeRednapeProduct`. This
+   * does NOT make the value a verified ranking - `rankingVerified` stays
+   * `false` and `rank` stays `null` regardless.
+   */
+  listingPosition: number;
+};
+
+/**
+ * Splits the category listing HTML into per-product slices anchored on
+ * `<li id="anchorBoxId_{id}">`, then extracts id/name/href from each slice.
+ *
+ * Deliberately does NOT try to match a balanced closing `</li>` (the way a
+ * naive `<li ...>[\s\S]*?<\/li>` lazy regex would) - each Rednape product
+ * block contains several NESTED `<li>` elements of its own
+ * (`class="left"`, `class="right"`, `class="price"`, `class="about"`,
+ * `class="icon"`), so a lazy match would truncate at the first nested
+ * `</li>`, not the real end of the block. Slicing between consecutive
+ * `anchorBoxId_` match positions instead is robust to that nesting and
+ * needs no HTML-balancing logic.
+ *
+ * `startPosition` (default 1) lets the caller continue a running,
+ * cross-page listing ordinal instead of restarting at 1 on every page -
+ * pass `1 + <number of entries returned by the previous page's call>` for
+ * page 2, etc. `listingPosition` is assigned from the raw per-page card
+ * index (`startPosition + i`), not from how many entries actually parsed
+ * successfully, so a later card's position is never shifted by an earlier
+ * card on the SAME page failing to parse. (A card that itself fails to
+ * parse - missing name/href - is skipped from the returned array, so in
+ * the rare case that happens, the cross-page running total the caller
+ * advances by will undercount by that many positions; this is an accepted,
+ * documented simplification, not a claim of perfect position-numbering
+ * across a parse failure - no real sampled Rednape card has ever failed to
+ * parse.)
+ */
+export function extractRednapeListingEntries(html: string, baseUrl: string, startPosition = 1): RednapeListingEntry[] {
+  const anchorPattern = /<li id="anchorBoxId_(\d+)"/g;
+  const starts: Array<{ index: number; id: string }> = [];
+  for (const match of html.matchAll(anchorPattern)) {
+    if (match.index != null && match[1]) starts.push({ index: match.index, id: match[1] });
+  }
+
+  const entries: RednapeListingEntry[] = [];
+  for (let i = 0; i < starts.length; i++) {
+    const start = starts[i]!;
+    const end = i + 1 < starts.length ? starts[i + 1]!.index : html.length;
+    const block = html.slice(start.index, end);
+
+    const href = block.match(/<a href="(\/product\/[^"]+)"/)?.[1];
+    const name = decodeRednapeHtml(block.match(/class="name">[\s\S]*?<span[^>]*>([^<]+)<\/span>/)?.[1] ?? "");
+    if (!href || !name) continue;
+
+    entries.push({
+      externalProductId: start.id,
+      name,
+      detailUrl: new URL(href, baseUrl).toString(),
+      listingPosition: startPosition + i
+    });
+  }
+  return entries;
+}
+
+/**
+ * Removes already-seen base product IDs from `entries`, in order,
+ * mutating `seen` as a side effect so repeated calls across successive
+ * listing pages accumulate one shared identity set (matches the
+ * base-numeric-ID identity model - never the per-color `item_code`, and
+ * never the URL string, which can carry a different referrer suffix for
+ * the same product). Defaults to a fresh `Set` so it is directly
+ * unit-testable standalone, e.g. simulating a duplicate id appearing
+ * twice within what would be one page, or once each across two pages
+ * concatenated into one call.
+ */
+export function dedupeListingEntries(entries: RednapeListingEntry[], seen: Set<string> = new Set()): RednapeListingEntry[] {
+  const unique: RednapeListingEntry[] = [];
+  for (const entry of entries) {
+    if (seen.has(entry.externalProductId)) continue;
+    seen.add(entry.externalProductId);
+    unique.push(entry);
+  }
+  return unique;
+}
+
+/** Minimal shape of the fields this collector actually uses from the product detail page's Schema.org `Product` JSON-LD block. */
+export type RednapeProductJsonLd = {
+  name?: string;
+  image?: string[];
+  offers?: Array<{ name?: string; price?: number }>;
+};
+
+/**
+ * Finds and parses the `application/ld+json` `Product` block on a Rednape
+ * product detail page. Tries every `<script type="application/ld+json">`
+ * tag on the page (there is also an `Organization` block on some pages)
+ * and skips any that fail to parse, rather than throwing on the first
+ * malformed one - a category/campaign banner script or a genuinely broken
+ * block should not prevent finding the real `Product` entry elsewhere on
+ * the page. Returns null (never throws) when no `Product` block is found;
+ * the caller decides whether that is an error.
+ */
+export function extractRednapeProductJsonLd(html: string): RednapeProductJsonLd | null {
+  for (const match of html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {
+    try {
+      const parsed: unknown = JSON.parse((match[1] ?? "").trim());
+      const candidates = Array.isArray(parsed) ? parsed : [parsed];
+      const product = candidates.find((entry): entry is RednapeProductJsonLd & { "@type": string } => Boolean(entry) && typeof entry === "object" && (entry as { "@type"?: string })["@type"] === "Product");
+      if (product) return product;
+    } catch {
+      // Malformed or unrelated JSON-LD block - try the next <script> tag.
+    }
+  }
+  return null;
+}
+
+/** Extracts the site's own declared canonical URL (`<link rel="canonical">`), the correct value for `RawRednapeProduct.canonicalUrl` - never reconstructed from the listing's referrer-suffixed href. */
+export function extractRednapeCanonicalUrl(html: string): string | null {
+  return html.match(/<link rel="canonical" href="([^"]+)"/i)?.[1] ?? null;
+}
+
+function decodeRednapeHtml(value: string): string {
+  return value
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, "\"")
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&nbsp;/g, " ")
+    .trim();
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Courtesy delay between sequential PHASE 2 product-detail requests only
+ * (never before the single PHASE 1 listing fetch, and never between
+ * listing pages, which are already infrequent). Rednape's own robots.txt
+ * declares explicit per-engine crawl delays (Googlebot 1s, Yeti 2s,
+ * Bingbot 5s) but nothing for a generic `*` agent, which is the group this
+ * collector's own user agent falls into. 1000ms mirrors the LOWEST of
+ * those three named delays - a deliberately conservative choice for a
+ * small independent shop rather than a large platform, without meaningfully
+ * slowing a run that only ever fetches a handful of detail pages (today:
+ * up to 5). Source-local to this file - not a generalized throttling
+ * framework, since no other collector in this repo currently needs one
+ * (see docs/MARKET_SOURCE_AUDIT.md "Rednape").
+ */
+const RATE_LIMIT_DELAY_MS = 1000;
+
+/** Defensive circuit breaker only - today's audited catalog has exactly one real page (page 2 already verified empty). Never expected to be reached; exists solely to guarantee this loop cannot run forever if the site's pagination ever misbehaves. */
+const MAX_LISTING_PAGES = 20;
+
+function withPage(categoryUrl: string, page: number): string {
+  const url = new URL(categoryUrl);
+  url.searchParams.set("page", String(page));
+  return url.toString();
+}
+
+function startOfDay(date: Date): Date {
+  const next = new Date(date);
+  next.setHours(0, 0, 0, 0);
+  return next;
+}
+
+/**
+ * Live Rednape collector - BAG category only
+ * (/category/accessories/45/). Any other category (e.g. LONG_SLEEVE_TSHIRT
+ * or PANTS, which already map to /category/new-arrivals/23/ in
+ * sourceCategoryConfigs) returns UNSUPPORTED here - new-arrivals
+ * collection is out of scope for this pass and must not be attempted by
+ * this class, even though the config mapping already exists.
+ *
+ * PHASE 1 (category listing): fetch page 1, extract every product's
+ * id/name/href, apply `isConfirmedBagProduct` to the LISTING name for
+ * every entry BEFORE any detail request is made - a product that fails
+ * the gate here never causes a Phase 2 fetch at all. Advances to
+ * additional pages only while more gated products are still needed
+ * (`options.limit` not yet reached) and the previous page actually
+ * produced at least one not-yet-seen id; stops on an empty page, on a
+ * page that yields zero new ids (dedup safety net), or after
+ * MAX_LISTING_PAGES regardless - never an unbounded loop. This relies on
+ * an empty next page as the "no more products" signal (the simplest
+ * robust option; Rednape's listing HTML exposes no separate "is this the
+ * last page" flag) rather than a more complex total-count/last-page
+ * parser - which means, with today's audited catalog (22 products, 5
+ * confirmed bags, page 2 already verified empty), the ACTUAL request
+ * count depends on `options.limit`: at `limit <= 5`, page 1 alone already
+ * satisfies `gatedEntries.length >= options.limit`, so the loop exits
+ * BEFORE ever requesting page 2 (1 listing + up to 5 detail requests =
+ * <=6 total). At `limit > 5`, page 1 still only yields 5 gated entries
+ * (fewer than the limit), so the loop tries page 2 to discover that
+ * exhaustion, which returns zero products and stops it (2 listing + 5
+ * detail requests = 7 total). Do not assume <=6 for every limit value.
+ *
+ * PHASE 2 (product detail): sequentially (never concurrently) fetches
+ * only the gated products' detail pages, extracts the canonical URL and
+ * `Product` JSON-LD, and hands the result straight to the already
+ * unit-tested `normalizeRednapeProduct` - this class never reimplements
+ * the BAG gate, mainColor, or price rules itself. `sourcePosition` passed
+ * through is each entry's original `listingPosition` (assigned in Phase 1
+ * before gating), never a post-filter/gated-only counter.
+ */
+export class Cafe24RednapeCollector implements MarketCollector {
+  source: MarketSource = "REDNAPE";
+
+  async collect(options: MarketCollectOptions): Promise<MarketCollectionResult> {
+    const collectedAt = new Date();
+    const audienceSegment = options.audienceSegment ?? "ALL";
+    const periodDate = options.periodDate ?? startOfDay(collectedAt);
+    const config = sourceCategoryConfigs[this.source];
+    const baseResult = {
+      source: this.source,
+      category: options.category,
+      audienceSegment,
+      collectedAt,
+      method: "CAFE24_CATEGORY_HTML",
+      fetchedCount: 0,
+      products: [] as MarketCollectedProduct[],
+      errors: [] as MarketCollectionError[]
+    };
+
+    if (!config || config.method !== "CAFE24_CATEGORY_HTML") {
+      return { ...baseResult, status: "UNSUPPORTED", errors: [{ source: this.source, category: options.category, reason: "Source is not configured for Cafe24 category HTML collection.", timestamp: collectedAt }] };
+    }
+
+    // REDNAPE's sourceCategoryConfigs entry already maps LONG_SLEEVE_TSHIRT
+    // and PANTS to /category/new-arrivals/23/ (see docs/MARKET_SOURCE_AUDIT.md
+    // "Rednape") - that config mapping existing does NOT mean a collector
+    // exists for it. This guard is intentional and load-bearing: a future
+    // agent must not assume LONG_SLEEVE_TSHIRT/PANTS are already
+    // implemented just because getSourceCategoryUrl can resolve a URL for
+    // them - only BAG (/category/accessories/45/) has real collector code
+    // in this pass. Implementing new-arrivals is a separate, not-yet-done
+    // task.
+    if (options.category !== "BAG") {
+      return {
+        ...baseResult,
+        status: "UNSUPPORTED",
+        errors: [
+          {
+            source: this.source,
+            category: options.category,
+            reason: "Cafe24RednapeCollector only implements the BAG category (/category/accessories/45/) in this pass; other mapped categories (e.g. new-arrivals) are not yet implemented.",
+            timestamp: collectedAt
+          }
+        ]
+      };
+    }
+
+    const categoryUrl = getSourceCategoryUrl(this.source, options.category, options.limit);
+    if (!categoryUrl) {
+      return { ...baseResult, status: "UNSUPPORTED", errors: [{ source: this.source, category: options.category, reason: `No category mapping for ${options.category}.`, timestamp: collectedAt }] };
+    }
+
+    const seenIds = new Set<string>();
+    const gatedEntries: RednapeListingEntry[] = [];
+    let listingFetchedCount = 0;
+    let nextListingPosition = 1;
+
+    try {
+      let page = 1;
+      while (page <= MAX_LISTING_PAGES && gatedEntries.length < options.limit) {
+        const pageUrl = withPage(categoryUrl, page);
+        const robots = await verifyRobotsAllowed(pageUrl);
+        if (!robots.allowed) {
+          return { ...baseResult, status: "RESTRICTED", errors: [{ source: this.source, category: options.category, url: pageUrl, reason: robots.reason, timestamp: collectedAt }] };
+        }
+
+        const response = await fetch(pageUrl, { headers: { "User-Agent": marketCollectorUserAgent(), Accept: "text/html" } });
+        if (!response.ok) throw new Error(`HTTP ${response.status} fetching ${pageUrl}`);
+        const html = await response.text();
+        const entries = extractRednapeListingEntries(html, config.baseUrl, nextListingPosition);
+        listingFetchedCount += entries.length;
+        nextListingPosition += entries.length;
+        if (entries.length === 0) break;
+
+        const freshEntries = dedupeListingEntries(entries, seenIds);
+        for (const entry of freshEntries) {
+          if (!isConfirmedBagProduct(entry.name)) continue;
+          gatedEntries.push(entry);
+          if (gatedEntries.length >= options.limit) break;
+        }
+        if (freshEntries.length === 0) break;
+        page += 1;
+      }
+    } catch (error) {
+      return { ...baseResult, status: "FAILED", errors: [{ source: this.source, category: options.category, reason: error instanceof Error ? error.message : String(error), timestamp: new Date() }] };
+    }
+
+    const products: MarketCollectedProduct[] = [];
+    const errors: MarketCollectionError[] = [];
+
+    for (const [index, entry] of gatedEntries.entries()) {
+      try {
+        if (index > 0) await delay(RATE_LIMIT_DELAY_MS);
+        const robots = await verifyRobotsAllowed(entry.detailUrl);
+        if (!robots.allowed) throw new Error(robots.reason);
+
+        const response = await fetch(entry.detailUrl, { headers: { "User-Agent": marketCollectorUserAgent(), Accept: "text/html" } });
+        if (!response.ok) throw new Error(`HTTP ${response.status} fetching ${entry.detailUrl}`);
+        const html = await response.text();
+
+        const jsonLd = extractRednapeProductJsonLd(html);
+        if (!jsonLd) throw new Error(`Rednape product #${entry.externalProductId} detail page did not expose a parseable Product JSON-LD block.`);
+        const canonicalUrl = extractRednapeCanonicalUrl(html) ?? entry.detailUrl;
+
+        const raw: RawRednapeProduct = {
+          externalProductId: entry.externalProductId,
+          name: jsonLd.name ?? entry.name,
+          canonicalUrl,
+          images: Array.isArray(jsonLd.image) ? jsonLd.image : [],
+          offers: (jsonLd.offers ?? [])
+            .filter((offer): offer is { name: string; price: number } => typeof offer?.name === "string" && typeof offer?.price === "number")
+        };
+
+        // sourcePosition preserves the product's ORIGINAL listing position
+        // (assigned before BAG gating - see RednapeListingEntry.listingPosition),
+        // never a post-filter/gated-only counter. A product's position in the
+        // real source listing is observational metadata and must not be
+        // silently renumbered by which products happened to pass the BAG
+        // gate. This does not make it a verified ranking: rankingVerified
+        // stays false and rank stays null regardless (enforced inside
+        // normalizeRednapeProduct itself).
+        products.push(normalizeRednapeProduct({ raw, sourcePosition: entry.listingPosition, audienceSegment, periodDate, metricType: config.metricType }));
+      } catch (error) {
+        errors.push({
+          source: this.source,
+          category: options.category,
+          externalProductId: entry.externalProductId,
+          url: entry.detailUrl,
+          reason: error instanceof Error ? error.message : String(error),
+          timestamp: new Date()
+        });
+      }
+    }
+
+    return {
+      ...baseResult,
+      fetchedCount: listingFetchedCount,
+      products,
+      errors,
+      status: errors.length > 0 ? "PARTIAL_SUCCESS" : "SUCCESS"
+    };
+  }
 }

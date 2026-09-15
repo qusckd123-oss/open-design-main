@@ -1,5 +1,6 @@
 import { sourceCategoryConfigs } from "@/config/market-category-map";
 import type { MarketSource } from "@/config/market-sources";
+import { Cafe24RednapeCollector } from "@/collectors/market/cafe24-rednape";
 import { EndBestsellerCollector } from "@/collectors/market/end";
 import { RakutenFashionRankingCollector } from "@/collectors/market/rakuten-fashion";
 import { ShopifyMarketCollector } from "@/collectors/market/shopify";
@@ -10,12 +11,13 @@ export function createMarketCollector(source: MarketSource): MarketCollector {
   if (config?.method === "PUBLIC_BESTSELLER_PAGE") return new EndBestsellerCollector();
   if (config?.method === "PUBLIC_RANKING_PAGE") return new RakutenFashionRankingCollector();
   if (config?.method === "SHOPIFY_PRODUCTS_JSON") return new ShopifyMarketCollector(source);
+  if (config?.method === "CAFE24_CATEGORY_HTML") return new Cafe24RednapeCollector();
   return new UnsupportedMarketCollector(source);
 }
 
 export function supportedCollectorSources() {
   return Object.entries(sourceCategoryConfigs)
-    .filter(([, config]) => config.method === "SHOPIFY_PRODUCTS_JSON" || config.method === "PUBLIC_BESTSELLER_PAGE" || config.method === "PUBLIC_RANKING_PAGE")
+    .filter(([, config]) => config.method === "SHOPIFY_PRODUCTS_JSON" || config.method === "PUBLIC_BESTSELLER_PAGE" || config.method === "PUBLIC_RANKING_PAGE" || config.method === "CAFE24_CATEGORY_HTML")
     .map(([source]) => source as MarketSource);
 }
 
@@ -27,7 +29,7 @@ export function verifiedRankingCollectorSources() {
 
 export function assortmentCollectorSources() {
   return Object.entries(sourceCategoryConfigs)
-    .filter(([, config]) => !config.rankingVerified && config.method === "SHOPIFY_PRODUCTS_JSON")
+    .filter(([, config]) => !config.rankingVerified && (config.method === "SHOPIFY_PRODUCTS_JSON" || config.method === "CAFE24_CATEGORY_HTML"))
     .map(([source]) => source as MarketSource);
 }
 
