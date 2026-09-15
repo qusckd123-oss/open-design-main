@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import * as XLSX from "xlsx";
 import { assortmentCollectorSources, createMarketCollector, verifiedRankingCollectorSources } from "../src/collectors/market/index";
+import { handleCollectionResult, runOneCollection } from "../scripts/collect-market";
 import { classifyMarketAttributes, validateSubItemForCategory } from "../src/collectors/market/classification";
 import { inferEditorialGender } from "../src/collectors/editorial/gender";
 import { editorialRules, extractEditorialMentions } from "../src/collectors/editorial/mentions";
@@ -25,7 +26,7 @@ import { categoryOfItemType, categoryOfSpecificItem, isKnownSpecificItem, matche
 import { matchesGenderFilterValue } from "../src/lib/planning-filters";
 import { evidenceStrengthLabel, hasVerifiedMarketEvidence } from "../src/lib/market-ui";
 import { extractEndHits, inferRankingCategory, normalizeEndHit, verifyBestsellerSemantic } from "../src/collectors/market/end";
-import { dedupeListingEntries, extractRednapeCanonicalUrl, extractRednapeListingEntries, extractRednapeProductJsonLd, isConfirmedBagProduct, normalizeRednapeProduct, type RawRednapeProduct, type RednapeListingEntry } from "../src/collectors/market/cafe24-rednape";
+import { dedupeListingEntries, extractRednapeCanonicalUrl, extractRednapeListingEntries, extractRednapeProductJsonLd, isConfirmedBagProduct, normalizeRednapeOffers, normalizeRednapeProduct, type RawRednapeProduct, type RednapeListingEntry, type RednapeProductJsonLd } from "../src/collectors/market/cafe24-rednape";
 import { normalizeShopifyProduct } from "../src/collectors/market/normalize";
 import { extractRakutenRankingItems, inferRakutenRankingCategory, normalizeRakutenRankingItem, parseRakutenItemDetails, verifyRakutenRankingSemantic } from "../src/collectors/market/rakuten-fashion";
 import { parseRobotsAllowed as parseMarketRobotsAllowed } from "../src/collectors/market/robots";
@@ -79,6 +80,7 @@ async function main() {
   await verifyDomesticFirstFiltering();
   await verifyDemandSignalHelpers();
   await verifyRealMarketCollectorHelpers();
+  await verifyMarketDryRunNeverPersists();
   verifyRednapeCollectorHelpers();
   await verifyMarketCollectionPartialPersistence();
   verifyBusinessSignals();
@@ -389,6 +391,41 @@ async function verifyRealMarketCollectorHelpers() {
 }
 
 /**
+ * Proves the `--dry-run` persistence boundary added to
+ * scripts/collect-market.ts: `handleCollectionResult(..., dryRun: true)`
+ * must NEVER create an ImportRun row, while `dryRun: false` against the
+ * exact same kind of result must still persist exactly as before this
+ * change (non-dry-run behavior unchanged). Uses MUSINSA (an already-
+ * UNSUPPORTED, non-network source) so this proof needs no live HTTP call
+ * and no real collected data - the point being tested is the persistence
+ * decision boundary itself, not any particular source's collector.
+ */
+async function verifyMarketDryRunNeverPersists() {
+  const category = "SHORT_SLEEVE_TSHIRT" as const;
+  const beforeCount = await prisma.importRun.count({ where: { source: "MUSINSA" } });
+
+  const dryResult = await runOneCollection("MUSINSA", category, 1);
+  const drySummary = await handleCollectionResult("MUSINSA", category, dryResult, true);
+  assert.equal(drySummary.saved, 0, "Dry-run summary must report zero saved.");
+  assert.equal(drySummary.importRunId, undefined, "Dry-run summary must carry no importRunId - nothing was ever persisted to have one.");
+  const afterDryRunCount = await prisma.importRun.count({ where: { source: "MUSINSA" } });
+  assert.equal(afterDryRunCount, beforeCount, "dryRun: true must never create an ImportRun row - persistMarketCollectionResult must be structurally unreachable on this path.");
+
+  // Prove non-dry-run behavior is unchanged: the same kind of result, persisted, still creates exactly one row.
+  const liveResult = await runOneCollection("MUSINSA", category, 1);
+  const liveSummary = await handleCollectionResult("MUSINSA", category, liveResult, false);
+  assert.equal(liveSummary.status, "UNSUPPORTED");
+  assert.ok(liveSummary.importRunId, "Non-dry-run path must still persist and return a real importRunId, exactly as before this change.");
+  const afterLiveRunCount = await prisma.importRun.count({ where: { source: "MUSINSA" } });
+  assert.equal(afterLiveRunCount, beforeCount + 1, "dryRun: false must persist exactly one ImportRun row, same as pre-existing behavior.");
+
+  // Clean up the one real row this proof intentionally created - by exact id, never a broad delete.
+  await prisma.importRun.delete({ where: { id: liveSummary.importRunId! } });
+  const afterCleanupCount = await prisma.importRun.count({ where: { source: "MUSINSA" } });
+  assert.equal(afterCleanupCount, beforeCount, "Cleanup must restore the exact pre-test MUSINSA ImportRun count.");
+}
+
+/**
  * Fixtures captured directly from the 2026-09-15 read-only Rednape audit
  * (docs/MARKET_SOURCE_AUDIT.md "Rednape" section) - no live network call
  * happens in this function or in cafe24-rednape.ts itself.
@@ -427,19 +464,63 @@ function verifyRednapeCollectorHelpers() {
   assert.equal(ecoBagRow.fit, null);
   assert.equal(ecoBagRow.salePrice, null, "No confirmed live discount example exists yet.");
 
-  // #440 - exactly one confirmed color, no color-count suffix in the base name.
+  // #440 - "토고 쉘 경량 그리드 백팩", verified LIVE on 2026-09-15: unlike #593's
+  // array-of-named-offers shape, this single-variant product's JSON-LD
+  // `offers` is a bare object with NO `name` field at all (just
+  // `@type`/`url`/`priceCurrency`/`price`). An earlier pass of this fixture
+  // guessed an array shape with a fabricated "Black" name - that guess was
+  // never actually observed live and has been replaced with the real
+  // captured shape below (see normalizeRednapeOffers for the fix this
+  // proves: object offers -> normalized to [offer]; a missing offer name
+  // -> "" -> filtered out of distinctColors -> mainColor null, never a
+  // thrown error or a dropped price).
+  const liveSingleOfferShape = { price: 57800 } as RednapeProductJsonLd["offers"]; // real payload also carries @type/url/priceCurrency, irrelevant to normalizeRednapeOffers
+  assert.deepEqual(normalizeRednapeOffers(liveSingleOfferShape), [{ name: "", price: 57800 }]);
   const backpack: RawRednapeProduct = {
     externalProductId: "440",
     name: "토고 쉘 경량 그리드 백팩",
     canonicalUrl: "https://rednape.kr/product/토고-쉘-경량-그리드-백팩/440/",
-    images: ["//ecimg.cafe24img.com/pg3204b60863782020/rednape/web/product/small/20260804/46e1f5dbcbf9e9948ce4997c065e46e7.jpg"],
-    offers: [{ name: "토고 쉘 경량 그리드 백팩 Black", price: 57800 }]
+    images: ["https://ecimg.cafe24img.com/pg3204b60863782020/rednape/web/product/big/20260804/19e95ceed4f06c25ab90bce45c367d1c.jpg"],
+    offers: normalizeRednapeOffers(liveSingleOfferShape)
   };
   assert.equal(isConfirmedBagProduct(backpack.name), true, "백팩 suffix must pass the confirmed-bag gate.");
   const backpackRow = normalizeRednapeProduct({ raw: backpack, sourcePosition: 11, audienceSegment: "ALL", periodDate: new Date("2026-09-15T00:00:00.000Z"), metricType: "CATALOG" });
   assert.equal(backpackRow.externalProductId, "440");
-  assert.equal(backpackRow.mainColor, "Black", "Exactly one distinct color must be preserved literally, unnormalized.");
-  assert.equal(backpackRow.price, 57800);
+  assert.equal(backpackRow.mainColor, null, "The real live #440 offer carries no name at all, so there is no color text to confirm - null is honest, not a guess.");
+  assert.equal(backpackRow.price, 57800, "A single-variant product's one offer price must still populate price even though its offers field is a bare object, not an array.");
+
+  // Synthetic - single-variant JSON-LD offers object that DOES carry a name (a plausible
+  // Rednape shape not yet observed live), proving "exactly one color -> literal mainColor"
+  // still holds when the raw shape is an object rather than an array.
+  const namedSingleOfferOffers = normalizeRednapeOffers({ name: "토고 쉘 경량 그리드 백팩 네이비", price: 57800 } as RednapeProductJsonLd["offers"]);
+  assert.deepEqual(namedSingleOfferOffers, [{ name: "토고 쉘 경량 그리드 백팩 네이비", price: 57800 }]);
+  const namedSingleOfferRow = normalizeRednapeProduct({
+    raw: { externalProductId: "440", name: "토고 쉘 경량 그리드 백팩", canonicalUrl: backpack.canonicalUrl, images: [], offers: namedSingleOfferOffers },
+    sourcePosition: 11,
+    audienceSegment: "ALL",
+    periodDate: new Date("2026-09-15T00:00:00.000Z"),
+    metricType: "CATALOG"
+  });
+  assert.equal(namedSingleOfferRow.mainColor, "네이비", "A single-variant object offer that DOES carry a name must still yield a literal mainColor, not null.");
+
+  // normalizeRednapeOffers direct coverage - array shape, object shape, and missing/invalid input.
+  assert.deepEqual(
+    normalizeRednapeOffers([
+      { name: "아카이브 나일론 에코백 (3C) 아쿠아블루", price: 38800 },
+      { name: "아카이브 나일론 에코백 (3C) 브릭", price: 38800 }
+    ]),
+    [
+      { name: "아카이브 나일론 에코백 (3C) 아쿠아블루", price: 38800 },
+      { name: "아카이브 나일론 에코백 (3C) 브릭", price: 38800 }
+    ],
+    "An array of offers must be preserved as-is (minus the same invalid-entry filtering already applied to any shape)."
+  );
+  assert.deepEqual(normalizeRednapeOffers(undefined), [], "A completely absent offers field must normalize to an empty array, never throw.");
+  assert.deepEqual(
+    normalizeRednapeOffers([{ name: "무가격 옵션" }, { name: "유효 옵션", price: 1000 }] as RednapeProductJsonLd["offers"]),
+    [{ name: "유효 옵션", price: 1000 }],
+    "An offer entry with no numeric price must be dropped, never coerced into a fake price."
+  );
 
   // Synthetic fixture (not a live-captured product) - 2 color offers with genuinely different prices.
   // This edge case was not observed on any real sampled Rednape product; it exists only to prove
@@ -629,8 +710,27 @@ function verifyRednapeCollectorHelpers() {
   const jsonLd = extractRednapeProductJsonLd(detailFixtureHtml);
   assert.equal(jsonLd?.name, "아카이브 나일론 에코백 (3C)", "Must find the Product block, not the earlier Organization block.");
   assert.equal(jsonLd?.image?.[0], "https://ecimg.cafe24img.com/pg3204b60863782020/rednape/web/product/big/20260815/8618289e341fd4df0e6f13b7b3f3d2ca.jpg");
-  assert.equal(jsonLd?.offers?.length, 2);
-  assert.equal(jsonLd?.offers?.[0]?.price, 38800);
+  assert.equal(Array.isArray(jsonLd?.offers), true, "#593 is a multi-variant product - its real offers shape is an array.");
+  const jsonLdOffers = normalizeRednapeOffers(jsonLd?.offers);
+  assert.equal(jsonLdOffers.length, 2);
+  assert.equal(jsonLdOffers[0]?.price, 38800);
+
+  // --- Product detail parsing: the #440 single-variant shape, real captured
+  // live evidence (2026-09-15). Unlike #593 above, this product's `offers`
+  // is a bare JSON-LD object, not an array - this end-to-end fixture (raw
+  // HTML -> extractRednapeProductJsonLd -> normalizeRednapeOffers) proves
+  // the real parsing pipeline handles the exact shape observed live, not
+  // just a hand-built object passed directly to normalizeRednapeOffers.
+  const singleOfferDetailHtml = `
+    <html><head>
+    <link rel="canonical" href="https://rednape.kr/product/토고-쉘-경량-그리드-백팩/440/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"토고 쉘 경량 그리드 백팩","image":["https://ecimg.cafe24img.com/pg3204b60863782020/rednape/web/product/big/20260804/19e95ceed4f06c25ab90bce45c367d1c.jpg"],"brand":{"@type":"Brand","name":"레드네이프"},"offers":{"@type":"Offer","url":"https://rednape.kr/product/토고-쉘-경량-그리드-백팩/440/","priceCurrency":"KRW","price":57800}}</script>
+    </head><body></body></html>`;
+  assert.equal(extractRednapeCanonicalUrl(singleOfferDetailHtml), "https://rednape.kr/product/토고-쉘-경량-그리드-백팩/440/");
+  const singleOfferJsonLd = extractRednapeProductJsonLd(singleOfferDetailHtml);
+  assert.equal(singleOfferJsonLd?.name, "토고 쉘 경량 그리드 백팩");
+  assert.equal(Array.isArray(singleOfferJsonLd?.offers), false, "This is the real live #440 shape: a bare object, not an array.");
+  assert.deepEqual(normalizeRednapeOffers(singleOfferJsonLd?.offers), [{ name: "", price: 57800 }]);
 
   // --- Malformed/missing Product JSON-LD: must return null, never throw -
   // this is exactly what lets the live collector's per-product try/catch

@@ -1,6 +1,6 @@
 import { getSourceCategoryUrl, sourceCategoryConfigs, type MarketMetricType, type RankingCategory, type RankingScope } from "@/config/market-category-map";
 import type { MarketSource } from "@/config/market-sources";
-import { marketCollectorUserAgent, verifyRobotsAllowed } from "@/collectors/market/robots";
+import { marketCollectorUserAgent, parseRobotsAllowed, type RobotsCheck } from "@/collectors/market/robots";
 import type { MarketCollectedProduct, MarketCollectOptions, MarketCollectionError, MarketCollectionResult, MarketCollector } from "@/collectors/market/types";
 
 /**
@@ -310,12 +310,60 @@ export function dedupeListingEntries(entries: RednapeListingEntry[], seen: Set<s
   return unique;
 }
 
+/** One raw JSON-LD offer entry as Rednape actually serializes it - `name` is present for multi-variant products (color-disambiguating) and absent for single-variant ones (verified live on #440, 2026-09-15). */
+type RednapeJsonLdOffer = { name?: string; price?: number };
+
 /** Minimal shape of the fields this collector actually uses from the product detail page's Schema.org `Product` JSON-LD block. */
 export type RednapeProductJsonLd = {
   name?: string;
   image?: string[];
-  offers?: Array<{ name?: string; price?: number }>;
+  /**
+   * Schema.org allows `Product.offers` to be either a single `Offer` object
+   * or an array of them, and Rednape actually uses BOTH shapes depending on
+   * variant count: a single-variant product (e.g. #440, "토고 쉘 경량 그리드
+   * 백팩") serializes `offers` as one bare object with no `name` field at
+   * all (just `@type`/`url`/`priceCurrency`/`price`), while a multi-variant
+   * product (e.g. #593, 3 colors) serializes an array with one named entry
+   * per color. See `normalizeRednapeOffers` for the boundary that
+   * reconciles this into the flat shape everything downstream expects.
+   */
+  offers?: RednapeJsonLdOffer[] | RednapeJsonLdOffer;
 };
+
+/**
+ * Normalizes JSON-LD `Product.offers` into the flat `RawRednapeOffer[]`
+ * shape `RawRednapeProduct.offers` and `normalizeRednapeProduct` already
+ * expect - the single boundary point where the object/array ambiguity
+ * documented on `RednapeProductJsonLd.offers` gets resolved, so nothing
+ * downstream of this function (in particular `normalizeRednapeProduct`)
+ * ever has to reason about that ambiguity itself.
+ *
+ * A single offer object (Rednape's single-variant shape) is wrapped into a
+ * one-element array; a genuinely absent `offers` field normalizes to an
+ * empty array, which `normalizeRednapeProduct` already handles safely
+ * (zero distinct colors/prices -> mainColor/price both null - never a
+ * thrown error just because a product happens to have no readable offers).
+ *
+ * Only `price` is required to keep an entry - Rednape's real single-variant
+ * JSON-LD (verified live on #440, 2026-09-15) omits `name` entirely, and a
+ * missing offer name must never be allowed to silently drop that offer's
+ * price from the price-agreement calculation. A missing `name` normalizes
+ * to `""` (never guessed at - e.g. never defaulted to the base product
+ * name), which `extractOfferColor`'s existing color-extraction naturally
+ * treats as "no distinguishable color for this offer" (filtered out of
+ * `distinctColors` for having zero length) - consistent with `mainColor`
+ * already being null whenever there is no single confirmable color text,
+ * not only when there is more than one.
+ */
+export function normalizeRednapeOffers(offers: RednapeProductJsonLd["offers"]): RawRednapeOffer[] {
+  const list = Array.isArray(offers) ? offers : offers ? [offers] : [];
+  const normalized: RawRednapeOffer[] = [];
+  for (const offer of list) {
+    if (typeof offer?.price !== "number") continue;
+    normalized.push({ name: typeof offer.name === "string" ? offer.name : "", price: offer.price });
+  }
+  return normalized;
+}
 
 /**
  * Finds and parses the `application/ld+json` `Product` block on a Rednape
@@ -386,6 +434,60 @@ function withPage(categoryUrl: string, page: number): string {
   return url.toString();
 }
 
+/**
+ * Fetches and parses rednape.kr's robots.txt ONCE for the lifetime of a
+ * single `collect()` call and reuses that parsed text for every URL that
+ * call needs to check, via the same pure `parseRobotsAllowed` the shared
+ * `verifyRobotsAllowed` helper (src/collectors/market/robots.ts) already
+ * uses internally - this is a redundant-fetch elimination, not a
+ * network-skipping shortcut. Every call still re-evaluates robots against
+ * ITS OWN path (the listing page and each product detail page have
+ * different paths, and `parseRobotsAllowed` is what actually applies the
+ * path-specific allow/disallow rules), so a disallowed path can never slip
+ * through just because an earlier path was allowed.
+ *
+ * Deliberately local to one `collect()` invocation (a plain closure created
+ * fresh on every call, never a class field or module-level variable):
+ * nothing here survives past the invocation that created it, is shared
+ * across concurrent `collect()` calls, or is shared across other sources'
+ * collectors - so this cannot become a stale-robots-across-runs bug or a
+ * cross-source cache. Keyed by origin (not hardcoded to rednape.kr) purely
+ * for correctness if this ever needs multiple origins in one run; in
+ * practice Rednape's `baseUrl` is fixed, so there is only ever one entry.
+ *
+ * `verifyRobotsAllowed` itself is intentionally left untouched: it is
+ * shared by every other collector in this codebase, and giving it a
+ * persistent/shared cache would change its semantics for all of them, not
+ * just Rednape - out of scope for a source-local Rednape fix. If robots.txt
+ * cannot be fetched at all, every subsequent check for this run fails
+ * closed (`allowed: false`), exactly matching `verifyRobotsAllowed`'s own
+ * fetch-failure behavior - no bypass.
+ */
+function createRednapeRobotsChecker(userAgent: string): (targetUrl: string) => Promise<RobotsCheck> {
+  const robotsTextByOrigin = new Map<string, Promise<string | null>>();
+
+  function loadRobotsText(origin: string): Promise<string | null> {
+    let pending = robotsTextByOrigin.get(origin);
+    if (!pending) {
+      pending = fetch(new URL("/robots.txt", origin).toString(), { headers: { "User-Agent": userAgent } })
+        .then((response) => (response.ok ? response.text() : null))
+        .catch(() => null);
+      robotsTextByOrigin.set(origin, pending);
+    }
+    return pending;
+  }
+
+  return async function checkRobots(targetUrl: string): Promise<RobotsCheck> {
+    const url = new URL(targetUrl);
+    const robotsText = await loadRobotsText(url.origin);
+    if (robotsText == null) {
+      return { allowed: false, reason: "Unable to verify robots.txt." };
+    }
+    const allowed = parseRobotsAllowed(robotsText, userAgent, `${url.pathname}${url.search}`);
+    return { allowed, reason: allowed ? "Allowed by robots.txt." : `Blocked by robots.txt for ${url.pathname}.` };
+  };
+}
+
 function startOfDay(date: Date): Date {
   const next = new Date(date);
   next.setHours(0, 0, 0, 0);
@@ -413,14 +515,20 @@ function startOfDay(date: Date): Date {
  * robust option; Rednape's listing HTML exposes no separate "is this the
  * last page" flag) rather than a more complex total-count/last-page
  * parser - which means, with today's audited catalog (22 products, 5
- * confirmed bags, page 2 already verified empty), the ACTUAL request
+ * confirmed bags, page 2 already verified empty), the ACTUAL PAGE request
  * count depends on `options.limit`: at `limit <= 5`, page 1 alone already
  * satisfies `gatedEntries.length >= options.limit`, so the loop exits
- * BEFORE ever requesting page 2 (1 listing + up to 5 detail requests =
- * <=6 total). At `limit > 5`, page 1 still only yields 5 gated entries
- * (fewer than the limit), so the loop tries page 2 to discover that
- * exhaustion, which returns zero products and stops it (2 listing + 5
- * detail requests = 7 total). Do not assume <=6 for every limit value.
+ * BEFORE ever requesting page 2 (1 listing + up to 5 detail page requests).
+ * At `limit > 5`, page 1 still only yields 5 gated entries (fewer than the
+ * limit), so the loop tries page 2 to discover that exhaustion, which
+ * returns zero products and stops it (2 listing + 5 detail page requests).
+ * Do not assume the same page-request count for every limit value. On top
+ * of these page requests, exactly ONE robots.txt fetch happens per
+ * `collect()` call regardless of how many pages/details are requested (see
+ * `createRednapeRobotsChecker`) - before that fix, robots.txt was
+ * re-fetched once per page/detail request with no caching at all (12 total
+ * requests observed live for `limit=5` on 2026-09-15, confirmed reduced to
+ * 7 after this fix: 1 robots.txt + 1 listing page + 5 detail pages).
  *
  * PHASE 2 (product detail): sequentially (never concurrently) fetches
  * only the gated products' detail pages, extracts the canonical URL and
@@ -486,12 +594,13 @@ export class Cafe24RednapeCollector implements MarketCollector {
     const gatedEntries: RednapeListingEntry[] = [];
     let listingFetchedCount = 0;
     let nextListingPosition = 1;
+    const checkRobots = createRednapeRobotsChecker(marketCollectorUserAgent());
 
     try {
       let page = 1;
       while (page <= MAX_LISTING_PAGES && gatedEntries.length < options.limit) {
         const pageUrl = withPage(categoryUrl, page);
-        const robots = await verifyRobotsAllowed(pageUrl);
+        const robots = await checkRobots(pageUrl);
         if (!robots.allowed) {
           return { ...baseResult, status: "RESTRICTED", errors: [{ source: this.source, category: options.category, url: pageUrl, reason: robots.reason, timestamp: collectedAt }] };
         }
@@ -523,7 +632,7 @@ export class Cafe24RednapeCollector implements MarketCollector {
     for (const [index, entry] of gatedEntries.entries()) {
       try {
         if (index > 0) await delay(RATE_LIMIT_DELAY_MS);
-        const robots = await verifyRobotsAllowed(entry.detailUrl);
+        const robots = await checkRobots(entry.detailUrl);
         if (!robots.allowed) throw new Error(robots.reason);
 
         const response = await fetch(entry.detailUrl, { headers: { "User-Agent": marketCollectorUserAgent(), Accept: "text/html" } });
@@ -539,8 +648,7 @@ export class Cafe24RednapeCollector implements MarketCollector {
           name: jsonLd.name ?? entry.name,
           canonicalUrl,
           images: Array.isArray(jsonLd.image) ? jsonLd.image : [],
-          offers: (jsonLd.offers ?? [])
-            .filter((offer): offer is { name: string; price: number } => typeof offer?.name === "string" && typeof offer?.price === "number")
+          offers: normalizeRednapeOffers(jsonLd.offers)
         };
 
         // sourcePosition preserves the product's ORIGINAL listing position
