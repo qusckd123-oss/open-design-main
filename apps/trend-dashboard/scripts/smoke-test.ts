@@ -39,6 +39,7 @@ import { featureFlags } from "../src/config/feature-flags";
 import { suggestColumnMapping } from "../src/config/import-mapping";
 import { prisma } from "../src/db/client";
 import { businessDayKey, businessDayStart } from "../src/lib/business-time";
+import { countBy, countNdjsonLines, sha256Hex, stableStringify, timestampSlug, validateNdjson } from "../scripts/export-sqlite-snapshot";
 import { combinedTrendSignal, percentChange, targetAgeSignal } from "../src/lib/search-trend-signals";
 import { classifyTrend, rankChange } from "../src/lib/trend-signals";
 import { applyMarketPresenceStatuses, classifyAssortmentItemSignal, classifyItemSignal, classifyMarketSignal, classifySalesSignal, getBusinessDashboardData, getItemTrendRows, getMarketRows, getSourceFreshness, rankChangeByDays, signalConfidence, toMarketRow } from "../src/services/business-analytics-service";
@@ -85,6 +86,7 @@ async function main() {
   verifyRednapeCollectorHelpers();
   await verifyMarketCollectionPartialPersistence();
   await verifyBusinessTimeHardening();
+  verifyExportSnapshotHelpers();
   verifyBusinessSignals();
 
   const dashboard = await getBusinessDashboardData();
@@ -2768,6 +2770,54 @@ async function verifyBusinessTimeHardening() {
     if (originalTz === undefined) delete process.env.TZ;
     else process.env.TZ = originalTz;
   }
+}
+
+/** Pure-helper coverage for scripts/export-sqlite-snapshot.ts - no DB access, no file I/O, no live export run (see AGENT_OPERATING_RULES.md-style preference for unit tests over live runs wherever a change is unit-testable). */
+function verifyExportSnapshotHelpers() {
+  // stableStringify: key order must never affect output, and Date fields
+  // must serialize as full ISO-8601 UTC instants (never businessDayKey()'d,
+  // never local-time reformatted - this is the exact mechanism the exporter
+  // relies on for DateTime preservation).
+  const a = stableStringify({ b: 2, a: 1, periodDate: new Date("2026-09-14T15:00:00.000Z") });
+  const b = stableStringify({ periodDate: new Date("2026-09-14T15:00:00.000Z"), a: 1, b: 2 });
+  assert.equal(a, b, "Key insertion order must never affect stableStringify output - required for byte-identical re-exports of an unchanged DB.");
+  assert.equal(a, '{"a":1,"b":2,"periodDate":"2026-09-14T15:00:00.000Z"}', "Date fields must serialize as full ISO-8601 UTC instants, keys sorted alphabetically.");
+  assert.equal(stableStringify({ x: null, y: undefined }), '{"x":null}', "null must be preserved; undefined must drop exactly as plain JSON.stringify already does - no special-casing added.");
+  assert.equal(stableStringify([{ b: 1, a: 2 }, { d: 1, c: 2 }]), '[{"a":2,"b":1},{"c":2,"d":1}]', "Arrays of objects must have each element's keys sorted independently.");
+
+  // sha256Hex: verified against the standard NIST test vector for "abc",
+  // not merely self-consistency against Node's own crypto module.
+  assert.equal(sha256Hex("abc"), "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad", "SHA-256 of \"abc\" must match the standard published test vector.");
+  assert.equal(sha256Hex(""), "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "SHA-256 of the empty string must match the well-known constant.");
+
+  // countNdjsonLines / validateNdjson: trailing newline and empty content
+  // must never be miscounted as an extra/phantom line.
+  assert.equal(countNdjsonLines(""), 0);
+  assert.equal(countNdjsonLines('{"a":1}\n'), 1);
+  assert.equal(countNdjsonLines('{"a":1}\n{"b":2}\n{"c":3}\n'), 3);
+  assert.equal(countNdjsonLines('{"a":1}\n{"b":2}'), 2, "A file without a trailing newline must still count its last line.");
+
+  const validEmpty = validateNdjson("");
+  assert.deepEqual(validEmpty, { lineCount: 0, allValid: true });
+  const validThree = validateNdjson('{"a":1}\n{"b":2}\n{"c":3}\n');
+  assert.equal(validThree.lineCount, 3);
+  assert.equal(validThree.allValid, true);
+  const invalidLine = validateNdjson('{"a":1}\nnot valid json\n{"c":3}\n');
+  assert.equal(invalidLine.allValid, false, "A malformed JSON line must be detected, not silently accepted.");
+  assert.ok(invalidLine.firstError?.startsWith("line 2:"), "The reported error must identify the exact 1-based line number that failed to parse.");
+
+  // countBy: bounded per-key aggregation used for the manifest's
+  // reconciliation-anchor summaries.
+  assert.deepEqual(
+    countBy([{ source: "A" }, { source: "B" }, { source: "A" }, { source: "A" }], (row) => row.source),
+    { A: 3, B: 1 }
+  );
+
+  // timestampSlug: filesystem-safe (no ":" - forbidden in Windows paths),
+  // and derived from the UTC instant, never a business-day/local-time key.
+  const slug = timestampSlug(new Date("2026-09-15T05:49:18.610Z"));
+  assert.equal(slug, "2026-09-15T05-49-18-610Z");
+  assert.equal(slug.includes(":"), false, "Export directory names must never contain ':' - not a valid Windows path character.");
 }
 
 function verifyBusinessSignals() {

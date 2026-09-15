@@ -5,6 +5,7 @@ prisma/dev.db-journal
 prisma/dev.db-wal
 prisma/dev.db-shm
 logs/
+backups/
 
 # Secrets - never commit local env files. .env.example is intentionally
 # un-ignored below so the template stays trackable.

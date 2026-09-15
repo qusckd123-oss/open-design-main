@@ -23,6 +23,7 @@
     "backfill:naver": "tsx scripts/backfill-naver.ts",
     "test:naver-real": "tsx scripts/test-naver-real.ts",
     "data:reset-sample": "tsx scripts/reset-sample-data.ts",
+    "export:sqlite-snapshot": "tsx scripts/export-sqlite-snapshot.ts",
     "templates:generate": "tsx scripts/generate-templates.ts",
     "audit:specific-item-phrases": "tsx scripts/audit-specific-item-phrases.ts",
     "audit:attribute-relations": "tsx scripts/audit-attribute-relations.ts",
