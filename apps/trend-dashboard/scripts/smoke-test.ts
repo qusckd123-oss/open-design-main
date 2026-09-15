@@ -94,7 +94,27 @@ async function main() {
   assert.ok(items.length > 0, "Expected item trend rows.");
   assert.ok((await prisma.marketRankingSnapshot.count({ where: { dataMode: "real" } })) >= 472, "Ranking scope migration must preserve existing REAL snapshots while allowing later real collections.");
   assert.ok(dashboard.summary.verifiedRankingSources >= 2, "Expected END and Rakuten Fashion verified ranking sources.");
-  assert.equal(dashboard.summary.assortmentSources, 2, "SLAM_JAM/STUSSY assortment sources must remain separate from verified ranking.");
+  // dashboard.summary.assortmentSources counts DISTINCT sources that actually
+  // have real, non-rankingVerified MarketRankingSnapshot rows PERSISTED in
+  // the DB - a data-level count, not the same thing as
+  // assortmentCollectorSources() below (a config-level list of which sources
+  // ARE CONFIGURED to run as assortment collectors, whether or not they have
+  // ever been collected). Before the first persisted REDNAPE collection
+  // (2026-09-15, see CURRENT_STATE.md), only SLAM_JAM and STUSSY had real
+  // assortment rows, so this was 2; REDNAPE now legitimately joins that set
+  // as a third real assortment source. COVERCHORD remains configured (see
+  // assortmentCollectorSources() below) but still has zero persisted real
+  // rows, so it must not appear here yet. Deriving the expected set from the
+  // actual persisted rows - rather than hardcoding a count - keeps this
+  // assertion meaningful as sources move from "configured" to "actually
+  // collected" over time, instead of needing a magic-number bump each time.
+  const realAssortmentSources = new Set(defaultMarket.rows.filter((row) => !row.rankingVerified).map((row) => row.source));
+  assert.deepEqual(
+    [...realAssortmentSources].sort(),
+    ["REDNAPE", "SLAM_JAM", "STUSSY"].sort(),
+    "Real (persisted) assortment sources must be exactly the sources actually collected with rankingVerified:false - never a verified-ranking source (END/RAKUTEN_FASHION), and never a merely-configured-but-uncollected source (COVERCHORD)."
+  );
+  assert.equal(dashboard.summary.assortmentSources, realAssortmentSources.size, "dashboard.summary.assortmentSources must equal the actual distinct real assortment source count derived from persisted rows.");
   assert.ok(defaultMarket.rows.some((row) => row.source === "END" && row.rankingVerified && row.rankingScope === "DEPARTMENT" && row.rankingCategory === "CLOTHING" && row.observedCategory != null), "END rows must preserve DEPARTMENT/CLOTHING scope and observed category.");
   assert.ok(defaultMarket.rows.some((row) => row.source === "RAKUTEN_FASHION" && row.rankingVerified && row.metricType === "RANKING" && row.rankingScope === "SITEWIDE" && row.rankingCategory === "ALL_FASHION" && row.rank != null), "Rakuten verified ranking rows must retain SITEWIDE rank.");
   assert.ok(defaultMarket.rows.some((row) => row.source === "STUSSY" && !row.rankingVerified && row.metricType === "COLLECTION_ORDER" && row.rank == null), "Collection-order rows must not become ranking rows.");
