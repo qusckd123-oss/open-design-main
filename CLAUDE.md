@@ -681,3 +681,13 @@
 - 2026-09-14 decisions: Kim Hojin's 9/16–9/30 absence is covered by Yoo Jiwon; global reorders are batched, Taiwan reorder is not proceeding except the confirmed 10PCS; `CD51`/`KT62` go to Wiz and `CDH1`/`KTH3`/`PTH3` to Barak.
 - 2026-09-14 unresolved: final 27SS PO quantity/approver and global quantity, additional-CAD final colors/quantities/dates, ACC production source, 27SS material/spec/color FIX, remaining 26FW EX-FAC/O.C updates, and the mixed `WA2603CR16`/`WA2603CR17` style reference remain open.
 - 2026-09-14 next actions: close 27SS spring specs and release work instructions; finalize PO/LINE SHEET and ACC production details; track partial inbound and outbound results; confirm global EX-FAC/O.C responses; resolve CR16/CR17 numbering and country-level order decisions; prepare SKU-level cost-reduction/price actions.
+
+## Current Teams Summary - 2026-09-15
+
+- Latest live Teams summary: `work/90_archive/workspace/memory/current-teams-update-summary-2026-09-15.md`.
+- Scope: live Teams messages through 2026-09-14; 2026-09-15 same-day messages are excluded.
+- 2026-09-15 decisions: `WA2702ST01` 1차 솔리드 4컬러는 통푸, 2차 TC 다잉은 HNC로 진행하고, ST01은 20수 싱글, ST02는 쿨코튼·오픈에이로 진행한다. 기존 투팩도 쿨코튼으로 함께 진행한다.
+- 2026-09-15 decisions: 홀리데이 시리즈는 금주 아트웍·소재 결정 및 디자인, 다음 주 작지 불출을 목표로 하며 12월 첫째 주 입고 목표에 맞춰 BT를 최소화하고 이번 주 출고 방향으로 조율한다.
+- 2026-09-15 decisions: 26FW 리오더 품번은 ERP 상품등록 비고란에 `(리오더)` 또는 `글로벌(리오더)`를 표기하고, 발주번호란은 변경하지 않는다. 광복 FSS 모자 2SKU는 각 100PCS 입고하고 반팔 티셔츠는 별도 출고 없이 목요일 오전 입고를 추진한다.
+- 2026-09-15 unresolved: ST01의 직소싱 표현과 통푸/HNC 차수 배정 간 최종 기준, 기존 2팩 사이즈·출시 시점, 27SS PO/ACC 최종 수량·생산처, 부츠컷 팬츠 9/23 입고 가능 수량과 팝업 투입 가능 여부가 남아 있다.
+- 2026-09-15 next actions: reconcile the ST01 supplier master across PO/LINE SHEET/ERP; confirm existing 2-pack sizing and launch timing; close holiday artwork/material and release work instructions; confirm ACC production details and cost target; verify Gwangbok inbound; and decide the bootcut-pants fallback by 2026-09-16.
