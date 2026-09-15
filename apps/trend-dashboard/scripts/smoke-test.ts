@@ -25,6 +25,7 @@ import { categoryOfItemType, categoryOfSpecificItem, isKnownSpecificItem, matche
 import { matchesGenderFilterValue } from "../src/lib/planning-filters";
 import { evidenceStrengthLabel, hasVerifiedMarketEvidence } from "../src/lib/market-ui";
 import { extractEndHits, inferRankingCategory, normalizeEndHit, verifyBestsellerSemantic } from "../src/collectors/market/end";
+import { isConfirmedBagProduct, normalizeRednapeProduct, type RawRednapeProduct } from "../src/collectors/market/cafe24-rednape";
 import { normalizeShopifyProduct } from "../src/collectors/market/normalize";
 import { extractRakutenRankingItems, inferRakutenRankingCategory, normalizeRakutenRankingItem, parseRakutenItemDetails, verifyRakutenRankingSemantic } from "../src/collectors/market/rakuten-fashion";
 import { parseRobotsAllowed as parseMarketRobotsAllowed } from "../src/collectors/market/robots";
@@ -78,6 +79,7 @@ async function main() {
   await verifyDomesticFirstFiltering();
   await verifyDemandSignalHelpers();
   await verifyRealMarketCollectorHelpers();
+  verifyRednapeCollectorHelpers();
   await verifyMarketCollectionPartialPersistence();
   verifyBusinessSignals();
 
@@ -383,6 +385,120 @@ async function verifyRealMarketCollectorHelpers() {
   const restricted = await createMarketCollector("SSENSE").collect({ category: "SHORT_SLEEVE_TSHIRT", limit: 1 });
   assert.equal(restricted.status, "UNSUPPORTED", "Restricted source should not be saved as verified ranking data.");
   assert.equal(classifyMarketSignal({ rank: 1, change1w: null, change2w: null, change4w: null, isNewEntry: false }), "INSUFFICIENT_DATA");
+}
+
+/**
+ * Fixtures captured directly from the 2026-09-15 read-only Rednape audit
+ * (docs/MARKET_SOURCE_AUDIT.md "Rednape" section) - no live network call
+ * happens in this function or in cafe24-rednape.ts itself.
+ */
+function verifyRednapeCollectorHelpers() {
+  // #593 - 3 confirmed colors, one price shared across all three.
+  const ecoBag: RawRednapeProduct = {
+    externalProductId: "593",
+    name: "아카이브 나일론 에코백 (3C)",
+    canonicalUrl: "https://rednape.kr/product/아카이브-나일론-에코백-3c/593/",
+    images: [
+      "https://ecimg.cafe24img.com/pg3204b60863782020/rednape/web/product/big/20260815/8618289e341fd4df0e6f13b7b3f3d2ca.jpg",
+      "https://ecimg.cafe24img.com/pg3204b60863782020/rednape/web/product/extra/big/20260804/8605bac467b2e4507116685a7bcfbe90.jpg"
+    ],
+    offers: [
+      { name: "아카이브 나일론 에코백 (3C) 아쿠아블루", price: 38800 },
+      { name: "아카이브 나일론 에코백 (3C) 브릭", price: 38800 },
+      { name: "아카이브 나일론 에코백 (3C) 카키", price: 38800 }
+    ]
+  };
+  assert.equal(isConfirmedBagProduct(ecoBag.name), true, "에코백 suffix must pass the confirmed-bag gate.");
+  const ecoBagRow = normalizeRednapeProduct({ raw: ecoBag, sourcePosition: 3, audienceSegment: "ALL", periodDate: new Date("2026-09-15T00:00:00.000Z"), metricType: "CATALOG" });
+  assert.equal(ecoBagRow.source, "REDNAPE");
+  assert.equal(ecoBagRow.externalProductId, "593", "externalProductId must be the base numeric product ID, never a per-color item_code.");
+  assert.equal(ecoBagRow.brand, "레드네이프");
+  assert.equal(ecoBagRow.url, ecoBag.canonicalUrl);
+  assert.equal(ecoBagRow.imageUrl, ecoBag.images[0]);
+  assert.equal(ecoBagRow.price, 38800);
+  assert.equal(ecoBagRow.rankingCategory, "BAG");
+  assert.equal(ecoBagRow.observedCategory, "BAG");
+  assert.equal(ecoBagRow.rankingVerified, false);
+  assert.equal(ecoBagRow.rankingScope, "CATEGORY");
+  assert.equal(ecoBagRow.rank, null, "Unverified assortment source must never carry a rank.");
+  assert.equal(ecoBagRow.mainColor, null, "3 distinct colors must never collapse into one mainColor value.");
+  assert.equal(ecoBagRow.material, null, "Material lives only in free-form SmartEditor text - not parsed in v1.");
+  assert.equal(ecoBagRow.fit, null);
+  assert.equal(ecoBagRow.salePrice, null, "No confirmed live discount example exists yet.");
+
+  // #440 - exactly one confirmed color, no color-count suffix in the base name.
+  const backpack: RawRednapeProduct = {
+    externalProductId: "440",
+    name: "토고 쉘 경량 그리드 백팩",
+    canonicalUrl: "https://rednape.kr/product/토고-쉘-경량-그리드-백팩/440/",
+    images: ["//ecimg.cafe24img.com/pg3204b60863782020/rednape/web/product/small/20260804/46e1f5dbcbf9e9948ce4997c065e46e7.jpg"],
+    offers: [{ name: "토고 쉘 경량 그리드 백팩 Black", price: 57800 }]
+  };
+  assert.equal(isConfirmedBagProduct(backpack.name), true, "백팩 suffix must pass the confirmed-bag gate.");
+  const backpackRow = normalizeRednapeProduct({ raw: backpack, sourcePosition: 11, audienceSegment: "ALL", periodDate: new Date("2026-09-15T00:00:00.000Z"), metricType: "CATALOG" });
+  assert.equal(backpackRow.externalProductId, "440");
+  assert.equal(backpackRow.mainColor, "Black", "Exactly one distinct color must be preserved literally, unnormalized.");
+  assert.equal(backpackRow.price, 57800);
+
+  // Synthetic fixture (not a live-captured product) - 2 color offers with genuinely different prices.
+  // This edge case was not observed on any real sampled Rednape product; it exists only to prove
+  // normalizeRednapeProduct never silently picks offers[0]'s price when offers actually disagree.
+  const divergentPriceProduct: RawRednapeProduct = {
+    externalProductId: "999999",
+    name: "테스트 합성 크로스백 (2C)",
+    canonicalUrl: "https://rednape.kr/product/테스트-합성-크로스백-2c/999999/",
+    images: [],
+    offers: [
+      { name: "테스트 합성 크로스백 (2C) 블랙", price: 10000 },
+      { name: "테스트 합성 크로스백 (2C) 화이트", price: 12000 }
+    ]
+  };
+  assert.equal(isConfirmedBagProduct(divergentPriceProduct.name), true, "크로스백 suffix must pass the confirmed-bag gate.");
+  const divergentPriceRow = normalizeRednapeProduct({ raw: divergentPriceProduct, sourcePosition: 1, audienceSegment: "ALL", periodDate: new Date("2026-09-15T00:00:00.000Z"), metricType: "CATALOG" });
+  assert.equal(divergentPriceRow.price, null, "Divergent per-color prices must never silently collapse to offers[0]'s price.");
+  const rawData = JSON.parse(divergentPriceRow.rawData ?? "{}");
+  assert.deepEqual(rawData.offerPrices?.sort(), [10000, 12000], "Full distinct offer price list must be preserved in rawData for auditability.");
+
+  // #707 - a loafer (shoe) from the same category page; must never pass the gate or be normalized as BAG.
+  const loafer = "모카 스티치 스웨이드 로퍼 (2C)";
+  assert.equal(isConfirmedBagProduct(loafer), false, "A loafer must never pass the confirmed-bag gate.");
+  assert.throws(
+    () =>
+      normalizeRednapeProduct({
+        raw: { externalProductId: "707", name: loafer, canonicalUrl: "https://rednape.kr/product/모카-스티치-스웨이드-로퍼-2c/707/", images: [], offers: [{ name: `${loafer} Brown`, price: 62800 }] },
+        sourcePosition: 1,
+        audienceSegment: "ALL",
+        periodDate: new Date("2026-09-15T00:00:00.000Z"),
+        metricType: "CATALOG"
+      }),
+    /did not pass the confirmed-bag-name gate/,
+    "normalizeRednapeProduct must refuse to emit a non-bag product as BAG even if a caller forgets to gate first."
+  );
+
+  // Full 17-non-bag-name regression, from the same live enumeration - none may ever pass the gate.
+  const confirmedNonBagNames = [
+    "코린 멀티 스트라이프 비니 (3C)",
+    "썬키스트 더블자수 캡 (2C)",
+    "피그먼트 타코 워싱 캡 (2C)",
+    "보니 스퀘어 토 블로퍼",
+    "빈티지 더블 스터드 벨트 (2C)",
+    "카우 포니 더블 롱 벨트",
+    "블렌디드 스트라이프 울 머플러 (5C)",
+    "제린 스트라이프 울 머플러 (5C)",
+    "웨그 스냅 로프 캡 (4C)",
+    "폴란드 니트 터치 장갑 (4C)",
+    "킬러 버거 캡 (2C)",
+    "강추! 캔디 소프트 스트라이프 머플러 (5C)",
+    "플러피 모던 울 머플러 (5C)",
+    "빈티지 더블 아일렛 벨트",
+    "버클 아일렛 펑크 벨트",
+    "빈티지 웨스턴 스퀘어 벨트",
+    loafer
+  ];
+  for (const name of confirmedNonBagNames) {
+    assert.equal(isConfirmedBagProduct(name), false, `"${name}" must not pass the confirmed-bag gate.`);
+  }
+  assert.equal(confirmedNonBagNames.length, 17, "Regression fixture must cover all 17 confirmed non-bag names from the audit.");
 }
 
 async function verifyEndBestsellerCollectorHelpers() {
