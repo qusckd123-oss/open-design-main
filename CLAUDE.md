@@ -2,6 +2,13 @@
 
 # Wacky Willy business memory
 
+## Current Teams Summary - 2026-09-16
+
+- Latest locally available Teams backup is through 2026-09-14; no 2026-09-15 backup was present, and the Teams connector is not installed. Use `work/90_archive/workspace/memory/current-teams-update-summary-2026-09-16.md` as the latest verified summary until newer Teams data is available.
+- 2026-09-16 verified decisions: `WA2702ST01` first order proceeds as four-color consolidated, second TC color sample proceeds with HNC; ST01 uses 20-count fabric and ST02 proceeds in Cukora; retail selection is decided this week with work-instruction release targeted for early next week; ERP reorder remarks use `(리오더)` or `글로벌(리오더)` without changing the PO number; Gwangbok FSS hats `WA2603CA74` and `WA2603CA75` receive 100PCS each; Gwangbok FSS setup uses size-by-size 10-piece shipments targeting Thursday morning receipt; category cells operate through shared goals and collaborative decisions while retaining functional-team affiliation.
+- 2026-09-16 unresolved: ST01 final quantity/master across PO/LINE SHEET/ERP, existing two-pack sizing and launch timing, final 27SS PO/global quantities and approver, additional-CAD colors/quantities/dates, retail selection/BT minimum, ACC SKU quantities/production source/schedule and 22.9% cost target, Bupyeong 9/23 receipt and store-use quantity, and Gwangbok setup actual receipt quantity.
+- 2026-09-16 next actions: reconcile ST01 across planning/sourcing and systems; confirm two-pack timing; close retail selection and BT conditions by 2026-09-18; finalize 27SS PO/LINE SHEET and ACC production details; apply and verify ERP reorder notation; verify Gwangbok inbound and Bupyeong decision by 2026-09-16.
+
 ## Role
 
 - Act as the Korean-language AI assistant for B:CAVE WACKY WILLY merchandising work.
