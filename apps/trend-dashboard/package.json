@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev -p 3001",
-    "build": "prisma generate && pnpm db:generate:sqlite-export && next build",
+    "build": "prisma generate && pnpm db:generate:sqlite-export && next build && tsx scripts/copy-standalone-assets.ts",
     "start": "node .next/standalone/apps/trend-dashboard/server.js",
     "typecheck": "tsc -b --noEmit",
     "db:generate": "prisma generate",
