@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import * as XLSX from "xlsx";
 import { assortmentCollectorSources, createMarketCollector, verifiedRankingCollectorSources } from "../src/collectors/market/index";
 import { handleCollectionResult, runOneCollection } from "../scripts/collect-market";
@@ -40,6 +43,35 @@ import { suggestColumnMapping } from "../src/config/import-mapping";
 import { prisma } from "../src/db/client";
 import { businessDayKey, businessDayStart } from "../src/lib/business-time";
 import { countBy, countNdjsonLines, sha256Hex, stableStringify, timestampSlug, validateNdjson } from "../scripts/export-sqlite-snapshot";
+import {
+  checkVerificationUrlPolicy,
+  convertRowDateTimeFields,
+  CREATE_MANY_BATCH_SIZE,
+  DATE_TIME_FIELDS_BY_MODEL,
+  evaluateEmptyTargetGuard,
+  IMPORT_ORDER,
+  importModel,
+  PARENT_OF_MODEL,
+  prepareRowForWrite,
+  sanitizeErrorMessage,
+  validateManifestShape,
+  validateSnapshotIntegrity,
+  verifyNdjsonFileIntegrity,
+  type ExportRow,
+  type ManifestModelEntry,
+  type SnapshotManifest
+} from "../scripts/import-postgres-snapshot";
+import {
+  canonicalFieldValue,
+  checkMarketRankingSnapshotDataModeCounts,
+  checkRednapeAnchors,
+  checkRelationIntegrity,
+  compareAggregate,
+  compareIdSets,
+  compareRowFields,
+  computeModelFingerprint,
+  RELATION_FK_FIELD
+} from "../scripts/reconcile-postgres-snapshot";
 import { combinedTrendSignal, percentChange, targetAgeSignal } from "../src/lib/search-trend-signals";
 import { classifyTrend, rankChange } from "../src/lib/trend-signals";
 import { applyMarketPresenceStatuses, classifyAssortmentItemSignal, classifyItemSignal, classifyMarketSignal, classifySalesSignal, getBusinessDashboardData, getItemTrendRows, getMarketRows, getSourceFreshness, rankChangeByDays, signalConfidence, toMarketRow } from "../src/services/business-analytics-service";
@@ -87,6 +119,8 @@ async function main() {
   await verifyMarketCollectionPartialPersistence();
   await verifyBusinessTimeHardening();
   verifyExportSnapshotHelpers();
+  await verifyImportPostgresSnapshotHelpers();
+  verifyReconcilePostgresSnapshotHelpers();
   verifyBusinessSignals();
 
   const dashboard = await getBusinessDashboardData();
@@ -2818,6 +2852,526 @@ function verifyExportSnapshotHelpers() {
   const slug = timestampSlug(new Date("2026-09-15T05:49:18.610Z"));
   assert.equal(slug, "2026-09-15T05-49-18-610Z");
   assert.equal(slug.includes(":"), false, "Export directory names must never contain ':' - not a valid Windows path character.");
+}
+
+/**
+ * Builds a minimal, internally-consistent fixture snapshot directory (all 16
+ * expected models present; Product has one real row exercising DateTime
+ * round-trip, every other model is a correctly-hashed empty file) - the
+ * baseline every "detect one specific corruption" test below mutates by
+ * exactly one dimension, so each test isolates exactly the failure mode it
+ * claims to test.
+ */
+function buildValidFixtureManifestAndFiles(dir: string): { manifest: SnapshotManifest } {
+  const rowsByModel: Record<string, ExportRow[]> = Object.fromEntries(IMPORT_ORDER.map((name) => [name, [] as ExportRow[]]));
+  rowsByModel.Product = [
+    {
+      id: "fixture-product-1",
+      externalId: "fixture-ext-1",
+      source: "musinsa",
+      brand: "FIXTURE",
+      name: "Fixture Product",
+      url: "https://example.com/fixture-1",
+      imageUrl: null,
+      category: "상의",
+      gender: null,
+      color: null,
+      isNew: false,
+      createdAt: "2026-09-14T15:00:00.000Z",
+      updatedAt: "2026-09-14T15:00:00.000Z"
+    }
+  ];
+
+  const modelEntries: ManifestModelEntry[] = [];
+  let totalRows = 0;
+  for (const name of IMPORT_ORDER) {
+    const rows = rowsByModel[name] ?? [];
+    const lines = rows.map((row) => stableStringify(row));
+    const content = lines.length > 0 ? `${lines.join("\n")}\n` : "";
+    const fileName = `${name}.ndjson`;
+    writeFileSync(join(dir, fileName), content, "utf8");
+    modelEntries.push({ name, rowCount: rows.length, fileName, sha256: sha256Hex(content), bytes: Buffer.byteLength(content, "utf8") });
+    totalRows += rows.length;
+  }
+
+  const manifest: SnapshotManifest = {
+    formatVersion: 1,
+    modelCount: IMPORT_ORDER.length,
+    expectedModelCount: IMPORT_ORDER.length,
+    models: modelEntries,
+    totalRows
+  };
+  writeFileSync(join(dir, "manifest.json"), JSON.stringify(manifest), "utf8");
+  return { manifest };
+}
+
+/**
+ * Pure/fixture coverage for scripts/import-postgres-snapshot.ts - no Neon
+ * connection, no SQLite access, no live importer run anywhere in this
+ * function (matching this project's standing preference for unit/fixture
+ * tests over live runs). Filesystem fixtures live under a fresh os.tmpdir()
+ * subdirectory per test and are removed immediately after use - never
+ * touching backups/ or any committed path.
+ */
+async function verifyImportPostgresSnapshotHelpers() {
+  // ---- IMPORT_ORDER / PARENT_OF_MODEL: dependency-order proof (Section D) ----
+  assert.equal(IMPORT_ORDER.length, 16, "IMPORT_ORDER must cover exactly all 16 models.");
+  assert.deepEqual([...IMPORT_ORDER].sort(), [...new Set(IMPORT_ORDER)].sort(), "IMPORT_ORDER must not contain duplicate model names.");
+  const positionOf = new Map(IMPORT_ORDER.map((name, index) => [name, index]));
+  for (const [child, parent] of Object.entries(PARENT_OF_MODEL)) {
+    if (parent === null) continue;
+    assert.ok(
+      positionOf.get(parent)! < positionOf.get(child)!,
+      `${parent} (parent) must be imported strictly before ${child} (its @relation() dependent) - got positions ${positionOf.get(parent)} vs ${positionOf.get(child)}.`
+    );
+  }
+  assert.deepEqual([...IMPORT_ORDER].sort(), Object.keys(DATE_TIME_FIELDS_BY_MODEL).sort(), "Every model in IMPORT_ORDER must have a registered DateTime field list, even if empty - no model may import with unmapped DateTime fields.");
+  assert.ok(CREATE_MANY_BATCH_SIZE > 0 && CREATE_MANY_BATCH_SIZE * 20 < 65535, "CREATE_MANY_BATCH_SIZE must stay comfortably under Postgres's 65535-parameter limit even for this schema's widest model (~20 columns).");
+
+  // ---- convertRowDateTimeFields / prepareRowForWrite (Section C/H, pure) ----
+  const converted = convertRowDateTimeFields("Product", {
+    id: "abc123",
+    createdAt: "2026-09-14T15:00:00.000Z",
+    updatedAt: "2026-09-14T15:00:00.000Z",
+    brand: "X",
+    isNew: true,
+    imageUrl: null
+  });
+  assert.ok(converted.createdAt instanceof Date, "A declared DateTime field must become a real Date instance.");
+  assert.equal((converted.createdAt as Date).toISOString(), "2026-09-14T15:00:00.000Z", "The converted Date must preserve the exact millisecond instant via toISOString().");
+  assert.equal((converted.createdAt as Date).getTime(), Date.parse("2026-09-14T15:00:00.000Z"), "The converted Date's getTime() must match the source instant exactly.");
+  assert.equal(converted.id, "abc123", "Explicit id must be preserved byte-for-byte.");
+  assert.equal(converted.brand, "X", "Non-DateTime string fields must pass through completely untouched.");
+  assert.equal(converted.isNew, true, "Boolean fields must pass through completely untouched.");
+  assert.equal(converted.imageUrl, null, "An explicit null on a non-DateTime field must be preserved exactly.");
+  const rawRowForPrepareCheck: ExportRow = { id: "z", createdAt: "2026-09-14T15:00:00.000Z", updatedAt: "2026-09-14T15:00:00.000Z" };
+  assert.deepEqual(
+    prepareRowForWrite("Product", rawRowForPrepareCheck),
+    convertRowDateTimeFields("Product", rawRowForPrepareCheck),
+    "prepareRowForWrite must apply exactly the same (and only the same) transformation as convertRowDateTimeFields."
+  );
+
+  // Nullable DateTime field: null must remain null, never become new Date(null) (the epoch instant).
+  const nullablePublishedAt = convertRowDateTimeFields("EditorialPost", {
+    id: "p1",
+    publishedAt: null,
+    collectedAt: "2026-09-14T15:00:00.000Z",
+    createdAt: "2026-09-14T15:00:00.000Z",
+    updatedAt: "2026-09-14T15:00:00.000Z"
+  });
+  assert.equal(nullablePublishedAt.publishedAt, null, "A nullable DateTime field with a null source value must remain null, never become an epoch Date.");
+
+  // Required (non-nullable) DateTime field must reject an unexpected null.
+  assert.throws(
+    () => convertRowDateTimeFields("Product", { id: "p2", createdAt: null, updatedAt: "2026-09-14T15:00:00.000Z" }),
+    /is null but is not a nullable DateTime field/,
+    "A null value in a REQUIRED DateTime field must be rejected, not silently imported."
+  );
+
+  // A timestamp that does not round-trip exactly through Date must be rejected.
+  assert.throws(
+    () => convertRowDateTimeFields("Product", { id: "p3", createdAt: "2026-09-14 15:00:00", updatedAt: "2026-09-14T15:00:00.000Z" }),
+    /did not round-trip exactly/,
+    "A malformed/non-canonical timestamp must be rejected rather than silently imported."
+  );
+
+  // An unregistered model name must refuse to run blind rather than skip DateTime conversion silently.
+  assert.throws(() => convertRowDateTimeFields("NotARealModel", { id: "x" }), /No DateTime field mapping registered/);
+
+  // Section I: a dangling importRunId (no @relation()/FK on this field at
+  // all) must be preserved exactly - this function has zero relation
+  // awareness, so it structurally cannot "fix" it.
+  const marketSnapshotRow = convertRowDateTimeFields("MarketRankingSnapshot", {
+    id: "mrs1",
+    marketProductId: "mp1",
+    source: "REDNAPE",
+    periodDate: "2026-09-14T15:00:00.000Z",
+    importRunId: "does-not-correspond-to-any-importrun-row",
+    createdAt: "2026-09-14T15:00:00.000Z"
+  });
+  assert.equal(marketSnapshotRow.importRunId, "does-not-correspond-to-any-importrun-row", "A dangling importRunId string must be preserved exactly, never nulled, validated, or reconciled.");
+
+  // ---- checkVerificationUrlPolicy (Section A guards 1-3, pure) ----
+  assert.deepEqual(checkVerificationUrlPolicy(undefined, "file:./dev.db"), {
+    set: false,
+    protocolValid: false,
+    differsFromDatabaseUrl: true,
+    errors: ["POSTGRES_VERIFICATION_URL is not set."]
+  });
+  assert.equal(checkVerificationUrlPolicy("mysql://user:pass@host/db", "file:./dev.db").protocolValid, false, "A non-postgres protocol must be rejected.");
+  assert.equal(checkVerificationUrlPolicy("file:./dev.db", "file:./dev.db").differsFromDatabaseUrl, false, "POSTGRES_VERIFICATION_URL equal to DATABASE_URL must be rejected.");
+  assert.deepEqual(
+    checkVerificationUrlPolicy("postgresql://user:pass@ep-example.neon.tech/neondb?sslmode=require", "file:./dev.db"),
+    { set: true, protocolValid: true, differsFromDatabaseUrl: true, errors: [] },
+    "A valid, distinct postgresql:// URL must pass all three checks cleanly."
+  );
+  assert.equal(checkVerificationUrlPolicy("postgres://user:pass@host/db", "file:./dev.db").protocolValid, true, "The postgres:// scheme (not only postgresql://) must also be accepted.");
+
+  // ---- evaluateEmptyTargetGuard (Section A guards 4-5, pure) ----
+  const allEmptyCounts = Object.fromEntries(IMPORT_ORDER.map((m) => [m, 0]));
+  assert.equal(evaluateEmptyTargetGuard(IMPORT_ORDER, allEmptyCounts).ok, true, "All 16 tables present and empty must pass the guard.");
+  const missingTableGuard = evaluateEmptyTargetGuard(IMPORT_ORDER.filter((m) => m !== "ImportError"), {});
+  assert.equal(missingTableGuard.ok, false, "A missing target table must fail the guard.");
+  assert.deepEqual(missingTableGuard.missingTables, ["ImportError"]);
+  const nonEmptyGuard = evaluateEmptyTargetGuard(IMPORT_ORDER, { ...allEmptyCounts, Product: 5 });
+  assert.equal(nonEmptyGuard.ok, false, "A single non-empty target table must fail the whole guard, never partially proceed.");
+  assert.deepEqual(nonEmptyGuard.nonEmptyTables, ["Product"]);
+
+  // ---- validateManifestShape (pure, no fs) ----
+  const wellFormedModels: ManifestModelEntry[] = IMPORT_ORDER.map((name) => ({ name, rowCount: 0, fileName: `${name}.ndjson`, sha256: sha256Hex(""), bytes: 0 }));
+  assert.equal(validateManifestShape({ formatVersion: 1, modelCount: 16, expectedModelCount: 16, totalRows: 0, models: wellFormedModels }).ok, true, "A well-formed manifest declaring all 16 expected models must validate.");
+  const badVersionShape = validateManifestShape({ formatVersion: 999 });
+  assert.equal(badVersionShape.ok, false);
+  assert.ok(badVersionShape.errors[0]?.includes("Unsupported manifest formatVersion"), "An unsupported formatVersion must be reported and short-circuit further shape checks.");
+  const missingModelShape = validateManifestShape({
+    formatVersion: 1,
+    modelCount: 15,
+    totalRows: 0,
+    models: wellFormedModels.filter((m) => m.name !== "ImportError")
+  });
+  assert.equal(missingModelShape.ok, false);
+  assert.ok(missingModelShape.errors.some((e) => e.includes('missing an entry for expected model "ImportError"')), "A manifest missing one of the 16 expected models must be detected.");
+  const unknownModelShape = validateManifestShape({
+    formatVersion: 1,
+    modelCount: 17,
+    totalRows: 0,
+    models: [...wellFormedModels, { name: "NotARealModel", rowCount: 0, fileName: "NotARealModel.ndjson", sha256: sha256Hex(""), bytes: 0 }]
+  });
+  assert.equal(unknownModelShape.ok, false);
+  assert.ok(unknownModelShape.errors.some((e) => e.includes('unknown model "NotARealModel"')), "A manifest entry for an unrecognized model name must be detected as unsupported.");
+
+  // ---- verifyNdjsonFileIntegrity (pure, no fs) ----
+  assert.equal(verifyNdjsonFileIntegrity("Product", '{"a":1}\n', { sha256: sha256Hex('{"a":1}\n'), rowCount: 1 }).ok, true);
+  const shaMismatch = verifyNdjsonFileIntegrity("Product", '{"a":1}\n', { sha256: "0".repeat(64), rowCount: 1 });
+  assert.equal(shaMismatch.ok, false);
+  assert.ok(shaMismatch.errors[0]?.includes("SHA-256 mismatch"), "A SHA-256 mismatch must be detected and named as such.");
+  const lineCountMismatch = verifyNdjsonFileIntegrity("Product", '{"a":1}\n{"b":2}\n', { sha256: sha256Hex('{"a":1}\n{"b":2}\n'), rowCount: 5 });
+  assert.equal(lineCountMismatch.ok, false);
+  assert.ok(lineCountMismatch.errors[0]?.includes("line-count mismatch"), "A line-count mismatch must be detected and named as such.");
+
+  // ---- validateSnapshotIntegrity: fixture-backed, real filesystem I/O against a fresh os.tmpdir() directory only ----
+  const validDir = mkdtempSync(join(tmpdir(), "pg-import-fixture-valid-"));
+  try {
+    buildValidFixtureManifestAndFiles(validDir);
+    const validResult = await validateSnapshotIntegrity(validDir);
+    assert.equal(validResult.ok, true, `A correctly self-consistent fixture snapshot must validate cleanly. Errors: ${JSON.stringify(validResult.errors)}`);
+    assert.equal(validResult.manifest?.totalRows, 1);
+    assert.equal(validResult.rowsByModel.get("Product")?.length, 1);
+    assert.equal(validResult.rowsByModel.get("Product")?.[0]?.id, "fixture-product-1", "Parsed rows must retain their explicit id exactly.");
+  } finally {
+    rmSync(validDir, { recursive: true, force: true });
+  }
+
+  const shaDir = mkdtempSync(join(tmpdir(), "pg-import-fixture-sha-"));
+  try {
+    buildValidFixtureManifestAndFiles(shaDir);
+    writeFileSync(join(shaDir, "Product.ndjson"), '{"id":"tampered-after-manifest-was-written"}\n', "utf8");
+    const shaResult = await validateSnapshotIntegrity(shaDir);
+    assert.equal(shaResult.ok, false, "A file tampered with after its manifest hash was recorded must fail validation.");
+    assert.ok(shaResult.errors.some((e) => e.includes("SHA-256 mismatch")), "The failure must specifically name a SHA-256 mismatch.");
+  } finally {
+    rmSync(shaDir, { recursive: true, force: true });
+  }
+
+  const lineDir = mkdtempSync(join(tmpdir(), "pg-import-fixture-linecount-"));
+  try {
+    buildValidFixtureManifestAndFiles(lineDir);
+    writeFileSync(join(lineDir, "Product.ndjson"), '{"id":"a"}\n{"id":"b"}\n', "utf8");
+    const lineResult = await validateSnapshotIntegrity(lineDir);
+    assert.equal(lineResult.ok, false, "A file whose actual line count disagrees with the manifest must fail validation.");
+    assert.ok(lineResult.errors.some((e) => e.includes("line-count mismatch")), "The failure must specifically name a line-count mismatch.");
+  } finally {
+    rmSync(lineDir, { recursive: true, force: true });
+  }
+
+  const missingFileDir = mkdtempSync(join(tmpdir(), "pg-import-fixture-missingfile-"));
+  try {
+    buildValidFixtureManifestAndFiles(missingFileDir);
+    rmSync(join(missingFileDir, "ImportError.ndjson"));
+    const missingFileResult = await validateSnapshotIntegrity(missingFileDir);
+    assert.equal(missingFileResult.ok, false, "A manifest-referenced NDJSON file that does not actually exist on disk must fail validation.");
+    assert.ok(missingFileResult.errors.some((e) => e.includes("does not exist")), "The failure must specifically name the missing file.");
+  } finally {
+    rmSync(missingFileDir, { recursive: true, force: true });
+  }
+
+  const versionDir = mkdtempSync(join(tmpdir(), "pg-import-fixture-version-"));
+  try {
+    const { manifest } = buildValidFixtureManifestAndFiles(versionDir);
+    writeFileSync(join(versionDir, "manifest.json"), JSON.stringify({ ...manifest, formatVersion: 2 }), "utf8");
+    const versionResult = await validateSnapshotIntegrity(versionDir);
+    assert.equal(versionResult.ok, false, "An unsupported manifest formatVersion must fail validation immediately.");
+    assert.ok(versionResult.errors.some((e) => e.includes("Unsupported manifest formatVersion")), "The failure must specifically name the unsupported formatVersion.");
+  } finally {
+    rmSync(versionDir, { recursive: true, force: true });
+  }
+
+  const malformedDir = mkdtempSync(join(tmpdir(), "pg-import-fixture-malformed-"));
+  try {
+    const { manifest: baseManifest } = buildValidFixtureManifestAndFiles(malformedDir);
+    const malformedContent = "not valid json\n";
+    writeFileSync(join(malformedDir, "Product.ndjson"), malformedContent, "utf8");
+    // Recompute sha256/rowCount to MATCH the malformed content exactly, so
+    // this test isolates ONLY JSON-parse-validity failure - not a sha/line-
+    // count mismatch, which would otherwise mask what is actually being tested.
+    const patchedManifest: SnapshotManifest = {
+      ...baseManifest,
+      models: baseManifest.models.map((m) => (m.name === "Product" ? { ...m, sha256: sha256Hex(malformedContent), rowCount: 1, bytes: Buffer.byteLength(malformedContent, "utf8") } : m))
+    };
+    writeFileSync(join(malformedDir, "manifest.json"), JSON.stringify(patchedManifest), "utf8");
+    const malformedResult = await validateSnapshotIntegrity(malformedDir);
+    assert.equal(malformedResult.ok, false, "A line that fails JSON.parse must fail validation even when sha256/line-count both match.");
+    assert.ok(malformedResult.errors.some((e) => e.includes("NDJSON parse failure")), "The failure must specifically name the parse failure.");
+  } finally {
+    rmSync(malformedDir, { recursive: true, force: true });
+  }
+
+  // ---- sanitizeErrorMessage (pure) ----
+  assert.equal(
+    sanitizeErrorMessage("connection to postgresql://user:secret@ep-example.neon.tech/neondb?sslmode=require failed"),
+    "connection to postgres[ql]://[REDACTED] failed",
+    "Any embedded postgres(ql):// connection-string-shaped substring must be redacted before an error message is ever surfaced."
+  );
+  assert.equal(sanitizeErrorMessage("unique constraint violation on Product.externalId"), "unique constraint violation on Product.externalId", "A message with no embedded connection string must pass through unchanged.");
+
+  // ---- importModel: a failed createMany() batch must trigger ZERO further
+  // write calls of any kind - this is the exact regression the removal of
+  // the automatic per-row create() diagnostic replay guards against. Uses a
+  // fake client/delegate (no real DB, no Neon, no SQLite) that instruments
+  // every call so any unexpected write attempt fails the test immediately. ----
+  {
+    let createManyCalls = 0;
+    let createCalls = 0;
+    let countCalls = 0;
+    const fakeDelegate = {
+      createMany: async () => {
+        createManyCalls += 1;
+        throw new Error("simulated unique constraint violation");
+      },
+      create: async () => {
+        createCalls += 1;
+        throw new Error("create() must never be called by importModel after a createMany failure - this fake exists specifically to fail the test if it is.");
+      },
+      count: async () => {
+        countCalls += 1;
+        return 0; // read-only; simulates an empty table after Postgres rolled back the failed multi-row INSERT
+      }
+    };
+    const fakeClient = { product: fakeDelegate } as unknown as Parameters<typeof importModel>[0];
+    const rows: ExportRow[] = [{ id: "row-1" }, { id: "row-2" }];
+    const outcome = await importModel(fakeClient, "Product", rows);
+
+    assert.equal(outcome.status, "FAIL", "A failed createMany must produce a FAIL outcome.");
+    assert.equal(createManyCalls, 1, "createMany must be attempted exactly once for a single-batch import.");
+    assert.equal(createCalls, 0, "create() (the removed per-row diagnostic replay) must NEVER be called after a createMany failure.");
+    assert.equal(countCalls, 1, "Exactly one read-only count() call is expected for failure reporting - a read, never a write.");
+    assert.equal(outcome.failureDetail?.batchNumber, 1);
+    assert.equal(outcome.failureDetail?.sourceRowRangeStart, 1);
+    assert.equal(outcome.failureDetail?.sourceRowRangeEnd, 2);
+    assert.equal(outcome.failureDetail?.firstSourceId, "row-1", "The failure report must identify the first source id in the failed batch.");
+    assert.equal(outcome.failureDetail?.lastSourceId, "row-2", "The failure report must identify the last source id in the failed batch.");
+    assert.ok(outcome.failureDetail?.message.includes("simulated unique constraint violation"), "The original (sanitized) error message must be included in the report.");
+  }
+
+  // ---- importModel: a LATER batch's failure (after an earlier batch
+  // already succeeded) must also trigger zero create() calls - proving the
+  // guarantee holds regardless of which batch fails, not just the first. ----
+  {
+    let createManyCalls = 0;
+    let createCalls = 0;
+    const fakeDelegate = {
+      createMany: async () => {
+        createManyCalls += 1;
+        if (createManyCalls === 2) throw new Error("simulated batch 2 failure");
+      },
+      create: async () => {
+        createCalls += 1;
+        throw new Error("create() must never be called - no per-row fallback exists anywhere in importModel.");
+      },
+      count: async () => CREATE_MANY_BATCH_SIZE // read-only; simulates the first batch's rows having landed
+    };
+    const fakeClient = { product: fakeDelegate } as unknown as Parameters<typeof importModel>[0];
+    const manyRows: ExportRow[] = Array.from({ length: CREATE_MANY_BATCH_SIZE + 1 }, (_, i) => ({ id: `row-${i + 1}` }));
+    const outcome = await importModel(fakeClient, "Product", manyRows);
+
+    assert.equal(outcome.status, "FAIL");
+    assert.equal(createManyCalls, 2, "The second batch's createMany must be attempted after the first batch succeeded.");
+    assert.equal(createCalls, 0, "create() must never be called even after a LATER batch's failure.");
+    assert.equal(outcome.failureDetail?.batchNumber, 2);
+    assert.equal(outcome.failureDetail?.sourceRowRangeStart, CREATE_MANY_BATCH_SIZE + 1);
+    assert.equal(outcome.failureDetail?.sourceRowRangeEnd, CREATE_MANY_BATCH_SIZE + 1);
+  }
+
+  // ---- importModel: success path (no failure) must still call createMany
+  // exactly once per batch and never call create() at all. ----
+  {
+    let createManyCalls = 0;
+    let createCalls = 0;
+    const fakeDelegate = {
+      createMany: async () => {
+        createManyCalls += 1;
+      },
+      create: async () => {
+        createCalls += 1;
+        throw new Error("create() must never be called on the success path either.");
+      },
+      count: async () => 2
+    };
+    const fakeClient = { product: fakeDelegate } as unknown as Parameters<typeof importModel>[0];
+    const outcome = await importModel(fakeClient, "Product", [{ id: "a" }, { id: "b" }]);
+
+    assert.equal(outcome.status, "PASS");
+    assert.equal(outcome.importedRowCount, 2);
+    assert.equal(createManyCalls, 1);
+    assert.equal(createCalls, 0, "create() must never be called on the success path.");
+  }
+}
+
+/**
+ * Pure/fixture coverage for scripts/reconcile-postgres-snapshot.ts - no Neon
+ * connection, no SQLite access, no live reconciliation run. Every case below
+ * uses hand-built ExportRow fixtures only.
+ */
+function verifyReconcilePostgresSnapshotHelpers() {
+  // ---- deterministic normalization (canonicalFieldValue) ----
+  assert.equal(canonicalFieldValue("Product", "createdAt", "2026-09-14T15:00:00.000Z"), "2026-09-14T15:00:00.000Z", "An already-canonical ISO string must normalize to itself.");
+  assert.equal(canonicalFieldValue("Product", "createdAt", new Date("2026-09-14T15:00:00.000Z")), "2026-09-14T15:00:00.000Z", "A Date instance must normalize to the same canonical ISO string as the equivalent ISO source string.");
+  assert.equal(canonicalFieldValue("Product", "brand", "FIXTURE"), "FIXTURE", "A non-DateTime field must pass through untouched.");
+  assert.equal(canonicalFieldValue("Product", "brand", undefined), undefined, "A field entirely absent from a row must normalize to undefined, not crash or become null.");
+  assert.throws(() => canonicalFieldValue("Product", "createdAt", "not-a-date"), /unparseable DateTime string/, "An unparseable DateTime string must be rejected, never silently normalized.");
+
+  // ---- null preservation ----
+  assert.equal(canonicalFieldValue("EditorialPost", "publishedAt", null), null, "A null DateTime field must normalize to null, never new Date(null)'s epoch instant.");
+  assert.equal(canonicalFieldValue("Product", "imageUrl", null), null, "A null non-DateTime field must normalize to null unchanged.");
+
+  // ---- DateTime equality via compareRowFields: Date instance (Neon) vs ISO string (snapshot) representing the SAME instant must NOT be reported as a mismatch ----
+  const baseProductSource: ExportRow = { id: "p1", brand: "X", createdAt: "2026-09-14T15:00:00.000Z", updatedAt: "2026-09-14T15:00:00.000Z", isNew: true, imageUrl: null };
+  const sameInstantTarget: ExportRow = { id: "p1", brand: "X", createdAt: new Date("2026-09-14T15:00:00.000Z"), updatedAt: new Date("2026-09-14T15:00:00.000Z"), isNew: true, imageUrl: null };
+  assert.deepEqual(compareRowFields("Product", "p1", baseProductSource, sameInstantTarget), [], "A Date instance and an ISO string for the identical instant must compare as equal, never a false-positive DateTime mismatch.");
+
+  // A DateTime field off by one millisecond MUST be reported as a mismatch (DateTime equality is exact-instant, not date-only).
+  const offByOneMsTarget: ExportRow = { ...sameInstantTarget, createdAt: new Date("2026-09-14T15:00:00.001Z") };
+  const offByOneMsMismatches = compareRowFields("Product", "p1", baseProductSource, offByOneMsTarget);
+  assert.equal(offByOneMsMismatches.length, 1);
+  assert.equal(offByOneMsMismatches[0]?.field, "createdAt");
+  assert.equal(offByOneMsMismatches[0]?.isDateTimeField, true, "A DateTime-field mismatch must be flagged as such (drives the separate DateTime-equality PASS/FAIL line).");
+
+  // ---- field mismatch detection (non-DateTime field) ----
+  const wrongBrandTarget: ExportRow = { ...sameInstantTarget, brand: "DIFFERENT" };
+  const brandMismatches = compareRowFields("Product", "p1", baseProductSource, wrongBrandTarget);
+  assert.equal(brandMismatches.length, 1);
+  assert.deepEqual(
+    { field: brandMismatches[0]?.field, sourceValue: brandMismatches[0]?.sourceValue, targetValue: brandMismatches[0]?.targetValue, isDateTimeField: brandMismatches[0]?.isDateTimeField },
+    { field: "brand", sourceValue: "X", targetValue: "DIFFERENT", isDateTimeField: false },
+    "A plain scalar-field mismatch must report source/target values and isDateTimeField=false."
+  );
+
+  // A null vs a non-null value on either side must be reported as a mismatch (never treated as "close enough").
+  const nullVsValueMismatches = compareRowFields("Product", "p1", baseProductSource, { ...sameInstantTarget, imageUrl: "https://example.com/x.jpg" });
+  assert.equal(nullVsValueMismatches.length, 1);
+  assert.equal(nullVsValueMismatches[0]?.field, "imageUrl");
+
+  // A field present on only one side must be reported as a mismatch (against `undefined`), never silently ignored.
+  const missingFieldMismatches = compareRowFields("Product", "p1", { ...baseProductSource, extraSourceOnlyField: "present" }, sameInstantTarget);
+  assert.equal(missingFieldMismatches.length, 1);
+  assert.equal(missingFieldMismatches[0]?.field, "extraSourceOnlyField");
+  assert.equal(missingFieldMismatches[0]?.targetValue, undefined);
+
+  // ---- ID-set mismatch detection ----
+  const idSetMatch = compareIdSets(new Set(["a", "b", "c"]), new Set(["a", "b", "c"]));
+  assert.deepEqual(idSetMatch, { ok: true, missingInTarget: [], extraInTarget: [] });
+  const idSetMismatch = compareIdSets(new Set(["a", "b", "c"]), new Set(["a", "c", "d"]));
+  assert.equal(idSetMismatch.ok, false);
+  assert.deepEqual(idSetMismatch.missingInTarget, ["b"], "An id present in the snapshot but absent from Neon must be reported as missingInTarget.");
+  assert.deepEqual(idSetMismatch.extraInTarget, ["d"], "An id present in Neon but absent from the snapshot must be reported as extraInTarget.");
+
+  // ---- fingerprint equality: logically-identical rows must fingerprint identically even when DateTime representation differs (ISO string vs Date instance) ----
+  const fingerprintSourceRows: ExportRow[] = [
+    { id: "b", brand: "B", createdAt: "2026-09-14T15:00:00.000Z" },
+    { id: "a", brand: "A", createdAt: "2026-09-14T14:00:00.000Z" }
+  ];
+  const fingerprintTargetRowsSameData: ExportRow[] = [
+    { id: "a", brand: "A", createdAt: new Date("2026-09-14T14:00:00.000Z") },
+    { id: "b", brand: "B", createdAt: new Date("2026-09-14T15:00:00.000Z") }
+  ];
+  const sourceFingerprint = computeModelFingerprint("Product", fingerprintSourceRows);
+  const targetFingerprintSameData = computeModelFingerprint("Product", fingerprintTargetRowsSameData);
+  assert.equal(sourceFingerprint, targetFingerprintSameData, "Fingerprints must match for logically identical data regardless of row order or DateTime representation (string vs Date), since both are sorted by id and DateTime-normalized before hashing.");
+  assert.equal(sourceFingerprint.length, 64, "A SHA-256 hex digest must be 64 characters.");
+  assert.equal(computeModelFingerprint("Product", []), computeModelFingerprint("Product", []), "Fingerprint of an empty row set must be deterministic.");
+
+  // ---- fingerprint mismatch: a single differing field value must change the fingerprint ----
+  const fingerprintTargetRowsDifferentData: ExportRow[] = [
+    { id: "a", brand: "A", createdAt: new Date("2026-09-14T14:00:00.000Z") },
+    { id: "b", brand: "DIFFERENT", createdAt: new Date("2026-09-14T15:00:00.000Z") }
+  ];
+  assert.notEqual(computeModelFingerprint("Product", fingerprintSourceRows), computeModelFingerprint("Product", fingerprintTargetRowsDifferentData), "A single differing field value anywhere in the table must change the whole-model fingerprint.");
+
+  // ---- dangling importRunId preservation: MarketRankingSnapshot HAS a declared relation to MarketProduct (via marketProductId), but its SEPARATE
+  // importRunId field has no @relation() at all and must never be treated as a relation to validate/repair. SalesSnapshot has no declared relation
+  // dependents in RELATION_FK_FIELD at all in this fixture set (its own importRunId field is likewise unconstrained). ----
+  assert.equal(RELATION_FK_FIELD.MarketRankingSnapshot, "marketProductId", "MarketRankingSnapshot's only declared relation is via marketProductId -> MarketProduct; its importRunId must never appear here.");
+  assert.equal(RELATION_FK_FIELD.SalesSnapshot, "productId", "SalesSnapshot's only declared relation is via productId -> InternalProduct; its importRunId must never appear here.");
+  const danglingSnapshotRow: ExportRow = { id: "mrs1", marketProductId: "mp1", source: "REDNAPE", importRunId: "does-not-correspond-to-any-importrun-row" };
+  // checkRelationIntegrity for MarketRankingSnapshot validates ONLY marketProductId - a valid marketProductId must pass even though importRunId is dangling.
+  const relationCheckIgnoresImportRunId = checkRelationIntegrity("MarketRankingSnapshot", [danglingSnapshotRow], new Set(["mp1"]));
+  assert.deepEqual(relationCheckIgnoresImportRunId, { ok: true, danglingIds: [] }, "checkRelationIntegrity must validate only the declared marketProductId relation and never inspect importRunId as if it were an FK.");
+  // A model genuinely absent from RELATION_FK_FIELD (no declared relation at all) must be a structural no-op.
+  assert.equal(RELATION_FK_FIELD.Product, undefined, "Product (a GROUP 1 independent parent) must have no entry in RELATION_FK_FIELD.");
+  const relationCheckForNonRelationModel = checkRelationIntegrity("Product", [{ id: "prod1" }], new Set());
+  assert.deepEqual(relationCheckForNonRelationModel, { ok: true, danglingIds: [] }, "checkRelationIntegrity must be a structural no-op (always ok) for a model with no declared relation at all.");
+  // The dangling importRunId value itself must still be preserved and compared exactly as an ordinary field via compareRowFields.
+  const danglingFieldMismatches = compareRowFields("MarketRankingSnapshot", "mrs1", danglingSnapshotRow, { ...danglingSnapshotRow, importRunId: "does-not-correspond-to-any-importrun-row" });
+  assert.deepEqual(danglingFieldMismatches, [], "An identical dangling importRunId string on both sides must compare as equal - reconciliation never nulls, repairs, or flags it as an orphan.");
+  const danglingFieldChanged = compareRowFields("MarketRankingSnapshot", "mrs1", danglingSnapshotRow, { ...danglingSnapshotRow, importRunId: "a-different-dangling-value" });
+  assert.equal(danglingFieldChanged.length, 1, "A CHANGED dangling importRunId value must still be reported as an ordinary field mismatch - preservation means exact comparison, not exemption from comparison.");
+
+  // ---- relation integrity for an actual declared relation: a real dangling FK must be detected ----
+  assert.equal(RELATION_FK_FIELD.RankingSnapshot, "productId");
+  const validParentIds = new Set(["prod-1", "prod-2"]);
+  const relationOk = checkRelationIntegrity("RankingSnapshot", [{ id: "rs1", productId: "prod-1" }, { id: "rs2", productId: "prod-2" }], validParentIds);
+  assert.deepEqual(relationOk, { ok: true, danglingIds: [] });
+  const relationDangling = checkRelationIntegrity("RankingSnapshot", [{ id: "rs1", productId: "prod-1" }, { id: "rs2", productId: "prod-missing" }], validParentIds);
+  assert.equal(relationDangling.ok, false);
+  assert.deepEqual(relationDangling.danglingIds, ["rs2"], "A RankingSnapshot row whose productId does not resolve to any known Product id must be reported as dangling.");
+
+  // ---- aggregate comparisons (bonus coverage: source/category-style dimension checks) ----
+  const aggSource: ExportRow[] = [{ id: "1", source: "END" }, { id: "2", source: "END" }, { id: "3", source: "STUSSY" }];
+  const aggTargetMatching: ExportRow[] = [{ id: "1", source: "END" }, { id: "2", source: "END" }, { id: "3", source: "STUSSY" }];
+  assert.equal(compareAggregate("test", aggSource, aggTargetMatching, (r) => String(r.source)).ok, true);
+  const aggTargetMismatch: ExportRow[] = [{ id: "1", source: "END" }, { id: "2", source: "STUSSY" }, { id: "3", source: "STUSSY" }];
+  const aggMismatchResult = compareAggregate("test", aggSource, aggTargetMismatch, (r) => String(r.source));
+  assert.equal(aggMismatchResult.ok, false);
+  assert.deepEqual(aggMismatchResult.diffKeys, ["END", "STUSSY"], "Both dimension keys whose counts differ between source and target must be reported.");
+
+  // ---- REDNAPE anchor fixture check ----
+  const rednapeMarketProduct: ExportRow[] = ["593", "586", "509", "440", "45"].map((externalProductId, i) => ({ id: `mp${i}`, source: "REDNAPE", externalProductId }));
+  const rednapeSnapshot: ExportRow[] = rednapeMarketProduct.map((mp, i) => ({
+    id: `mrs${i}`,
+    marketProductId: mp.id,
+    source: "REDNAPE",
+    periodDate: "2026-09-14T15:00:00.000Z",
+    rank: null,
+    rankingVerified: false,
+    rankingScope: "CATEGORY"
+  }));
+  const rednapeImportRun: ExportRow[] = [{ id: "run1", source: "REDNAPE" }];
+  const rednapeFixtureSides = { marketProduct: rednapeMarketProduct, marketRankingSnapshot: rednapeSnapshot, importRun: rednapeImportRun, importError: [] as ExportRow[] };
+  const rednapeMatchingReport = checkRednapeAnchors(rednapeFixtureSides, rednapeFixtureSides);
+  assert.equal(rednapeMatchingReport.ok, true, "A REDNAPE fixture matching every known baseline (5/5/1/0, exact external id set, exact periodDate/rank/flags) must pass in full.");
+
+  const rednapeBrokenTarget = { ...rednapeFixtureSides, marketRankingSnapshot: rednapeSnapshot.map((r, i) => (i === 0 ? { ...r, rank: 3 } : r)) };
+  const rednapeBrokenReport = checkRednapeAnchors(rednapeFixtureSides, rednapeBrokenTarget);
+  assert.equal(rednapeBrokenReport.ok, false, "A REDNAPE snapshot row with a non-null rank (violating the known rank=null baseline) must fail the anchor check.");
+  assert.equal(rednapeBrokenReport.periodDateAndFlags.ok, false);
+
+  // ---- MarketRankingSnapshot dataMode aggregate check ----
+  const dataModeRows: ExportRow[] = [...Array.from({ length: 672 }, () => ({ dataMode: "real" })), ...Array.from({ length: 2592 }, () => ({ dataMode: "sample" }))];
+  const dataModeReport = checkMarketRankingSnapshotDataModeCounts(dataModeRows, dataModeRows);
+  assert.deepEqual(dataModeReport.source, { real: 672, sample: 2592, total: 3264 });
+  assert.equal(dataModeReport.ok, true);
+  const dataModeReportBroken = checkMarketRankingSnapshotDataModeCounts(dataModeRows, [...dataModeRows, { dataMode: "sample" }]);
+  assert.equal(dataModeReportBroken.ok, false, "A target row count that no longer matches the known 672/2592/3264 baseline must fail this check.");
 }
 
 function verifyBusinessSignals() {
