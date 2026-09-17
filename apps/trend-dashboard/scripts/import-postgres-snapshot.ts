@@ -1,28 +1,64 @@
 /**
- * NDJSON -> PostgreSQL (disposable Neon verification DB) importer.
+ * NDJSON -> PostgreSQL migration-target importer.
+ *
+ * Generalized (2026-09-17, Phase 2A tooling hardening) from the original
+ * SQLite->Postgres rehearsal-only importer. The rehearsal needed an
+ * isolated, separately-generated Postgres Prisma client because the app's
+ * canonical schema was still SQLite at the time - two different database
+ * PROVIDERS can never share one generated client. That is no longer true:
+ * prisma/schema.prisma (the app's canonical runtime schema) is itself
+ * PostgreSQL now, so this file reuses the exact same generated `@prisma/client`
+ * the app uses, and simply points a dedicated instance of it at a different
+ * connection string via Prisma's supported `datasources.db.url` constructor
+ * override. This eliminates the old isolated-schema/isolated-generator-output
+ * design entirely - there is no second tracked schema file to keep in sync,
+ * and nothing here depends on a generated client that could only exist by
+ * having once run `prisma generate --schema=prisma/schema.postgres.prisma`
+ * (that schema, and its isolated node_modules/.prisma-postgres-verification/
+ * client output, were retired in Phase 1 - neither is depended on anywhere
+ * in this file, by construction).
  *
  * SAFETY CONTRACT:
- *  - Writes ONLY through the isolated PostgreSQL verification Prisma client
- *    generated from prisma/schema.postgres.prisma (node_modules/.prisma-postgres-verification/client).
- *    The normal SQLite client (`../src/db/client`) is never imported here.
+ *  - Writes ONLY through a PrismaClient instance THIS FILE constructs itself
+ *    (`new PrismaClient({ datasources: { db: { url: POSTGRES_MIGRATION_URL } } })`),
+ *    imported from the exact same `@prisma/client` package the app uses.
+ *    This file NEVER imports `../src/db/client` (the app's shared singleton)
+ *    - importing that module would risk this script silently inheriting
+ *    whatever `DATABASE_URL` the app happens to be configured with, which is
+ *    exactly the accidental-write risk `POSTGRES_MIGRATION_URL` (a dedicated,
+ *    explicit migration-target variable - see `checkMigrationUrlPolicy`)
+ *    exists to prevent. `DATABASE_URL` is never read for connection purposes
+ *    anywhere in this file - only for an informational same/different report
+ *    (see `checkMigrationUrlPolicy`), never a gate.
  *  - Reads ONLY from an already-exported NDJSON snapshot directory
  *    (backups/sqlite-export/<timestamp>/). This script NEVER opens
- *    prisma/dev.db, never imports @prisma/client (the SQLite client), and
- *    never runs a SQLite query of any kind - SQLite is not a dependency of
- *    this file at all, by construction, not by convention.
- *  - Refuses to write anything until every guard in `checkVerificationUrlPolicy()`
- *    / `evaluateEmptyTargetGuard()` (Section A) and every check in
+ *    prisma/dev.db and never runs a SQLite query of any kind - SQLite is not
+ *    a dependency of this file at all, by construction, not by convention.
+ *  - Refuses to write anything until every guard in `checkMigrationUrlPolicy()`
+ *    / `evaluateTargetSafetyGuard()` (Section A) and every check in
  *    `validateSnapshotIntegrity()` (Section B) passes. Any failure aborts
  *    before the first write.
  *  - No reset/truncate/delete/rollback logic exists anywhere in this file
- *    (Section F). A partially-imported disposable database is expected to
- *    be fixed by recreating the Neon database, not by this script.
+ *    (Section F). A partially-imported target database is expected to be
+ *    fixed by recreating it and redeploying migrations, not by this script.
  *
- * ENV: `POSTGRES_VERIFICATION_URL` must already be set in the process
- * environment before running (see the repo's established pattern: source
- * apps/trend-dashboard/.env.postgres-verification into a subshell). This
- * file deliberately does NOT parse any .env file itself - the smallest safe
- * wrapper lives at the shell-invocation layer, not inside the importer.
+ * SCHEMA CREATION: this importer never runs migrations itself - the target
+ * must already have the initial migration deployed (Guard 5 below checks
+ * this). A bare `POSTGRES_MIGRATION_URL=... prisma migrate deploy` does
+ * NOT work for that step - prisma/schema.prisma's datasource reads
+ * `DATABASE_URL` unconditionally, so Prisma CLI would silently migrate
+ * whichever database DATABASE_URL currently points to instead. Use
+ * `pnpm db:migrate:target` (scripts/migrate-postgres-target.ts) - it spawns
+ * Prisma CLI with `DATABASE_URL` set to `POSTGRES_MIGRATION_URL` in the
+ * CHILD PROCESS'S environment only.
+ *
+ * ENV: `POSTGRES_MIGRATION_URL` must already be set in the process
+ * environment before running - it identifies the EXPLICIT migration target
+ * (the disposable rehearsal database, or later the real production
+ * database - the same variable names whichever one you are currently
+ * pointing this tool at; see .env.example). This file deliberately does NOT
+ * parse any .env file itself - the smallest safe wrapper lives at the
+ * shell-invocation layer, not inside the importer.
  *
  * Usage:
  *   tsx scripts/import-postgres-snapshot.ts <snapshot-dir>
@@ -32,19 +68,14 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { countNdjsonLines, sha256Hex, validateNdjson } from "./export-sqlite-snapshot";
-// Isolated PostgreSQL verification client ONLY - generated from
-// prisma/schema.postgres.prisma into a path that can never collide with the
-// application's normal SQLite client. Do not replace with "@prisma/client".
-//
-// Deliberately a TYPE-ONLY import (erased entirely at compile time - safe
-// under this project's `isolatedModules: true`). The actual runtime client
-// is loaded lazily inside main() via `await import(...)` instead. This
-// means importing this file's PURE functions (as scripts/smoke-test.ts
-// does, for fixture/unit testing) never requires the generated client at
-// node_modules/.prisma-postgres-verification/client to exist on disk -
-// `pnpm test` must keep working even before anyone has ever run
-// `prisma generate --schema=prisma/schema.postgres.prisma`.
-import type { PrismaClient as PostgresVerificationPrismaClient } from "../node_modules/.prisma-postgres-verification/client";
+// The app's own generated Postgres client - the SAME `@prisma/client` used
+// by src/db/client.ts and every service, generated from the SAME canonical
+// prisma/schema.prisma. This file never imports "../src/db/client" itself
+// (see the safety contract above) - it imports only the generated client
+// TYPE/constructor and builds its own dedicated instance, pointed at
+// POSTGRES_MIGRATION_URL via the `datasources` constructor override, never
+// at whatever DATABASE_URL the app happens to be configured with.
+import { PrismaClient } from "@prisma/client";
 
 const SUPPORTED_FORMAT_VERSION = 1;
 
@@ -53,7 +84,7 @@ const SUPPORTED_FORMAT_VERSION = 1;
  * GROUP 1 (rows 0-6) - independent parent models with no FK dependency on
  * any other model in this list, order-insensitive among themselves.
  * GROUP 2 (rows 7-15) - dependent child models, each placed strictly after
- * its own parent. Re-derived directly from prisma/schema.postgres.prisma's
+ * its own parent. Re-derived directly from prisma/schema.prisma's
  * @relation() fields (the only source of truth for FK dependency - NOT the
  * schema's plain declaration order, which is unrelated). Models whose only
  * "*RunId"-shaped field has no @relation() attribute (MarketRankingSnapshot.
@@ -86,8 +117,8 @@ export const IMPORT_ORDER: string[] = [
  * actual @relation() parent each dependent model in GROUP 2 requires to
  * already exist. Deliberately does NOT include MarketRankingSnapshot ->
  * ImportRun or SalesSnapshot -> ImportRun: those `importRunId` fields are
- * plain, unconstrained strings in prisma/schema.postgres.prisma (no
- * @relation()), so they carry no FK ordering requirement. See Section I.
+ * plain, unconstrained strings in prisma/schema.prisma (no @relation()), so
+ * they carry no FK ordering requirement. See Section I.
  */
 export const PARENT_OF_MODEL: Record<string, string | null> = {
   Product: null,
@@ -136,7 +167,7 @@ export const DATE_TIME_FIELDS_BY_MODEL: Record<string, string[]> = {
 };
 
 /**
- * Fields that are nullable DateTime columns in prisma/schema.postgres.prisma
+ * Fields that are nullable DateTime columns in prisma/schema.prisma
  * (`DateTime?`) - a `null` value here is valid data, never an error, and
  * must never be coerced into `new Date(null)` (which would silently produce
  * the epoch instant instead of preserving the null).
@@ -385,57 +416,137 @@ export async function validateSnapshotIntegrity(snapshotDir: string): Promise<Sn
 }
 
 // ---------------------------------------------------------------------------
-// Section A (pure core + client-backed wrapper): pre-push safety guards.
+// Section A (pure core + client-backed wrapper): pre-write safety guards.
 // ---------------------------------------------------------------------------
-export interface UrlProtocolCheck {
+
+/**
+ * Reduces a full connection string to a non-secret "target identity"
+ * (host + pathname only - no credentials, no query params) purely so two
+ * URLs can be compared for "same database" without ever exposing or
+ * returning the raw string. Returns null for an unparseable URL, which
+ * `checkMigrationUrlPolicy` treats as "not comparable", never as "same".
+ */
+export function normalizedTargetIdentity(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    return `${parsed.host}${parsed.pathname}`;
+  } catch {
+    return null;
+  }
+}
+
+export interface MigrationUrlPolicyCheck {
   set: boolean;
   protocolValid: boolean;
-  differsFromDatabaseUrl: boolean;
+  differsFromSqliteExportUrl: boolean;
+  /** null when DATABASE_URL is unset - informational only, never gates anything. */
+  sameAsDatabaseUrl: boolean | null;
   errors: string[];
 }
 
-/** Pure: checks 1-3 of Section A, given only the two raw env-var strings (never logged/returned). */
-export function checkVerificationUrlPolicy(postgresVerificationUrl: string | undefined, databaseUrl: string | undefined): UrlProtocolCheck {
+/**
+ * Pure: the full POSTGRES_MIGRATION_URL policy, given only the raw env-var
+ * strings (never logged/returned as-is - only booleans and the redacted
+ * host+pathname-only identity comparison ever leave this function).
+ *
+ *   - POSTGRES_MIGRATION_URL must be set and a valid postgres(ql):// URL.
+ *   - It must differ from SQLITE_EXPORT_DATABASE_URL (defense in depth -
+ *     protocol validation alone would already reject a `file:` URL, but an
+ *     explicit differs-check catches any future SQLite-export URL that
+ *     happened to be postgres-shaped too).
+ *   - DATABASE_URL (the app runtime's variable) is NEVER a gate here - it is
+ *     read only to report whether it identifies the same target, for
+ *     operator awareness (e.g. "you are about to import into the exact
+ *     database the app is currently configured to read from"). This
+ *     importer must never rely on DATABASE_URL for migration targeting.
+ */
+export function checkMigrationUrlPolicy(postgresMigrationUrl: string | undefined, sqliteExportUrl: string | undefined, databaseUrl: string | undefined): MigrationUrlPolicyCheck {
   const errors: string[] = [];
-  const set = typeof postgresVerificationUrl === "string" && postgresVerificationUrl.length > 0;
+  const set = typeof postgresMigrationUrl === "string" && postgresMigrationUrl.length > 0;
   if (!set) {
-    errors.push("POSTGRES_VERIFICATION_URL is not set.");
-    return { set: false, protocolValid: false, differsFromDatabaseUrl: true, errors };
+    errors.push("POSTGRES_MIGRATION_URL is not set.");
+    return { set: false, protocolValid: false, differsFromSqliteExportUrl: true, sameAsDatabaseUrl: null, errors };
   }
 
   let protocolValid = false;
   try {
-    const parsed = new URL(postgresVerificationUrl!);
+    const parsed = new URL(postgresMigrationUrl);
     protocolValid = parsed.protocol === "postgres:" || parsed.protocol === "postgresql:";
   } catch {
     protocolValid = false;
   }
   if (!protocolValid) {
-    errors.push("POSTGRES_VERIFICATION_URL is not a valid postgres:// or postgresql:// URL.");
+    errors.push("POSTGRES_MIGRATION_URL is not a valid postgres:// or postgresql:// URL.");
   }
 
-  const differsFromDatabaseUrl = postgresVerificationUrl !== databaseUrl;
-  if (!differsFromDatabaseUrl) {
-    errors.push("POSTGRES_VERIFICATION_URL must not equal DATABASE_URL.");
+  const differsFromSqliteExportUrl = postgresMigrationUrl !== sqliteExportUrl;
+  if (!differsFromSqliteExportUrl) {
+    errors.push("POSTGRES_MIGRATION_URL must not equal SQLITE_EXPORT_DATABASE_URL.");
   }
 
-  return { set, protocolValid, differsFromDatabaseUrl, errors };
+  const sameAsDatabaseUrl =
+    databaseUrl === undefined
+      ? null
+      : (() => {
+          const migrationIdentity = normalizedTargetIdentity(postgresMigrationUrl);
+          const appIdentity = normalizedTargetIdentity(databaseUrl);
+          return migrationIdentity !== null && migrationIdentity === appIdentity;
+        })();
+
+  return { set, protocolValid, differsFromSqliteExportUrl, sameAsDatabaseUrl, errors };
 }
 
-export interface EmptyTargetGuardResult {
+export interface TargetSafetyGuardResult {
   ok: boolean;
+  reachable: boolean;
   missingTables: string[];
+  migrationsTableExists: boolean;
+  appliedMigrationCount: number;
   nonEmptyTables: string[];
   errors: string[];
 }
 
-/** Pure: guards 4-5 of Section A, given already-fetched table names + counts. */
-export function evaluateEmptyTargetGuard(existingTableNames: string[], countsByModel: Record<string, number>): EmptyTargetGuardResult {
+/**
+ * Pure: every pre-write safety check against already-fetched target state.
+ * Every branch below is a hard ABORT-before-any-write condition:
+ *   1. unreachable target
+ *   2. any of the 16 application tables missing (schema not created yet -
+ *      this importer never runs `prisma migrate deploy` or `db push` itself)
+ *   3. no `_prisma_migrations` table, or one with zero applied migrations
+ *      (the initial migration has not actually been deployed)
+ *   4. any application table already non-empty (this importer never
+ *      truncates/resets an existing target - a non-empty target must be
+ *      fixed by recreating the database, never by this script)
+ */
+export function evaluateTargetSafetyGuard(
+  reachable: boolean,
+  existingTableNames: string[],
+  migrationsTableExists: boolean,
+  appliedMigrationCount: number,
+  countsByModel: Record<string, number>
+): TargetSafetyGuardResult {
   const errors: string[] = [];
+  if (!reachable) {
+    errors.push("Target database is not reachable.");
+    return { ok: false, reachable: false, missingTables: [], migrationsTableExists: false, appliedMigrationCount: 0, nonEmptyTables: [], errors };
+  }
+
   const existingSet = new Set(existingTableNames);
   const missingTables = IMPORT_ORDER.filter((model) => !existingSet.has(model));
+  // NOTE: a bare `POSTGRES_MIGRATION_URL=... prisma migrate deploy` does NOT
+  // work - prisma/schema.prisma's datasource reads DATABASE_URL
+  // unconditionally, so Prisma CLI would migrate whichever database
+  // DATABASE_URL currently points to, not POSTGRES_MIGRATION_URL. The
+  // messages below point at the actual safe wrapper (`pnpm db:migrate:target`
+  // / scripts/migrate-postgres-target.ts) instead.
   if (missingTables.length > 0) {
-    errors.push(`Target database is missing expected tables: ${missingTables.join(", ")}.`);
+    errors.push(`Target database is missing expected tables: ${missingTables.join(", ")}. Run "pnpm db:migrate:target" (with POSTGRES_MIGRATION_URL set to this same target) before importing.`);
+  }
+
+  if (!migrationsTableExists) {
+    errors.push('Target database has no "_prisma_migrations" table - the initial migration has not been applied. Run "pnpm db:migrate:target" (with POSTGRES_MIGRATION_URL set to this same target) before importing.');
+  } else if (appliedMigrationCount === 0) {
+    errors.push('"_prisma_migrations" table exists but has zero applied (finished, non-rolled-back) migrations. Run "pnpm db:migrate:target" (with POSTGRES_MIGRATION_URL set to this same target) before importing.');
   }
 
   const nonEmptyTables = IMPORT_ORDER.filter((model) => (countsByModel[model] ?? 0) > 0);
@@ -443,31 +554,48 @@ export function evaluateEmptyTargetGuard(existingTableNames: string[], countsByM
     errors.push(`Target database already has rows in: ${nonEmptyTables.join(", ")}. ABORT - this importer never truncates/resets an existing target.`);
   }
 
-  return { ok: missingTables.length === 0 && nonEmptyTables.length === 0, missingTables, nonEmptyTables, errors };
+  return { ok: errors.length === 0, reachable, missingTables, migrationsTableExists, appliedMigrationCount, nonEmptyTables, errors };
 }
 
-type PostgresVerificationClient = InstanceType<typeof PostgresVerificationPrismaClient>;
+export type PostgresMigrationClient = InstanceType<typeof PrismaClient>;
 
-/** Client-backed: runs guards 4-5 for real against the live target (used only from main(), never from tests). */
-async function fetchEmptyTargetGuardState(client: PostgresVerificationClient): Promise<{ existingTableNames: string[]; countsByModel: Record<string, number> }> {
-  const tableRows = await client.$queryRaw<Array<{ table_name: string }>>`
-    SELECT table_name FROM information_schema.tables
-    WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
-  `;
+/** Client-backed: fetches every piece of state evaluateTargetSafetyGuard needs, entirely read-only (SELECT only). Used only from main(), never from tests. */
+async function fetchTargetSafetyState(
+  client: PostgresMigrationClient
+): Promise<{ reachable: boolean; existingTableNames: string[]; migrationsTableExists: boolean; appliedMigrationCount: number; countsByModel: Record<string, number> }> {
+  let tableRows: Array<{ table_name: string }>;
+  try {
+    tableRows = await client.$queryRaw<Array<{ table_name: string }>>`
+      SELECT table_name FROM information_schema.tables
+      WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
+    `;
+  } catch {
+    return { reachable: false, existingTableNames: [], migrationsTableExists: false, appliedMigrationCount: 0, countsByModel: {} };
+  }
+
   const existingTableNames = tableRows.map((r) => r.table_name);
+  const existingSet = new Set(existingTableNames);
+  const migrationsTableExists = existingSet.has("_prisma_migrations");
+
+  let appliedMigrationCount = 0;
+  if (migrationsTableExists) {
+    const migrationRows = await client.$queryRaw<Array<{ count: bigint }>>`
+      SELECT COUNT(*)::int AS count FROM "_prisma_migrations" WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL
+    `;
+    appliedMigrationCount = Number(migrationRows[0]?.count ?? 0);
+  }
 
   const countsByModel: Record<string, number> = {};
-  const existingSet = new Set(existingTableNames);
   for (const modelName of IMPORT_ORDER) {
     if (!existingSet.has(modelName)) continue; // counting a nonexistent table would throw - missing-table is already reported separately
     countsByModel[modelName] = await modelDelegate(client, modelName).count();
   }
-  return { existingTableNames, countsByModel };
+  return { reachable: true, existingTableNames, migrationsTableExists, appliedMigrationCount, countsByModel };
 }
 
-/** Maps a model name string to its typed Prisma delegate on the generated client - the single place model-name -> client-accessor happens. */
-function modelDelegate(client: PostgresVerificationClient, modelName: string) {
-  const key = (modelName.charAt(0).toLowerCase() + modelName.slice(1)) as keyof PostgresVerificationClient;
+/** Maps a model name string to its typed Prisma delegate on the migration client - the single place model-name -> client-accessor happens. */
+function modelDelegate(client: PostgresMigrationClient, modelName: string) {
+  const key = (modelName.charAt(0).toLowerCase() + modelName.slice(1)) as keyof PostgresMigrationClient;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return client[key] as any;
 }
@@ -533,7 +661,7 @@ export interface ModelImportOutcome {
  * bad - a per-row replay could silently insert most of the batch) and mixed
  * diagnosis with migration behavior. Removed per explicit review. If
  * row-level diagnosis is ever needed, that is a separate, explicitly-
- * approved task against a freshly-empty disposable DB - never an automatic
+ * approved task against a freshly-empty target - never an automatic
  * fallback inside this importer. The only call made after a batch failure
  * below is a read-only count() (a SELECT, never a write) purely for
  * accurate reporting of the target's current state.
@@ -542,7 +670,7 @@ export interface ModelImportOutcome {
  * model after a FAIL outcome here - see Section F.
  */
 export async function importModel(
-  client: PostgresVerificationClient,
+  client: PostgresMigrationClient,
   modelName: string,
   preparedRows: ExportRow[]
 ): Promise<ModelImportOutcome> {
@@ -612,9 +740,12 @@ async function main() {
   console.log(`Snapshot: ${snapshotDir}`);
   console.log("");
 
-  // ---- Section A, guards 1-3 (no DB connection needed yet) ----
-  const urlPolicy = checkVerificationUrlPolicy(process.env.POSTGRES_VERIFICATION_URL, process.env.DATABASE_URL);
-  console.log(`Guard 1-3 (env/protocol/distinct-from-DATABASE_URL): ${urlPolicy.errors.length === 0 ? "PASS" : "FAIL"}`);
+  // ---- Guard 1: POSTGRES_MIGRATION_URL policy (no DB connection needed yet) ----
+  const urlPolicy = checkMigrationUrlPolicy(process.env.POSTGRES_MIGRATION_URL, process.env.SQLITE_EXPORT_DATABASE_URL, process.env.DATABASE_URL);
+  console.log(`Guard 1 (POSTGRES_MIGRATION_URL set/valid/distinct-from-SQLITE_EXPORT_DATABASE_URL): ${urlPolicy.errors.length === 0 ? "PASS" : "FAIL"}`);
+  if (urlPolicy.sameAsDatabaseUrl !== null) {
+    console.log(`  Informational only (never a gate): POSTGRES_MIGRATION_URL identifies the ${urlPolicy.sameAsDatabaseUrl ? "SAME" : "a DIFFERENT"} target as the app's current DATABASE_URL.`);
+  }
   if (urlPolicy.errors.length > 0) {
     for (const err of urlPolicy.errors) console.error(`  - ${err}`);
     console.error("ABORT before writing anything.");
@@ -622,9 +753,9 @@ async function main() {
     return;
   }
 
-  // ---- Section B: snapshot integrity (no DB connection needed) ----
+  // ---- Guard 2: snapshot integrity (no DB connection needed) ----
   const snapshot = await validateSnapshotIntegrity(snapshotDir);
-  console.log(`Snapshot integrity check: ${snapshot.ok ? "PASS" : "FAIL"}`);
+  console.log(`Guard 2 (snapshot integrity): ${snapshot.ok ? "PASS" : "FAIL"}`);
   if (!snapshot.ok) {
     for (const err of snapshot.errors) console.error(`  - ${err}`);
     console.error("ABORT before writing anything.");
@@ -634,17 +765,17 @@ async function main() {
   console.log(`  manifest models=${snapshot.manifest!.modelCount} totalRows=${snapshot.manifest!.totalRows}`);
   console.log("");
 
-  // Lazy runtime load - see the top-of-file comment on the type-only import
-  // above for why this must not be a static/eager import.
-  const { PrismaClient: PostgresVerificationPrismaClient } = await import("../node_modules/.prisma-postgres-verification/client");
-  const client: PostgresVerificationClient = new PostgresVerificationPrismaClient();
+  const client: PostgresMigrationClient = new PrismaClient({ datasources: { db: { url: process.env.POSTGRES_MIGRATION_URL } } });
   try {
-    // ---- Section A, guards 4-5 (needs a connection) ----
-    const { existingTableNames, countsByModel } = await fetchEmptyTargetGuardState(client);
-    const emptyGuard = evaluateEmptyTargetGuard(existingTableNames, countsByModel);
-    console.log(`Guard 4-5 (all 16 tables exist, all empty): ${emptyGuard.ok ? "PASS" : "FAIL"}`);
-    if (!emptyGuard.ok) {
-      for (const err of emptyGuard.errors) console.error(`  - ${err}`);
+    // ---- Guards 3-6: reachability, expected schema, migrations applied, all empty ----
+    const state = await fetchTargetSafetyState(client);
+    const safety = evaluateTargetSafetyGuard(state.reachable, state.existingTableNames, state.migrationsTableExists, state.appliedMigrationCount, state.countsByModel);
+    console.log(`Guard 3 (target reachable): ${safety.reachable ? "PASS" : "FAIL"}`);
+    console.log(`Guard 4 (all 16 application tables exist): ${safety.reachable && safety.missingTables.length === 0 ? "PASS" : "FAIL"}`);
+    console.log(`Guard 5 (_prisma_migrations present, initial migration applied): ${safety.reachable && safety.migrationsTableExists && safety.appliedMigrationCount > 0 ? "PASS" : "FAIL"}`);
+    console.log(`Guard 6 (every application table empty): ${safety.reachable && safety.nonEmptyTables.length === 0 ? "PASS" : "FAIL"}`);
+    if (!safety.ok) {
+      for (const err of safety.errors) console.error(`  - ${err}`);
       console.error("ABORT before writing anything.");
       process.exitCode = 1;
       return;
@@ -698,7 +829,7 @@ async function main() {
 const isDirectRun = process.argv[1] != null && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isDirectRun) {
   main().catch((error) => {
-    console.error("Import failed:", error instanceof Error ? error.message : error);
+    console.error("Import failed:", error instanceof Error ? sanitizeErrorMessage(error.message) : error);
     process.exitCode = 1;
   });
 }

@@ -44,13 +44,14 @@ import { prisma } from "../src/db/client";
 import { businessDayKey, businessDayStart } from "../src/lib/business-time";
 import { countBy, countNdjsonLines, sha256Hex, stableStringify, timestampSlug, validateNdjson } from "../scripts/export-sqlite-snapshot";
 import {
-  checkVerificationUrlPolicy,
+  checkMigrationUrlPolicy,
   convertRowDateTimeFields,
   CREATE_MANY_BATCH_SIZE,
   DATE_TIME_FIELDS_BY_MODEL,
-  evaluateEmptyTargetGuard,
+  evaluateTargetSafetyGuard,
   IMPORT_ORDER,
   importModel,
+  normalizedTargetIdentity,
   PARENT_OF_MODEL,
   prepareRowForWrite,
   sanitizeErrorMessage,
@@ -61,6 +62,7 @@ import {
   type ManifestModelEntry,
   type SnapshotManifest
 } from "../scripts/import-postgres-snapshot";
+import { buildChildEnvForMigrationDeploy, buildMigrateDeployArgs } from "../scripts/migrate-postgres-target";
 import {
   canonicalFieldValue,
   checkMarketRankingSnapshotDataModeCounts,
@@ -70,7 +72,9 @@ import {
   compareIdSets,
   compareRowFields,
   computeModelFingerprint,
-  RELATION_FK_FIELD
+  computeReconciliationVerdict,
+  RELATION_FK_FIELD,
+  resolveReconciliationProfile
 } from "../scripts/reconcile-postgres-snapshot";
 import { combinedTrendSignal, percentChange, targetAgeSignal } from "../src/lib/search-trend-signals";
 import { classifyTrend, rankChange } from "../src/lib/trend-signals";
@@ -188,6 +192,7 @@ async function main() {
   await verifyImportPostgresSnapshotHelpers();
   verifyReconcilePostgresSnapshotHelpers();
   verifySmokeTestCorpusMode();
+  verifyMigratePostgresTargetHelpers();
   verifyBusinessSignals();
 
   // Fixture setup for the real-data dashboard/assortment/verified-ranking
@@ -3226,31 +3231,94 @@ async function verifyImportPostgresSnapshotHelpers() {
   });
   assert.equal(marketSnapshotRow.importRunId, "does-not-correspond-to-any-importrun-row", "A dangling importRunId string must be preserved exactly, never nulled, validated, or reconciled.");
 
-  // ---- checkVerificationUrlPolicy (Section A guards 1-3, pure) ----
-  assert.deepEqual(checkVerificationUrlPolicy(undefined, "file:./dev.db"), {
+  // ---- checkMigrationUrlPolicy (Section A guard 1, pure) - generalized 2026-09-17
+  // from the old rehearsal-only checkVerificationUrlPolicy(POSTGRES_VERIFICATION_URL,
+  // DATABASE_URL). The new policy gates on differing from SQLITE_EXPORT_DATABASE_URL
+  // (never DATABASE_URL - DATABASE_URL is informational only, see sameAsDatabaseUrl). ----
+  assert.deepEqual(checkMigrationUrlPolicy(undefined, "file:./dev.db", undefined), {
     set: false,
     protocolValid: false,
-    differsFromDatabaseUrl: true,
-    errors: ["POSTGRES_VERIFICATION_URL is not set."]
+    differsFromSqliteExportUrl: true,
+    sameAsDatabaseUrl: null,
+    errors: ["POSTGRES_MIGRATION_URL is not set."]
   });
-  assert.equal(checkVerificationUrlPolicy("mysql://user:pass@host/db", "file:./dev.db").protocolValid, false, "A non-postgres protocol must be rejected.");
-  assert.equal(checkVerificationUrlPolicy("file:./dev.db", "file:./dev.db").differsFromDatabaseUrl, false, "POSTGRES_VERIFICATION_URL equal to DATABASE_URL must be rejected.");
-  assert.deepEqual(
-    checkVerificationUrlPolicy("postgresql://user:pass@ep-example.neon.tech/neondb?sslmode=require", "file:./dev.db"),
-    { set: true, protocolValid: true, differsFromDatabaseUrl: true, errors: [] },
-    "A valid, distinct postgresql:// URL must pass all three checks cleanly."
+  assert.equal(checkMigrationUrlPolicy("mysql://user:pass@host/db", "file:./dev.db", undefined).protocolValid, false, "A non-postgres protocol must be rejected.");
+  assert.equal(
+    checkMigrationUrlPolicy("file:./dev.db", "file:./dev.db", undefined).differsFromSqliteExportUrl,
+    false,
+    "POSTGRES_MIGRATION_URL equal to SQLITE_EXPORT_DATABASE_URL must be rejected - this is the new differs-check, replacing the old DATABASE_URL-based one."
   );
-  assert.equal(checkVerificationUrlPolicy("postgres://user:pass@host/db", "file:./dev.db").protocolValid, true, "The postgres:// scheme (not only postgresql://) must also be accepted.");
+  assert.deepEqual(
+    checkMigrationUrlPolicy("postgresql://user:pass@ep-example.neon.tech/neondb?sslmode=require", "file:./dev.db", undefined),
+    { set: true, protocolValid: true, differsFromSqliteExportUrl: true, sameAsDatabaseUrl: null, errors: [] },
+    "A valid, distinct postgresql:// URL with no DATABASE_URL set must pass cleanly, with sameAsDatabaseUrl reported as null (not comparable), never as false."
+  );
+  assert.equal(checkMigrationUrlPolicy("postgres://user:pass@host/db", "file:./dev.db", undefined).protocolValid, true, "The postgres:// scheme (not only postgresql://) must also be accepted.");
+  // DATABASE_URL must be purely informational - identical migration/app URLs must NOT fail the policy (never a gate).
+  const sameAsAppTarget = checkMigrationUrlPolicy("postgresql://user:pass@ep-example.neon.tech/neondb?sslmode=require", "file:./dev.db", "postgresql://user:pass@ep-example.neon.tech/neondb?sslmode=require");
+  assert.equal(sameAsAppTarget.errors.length, 0, "POSTGRES_MIGRATION_URL identifying the SAME target as DATABASE_URL must never be an error - it is reported, never gated.");
+  assert.equal(sameAsAppTarget.sameAsDatabaseUrl, true, "Identical host+pathname (ignoring query params like sslmode) must be reported as sameAsDatabaseUrl=true.");
+  const differentAppTarget = checkMigrationUrlPolicy("postgresql://user:pass@ep-example.neon.tech/neondb?sslmode=require", "file:./dev.db", "postgresql://user:pass@other-host.neon.tech/otherdb?sslmode=require");
+  assert.equal(differentAppTarget.sameAsDatabaseUrl, false, "A genuinely different host must be reported as sameAsDatabaseUrl=false.");
+  // Query-string-only differences (e.g. channel_binding) must not cause a false "different" report - identity is host+pathname only.
+  const sameHostDifferentQuery = checkMigrationUrlPolicy("postgresql://user:pass@ep-example.neon.tech/neondb?sslmode=require", "file:./dev.db", "postgresql://user:pass@ep-example.neon.tech/neondb?sslmode=require&channel_binding=require");
+  assert.equal(sameHostDifferentQuery.sameAsDatabaseUrl, true, "Identical host+pathname with only query-string differences must still be reported as the same target.");
 
-  // ---- evaluateEmptyTargetGuard (Section A guards 4-5, pure) ----
+  // ---- evaluateTargetSafetyGuard (Section A guards 3-6, pure) - generalized 2026-09-17
+  // from the old rehearsal-only evaluateEmptyTargetGuard(existingTableNames, countsByModel).
+  // Adds explicit reachability and _prisma_migrations/applied-migration requirements. ----
   const allEmptyCounts = Object.fromEntries(IMPORT_ORDER.map((m) => [m, 0]));
-  assert.equal(evaluateEmptyTargetGuard(IMPORT_ORDER, allEmptyCounts).ok, true, "All 16 tables present and empty must pass the guard.");
-  const missingTableGuard = evaluateEmptyTargetGuard(IMPORT_ORDER.filter((m) => m !== "ImportError"), {});
+  assert.equal(evaluateTargetSafetyGuard(true, IMPORT_ORDER, true, 1, allEmptyCounts).ok, true, "Reachable, all 16 tables present, migrations applied, all empty must pass the guard.");
+  const unreachableGuard = evaluateTargetSafetyGuard(false, [], false, 0, {});
+  assert.equal(unreachableGuard.ok, false, "An unreachable target must fail the guard.");
+  assert.deepEqual(unreachableGuard.errors, ["Target database is not reachable."], "An unreachable target must short-circuit with exactly one error, never proceed to check tables/migrations/emptiness.");
+  const missingTableGuard = evaluateTargetSafetyGuard(true, IMPORT_ORDER.filter((m) => m !== "ImportError"), true, 1, {});
   assert.equal(missingTableGuard.ok, false, "A missing target table must fail the guard.");
   assert.deepEqual(missingTableGuard.missingTables, ["ImportError"]);
-  const nonEmptyGuard = evaluateEmptyTargetGuard(IMPORT_ORDER, { ...allEmptyCounts, Product: 5 });
+  const noMigrationsTableGuard = evaluateTargetSafetyGuard(true, IMPORT_ORDER, false, 0, allEmptyCounts);
+  assert.equal(noMigrationsTableGuard.ok, false, "A target with no _prisma_migrations table must fail the guard - the initial migration has not been deployed.");
+  assert.ok(noMigrationsTableGuard.errors.some((e) => e.includes("_prisma_migrations")), "The failure must specifically name the missing _prisma_migrations table.");
+  const zeroAppliedMigrationsGuard = evaluateTargetSafetyGuard(true, IMPORT_ORDER, true, 0, allEmptyCounts);
+  assert.equal(zeroAppliedMigrationsGuard.ok, false, "A _prisma_migrations table with zero applied migrations must fail the guard - migrate deploy has not actually completed.");
+  const nonEmptyGuard = evaluateTargetSafetyGuard(true, IMPORT_ORDER, true, 1, { ...allEmptyCounts, Product: 5 });
   assert.equal(nonEmptyGuard.ok, false, "A single non-empty target table must fail the whole guard, never partially proceed.");
   assert.deepEqual(nonEmptyGuard.nonEmptyTables, ["Product"]);
+
+  // ---- resolveReconciliationProfile (pure) ----
+  assert.deepEqual(resolveReconciliationProfile([]), { profile: "default" }, "No --profile flag must default to \"default\" (core checks only).");
+  assert.deepEqual(resolveReconciliationProfile(["backups/x", "--profile=rehearsal"]), { profile: "rehearsal" });
+  assert.deepEqual(resolveReconciliationProfile(["backups/x", "--profile=default"]), { profile: "default" });
+  const badProfile = resolveReconciliationProfile(["backups/x", "--profile=production"]);
+  assert.equal(badProfile.profile, "default", "An unrecognized --profile value must never silently guess a profile - it falls back to default AND reports an error the caller must act on.");
+  assert.ok(badProfile.error?.includes('Unknown --profile value "production"'), "The error must name the exact unrecognized value.");
+
+  // ---- computeReconciliationVerdict (pure) - proves "default reconciliation does not
+  // require REDNAPE anchors" and "--profile=rehearsal still checks them" directly. ----
+  assert.deepEqual(
+    computeReconciliationVerdict("default", true, false, false),
+    { corePass: true, rehearsalPass: true, overallPass: true },
+    "Under the default profile, a FAILING REDNAPE/dataMode report must NOT fail the overall verdict - a future snapshot with no REDNAPE data must never fail reconciliation merely for lacking a dataset-specific anchor."
+  );
+  assert.deepEqual(
+    computeReconciliationVerdict("default", false, true, true),
+    { corePass: false, rehearsalPass: true, overallPass: false },
+    "Under the default profile, a core-check failure must still fail the overall verdict regardless of rehearsal-anchor status."
+  );
+  assert.deepEqual(
+    computeReconciliationVerdict("rehearsal", true, true, true),
+    { corePass: true, rehearsalPass: true, overallPass: true },
+    "Under --profile=rehearsal, core pass + REDNAPE pass + dataMode pass must yield an overall pass."
+  );
+  assert.deepEqual(
+    computeReconciliationVerdict("rehearsal", true, false, true),
+    { corePass: true, rehearsalPass: false, overallPass: false },
+    "Under --profile=rehearsal, a FAILING REDNAPE report must fail the overall verdict even when core checks pass - this is the exact case a rehearsal run must still catch."
+  );
+  assert.deepEqual(
+    computeReconciliationVerdict("rehearsal", true, true, false),
+    { corePass: true, rehearsalPass: false, overallPass: false },
+    "Under --profile=rehearsal, a FAILING dataMode-counts report must likewise fail the overall verdict."
+  );
 
   // ---- validateManifestShape (pure, no fs) ----
   const wellFormedModels: ManifestModelEntry[] = IMPORT_ORDER.map((name) => ({ name, rowCount: 0, fileName: `${name}.ndjson`, sha256: sha256Hex(""), bytes: 0 }));
@@ -3696,6 +3764,54 @@ function verifySmokeTestCorpusMode() {
       "development mode must print the N/A line even when the count already meets or exceeds the floor - a count meeting the floor must never be treated as proof this is a full-corpus environment."
     );
   }
+}
+
+/**
+ * Pure/fixture coverage for scripts/migrate-postgres-target.ts - no child
+ * process is ever spawned, no live `prisma migrate deploy` is ever run. See
+ * that file's own top comment for why it exists (a bare
+ * `POSTGRES_MIGRATION_URL=... prisma migrate deploy` does NOT make Prisma
+ * use POSTGRES_MIGRATION_URL, since the schema's datasource reads
+ * `env("DATABASE_URL")` unconditionally).
+ */
+function verifyMigratePostgresTargetHelpers() {
+  // ---- missing migration URL => fail, with NO fallback to DATABASE_URL ----
+  const missingUrlPolicy = checkMigrationUrlPolicy(undefined, "file:./dev.db", "postgresql://actual-app-db.neon.tech/appdb");
+  assert.equal(missingUrlPolicy.set, false, "A missing POSTGRES_MIGRATION_URL must be reported as unset.");
+  assert.ok(missingUrlPolicy.errors.some((e) => e.includes("POSTGRES_MIGRATION_URL is not set")), "The error must specifically name POSTGRES_MIGRATION_URL, never silently substitute DATABASE_URL.");
+  // The presence of a perfectly valid DATABASE_URL must never rescue a missing POSTGRES_MIGRATION_URL - this IS the "no fallback to parent DATABASE_URL" proof.
+  assert.equal(missingUrlPolicy.sameAsDatabaseUrl, null, "With POSTGRES_MIGRATION_URL unset, sameAsDatabaseUrl must be null (not comparable) - never silently treated as if DATABASE_URL were the migration target.");
+
+  // ---- invalid protocol => fail ----
+  const invalidProtocolPolicy = checkMigrationUrlPolicy("mysql://user:pass@host/db", "file:./dev.db", undefined);
+  assert.equal(invalidProtocolPolicy.protocolValid, false, "A non-postgres protocol must be rejected.");
+
+  // ---- valid URL => accepted ----
+  const validPolicy = checkMigrationUrlPolicy("postgresql://user:pass@ep-example.neon.tech/neondb?sslmode=require", "file:./dev.db", undefined);
+  assert.equal(validPolicy.errors.length, 0, "A valid, distinct postgresql:// URL must be accepted with zero errors.");
+
+  // ---- secret/raw URL is never included in sanitized reporting ----
+  const credentialedUrl = "postgresql://realuser:supersecretpassword@ep-real-host.neon.tech/realdb?sslmode=require";
+  const identity = normalizedTargetIdentity(credentialedUrl);
+  assert.ok(identity !== null, "A well-formed URL must produce a non-null sanitized identity.");
+  assert.equal(identity!.includes("realuser"), false, "The sanitized identity must never include the username.");
+  assert.equal(identity!.includes("supersecretpassword"), false, "The sanitized identity must never include the password.");
+  assert.equal(identity!.includes("sslmode"), false, "The sanitized identity must never include query-string parameters.");
+  assert.equal(identity, "ep-real-host.neon.tech/realdb", "The sanitized identity must be exactly host + pathname, nothing else.");
+
+  // ---- child env receives DATABASE_URL equal to POSTGRES_MIGRATION_URL ----
+  const baseEnv: NodeJS.ProcessEnv = { NODE_ENV: "test", DATABASE_URL: "postgresql://dev-host.neon.tech/devdb", PATH: "/usr/bin", SOME_OTHER_VAR: "unchanged" };
+  const childEnv = buildChildEnvForMigrationDeploy(baseEnv, "postgresql://prod-host.neon.tech/proddb");
+  assert.equal(childEnv.DATABASE_URL, "postgresql://prod-host.neon.tech/proddb", "The spawned Prisma process's DATABASE_URL must be exactly POSTGRES_MIGRATION_URL.");
+  assert.equal(childEnv.SOME_OTHER_VAR, "unchanged", "Every other env var must pass through to the child process untouched.");
+  assert.equal(childEnv.PATH, "/usr/bin", "PATH (required for the child process to find its own dependencies) must be preserved.");
+
+  // ---- existing parent DATABASE_URL is overridden ONLY for the spawned process - never mutated in place ----
+  assert.equal(baseEnv.DATABASE_URL, "postgresql://dev-host.neon.tech/devdb", "The ORIGINAL baseEnv object (e.g. process.env in the real script) must be completely unmodified after building the child env - this is the exact 'never mutate process.env.DATABASE_URL globally' guarantee.");
+  assert.notEqual(childEnv, baseEnv, "buildChildEnvForMigrationDeploy must return a NEW object, never the same reference as baseEnv (which would risk accidental in-place mutation elsewhere).");
+
+  // ---- only `migrate deploy` is ever invoked - never db push, never migrate dev, never a reset/truncate operation ----
+  assert.deepEqual(buildMigrateDeployArgs("/path/to/prisma/build/index.js"), ["/path/to/prisma/build/index.js", "migrate", "deploy"], "The spawned Prisma CLI must be invoked with exactly [entryPath, \"migrate\", \"deploy\"] - no other subcommand or flag.");
 }
 
 function verifyBusinessSignals() {

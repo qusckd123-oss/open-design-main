@@ -1,49 +1,79 @@
 /**
- * Read-only SQLite-snapshot <-> PostgreSQL (Neon verification DB) reconciler.
+ * Read-only SQLite-snapshot <-> PostgreSQL migration-target reconciler.
+ *
+ * Generalized (2026-09-17, Phase 2A tooling hardening) alongside
+ * scripts/import-postgres-snapshot.ts - see that file's own top comment for
+ * why this now reuses the app's own generated `@prisma/client` (via a
+ * dedicated instance pointed at POSTGRES_MIGRATION_URL through Prisma's
+ * `datasources` constructor override) instead of a second, isolated,
+ * separately-tracked Postgres schema. Nothing in this file depends on the
+ * retired prisma/schema.postgres.prisma or its isolated generated client.
  *
  * SAFETY CONTRACT:
  *  - Every database call this file makes is `findMany()` (a SELECT) against
- *    the isolated PostgreSQL verification Prisma client generated from
- *    prisma/schema.postgres.prisma (node_modules/.prisma-postgres-verification/client).
- *    There is no create/createMany/update/updateMany/upsert/delete/deleteMany/
- *    $executeRaw (any variant)/truncate/reset call anywhere in this file. This
- *    is a read-only comparison tool - full stop.
+ *    a PrismaClient instance THIS FILE constructs itself, imported from the
+ *    same `@prisma/client` the app uses. There is no create/createMany/
+ *    update/updateMany/upsert/delete/deleteMany/$executeRaw (any variant)/
+ *    truncate/reset call anywhere in this file. This is a read-only
+ *    comparison tool - full stop.
+ *  - This file NEVER imports `../src/db/client` (the app's shared
+ *    singleton) and NEVER relies on `DATABASE_URL` for connection purposes
+ *    - only `POSTGRES_MIGRATION_URL` (see `checkMigrationUrlPolicy`).
+ *    `DATABASE_URL` is read only for an informational same/different
+ *    report, never a gate.
  *  - The migration source of truth is the NDJSON snapshot directory
  *    (manifest.json + the per-model .ndjson files), read via the same
  *    `validateSnapshotIntegrity()` used by the importer. This file never
- *    opens prisma/dev.db and never imports the SQLite `@prisma/client`
- *    (`../src/db/client`) for the raw-row reconciliation path (Section A-F).
+ *    opens prisma/dev.db for the raw-row reconciliation path (Section A-F).
  *    Section G's Watchlist sanity check is the one deliberate exception -
  *    see its own comment for why and what it does NOT do.
- *  - `POSTGRES_VERIFICATION_URL` must already be set in the process
- *    environment before running (see the repo's established pattern: source
- *    apps/trend-dashboard/.env.postgres-verification into a subshell).
+ *
+ * PROFILES: default reconciliation runs only CORE, dataset-independent
+ * checks (row counts, exact ID sets, field/DateTime equality, deterministic
+ * fingerprints, relation integrity, and aggregate-equality comparisons that
+ * compare the snapshot's own breakdown against the target's, never a
+ * hardcoded expected value). `--profile=rehearsal` additionally runs the
+ * REDNAPE-dataset-specific anchors and the hardcoded real/sample/total
+ * MarketRankingSnapshot count check that were tied to the original 2026-09-15
+ * rehearsal snapshot - these are supplemental, opt-in checks, never part of
+ * the default gating verdict, so a future production snapshot with a
+ * different source composition never fails reconciliation merely for
+ * lacking REDNAPE (or any other) dataset-specific anchor.
  *
  * Usage:
- *   tsx scripts/reconcile-postgres-snapshot.ts <snapshot-dir>
- *   e.g. tsx scripts/reconcile-postgres-snapshot.ts backups/sqlite-export/2026-09-15T10-12-29-321Z
+ *   tsx scripts/reconcile-postgres-snapshot.ts <snapshot-dir> [--profile=rehearsal]
+ *   e.g. tsx scripts/reconcile-postgres-snapshot.ts backups/sqlite-export/2026-09-15T10-12-29-321Z --profile=rehearsal
  */
 import { pathToFileURL } from "node:url";
 import { countBy, sha256Hex } from "./export-sqlite-snapshot";
 import {
-  checkVerificationUrlPolicy,
+  checkMigrationUrlPolicy,
   DATE_TIME_FIELDS_BY_MODEL,
   IMPORT_ORDER,
   PARENT_OF_MODEL,
   sanitizeErrorMessage,
   validateSnapshotIntegrity,
-  type ExportRow
+  type ExportRow,
+  type PostgresMigrationClient
 } from "./import-postgres-snapshot";
-// Isolated PostgreSQL verification client ONLY - see the safety contract
-// above. Type-only import (erased at compile time, matches the importer's
-// own pattern) so this file's pure functions never require the generated
-// client to exist on disk just to be imported/tested.
-import type { PrismaClient as PostgresVerificationPrismaClient } from "../node_modules/.prisma-postgres-verification/client";
-
-type PostgresVerificationClient = InstanceType<typeof PostgresVerificationPrismaClient>;
+// The app's own generated Postgres client - see the safety contract above
+// and scripts/import-postgres-snapshot.ts's top comment for why this is no
+// longer an isolated, separately-tracked schema/client.
+import { PrismaClient } from "@prisma/client";
 
 /** Maximum number of individual field/value mismatches ever printed in one run - a bounded report, never a full dataset dump. */
 const MAX_REPORTED_MISMATCHES = 20;
+
+export type ReconciliationProfile = "default" | "rehearsal";
+
+/** Pure: parses the `--profile=` CLI flag. Any value other than the two recognized ones is a usage error, never silently coerced. */
+export function resolveReconciliationProfile(args: string[]): { profile: ReconciliationProfile; error?: string } {
+  const profileArg = args.find((a) => a.startsWith("--profile="));
+  if (!profileArg) return { profile: "default" };
+  const value = profileArg.slice("--profile=".length);
+  if (value === "default" || value === "rehearsal") return { profile: value };
+  return { profile: "default", error: `Unknown --profile value "${value}" - supported values are "default" (or omit --profile entirely) and "rehearsal".` };
+}
 
 // ---------------------------------------------------------------------------
 // Section E (pure): declared-relation map + deterministic canonicalization/
@@ -55,9 +85,9 @@ const MAX_REPORTED_MISMATCHES = 20;
  * field name (the parent model comes from `PARENT_OF_MODEL`, re-exported
  * from the importer so both files agree on dependency order). Deliberately
  * does NOT include MarketRankingSnapshot.importRunId or SalesSnapshot.importRunId -
- * both are plain, unconstrained strings in prisma/schema.postgres.prisma
- * (no @relation()), so they carry no FK/relation integrity requirement and
- * must be compared only as ordinary string fields (see `checkRelationIntegrity`
+ * both are plain, unconstrained strings in prisma/schema.prisma (no
+ * @relation()), so they carry no FK/relation integrity requirement and must
+ * be compared only as ordinary string fields (see `checkRelationIntegrity`
  * and the field-equality path, which both leave them alone accordingly).
  * Every relation in this schema is required (no `String?` FK field exists),
  * so there is no "optional relation" branch to special-case.
@@ -205,7 +235,7 @@ export interface AggregateComparison {
   diffKeys: string[];
 }
 
-/** Compares a `countBy(rows, keyFn)` grouping between source and target - both computed from already-loaded rows, never a fresh DB groupBy query. */
+/** Compares a `countBy(rows, keyFn)` grouping between source and target - both computed from already-loaded rows, never a fresh DB groupBy query. Dataset-independent: compares the snapshot's OWN breakdown against the target's, never a hardcoded expected value, so this is a CORE check regardless of profile. */
 export function compareAggregate(label: string, sourceRows: ExportRow[], targetRows: ExportRow[], keyFn: (row: ExportRow) => string): AggregateComparison {
   const sourceCounts = countBy(sourceRows, keyFn);
   const targetCounts = countBy(targetRows, keyFn);
@@ -216,7 +246,8 @@ export function compareAggregate(label: string, sourceRows: ExportRow[], targetR
 
 // ---------------------------------------------------------------------------
 // Per-model reconciliation (Sections B, C, E combined) - one model at a time,
-// read-only (`findMany` only) against the target.
+// read-only (`findMany` only) against the target. CORE - always required,
+// regardless of profile.
 // ---------------------------------------------------------------------------
 
 export interface ModelReconciliationResult {
@@ -234,24 +265,24 @@ export interface ModelReconciliationResult {
   relationTarget: RelationIntegrityResult | null;
 }
 
-/** Maps a model name string to its typed Prisma delegate on the generated client - mirrors import-postgres-snapshot.ts's own `modelDelegate`. */
-function modelDelegate(client: PostgresVerificationClient, modelName: string) {
-  const key = (modelName.charAt(0).toLowerCase() + modelName.slice(1)) as keyof PostgresVerificationClient;
+/** Maps a model name string to its typed Prisma delegate on the migration client - mirrors import-postgres-snapshot.ts's own `modelDelegate`. */
+function modelDelegate(client: PostgresMigrationClient, modelName: string) {
+  const key = (modelName.charAt(0).toLowerCase() + modelName.slice(1)) as keyof PostgresMigrationClient;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return client[key] as any;
 }
 
 /**
- * Reconciles exactly one model: fetches its full row set from Neon
+ * Reconciles exactly one model: fetches its full row set from the target
  * (read-only `findMany`, no filters, no writes), compares it against the
  * already-parsed snapshot rows for the same model, and records mismatches
- * (capped, via `mismatchSink`) plus every check in the task's Section B/E.
- * `sourceIdsByModel`/`targetIdsByModel` accumulate as models are processed
- * in `IMPORT_ORDER` (parents before children) so relation checks against an
- * already-visited parent never need a second query.
+ * (capped, via `mismatchSink`) plus every CORE check. `sourceIdsByModel`/
+ * `targetIdsByModel` accumulate as models are processed in `IMPORT_ORDER`
+ * (parents before children) so relation checks against an already-visited
+ * parent never need a second query.
  */
 async function reconcileModel(
-  client: PostgresVerificationClient,
+  client: PostgresMigrationClient,
   modelName: string,
   sourceRows: ExportRow[],
   sourceIdsByModel: Map<string, Set<string>>,
@@ -306,7 +337,9 @@ async function reconcileModel(
 }
 
 // ---------------------------------------------------------------------------
-// Section C (special known checks): REDNAPE anchors.
+// Section C (OPTIONAL, --profile=rehearsal only): REDNAPE dataset-specific
+// anchors, tied to the original 2026-09-15 rehearsal snapshot. Never part of
+// the default gating verdict - see the file-level PROFILES comment.
 // ---------------------------------------------------------------------------
 
 export interface RednapeAnchorReport {
@@ -323,7 +356,7 @@ export interface RednapeAnchorReport {
 const EXPECTED_REDNAPE_EXTERNAL_PRODUCT_IDS = ["440", "45", "509", "586", "593"];
 const EXPECTED_REDNAPE_PERIOD_DATE_ISO = "2026-09-14T15:00:00.000Z";
 
-/** Pure: everything the task's "Section C" REDNAPE anchor checks require, given already-loaded rows for both sides. */
+/** Pure: the OPTIONAL, rehearsal-profile-only REDNAPE anchor checks, given already-loaded rows for both sides. */
 export function checkRednapeAnchors(
   sourceRows: { marketProduct: ExportRow[]; marketRankingSnapshot: ExportRow[]; importRun: ExportRow[]; importError: ExportRow[] },
   targetRows: { marketProduct: ExportRow[]; marketRankingSnapshot: ExportRow[]; importRun: ExportRow[]; importError: ExportRow[] }
@@ -377,7 +410,11 @@ export function checkRednapeAnchors(
 }
 
 // ---------------------------------------------------------------------------
-// Section G: derived business sanity checks (read-only, best-effort).
+// Section G: derived business sanity checks.
+// checkMarketRankingSnapshotDataModeCounts is OPTIONAL / --profile=rehearsal
+// only (hardcoded to the 2026-09-15 rehearsal snapshot's exact counts - see
+// the file-level PROFILES comment). The Watchlist check is always-run and
+// purely informational (never gates the verdict under any profile).
 // ---------------------------------------------------------------------------
 
 export interface MarketRankingSnapshotDataModeReport {
@@ -386,7 +423,7 @@ export interface MarketRankingSnapshotDataModeReport {
   ok: boolean;
 }
 
-/** Pure: the task's "Market real row count = 672 / sample = 2592 / total = 3264" checks, from already-loaded MarketRankingSnapshot rows. */
+/** Pure: the REHEARSAL-ONLY "Market real row count = 672 / sample = 2592 / total = 3264" checks, from already-loaded MarketRankingSnapshot rows. Hardcoded to the 2026-09-15 rehearsal snapshot - never part of the default (core) gating verdict. */
 export function checkMarketRankingSnapshotDataModeCounts(sourceRows: ExportRow[], targetRows: ExportRow[]): MarketRankingSnapshotDataModeReport {
   const summarize = (rows: ExportRow[]) => ({
     real: rows.filter((r) => r.dataMode === "real").length,
@@ -410,28 +447,26 @@ export interface WatchlistSanityReport {
 }
 
 /**
- * READ-ONLY, current-code, SQLite-only sanity check for the task's Section G
- * "known Watchlist computation" item. Deliberately imports the app's
- * existing `getItemTrendRows()` (which reads through the singleton SQLite
- * `prisma` client) rather than reimplementing/duplicating its logic - this
- * is the one place this file touches SQLite at all, and it is a read
- * (`findMany`) exactly like everywhere else in the app's normal runtime path.
+ * READ-ONLY, current-code, SQLite-only sanity check. Deliberately imports
+ * the app's existing `getItemTrendRows()` (which reads through the
+ * singleton SQLite `prisma` client) rather than reimplementing/duplicating
+ * its logic - this is the one place this file touches SQLite at all, and it
+ * is a read (`findMany`) exactly like everywhere else in the app's normal
+ * runtime path. Always run, regardless of profile; never gates the verdict.
  *
- * This function CANNOT compare against Neon: `business-analytics-service.ts`
- * imports `prisma` directly from `@/db/client` (no constructor/DI parameter
- * to swap in the Postgres verification client), so running this same
- * computation against Postgres would require an application-code refactor -
- * explicitly out of scope for this read-only reconciliation task per the
- * task's own Section G instruction ("Do NOT rewrite application services
- * just to force a Postgres comparison... report that limitation, do not
- * introduce architectural refactors"). The `note`/`limitation` field below
- * is how that is surfaced in the final report.
+ * This function CANNOT compare against the migration target:
+ * `business-analytics-service.ts` imports `prisma` directly from
+ * `@/db/client` (no constructor/DI parameter to swap in a different
+ * client), so running this same computation against Postgres would require
+ * an application-code refactor - out of scope for this read-only
+ * reconciliation tool. The `note`/`limitation` field below is how that is
+ * surfaced in the final report.
  */
 async function checkWatchlistSanity(): Promise<WatchlistSanityReport> {
   const note =
     "Evaluated ONLY against the current SQLite dev.db via the app's existing getItemTrendRows() (a read-only findMany path) - " +
-    "business-analytics-service.ts imports the SQLite `prisma` singleton directly with no DI seam for the Postgres verification client, " +
-    "so this sanity check cannot be run against Neon without an application-code refactor, which is out of scope for this read-only reconciliation task.";
+    "business-analytics-service.ts imports the SQLite `prisma` singleton directly with no DI seam for a different client, " +
+    "so this sanity check cannot be run against the migration target without an application-code refactor, which is out of scope for this read-only reconciliation task.";
   try {
     const { getItemTrendRows } = await import("../src/services/business-analytics-service");
     const items = await getItemTrendRows();
@@ -442,24 +477,57 @@ async function checkWatchlistSanity(): Promise<WatchlistSanityReport> {
   }
 }
 
+export interface ReconciliationVerdict {
+  corePass: boolean;
+  rehearsalPass: boolean;
+  overallPass: boolean;
+}
+
+/**
+ * Pure: the final pass/fail decision, isolated from main()'s orchestration
+ * so it is directly unit-testable without a live DB. `corePass` is always
+ * required. `rehearsalPass` is vacuously true under the default profile
+ * (rehearsal-only anchors are simply not applicable, never silently
+ * "passed" in a way that would be misreported - main() only prints the
+ * "Rehearsal-profile supplemental anchors" line when profile==="rehearsal")
+ * and only reflects the REDNAPE/dataMode reports when profile==="rehearsal".
+ * This is the exact mechanism that proves "default reconciliation does not
+ * require REDNAPE anchors" and "--profile=rehearsal still checks them".
+ */
+export function computeReconciliationVerdict(profile: ReconciliationProfile, corePass: boolean, rednapeOk: boolean | null, dataModeOk: boolean | null): ReconciliationVerdict {
+  const rehearsalPass = profile !== "rehearsal" || ((rednapeOk ?? false) && (dataModeOk ?? false));
+  return { corePass, rehearsalPass, overallPass: corePass && rehearsalPass };
+}
+
 // ---------------------------------------------------------------------------
 // main() - orchestration only. Never called by the test suite.
 // ---------------------------------------------------------------------------
 async function main() {
-  const snapshotDir = process.argv[2];
+  const args = process.argv.slice(2);
+  const snapshotDir = args.find((a) => !a.startsWith("--"));
+  const { profile, error: profileError } = resolveReconciliationProfile(args);
+  if (profileError) {
+    console.error(profileError);
+    process.exitCode = 1;
+    return;
+  }
   if (!snapshotDir) {
-    console.error("Usage: tsx scripts/reconcile-postgres-snapshot.ts <snapshot-dir>");
+    console.error("Usage: tsx scripts/reconcile-postgres-snapshot.ts <snapshot-dir> [--profile=rehearsal]");
     process.exitCode = 1;
     return;
   }
 
-  console.log("READ-ONLY RECONCILIATION - no writes to SQLite or Postgres will be made.");
+  console.log("READ-ONLY RECONCILIATION - no writes to SQLite or the migration target will be made.");
   console.log(`Snapshot: ${snapshotDir}`);
+  console.log(`Profile: ${profile}${profile === "rehearsal" ? " (core checks + REDNAPE/dataset-specific anchors)" : " (core checks only - no dataset-specific anchors; use --profile=rehearsal to also check REDNAPE)"}`);
   console.log("");
 
-  // ---- reconfirm POSTGRES_VERIFICATION_URL policy ----
-  const urlPolicy = checkVerificationUrlPolicy(process.env.POSTGRES_VERIFICATION_URL, process.env.DATABASE_URL);
-  console.log(`POSTGRES_VERIFICATION_URL policy: ${urlPolicy.errors.length === 0 ? "PASS" : "FAIL"}`);
+  // ---- reconfirm POSTGRES_MIGRATION_URL policy ----
+  const urlPolicy = checkMigrationUrlPolicy(process.env.POSTGRES_MIGRATION_URL, process.env.SQLITE_EXPORT_DATABASE_URL, process.env.DATABASE_URL);
+  console.log(`POSTGRES_MIGRATION_URL policy: ${urlPolicy.errors.length === 0 ? "PASS" : "FAIL"}`);
+  if (urlPolicy.sameAsDatabaseUrl !== null) {
+    console.log(`  Informational only (never a gate): POSTGRES_MIGRATION_URL identifies the ${urlPolicy.sameAsDatabaseUrl ? "SAME" : "a DIFFERENT"} target as the app's current DATABASE_URL.`);
+  }
   if (urlPolicy.errors.length > 0) {
     for (const err of urlPolicy.errors) console.error(`  - ${err}`);
     console.error("ABORT - refusing to connect.");
@@ -479,8 +547,7 @@ async function main() {
   console.log(`  manifest models=${snapshot.manifest!.modelCount} totalRows=${snapshot.manifest!.totalRows}`);
   console.log("");
 
-  const { PrismaClient: PostgresVerificationPrismaClient } = await import("../node_modules/.prisma-postgres-verification/client");
-  const client: PostgresVerificationClient = new PostgresVerificationPrismaClient();
+  const client: PostgresMigrationClient = new PrismaClient({ datasources: { db: { url: process.env.POSTGRES_MIGRATION_URL } } });
 
   try {
     const sourceIdsByModel = new Map<string, Set<string>>();
@@ -491,7 +558,7 @@ async function main() {
     let totalMismatchCount = 0;
     const results: ModelReconciliationResult[] = [];
 
-    console.log("=== Per-model reconciliation ===");
+    console.log("=== Per-model reconciliation (CORE - always required) ===");
     for (const modelName of IMPORT_ORDER) {
       const sourceRows = snapshot.rowsByModel.get(modelName) ?? [];
       const { result, targetRows } = await reconcileModel(client, modelName, sourceRows, sourceIdsByModel, targetIdsByModel, mismatches);
@@ -525,9 +592,9 @@ async function main() {
       }
     }
 
-    // ---- Section D: source/category/etc aggregate comparisons ----
+    // ---- CORE aggregate comparisons - dataset-independent, always required ----
     console.log("");
-    console.log("=== Aggregate comparisons ===");
+    console.log("=== Aggregate comparisons (CORE - always required) ===");
     const aggregateChecks: AggregateComparison[] = [
       compareAggregate("MarketProduct by source", sourceRowsByModel.get("MarketProduct")!, targetRowsByModel.get("MarketProduct")!, (r) => String(r.source)),
       compareAggregate("MarketProduct by category", sourceRowsByModel.get("MarketProduct")!, targetRowsByModel.get("MarketProduct")!, (r) => String(r.category ?? "NULL")),
@@ -547,48 +614,53 @@ async function main() {
     console.log(`  TrendKeyword total: source=${sourceRowsByModel.get("TrendKeyword")!.length} target=${targetRowsByModel.get("TrendKeyword")!.length}`);
     console.log(`  InternalProduct total: source=${sourceRowsByModel.get("InternalProduct")!.length} target=${targetRowsByModel.get("InternalProduct")!.length}`);
 
-    // ---- Section C special known checks: REDNAPE anchors ----
+    // ---- OPTIONAL (--profile=rehearsal only): REDNAPE anchors + hardcoded dataMode counts ----
+    let rednapeReport: RednapeAnchorReport | null = null;
+    let marketRankingDataModeReport: MarketRankingSnapshotDataModeReport | null = null;
     console.log("");
-    console.log("=== REDNAPE anchor verification ===");
-    const rednapeReport = checkRednapeAnchors(
-      {
-        marketProduct: sourceRowsByModel.get("MarketProduct")!,
-        marketRankingSnapshot: sourceRowsByModel.get("MarketRankingSnapshot")!,
-        importRun: sourceRowsByModel.get("ImportRun")!,
-        importError: sourceRowsByModel.get("ImportError")!
-      },
-      {
-        marketProduct: targetRowsByModel.get("MarketProduct")!,
-        marketRankingSnapshot: targetRowsByModel.get("MarketRankingSnapshot")!,
-        importRun: targetRowsByModel.get("ImportRun")!,
-        importError: targetRowsByModel.get("ImportError")!
+    if (profile === "rehearsal") {
+      console.log("=== REDNAPE anchor verification (--profile=rehearsal, supplemental) ===");
+      rednapeReport = checkRednapeAnchors(
+        {
+          marketProduct: sourceRowsByModel.get("MarketProduct")!,
+          marketRankingSnapshot: sourceRowsByModel.get("MarketRankingSnapshot")!,
+          importRun: sourceRowsByModel.get("ImportRun")!,
+          importError: sourceRowsByModel.get("ImportError")!
+        },
+        {
+          marketProduct: targetRowsByModel.get("MarketProduct")!,
+          marketRankingSnapshot: targetRowsByModel.get("MarketRankingSnapshot")!,
+          importRun: targetRowsByModel.get("ImportRun")!,
+          importError: targetRowsByModel.get("ImportError")!
+        }
+      );
+      console.log(`  MarketProduct REDNAPE count: source=${rednapeReport.marketProductCount.source} target=${rednapeReport.marketProductCount.target} expected=5 -> ${rednapeReport.marketProductCount.ok ? "PASS" : "FAIL"}`);
+      console.log(
+        `  MarketRankingSnapshot REDNAPE count: source=${rednapeReport.marketRankingSnapshotCount.source} target=${rednapeReport.marketRankingSnapshotCount.target} expected=5 -> ${
+          rednapeReport.marketRankingSnapshotCount.ok ? "PASS" : "FAIL"
+        }`
+      );
+      console.log(`  ImportRun REDNAPE count: source=${rednapeReport.importRunCount.source} target=${rednapeReport.importRunCount.target} expected=1 -> ${rednapeReport.importRunCount.ok ? "PASS" : "FAIL"}`);
+      console.log(`  ImportError REDNAPE count: source=${rednapeReport.importErrorCount.source} target=${rednapeReport.importErrorCount.target} expected=0 -> ${rednapeReport.importErrorCount.ok ? "PASS" : "FAIL"}`);
+      console.log(`  externalProductId set: ${rednapeReport.externalProductIds.ok ? "PASS" : "FAIL"} (expected=${JSON.stringify(EXPECTED_REDNAPE_EXTERNAL_PRODUCT_IDS)})`);
+      console.log(`  periodDate/rank/rankingVerified/rankingScope on all 5 rows (both sides): ${rednapeReport.periodDateAndFlags.ok ? "PASS" : "FAIL"}`);
+      if (!rednapeReport.periodDateAndFlags.ok) {
+        for (const d of rednapeReport.periodDateAndFlags.details) console.log(`    - ${d}`);
       }
-    );
-    console.log(`  MarketProduct REDNAPE count: source=${rednapeReport.marketProductCount.source} target=${rednapeReport.marketProductCount.target} expected=5 -> ${rednapeReport.marketProductCount.ok ? "PASS" : "FAIL"}`);
-    console.log(
-      `  MarketRankingSnapshot REDNAPE count: source=${rednapeReport.marketRankingSnapshotCount.source} target=${rednapeReport.marketRankingSnapshotCount.target} expected=5 -> ${
-        rednapeReport.marketRankingSnapshotCount.ok ? "PASS" : "FAIL"
-      }`
-    );
-    console.log(`  ImportRun REDNAPE count: source=${rednapeReport.importRunCount.source} target=${rednapeReport.importRunCount.target} expected=1 -> ${rednapeReport.importRunCount.ok ? "PASS" : "FAIL"}`);
-    console.log(`  ImportError REDNAPE count: source=${rednapeReport.importErrorCount.source} target=${rednapeReport.importErrorCount.target} expected=0 -> ${rednapeReport.importErrorCount.ok ? "PASS" : "FAIL"}`);
-    console.log(`  externalProductId set: ${rednapeReport.externalProductIds.ok ? "PASS" : "FAIL"} (expected=${JSON.stringify(EXPECTED_REDNAPE_EXTERNAL_PRODUCT_IDS)})`);
-    console.log(`  periodDate/rank/rankingVerified/rankingScope on all 5 rows (both sides): ${rednapeReport.periodDateAndFlags.ok ? "PASS" : "FAIL"}`);
-    if (!rednapeReport.periodDateAndFlags.ok) {
-      for (const d of rednapeReport.periodDateAndFlags.details) console.log(`    - ${d}`);
+
+      marketRankingDataModeReport = checkMarketRankingSnapshotDataModeCounts(sourceRowsByModel.get("MarketRankingSnapshot")!, targetRowsByModel.get("MarketRankingSnapshot")!);
+      console.log(
+        `  MarketRankingSnapshot dataMode counts (real=672, sample=2592, total=3264): source=${JSON.stringify(marketRankingDataModeReport.source)} target=${JSON.stringify(
+          marketRankingDataModeReport.target
+        )} -> ${marketRankingDataModeReport.ok ? "PASS" : "FAIL"}`
+      );
+    } else {
+      console.log("=== REDNAPE anchor verification: SKIPPED (default profile - rerun with --profile=rehearsal to check REDNAPE-specific anchors) ===");
     }
 
-    // ---- Section G: derived business sanity checks (read-only, best-effort) ----
+    // ---- Section G: derived business sanity checks (read-only, best-effort, always run, never gates) ----
     console.log("");
-    console.log("=== Derived business sanity checks (Section G) ===");
-    const marketRankingDataModeReport = checkMarketRankingSnapshotDataModeCounts(sourceRowsByModel.get("MarketRankingSnapshot")!, targetRowsByModel.get("MarketRankingSnapshot")!);
-    console.log(
-      `  MarketRankingSnapshot dataMode counts (real=672, sample=2592, total=3264): source=${JSON.stringify(marketRankingDataModeReport.source)} target=${JSON.stringify(
-        marketRankingDataModeReport.target
-      )} -> ${marketRankingDataModeReport.ok ? "PASS" : "FAIL"}`
-    );
-    console.log(`  REDNAPE adds exactly 5 real MarketRankingSnapshot rows: ${rednapeReport.marketRankingSnapshotCount.ok ? "PASS" : "FAIL"} (see REDNAPE anchor section above)`);
-
+    console.log("=== Derived business sanity checks (informational, never gates the verdict) ===");
     const watchlistReport = await checkWatchlistSanity();
     console.log(`  Watchlist frozen-order sanity check: attempted=${watchlistReport.attempted} matches=${watchlistReport.matchesExpectedOrder}`);
     console.log(`    expected: ${JSON.stringify(EXPECTED_WATCHLIST_ORDER)}`);
@@ -596,15 +668,15 @@ async function main() {
     if (watchlistReport.error) console.log(`    error:    ${sanitizeErrorMessage(watchlistReport.error)}`);
     console.log(`    LIMITATION: ${watchlistReport.note}`);
 
-    // ---- final verdict: raw-row reconciliation is the gating requirement ----
-    const rawReconciliationPass =
-      results.every((r) => r.rowCountOk && r.idSet.ok && r.fieldEqualityOk && r.dateTimeEqualityOk && r.fingerprint.ok && (r.relationSource?.ok ?? true) && (r.relationTarget?.ok ?? true)) &&
-      aggregateChecks.every((c) => c.ok) &&
-      rednapeReport.ok;
+    // ---- final verdict: CORE raw-row reconciliation is always the gating requirement; rehearsal anchors gate ONLY under --profile=rehearsal ----
+    const corePass = results.every((r) => r.rowCountOk && r.idSet.ok && r.fieldEqualityOk && r.dateTimeEqualityOk && r.fingerprint.ok && (r.relationSource?.ok ?? true) && (r.relationTarget?.ok ?? true)) && aggregateChecks.every((c) => c.ok);
+    const verdict = computeReconciliationVerdict(profile, corePass, rednapeReport?.ok ?? null, marketRankingDataModeReport?.ok ?? null);
 
     console.log("");
-    console.log(`FINAL VERDICT: ${rawReconciliationPass ? "RECONCILIATION PASS" : "RECONCILIATION FAIL"}`);
-    if (!rawReconciliationPass) process.exitCode = 1;
+    console.log(`Core checks: ${verdict.corePass ? "PASS" : "FAIL"}`);
+    if (profile === "rehearsal") console.log(`Rehearsal-profile supplemental anchors: ${verdict.rehearsalPass ? "PASS" : "FAIL"}`);
+    console.log(`FINAL VERDICT: ${verdict.overallPass ? "RECONCILIATION PASS" : "RECONCILIATION FAIL"}`);
+    if (!verdict.overallPass) process.exitCode = 1;
   } finally {
     await client.$disconnect();
   }
