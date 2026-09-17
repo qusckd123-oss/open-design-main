@@ -5,8 +5,8 @@
  * comment): every database call in this file is `prisma.<model>.findMany(...)`
  * - there is no `create`, `createMany`, `update`, `updateMany`, `upsert`,
  * `delete`, `deleteMany`, `$executeRaw*`, or any transaction containing a
- * write anywhere below. `MODEL_EXPORTS` is the single, exhaustive list of
- * every read call this script makes; every entry funnels through the
+ * write anywhere below. `buildModelExports()` returns the single, exhaustive
+ * list of every read call this script makes; every entry funnels through the
  * `exporter()` wrapper, which only ever calls the `findMany` passed into it
  * and returns its result unchanged. Nothing in this file ever touches
  * `prisma/dev.db` directly (no fs write/rename/copy of the .db file itself)
@@ -16,14 +16,33 @@
  * Prisma model, suitable as (a) a point-in-time backup and (b) the future
  * input to a PostgreSQL import script - NOT the import script itself, which
  * is explicitly out of scope for this file.
+ *
+ * DATASOURCE NOTE: prisma/schema.prisma (the app's canonical schema, and
+ * therefore the default `@prisma/client`/`../src/db/client`) was promoted to
+ * PostgreSQL - its generated query engine can no longer speak to a SQLite
+ * `file:...` URL at all. This script instead uses the isolated client
+ * generated from prisma/schema.sqlite-export.prisma (output redirected to
+ * node_modules/.prisma-sqlite-export/client, reading SQLITE_EXPORT_DATABASE_URL),
+ * exactly mirroring scripts/import-postgres-snapshot.ts's own established
+ * type-only-import-plus-lazy-runtime-import pattern for an isolated,
+ * non-default generated client. This is the ONLY way this file touches
+ * SQLite now; it remains completely decoupled from the app's runtime client.
  */
 import { createHash } from "node:crypto";
 import { execSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { Prisma } from "@prisma/client";
-import { prisma } from "../src/db/client";
+// Isolated SQLite-export client ONLY - see the DATASOURCE NOTE above. Do not
+// replace with "@prisma/client" or "../src/db/client" (both are now
+// PostgreSQL-flavored). Deliberately a TYPE-ONLY import (erased entirely at
+// compile time - safe under this project's `isolatedModules: true`); the
+// actual runtime client/Prisma namespace are loaded lazily inside main() via
+// `await import(...)` so importing this file's pure functions never
+// requires the generated client to exist on disk.
+import type { Prisma as SqliteExportPrismaNamespace, PrismaClient as SqliteExportPrismaClient } from "../node_modules/.prisma-sqlite-export/client";
+
+type SqliteExportClient = InstanceType<typeof SqliteExportPrismaClient>;
 
 const FORMAT_VERSION = 1;
 /**
@@ -47,7 +66,7 @@ function exporter<T extends ExportRow>(findMany: () => Promise<T[]>): () => Prom
 
 /**
  * The complete, exhaustive list of persisted Prisma models (verified
- * against prisma/schema.prisma: 16 `model` blocks, matching
+ * against prisma/schema.sqlite-export.prisma: 16 `model` blocks, matching
  * EXPECTED_MODEL_COUNT). Every model orders by `id: "asc"` - every model in
  * this schema uses the same `id String @id @default(cuid())` shape, so this
  * one ordering rule is uniformly applicable; no model needed a different
@@ -57,25 +76,33 @@ function exporter<T extends ExportRow>(findMany: () => Promise<T[]>): () => Prom
  * inserted in the same batch (several collectors in this app insert many
  * rows per run), which would make row order across re-exports
  * nondeterministic; `id` never collides.
+ *
+ * Takes the isolated SQLite-export client as a parameter (rather than
+ * closing over a module-scope singleton) so this function - and therefore
+ * every pure helper below it - can be imported and unit-tested without ever
+ * requiring the generated client to exist on disk; only `main()` actually
+ * constructs one.
  */
-const MODEL_EXPORTS: ModelExportConfig[] = [
-  { name: "Product", findRows: exporter(() => prisma.product.findMany({ orderBy: { id: "asc" } })) },
-  { name: "RankingSnapshot", findRows: exporter(() => prisma.rankingSnapshot.findMany({ orderBy: { id: "asc" } })) },
-  { name: "CollectionRun", findRows: exporter(() => prisma.collectionRun.findMany({ orderBy: { id: "asc" } })) },
-  { name: "CollectionError", findRows: exporter(() => prisma.collectionError.findMany({ orderBy: { id: "asc" } })) },
-  { name: "TrendKeyword", findRows: exporter(() => prisma.trendKeyword.findMany({ orderBy: { id: "asc" } })) },
-  { name: "KeywordTrendSnapshot", findRows: exporter(() => prisma.keywordTrendSnapshot.findMany({ orderBy: { id: "asc" } })) },
-  { name: "KeywordShoppingAgeSnapshot", findRows: exporter(() => prisma.keywordShoppingAgeSnapshot.findMany({ orderBy: { id: "asc" } })) },
-  { name: "ProductTag", findRows: exporter(() => prisma.productTag.findMany({ orderBy: { id: "asc" } })) },
-  { name: "InternalProduct", findRows: exporter(() => prisma.internalProduct.findMany({ orderBy: { id: "asc" } })) },
-  { name: "SalesSnapshot", findRows: exporter(() => prisma.salesSnapshot.findMany({ orderBy: { id: "asc" } })) },
-  { name: "MarketProduct", findRows: exporter(() => prisma.marketProduct.findMany({ orderBy: { id: "asc" } })) },
-  { name: "MarketRankingSnapshot", findRows: exporter(() => prisma.marketRankingSnapshot.findMany({ orderBy: { id: "asc" } })) },
-  { name: "EditorialPost", findRows: exporter(() => prisma.editorialPost.findMany({ orderBy: { id: "asc" } })) },
-  { name: "EditorialMention", findRows: exporter(() => prisma.editorialMention.findMany({ orderBy: { id: "asc" } })) },
-  { name: "ImportRun", findRows: exporter(() => prisma.importRun.findMany({ orderBy: { id: "asc" } })) },
-  { name: "ImportError", findRows: exporter(() => prisma.importError.findMany({ orderBy: { id: "asc" } })) }
-];
+function buildModelExports(prisma: SqliteExportClient): ModelExportConfig[] {
+  return [
+    { name: "Product", findRows: exporter(() => prisma.product.findMany({ orderBy: { id: "asc" } })) },
+    { name: "RankingSnapshot", findRows: exporter(() => prisma.rankingSnapshot.findMany({ orderBy: { id: "asc" } })) },
+    { name: "CollectionRun", findRows: exporter(() => prisma.collectionRun.findMany({ orderBy: { id: "asc" } })) },
+    { name: "CollectionError", findRows: exporter(() => prisma.collectionError.findMany({ orderBy: { id: "asc" } })) },
+    { name: "TrendKeyword", findRows: exporter(() => prisma.trendKeyword.findMany({ orderBy: { id: "asc" } })) },
+    { name: "KeywordTrendSnapshot", findRows: exporter(() => prisma.keywordTrendSnapshot.findMany({ orderBy: { id: "asc" } })) },
+    { name: "KeywordShoppingAgeSnapshot", findRows: exporter(() => prisma.keywordShoppingAgeSnapshot.findMany({ orderBy: { id: "asc" } })) },
+    { name: "ProductTag", findRows: exporter(() => prisma.productTag.findMany({ orderBy: { id: "asc" } })) },
+    { name: "InternalProduct", findRows: exporter(() => prisma.internalProduct.findMany({ orderBy: { id: "asc" } })) },
+    { name: "SalesSnapshot", findRows: exporter(() => prisma.salesSnapshot.findMany({ orderBy: { id: "asc" } })) },
+    { name: "MarketProduct", findRows: exporter(() => prisma.marketProduct.findMany({ orderBy: { id: "asc" } })) },
+    { name: "MarketRankingSnapshot", findRows: exporter(() => prisma.marketRankingSnapshot.findMany({ orderBy: { id: "asc" } })) },
+    { name: "EditorialPost", findRows: exporter(() => prisma.editorialPost.findMany({ orderBy: { id: "asc" } })) },
+    { name: "EditorialMention", findRows: exporter(() => prisma.editorialMention.findMany({ orderBy: { id: "asc" } })) },
+    { name: "ImportRun", findRows: exporter(() => prisma.importRun.findMany({ orderBy: { id: "asc" } })) },
+    { name: "ImportError", findRows: exporter(() => prisma.importError.findMany({ orderBy: { id: "asc" } })) }
+  ];
+}
 
 /**
  * Deep, key-sorted JSON serialization - the same row exported twice (same
@@ -162,13 +189,27 @@ type PerModelResult = {
 };
 
 async function main() {
+  // Lazy runtime load - see the top-of-file DATASOURCE NOTE and the
+  // type-only import above for why this must not be a static/eager import.
+  const { PrismaClient: SqliteExportPrismaClient, Prisma: SqliteExportPrisma } = await import("../node_modules/.prisma-sqlite-export/client");
+  const prisma: SqliteExportClient = new SqliteExportPrismaClient();
+  const MODEL_EXPORTS = buildModelExports(prisma);
+
   if (MODEL_EXPORTS.length !== EXPECTED_MODEL_COUNT) {
     throw new Error(
       `MODEL_EXPORTS has ${MODEL_EXPORTS.length} entries but EXPECTED_MODEL_COUNT is ${EXPECTED_MODEL_COUNT}. ` +
-        "This is the schema-drift tripwire firing - prisma/schema.prisma's model list and this file's MODEL_EXPORTS array have gone out of sync. Update both together before re-running."
+        "This is the schema-drift tripwire firing - prisma/schema.sqlite-export.prisma's model list and this file's buildModelExports() array have gone out of sync. Update both together before re-running."
     );
   }
 
+  try {
+    await runExport(MODEL_EXPORTS, SqliteExportPrisma);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+async function runExport(MODEL_EXPORTS: ModelExportConfig[], SqliteExportPrisma: typeof SqliteExportPrismaNamespace) {
   const startedAt = new Date();
   const exportRoot = join("backups", "sqlite-export", timestampSlug(startedAt));
   mkdirSync(exportRoot, { recursive: true });
@@ -270,7 +311,7 @@ async function main() {
     sourceDatabase: "SQLite",
     sourceDatabasePath: "prisma/dev.db",
     gitCommit: tryGitHead(),
-    prismaClientVersion: Prisma.prismaVersion.client,
+    prismaClientVersion: SqliteExportPrisma.prismaVersion.client,
     modelCount: perModel.length,
     expectedModelCount: EXPECTED_MODEL_COUNT,
     models: perModel.map((m) => ({ name: m.name, rowCount: m.rowCount, fileName: m.fileName, sha256: m.sha256, bytes: m.bytes })),
@@ -305,12 +346,8 @@ async function main() {
 
 const isDirectRun = process.argv[1] != null && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isDirectRun) {
-  main()
-    .catch((error) => {
-      console.error("Export failed:", error instanceof Error ? error.message : error);
-      process.exitCode = 1;
-    })
-    .finally(async () => {
-      await prisma.$disconnect();
-    });
+  main().catch((error) => {
+    console.error("Export failed:", error instanceof Error ? error.message : error);
+    process.exitCode = 1;
+  });
 }

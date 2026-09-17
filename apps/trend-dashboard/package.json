@@ -6,10 +6,13 @@
   "scripts": {
     "dev": "next dev -p 3001",
     "build": "prisma generate && next build",
+    "start": "node .next/standalone/apps/trend-dashboard/server.js",
     "typecheck": "tsc -b --noEmit",
     "db:generate": "prisma generate",
+    "db:generate:sqlite-export": "prisma generate --schema=prisma/schema.sqlite-export.prisma",
     "db:push": "prisma db push",
     "db:setup": "prisma generate && prisma db push",
+    "db:migrate:deploy": "prisma migrate deploy",
     "db:seed": "tsx scripts/seed.ts",
     "db:migrate-market-scope": "tsx scripts/migrate-market-ranking-scope.ts",
     "data:reclassify-market": "tsx scripts/reclassify-market-data.ts",

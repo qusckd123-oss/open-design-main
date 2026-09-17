@@ -1,47 +1,42 @@
-// PostgreSQL verification/reconciliation schema.
+// SQLite export-only schema - NOT the application runtime schema.
 //
-// This file exists ONLY to verify that this project's 16 SQLite models can
-// be represented losslessly on PostgreSQL (a disposable Neon database) as
-// preparation for a future migration/import script. It is NOT the
-// application's schema and MUST NOT be imported by normal app runtime code
-// (src/**). The application continues to run entirely against
-// prisma/schema.prisma (SQLite, DATABASE_URL) via @prisma/client.
+// prisma/schema.prisma (the canonical runtime schema) was promoted to
+// PostgreSQL on 2026-09-17, after the SQLite -> disposable Neon rehearsal
+// fully validated data/schema parity (see scripts/reconcile-postgres-snapshot.ts).
+// Its default-output generated client can therefore no longer speak to a
+// `file:...` SQLite URL at all - the query engine itself is provider-specific.
 //
-// Differences from prisma/schema.prisma, and why:
-//   1. datasource provider is "postgresql" instead of "sqlite".
-//   2. datasource url reads POSTGRES_VERIFICATION_URL (a separate,
-//      disposable Neon database), never DATABASE_URL.
-//   3. generator output is redirected to an isolated path under
-//      node_modules/.prisma-postgres-verification/ so `prisma generate`
-//      against this file can never overwrite or collide with the
-//      application's normal generated client at node_modules/.prisma/client
-//      (the default location @prisma/client resolves for the SQLite schema).
-//   4. Every DateTime field gets an explicit @db.Timestamptz(3). Verified
-//      empirically (`prisma migrate diff --from-empty --to-schema-datamodel`)
-//      that Prisma's PostgreSQL default for a bare DateTime field is
-//      TIMESTAMP(3) (no timezone) - a naive wall-clock value with no stored
-//      offset. That default only round-trips correctly if every writer and
-//      reader implicitly agrees the value means UTC; a future
-//      migration/reconciliation script, a raw-SQL import path, or any
-//      non-Prisma tool touching this disposable database could silently
-//      shift the instant. TIMESTAMPTZ(3) stores/returns the instant itself,
-//      independent of server/session timezone, which is required for exact
-//      JS Date millisecond round-trip and cloud/host-timezone independence.
-//      Precision (3) matches both the JS Date millisecond ceiling and
-//      Prisma's own PostgreSQL default precision, so no precision is gained
-//      or lost by adding the tz-awareness - only the timezone-safety changes.
+// This file exists SOLELY to preserve a proven, isolated, read-only path to
+// prisma/dev.db (the final authoritative SQLite source) so
+// scripts/export-sqlite-snapshot.ts can keep producing fresh NDJSON
+// snapshots - specifically the one needed at Phase 2's real production
+// cutover time (see docs/production-migration-plan, task history). It is:
+//   - never imported by application runtime code (src/**)
+//   - never imported by any collector script
+//   - used by exactly one script: scripts/export-sqlite-snapshot.ts
 //
-// All 16 models are preserved exactly (same fields, types, relations,
-// unique/index constraints) - no model was added, removed, or restructured.
+// generator output is redirected to an isolated path under
+// node_modules/.prisma-sqlite-export/ so `prisma generate` against this file
+// can never overwrite or collide with the application's normal generated
+// client at node_modules/.prisma/client (now Postgres-flavored).
+//
+// datasource url reads SQLITE_EXPORT_DATABASE_URL (a dedicated variable -
+// see .env.example) rather than DATABASE_URL, since DATABASE_URL is now
+// reserved for the canonical PostgreSQL connection.
+//
+// All 16 models are reproduced exactly as prisma/schema.prisma had them
+// before this promotion (same fields, types, relations, unique/index
+// constraints, and SQLite's native DateTime representation - no
+// @db.Timestamptz annotations, which are PostgreSQL-only).
 
-generator postgresVerificationClient {
+generator sqliteExportClient {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma-postgres-verification/client"
+  output   = "../node_modules/.prisma-sqlite-export/client"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("POSTGRES_VERIFICATION_URL")
+  provider = "sqlite"
+  url      = env("SQLITE_EXPORT_DATABASE_URL")
 }
 
 model Product {
@@ -56,8 +51,8 @@ model Product {
   gender           String?
   color            String?
   isNew            Boolean           @default(false)
-  createdAt        DateTime          @default(now()) @db.Timestamptz(3)
-  updatedAt        DateTime          @updatedAt @db.Timestamptz(3)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
   rankingSnapshots RankingSnapshot[]
   tag              ProductTag?
 
@@ -76,7 +71,7 @@ model RankingSnapshot {
   reviewCount  Int?
   likeCount    Int?
   isSoldOut    Boolean  @default(false)
-  collectedAt  DateTime @db.Timestamptz(3)
+  collectedAt  DateTime
   product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([productId, collectedAt])
@@ -88,14 +83,14 @@ model CollectionRun {
   id           String    @id @default(cuid())
   source       String
   mode         String
-  startedAt    DateTime  @db.Timestamptz(3)
-  completedAt  DateTime? @db.Timestamptz(3)
+  startedAt    DateTime
+  completedAt  DateTime?
   status       String
   productCount Int       @default(0)
   fetchedCount Int       @default(0)
   errorCount   Int       @default(0)
   errorMessage String?
-  createdAt    DateTime  @default(now()) @db.Timestamptz(3)
+  createdAt    DateTime  @default(now())
   errors       CollectionError[]
 
   @@index([source])
@@ -110,7 +105,7 @@ model CollectionError {
   externalId      String?
   url             String?
   reason          String
-  timestamp       DateTime      @default(now()) @db.Timestamptz(3)
+  timestamp       DateTime      @default(now())
   collectionRun   CollectionRun @relation(fields: [collectionRunId], references: [id], onDelete: Cascade)
 
   @@index([source])
@@ -132,8 +127,8 @@ model TrendKeyword {
   // snapshot models' `gender` field) and must never be conflated with it.
   planningGender String?
   active    Boolean                @default(true)
-  createdAt DateTime               @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime               @updatedAt @db.Timestamptz(3)
+  createdAt DateTime               @default(now())
+  updatedAt DateTime               @updatedAt
   snapshots KeywordTrendSnapshot[]
   shoppingAgeSnapshots KeywordShoppingAgeSnapshot[]
 
@@ -151,12 +146,12 @@ model KeywordTrendSnapshot {
   // NAVER shopper gender ("ALL" | "FEMALE" | "MALE") - who searched, never
   // the product's planning gender.
   gender      String       @default("ALL")
-  period      DateTime     @db.Timestamptz(3)
+  period      DateTime
   ratio       Float
   // "real" only for actual NAVER API responses; "mock" for locally generated
   // demo data. Must never be mixed when reading REAL demand data.
   dataMode    String       @default("mock")
-  collectedAt DateTime     @db.Timestamptz(3)
+  collectedAt DateTime
   keyword     TrendKeyword @relation(fields: [keywordId], references: [id], onDelete: Cascade)
 
   @@unique([keywordId, source, ageGroup, gender, period])
@@ -175,12 +170,12 @@ model KeywordShoppingAgeSnapshot {
   // NAVER shopper gender ("ALL" | "FEMALE" | "MALE") - who searched/clicked,
   // never the product's planning gender.
   gender      String       @default("ALL")
-  period      DateTime     @db.Timestamptz(3)
+  period      DateTime
   ratio       Float
   // "real" only for actual NAVER API responses; "mock" for locally generated
   // demo data. Must never be mixed when reading REAL demand data.
   dataMode    String       @default("mock")
-  collectedAt DateTime     @db.Timestamptz(3)
+  collectedAt DateTime
   keyword     TrendKeyword @relation(fields: [keywordId], references: [id], onDelete: Cascade)
 
   @@unique([keywordId, source, ageGroup, gender, period])
@@ -203,8 +198,8 @@ model ProductTag {
   detail      String?
   style       String?
   gender      String?
-  createdAt   DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
@@ -228,8 +223,8 @@ model InternalProduct {
   detail            String?
   style             String?
   dataMode          String          @default("sample")
-  createdAt         DateTime        @default(now()) @db.Timestamptz(3)
-  updatedAt         DateTime        @updatedAt @db.Timestamptz(3)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
   salesSnapshots    SalesSnapshot[]
 
   @@index([brand])
@@ -242,7 +237,7 @@ model InternalProduct {
 model SalesSnapshot {
   id               String          @id @default(cuid())
   productId        String
-  periodDate       DateTime        @db.Timestamptz(3)
+  periodDate       DateTime
   salesQty         Int?
   salesAmount      Int?
   stockQty         Int?
@@ -254,7 +249,7 @@ model SalesSnapshot {
   onlineSalesQty   Int?
   dataMode         String          @default("sample")
   importRunId      String?
-  createdAt        DateTime        @default(now()) @db.Timestamptz(3)
+  createdAt        DateTime        @default(now())
   product          InternalProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([productId, periodDate])
@@ -282,8 +277,8 @@ model MarketProduct {
   style            String?
   gender           String?
   dataMode         String                  @default("sample")
-  createdAt        DateTime                @default(now()) @db.Timestamptz(3)
-  updatedAt        DateTime                @updatedAt @db.Timestamptz(3)
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
   rankingSnapshots MarketRankingSnapshot[]
 
   @@unique([source, externalProductId])
@@ -298,7 +293,7 @@ model MarketRankingSnapshot {
   id              String        @id @default(cuid())
   marketProductId String
   source          String
-  periodDate      DateTime      @db.Timestamptz(3)
+  periodDate      DateTime
   rankingCategory String        @default("ALL")
   observedCategory String        @default("ALL")
   audienceSegment String        @default("ALL")
@@ -315,7 +310,7 @@ model MarketRankingSnapshot {
   dataMode        String        @default("sample")
   importRunId     String?
   rawData         String?
-  createdAt       DateTime      @default(now()) @db.Timestamptz(3)
+  createdAt       DateTime      @default(now())
   marketProduct   MarketProduct @relation(fields: [marketProductId], references: [id], onDelete: Cascade)
 
   @@unique([marketProductId, source, periodDate, rankingScope, rankingCategory, observedCategory, audienceSegment])
@@ -339,16 +334,16 @@ model EditorialPost {
   url             String
   canonicalUrl    String?
   title           String
-  publishedAt     DateTime?           @db.Timestamptz(3)
+  publishedAt     DateTime?
   imageUrl        String?
   excerpt         String?
   text            String?
   audienceGender  String              @default("UNKNOWN")
   fashionRelevance String             @default("UNKNOWN")
   dataMode        String              @default("sample")
-  collectedAt     DateTime            @default(now()) @db.Timestamptz(3)
-  createdAt       DateTime            @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime            @updatedAt @db.Timestamptz(3)
+  collectedAt     DateTime            @default(now())
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
   mentions        EditorialMention[]
 
   @@unique([source, externalPostId])
@@ -367,7 +362,7 @@ model EditorialMention {
   audienceGender String      @default("UNKNOWN")
   confidence Float         @default(1)
   evidence   String?
-  createdAt  DateTime      @default(now()) @db.Timestamptz(3)
+  createdAt  DateTime      @default(now())
   post       EditorialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@unique([postId, type, value])
@@ -385,8 +380,8 @@ model ImportRun {
   rankingCategory String?
   audienceSegment String?
   dataMode     String        @default("sample")
-  startedAt    DateTime      @db.Timestamptz(3)
-  completedAt  DateTime?     @db.Timestamptz(3)
+  startedAt    DateTime
+  completedAt  DateTime?
   status       String
   totalRows    Int           @default(0)
   fetchedRows  Int           @default(0)
@@ -394,7 +389,7 @@ model ImportRun {
   failedRows   Int           @default(0)
   skippedRows  Int           @default(0)
   errorMessage String?
-  createdAt    DateTime      @default(now()) @db.Timestamptz(3)
+  createdAt    DateTime      @default(now())
   errors       ImportError[]
 
   @@index([type])
@@ -412,7 +407,7 @@ model ImportError {
   field       String?
   reason      String
   rawRow      String?
-  createdAt   DateTime  @default(now()) @db.Timestamptz(3)
+  createdAt   DateTime  @default(now())
   importRun   ImportRun @relation(fields: [importRunId], references: [id], onDelete: Cascade)
 
   @@index([importRunId])
