@@ -14,6 +14,7 @@
     "tools-dev": "pnpm exec tools-dev",
     "tools-pack": "pnpm exec tools-pack",
     "build": "pnpm --filter @open-design/web build",
+    "start": "pnpm --filter @open-design/trend-dashboard start",
     "check:residual-js": "node --experimental-strip-types scripts/check-residual-js.ts",
     "test:e2e:live": "pnpm --filter @open-design/e2e test:e2e:live",
     "test": "pnpm -r --workspace-concurrency=1 --if-present run test",
