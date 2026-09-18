@@ -699,3 +699,11 @@
 - 2026-09-15 decisions: 26FW 리오더 품번은 ERP 상품등록 비고란에 `(리오더)` 또는 `글로벌(리오더)`를 표기하고, 발주번호란은 변경하지 않는다. 광복 FSS 모자 2SKU는 각 100PCS 입고하고 반팔 티셔츠는 별도 출고 없이 목요일 오전 입고를 추진한다.
 - 2026-09-15 unresolved: ST01의 직소싱 표현과 통푸/HNC 차수 배정 간 최종 기준, 기존 2팩 사이즈·출시 시점, 27SS PO/ACC 최종 수량·생산처, 부츠컷 팬츠 9/23 입고 가능 수량과 팝업 투입 가능 여부가 남아 있다.
 - 2026-09-15 next actions: reconcile the ST01 supplier master across PO/LINE SHEET/ERP; confirm existing 2-pack sizing and launch timing; close holiday artwork/material and release work instructions; confirm ACC production details and cost target; verify Gwangbok inbound; and decide the bootcut-pants fallback by 2026-09-16.
+
+## Current Teams Summary - 2026-09-18
+
+- Latest saved Teams memory: `work/90_archive/workspace/memory/current-teams-update-summary-2026-09-18.md`.
+- Scope limitation: the latest available Teams summary reflects messages through 2026-09-16; repository backups stop at 2026-09-13 and Teams live access was unavailable in this session, so 2026-09-17 messages remain to be verified.
+- 2026-09-18 recorded decisions: Gwangbok FSS 4 styles inbound was completed on 2026-09-17; `WA2603PT78` first inbound is 2026-09-23 at 100 pcs per color with balance targeted for 2026-09-28 to 2026-09-29 and store release at 10 pcs per size; delayed Sorona/26FW new-basic goods are prioritized to upper-tier/metropolitan stores; holiday womens colors include black among four colors and unisex adds ivory tones; `HZ01` MG proceeds solid without dyeing; inbound exception posts tag sourcing, planning, and sales planning, and 27SS apparel/material notes go to the 27SS GTM channel.
+- 2026-09-18 unresolved: final 27SS overseas LINE SHEET quantities, Sorona/new-basic style-level inbound and release plan, `WA2603PT78` vendor/direct-shipment feasibility, Gwangbok FSS quick-release feasibility, final holiday GTM/PO/LINE SHEET/ERP reflection, and 27SS PO/ACC/additional-CAD details.
+- 2026-09-18 next actions: revalidate the Taiwan-adjusted 27SS overseas LINE SHEET, finalize delayed-inbound allocation and `WA2603PT78` balance/direct shipment, verify Gwangbok store movement and 9/18 arrival, reflect holiday direction into GTM/PO/ERP, and recheck 2026-09-17 Teams messages when the live source is available.
