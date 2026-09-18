@@ -62,7 +62,7 @@ jobs:
         run: pnpm --filter @open-design/trend-dashboard run db:generate
 
       - name: Run editorial refresh
-        run: pnpm --filter @open-design/trend-dashboard run refresh:editorial -- --json
+        run: pnpm --filter @open-design/trend-dashboard run refresh:editorial --json
 
       - name: Upload refresh report
         if: always()
