@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { featureFlags } from "@/config/feature-flags";
+import { SESSION_COOKIE_NAME, verifySessionToken } from "@/lib/auth";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -24,7 +26,10 @@ const primaryNav = [
   { href: "/import", label: "데이터 관리" }
 ];
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies();
+  const isAuthenticated = verifySessionToken(cookieStore.get(SESSION_COOKIE_NAME)?.value);
+
   return (
     <html lang="ko">
       <body>
@@ -35,28 +40,35 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <span className="text-sm font-semibold uppercase tracking-[0.18em] text-ink">상품기획 트렌드</span>
                 <span className="text-xs text-muted">Trend · Store · Assortment</span>
               </Link>
-              <nav className="flex flex-wrap items-center gap-6 text-sm font-medium text-muted">
-                {primaryNav.map((item) => (
-                  <Link key={item.href} className="hover:text-ink" href={item.href}>
-                    {item.label}
-                  </Link>
-                ))}
-                {featureFlags.enableInternalSales ? (
-                  <Link className="hover:text-ink" href="/sales">
-                    내부 판매
-                  </Link>
-                ) : null}
-                {featureFlags.enableNaverTrends ? (
-                  <>
-                    <Link className="hover:text-ink" href="/trends">
-                      검색 트렌드
+              {isAuthenticated ? (
+                <nav className="flex flex-wrap items-center gap-6 text-sm font-medium text-muted">
+                  {primaryNav.map((item) => (
+                    <Link key={item.href} className="hover:text-ink" href={item.href}>
+                      {item.label}
                     </Link>
-                    <Link className="hover:text-ink" href="/settings/keywords">
-                      키워드
+                  ))}
+                  {featureFlags.enableInternalSales ? (
+                    <Link className="hover:text-ink" href="/sales">
+                      내부 판매
                     </Link>
-                  </>
-                ) : null}
-              </nav>
+                  ) : null}
+                  {featureFlags.enableNaverTrends ? (
+                    <>
+                      <Link className="hover:text-ink" href="/trends">
+                        검색 트렌드
+                      </Link>
+                      <Link className="hover:text-ink" href="/settings/keywords">
+                        키워드
+                      </Link>
+                    </>
+                  ) : null}
+                  <form method="POST" action="/api/auth/logout">
+                    <button type="submit" className="hover:text-ink">
+                      로그아웃
+                    </button>
+                  </form>
+                </nav>
+              ) : null}
             </div>
           </header>
           <main className="mx-auto max-w-[1440px] px-6 py-10">{children}</main>
