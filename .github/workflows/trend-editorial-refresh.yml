@@ -1,0 +1,74 @@
+name: trend-editorial-refresh
+
+on:
+  schedule:
+    # 30 23 * * 0 (UTC) = Monday 08:30 Asia/Seoul.
+    - cron: "30 23 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trend-editorial-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Editorial refresh (Category A incremental)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Production Neon connection only - never DASHBOARD_ACCESS_CODE,
+      # SESSION_SECRET, or any of the POSTGRES_MIGRATION_URL /
+      # SQLITE_EXPORT_DATABASE_URL / POSTGRES_VERIFICATION_URL
+      # migration-only variables. This workflow must only ever run
+      # scripts/refresh-editorial.ts (Category A: idempotent upsert,
+      # never a schema change, migration, seed, or full reparse).
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    steps:
+      - name: Verify DATABASE_URL secret is configured
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::DATABASE_URL repository secret is not set. Add it under Settings > Secrets and variables > Actions before running this workflow." >&2
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          version: 10.33.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      # --ignore-scripts: the root postinstall (scripts/postinstall.mjs)
+      # builds packages/sidecar-proto, packages/sidecar, packages/platform,
+      # tools/dev, and tools/pack - none of which apps/trend-dashboard's
+      # refresh:editorial script imports. Skipping it keeps this workflow
+      # to only what the collector actually needs.
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      # Canonical runtime Prisma client only (prisma/schema.prisma, the
+      # PostgreSQL/DATABASE_URL schema) - never the sqlite-export client,
+      # which this workflow has no use for.
+      - name: Generate Prisma client
+        run: pnpm --filter @open-design/trend-dashboard run db:generate
+
+      - name: Run editorial refresh
+        run: pnpm --filter @open-design/trend-dashboard run refresh:editorial -- --json
+
+      - name: Upload refresh report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: editorial-refresh-report
+          path: apps/trend-dashboard/logs/editorial-refresh-report.json
+          if-no-files-found: warn
+          retention-days: 30
