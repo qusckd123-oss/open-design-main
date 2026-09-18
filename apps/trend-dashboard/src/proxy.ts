@@ -5,7 +5,7 @@ import { SESSION_COOKIE_NAME, verifySessionToken } from "@/lib/auth";
 // Next.js 16 renamed `middleware.ts` to `proxy.ts` (middleware is
 // deprecated). This is the single access-code auth gate for the dashboard:
 // everything is protected by default except the paths listed below.
-const PUBLIC_PATHS = new Set(["/login", "/api/auth/login", "/api/auth/logout"]);
+const PUBLIC_PATHS = new Set(["/login", "/api/auth/login", "/api/auth/logout", "/api/health"]);
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
