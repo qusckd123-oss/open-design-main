@@ -107,3 +107,30 @@ export function safeRedirectPath(candidate: string | null | undefined): string {
   if (!candidate.startsWith("/") || candidate.startsWith("//") || candidate.includes("://")) return "/";
   return candidate;
 }
+
+/**
+ * Reconstructs the browser-facing origin for building absolute redirect
+ * URLs in Route Handlers. `Request#url` there reflects the Next server's
+ * own listening address (e.g. `http://0.0.0.0:8080` from Railway's
+ * HOSTNAME/PORT), not the public host the browser actually visited - it
+ * does not consult forwarded headers, so a redirect built with `new
+ * URL(path, request.url)` behind a reverse proxy sends the browser to the
+ * container's internal bind address instead of the real site.
+ *
+ * Prefers the reverse proxy's `X-Forwarded-*` headers (Railway, and
+ * standard practice for any platform terminating TLS in front of a
+ * standalone Next server), falls back to the plain `Host` header for
+ * direct/unproxied access, and only falls back to the request's own URL
+ * as a last resort. Never reads process.env.HOSTNAME/PORT.
+ */
+export function getPublicOrigin(request: Request): string {
+  const requestUrl = new URL(request.url);
+
+  const forwardedProto = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim();
+  const protocol = forwardedProto || requestUrl.protocol.replace(":", "");
+
+  const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+  const host = forwardedHost || request.headers.get("host") || requestUrl.host;
+
+  return `${protocol}://${host}`;
+}
