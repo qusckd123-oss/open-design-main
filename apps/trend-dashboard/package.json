@@ -35,6 +35,7 @@
     "audit:attribute-relations": "tsx scripts/audit-attribute-relations.ts",
     "refresh:editorial-body": "tsx scripts/refresh-editorial-body.ts",
     "refresh:editorial": "tsx scripts/refresh-editorial.ts",
+    "backfill:eyesmag-content-blocks": "tsx scripts/backfill-eyesmag-content-blocks.ts",
     "reparse:editorial-mentions": "tsx scripts/reparse-editorial-mentions.ts",
     "test": "tsx scripts/smoke-test.ts",
     "test:refresh-editorial": "tsx scripts/test-refresh-editorial.ts",
