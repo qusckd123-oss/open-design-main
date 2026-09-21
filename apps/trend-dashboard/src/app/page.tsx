@@ -23,6 +23,7 @@ import { buildSignalInterpretation } from "@/lib/signal-interpretation";
 import { buildFilterHref, parseGenderParam, parseScopeParam } from "@/lib/planning-filters";
 import { getAttributeBundles } from "@/services/attribute-bundle-service";
 import { getPlanningDashboardData } from "@/services/planning-dashboard-service";
+import { selectWatchlistBundles } from "@/services/watchlist-selection";
 import type { EditorialTrendRow } from "@/services/editorial-analytics-service";
 import type { MarketRow } from "@/types/business";
 
@@ -49,30 +50,14 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   const editorialRows = data.editorialByType[editorialType] ?? data.editorialByType.SUB_ITEM ?? [];
   const isOverseas = scope === "overseas";
   const hasComparableEditorialMomentum = gender === "all";
-  // Same threshold selectPrimaryPlanningBundle uses: only a genuinely,
-  // INDEPENDENTLY repeated bundle (independentEvidenceClusterCount >= 2, not
-  // just raw article count - see docs/EDITORIAL_SIGNAL_TRUST_AUDIT.md)
-  // becomes the CURRENT SIGNAL hero. With no such bundle, every bundle is an
-  // equally single observation, so the uniform tile grid below is used
-  // instead - never an arbitrary "biggest of equals" promotion. Deliberately
-  // NOT selectPrimaryPlanningBundle itself here: that helper falls back to
-  // bundles[0] when nothing qualifies (right for a page that always wants
-  // SOME primary bundle), but this page wants null in that case, to render
-  // the grid instead of forcing a hero out of ordinary single observations.
-  const repeatedBundle = bundles.find((bundle) => bundle.independentEvidenceClusterCount >= 2) ?? null;
-  // Watchlist model (2026-09-14, approved P1 UX pass): the former separate
-  // hero + six "Specific Combinations" cards are the SAME sorted bundle list
-  // (positions 1..N) rendered two different ways - merged into one 5-signal
-  // Watchlist. repeatedBundle keeps its existing meaning unchanged (the
-  // existing "genuinely, INDEPENDENTLY repeated" gate - see
-  // docs/EDITORIAL_SIGNAL_TRUST_AUDIT.md) and stays first/default-selected,
-  // exactly like it was always the hero before; the remaining slots are the
-  // next bundles in the SAME frozen sort, unchanged. No ranking/service call
-  // changed - this is `bundles.slice(0, 5)` reordered only enough to put the
-  // existing default pick first, never a new selection rule.
-  const watchlistBundles = repeatedBundle
-    ? [repeatedBundle, ...bundles.filter((bundle) => bundle.key !== repeatedBundle.key)].slice(0, 5)
-    : [];
+  // Watchlist model (2026-09-14, approved P1 UX pass; selection rule
+  // extracted 2026-09-21 to src/services/watchlist-selection.ts so the
+  // snapshot writer can share the exact same pick - see that module's doc
+  // comment for the full "genuinely, INDEPENDENTLY repeated" gate
+  // explanation, unchanged from before this extraction). No ranking/service
+  // call changed - still `bundles.slice(0, 5)` reordered only enough to put
+  // the repeated-bundle pick first, never a new selection rule.
+  const watchlistBundles = selectWatchlistBundles(bundles);
   // Each row/detail pair is rendered server-side once (WatchlistRow /
   // SelectedSignalDetail) and handed to the client-only Watchlist shell as
   // plain ReactNode content - see src/components/Watchlist.tsx for why that

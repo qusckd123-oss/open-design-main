@@ -409,6 +409,124 @@ model ImportRun {
   @@index([dataMode])
 }
 
+// WATCHLIST SNAPSHOT (2026-09-21, Phase 6A - Archive foundation).
+//
+// Home `/` Watchlist evidence is partly mutable: EditorialPost.text can be
+// replaced and EditorialMention rows can be deleted/recreated during
+// reparsing/recollection (see docs/EDITORIAL_REFRESH_OPERATIONS.md), and
+// getAttributeBundles() (src/services/attribute-bundle-service.ts) derives
+// bundles from that text ON DEMAND at request time - it is never persisted.
+// A future Archive therefore cannot reconstruct "what the Watchlist showed
+// on date X" from today's EditorialPost/EditorialMention rows alone. These
+// two models are an APPEND-ONLY, point-in-time capture of the Watchlist's
+// already-RESOLVED output (see src/services/watchlist-snapshot-service.ts),
+// independent of whatever the mutable source evidence looks like later.
+//
+// Append-only policy: rows are only ever created, never updated or deleted
+// by application code (see captureWatchlistSnapshot in
+// watchlist-snapshot-service.ts, which only calls prisma...create). Running
+// the capture twice on the same businessDate creates a SECOND, distinct
+// WatchlistSnapshot row (no unique constraint on businessDate) - "latest for
+// a date" is a read-time MAX(capturedAt) selection (see
+// selectLatestSnapshotForDate), never an upsert/overwrite.
+//
+// This is the snapshot FOUNDATION only - no Archive UI, no production writes,
+// and no backfilled/invented historical data yet. See the task history for
+// "Phase 6A".
+model WatchlistSnapshot {
+  id          String   @id @default(cuid())
+  // Absolute instant the resolver ran (server `now()`), distinct from
+  // `createdAt` (Prisma row-insert bookkeeping) the same way EditorialPost
+  // already separates `collectedAt` from `createdAt`.
+  capturedAt  DateTime @db.Timestamptz(3)
+  // "YYYY-MM-DD" as observed in Asia/Seoul (businessDayKey() in
+  // src/lib/business-time.ts) - the canonical grouping/lookup key for a
+  // future Archive-by-date view. Never derived from a UTC calendar day.
+  businessDate String
+  // Explicit, deliberately-bumped provenance string (see
+  // WATCHLIST_ALGORITHM_VERSION in src/services/watchlist-selection.ts) -
+  // never derived from an unstable runtime value (git SHA, package version).
+  algorithmVersion String
+  // Input scope/filter identity - the exact getAttributeBundles(dataMode,
+  // gender) call this snapshot resolved against. Scope is never wider than
+  // this: the home page's `scope` (domestic/overseas) query param does not
+  // affect the Watchlist section at all (see src/app/page.tsx).
+  dataMode    String
+  gender      String
+  // Source/evidence freshness context needed to understand the snapshot
+  // without re-querying mutable EditorialPost rows: how many
+  // FASHION_RELEVANT posts (matching dataMode/gender) fed this resolution,
+  // and the most recent publishedAt among them.
+  sourceEditorialPostCount Int
+  sourceLatestPublishedAt DateTime? @db.Timestamptz(3)
+  // "scheduled" (future cron) or "manual" (operator-triggered CLI run) -
+  // provenance only, never used to filter/exclude a snapshot from Archive.
+  triggeredBy String  @default("manual")
+  // Denormalized count of `items` - cheap for a future Archive list view
+  // without a join/count query.
+  itemCount   Int      @default(0)
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  items       WatchlistSnapshotItem[]
+
+  @@index([businessDate])
+  @@index([dataMode])
+  @@index([gender])
+  @@index([capturedAt])
+}
+
+model WatchlistSnapshotItem {
+  id         String            @id @default(cuid())
+  snapshotId String
+  // 1-based Watchlist position at capture time (1..N, matches the row order
+  // src/components/AttributeBundle.tsx's WatchlistRow rendered).
+  rank       Int
+  // AttributeBundle.key (specificItem#TYPE:VALUE+...) - a provenance pointer
+  // for cross-reference only. Never relied on for reconstruction: the bundle
+  // this key currently resolves to may look different later (or vanish) as
+  // source evidence changes - every field a future Archive view needs is
+  // persisted directly on this row instead.
+  bundleKey  String
+  specificItem String
+  // The exact Korean-first name the UI showed for this row (WatchlistRow /
+  // SelectedSignalDetail both use buildSignalInterpretation(bundle).signalName,
+  // not the raw bundle.displayName - see src/lib/signal-interpretation.ts).
+  signalName String
+  displayName String
+  // JSON-encoded BundleAttribute[] ({type, value, articlePresence,
+  // sourceSpread}) - resolved attribute chips, stored as a string per this
+  // schema's existing convention (see MarketRankingSnapshot.rawData) rather
+  // than Prisma's Json type, which this schema never otherwise uses.
+  directAttributes String
+  // bundleEvidenceStrength(...) output, e.g. "반복 관측 · 서로 다른 사례".
+  evidenceStrength String
+  bundleArticlePresence Int
+  bundleSourceSpread    Int
+  independentEvidenceClusterCount Int
+  publisherFamilySpread Int
+  latestObservedAt DateTime? @db.Timestamptz(3)
+  // buildSignalInterpretation(bundle) output, persisted verbatim.
+  observedFact     String
+  // JSON-encoded string[].
+  unknowns         String
+  planningQuestion String
+  // Whether this row was the featured/default-selected signal (the
+  // independentEvidenceClusterCount >= 2 pick) at capture time.
+  isPrimarySignal  Boolean @default(false)
+  // Always "NOT_COMPARABLE" today - bundles have no comparable "최근 방향" at
+  // this exact-bundle grain (see LeadSignalDimensions in
+  // AttributeBundle.tsx: "조합 단위 비교값 없음"). An explicit, honest
+  // constant rather than an invented direction value; a future
+  // algorithmVersion may introduce a real comparable status.
+  directionStatus String @default("NOT_COMPARABLE")
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+  snapshot   WatchlistSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+
+  @@unique([snapshotId, rank])
+  @@index([snapshotId])
+  @@index([specificItem])
+  @@index([bundleKey])
+}
+
 model ImportError {
   id          String    @id @default(cuid())
   importRunId String

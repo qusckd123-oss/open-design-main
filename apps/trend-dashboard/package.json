@@ -37,7 +37,9 @@
     "refresh:editorial": "tsx scripts/refresh-editorial.ts",
     "reparse:editorial-mentions": "tsx scripts/reparse-editorial-mentions.ts",
     "test": "tsx scripts/smoke-test.ts",
-    "test:refresh-editorial": "tsx scripts/test-refresh-editorial.ts"
+    "test:refresh-editorial": "tsx scripts/test-refresh-editorial.ts",
+    "test:watchlist-snapshot": "tsx scripts/test-watchlist-snapshot.ts",
+    "snapshot:watchlist": "tsx scripts/snapshot-watchlist.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.15.0",
