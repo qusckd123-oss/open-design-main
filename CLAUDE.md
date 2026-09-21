@@ -2,6 +2,13 @@
 
 # Wacky Willy business memory
 
+## Current Teams Summary - 2026-09-21
+
+- Live Teams was checked through 2026-09-20; 2026-09-19~20 had no newly visible work messages, and the latest verified work posts were on 2026-09-18. Full memory: `work/90_archive/workspace/memory/current-teams-update-summary-2026-09-21.md`.
+- 2026-09-20 cutoff decisions: `WA2603PT78` first inbound 9/23 at 100PCS per color, balance 9/28~29, store release at 10PCS per size; delayed Sorona/new-basic goods go first to upper-tier/metropolitan stores; inbound exceptions CC sourcing/planning/sales-planning; holiday womens colors include black and unisex adds ivory tones; `HZ01 MG` is solid; 27SS SPOT line sheet is split into Taiwan/Japan/global POs; `WA2702ST27` Taiwan BK 200PCS is confirmed as 20-count single; Gwangbok FSS main goods and marketing samples are managed separately.
+- Unresolved: final 27SS SPOT CO/quantities/sizes and Taiwan revisions; style-level Sorona/new-basic availability and outbound completion; `WA2603PT78` vendor-direct feasibility; delayed fleece/`WA2603CR13`/`WA2603CR17`/`WA2603HZ15` partial-inbound quantities and dates; final PO/LINE SHEET/ERP and ACC/CAD details.
+- Next actions: reconcile the SPOT line sheet; close new-basic/Sorona allocation and store shipment; confirm `WA2603PT78` balance/direct shipment; update inbound-exception posts for fleece/CR13/CR17/HZ15; reflect holiday/HZ01 decisions in GTM, PO/LINE SHEET, and ERP; use a cross-functional pre-meeting for one-week-plus trim delays.
+
 ## Current Teams Summary - 2026-09-17
 
 - Live Teams was checked through 2026-09-16 (the prior day). Use `work/90_archive/workspace/memory/current-teams-update-summary-2026-09-17.md` as the latest verified summary.
