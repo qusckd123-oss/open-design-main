@@ -9,6 +9,7 @@
 - Unresolved: final 27SS SPOT CO/quantities/sizes and Taiwan revisions; style-level Sorona/new-basic availability and outbound completion; `WA2603PT78` vendor-direct feasibility; delayed fleece/`WA2603CR13`/`WA2603CR17`/`WA2603HZ15` partial-inbound quantities and dates; final PO/LINE SHEET/ERP and ACC/CAD details.
 - Next: reconcile the SPOT line sheet; close new-basic/Sorona allocation and store shipment; confirm `WA2603PT78` balance/direct shipment; update inbound-exception posts for fleece/CR13/CR17/HZ15; reflect holiday/HZ01 decisions in GTM, PO/LINE SHEET, and ERP; use a cross-functional pre-meeting for one-week-plus trim delays.
 - Full working memory: `work/90_archive/workspace/memory/current-teams-update-summary-2026-09-21.md`.
+- Live Teams addendum checked on 2026-09-21: fleece `WA2604JK65` is expected inbound this afternoon and cannot ship the same day if received at 15:00, so 9/22 shipment is the target; `WA2702ST11` moved from Ustrading to Weekly Plan and ERP was updated; urgent additional spring outer styles take priority through Friday or next Monday/Tuesday; 26FW holiday material/artwork decisions are targeted for this week with tech-pack release next week; 27SS ACC requires sourcing to receive delivery, price, and full-buy vendor details before contracting; the 26FW store-opinion survey is to be distributed over the weekend and reviewed next week.
 
 ## Current Teams Summary - 2026-09-21
 
