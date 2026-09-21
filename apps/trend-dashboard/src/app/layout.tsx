@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 // future reactivation; only this nav link is removed.
 const primaryNav = [
   { href: "/", label: "대시보드" },
+  { href: "/archive", label: "아카이브" },
   { href: "/editorial", label: "트렌드 검증" },
   { href: "/market", label: "스토어 반응" },
   { href: "/items", label: "세부 아이템" },

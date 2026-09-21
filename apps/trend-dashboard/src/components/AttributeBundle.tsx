@@ -137,7 +137,7 @@ function englishSubtitle(bundle: AttributeBundle): string {
  * deliberately as the "signal indicator" - one of the few sanctioned uses of
  * the accent color in this pass's reduced palette.
  */
-function EvidenceDots({ sourceSpread, articlePresence, label }: { sourceSpread: number; articlePresence: number; label: string }) {
+export function EvidenceDots({ sourceSpread, articlePresence, label }: { sourceSpread: number; articlePresence: number; label: string }) {
   const filled = Math.min(3, Math.max(sourceSpread, articlePresence >= 2 ? 1 : 0));
   return (
     <div className="flex items-center gap-2" title={`${articlePresence}개 기사 · ${sourceSpread}개 매체`}>
