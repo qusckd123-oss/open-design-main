@@ -21,7 +21,7 @@ import { editorialCoverageLabel, editorialRecentDirection } from "@/lib/editoria
 import { specificItemKoreanLabel } from "@/lib/korean-labels";
 import { buildSignalInterpretation } from "@/lib/signal-interpretation";
 import { buildFilterHref, parseGenderParam, parseScopeParam } from "@/lib/planning-filters";
-import { getAttributeBundles } from "@/services/attribute-bundle-service";
+import { bundleEvidenceStrength, getAttributeBundles, type AttributeBundle } from "@/services/attribute-bundle-service";
 import { getPlanningDashboardData } from "@/services/planning-dashboard-service";
 import { selectWatchlistBundles } from "@/services/watchlist-selection";
 import type { EditorialTrendRow } from "@/services/editorial-analytics-service";
@@ -97,6 +97,26 @@ export default async function DashboardPage({ searchParams }: PageProps) {
         six-card block for the same underlying list (2026-09-14 approved P1
         UX pass; see docs/CURRENT_STATE.md "P1 Watchlist").
       */}
+      {/*
+        Phase 8A "THIS WEEK" summary (2026-09-21, explicit user request): a
+        concise visual-first orientation strip above the Watchlist so a
+        planner sees "what to notice right now" before the denser row list.
+        Reuses the SAME watchlistBundles selection/order and the SAME
+        buildSignalInterpretation Korean naming the Watchlist rows use below
+        - no new ranking, no speculative mood/prose.
+      */}
+      {watchlistBundles.length > 0 ? (
+        <section className="mt-10 border-t border-line pt-10">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">This Week</p>
+          <h2 className="mt-1 text-2xl font-semibold text-ink md:text-3xl">이번 주 핵심 신호</h2>
+          <div className="mt-5 grid gap-5 sm:grid-cols-3">
+            {watchlistBundles.slice(0, 3).map((bundle, index) => (
+              <ThisWeekCard key={bundle.key} bundle={bundle} position={index + 1} />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       {bundles.length > 0 ? (
         <section className="mt-10 border-t border-line pt-10">
           {watchlistItems.length > 0 ? (
@@ -268,6 +288,30 @@ function DomesticStoreEmptyState({ currentParams }: { currentParams: Record<stri
         해외 데이터 참고하기 →
       </Link>
     </div>
+  );
+}
+
+/**
+ * THIS WEEK card - reuses the exact same Korean-first name (`signalName`)
+ * and count/strength fields the Watchlist row/detail already compute; no new
+ * data, no speculative summary prose. `observedFact` is the SAME sentence
+ * `SignalInterpretationBlock` shows, not a shortened rewrite, so this strip
+ * never introduces a second interpretation of the same bundle.
+ */
+function ThisWeekCard({ bundle, position }: { bundle: AttributeBundle; position: number }) {
+  const { signalName, observedFact } = buildSignalInterpretation(bundle);
+  const strength = bundleEvidenceStrength({
+    articlePresence: bundle.bundleArticlePresence,
+    sourceSpread: bundle.bundleSourceSpread,
+    independentEvidenceClusterCount: bundle.independentEvidenceClusterCount
+  });
+  return (
+    <article className="border-t-2 border-ink pt-3">
+      <span className="text-xs font-semibold tabular-nums text-muted">{String(position).padStart(2, "0")}</span>
+      <h3 className="mt-1 text-xl font-semibold leading-snug text-ink">{signalName}</h3>
+      <p className="mt-2 text-xs font-semibold text-signal">{strength}</p>
+      <p className="mt-1 text-xs leading-relaxed text-muted">{observedFact}</p>
+    </article>
   );
 }
 

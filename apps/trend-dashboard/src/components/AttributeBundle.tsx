@@ -63,8 +63,22 @@ function BundleHeroImage({ heroArticle, alt, size }: { heroArticle: BundleEviden
  * not a change to this shared component's default. The persistent
  * disclaimer stays VISIBLE TEXT, never a title-only/hover-only tooltip.
  */
-export function EditorialVisualContextStrip({ articles, limit = 6 }: { articles: BundleEvidenceArticle[]; limit?: number }) {
+export function EditorialVisualContextStrip({
+  articles,
+  limit = 6,
+  variant = "row"
+}: {
+  articles: BundleEvidenceArticle[];
+  limit?: number;
+  /** "row": small persistent-caption thumbnails (Watchlist row / dense lists).
+   * "grid": larger evidence cards for Phase 8A's selected-signal VISUAL
+   * EVIDENCE section - same data/selection/ordering, bigger tiles with a
+   * visible CONTEXT tier tag so it never reads as DIRECT/ADJACENT proof. */
+  variant?: "row" | "grid";
+}) {
   const visuals = selectEditorialVisualContext(articles, limit);
+  const tileClass = variant === "grid" ? "w-28 sm:w-36" : "w-20 sm:w-24";
+  const imageClass = variant === "grid" ? "aspect-[4/5]" : "aspect-square";
 
   if (visuals.length === 0) {
     return (
@@ -78,7 +92,7 @@ export function EditorialVisualContextStrip({ articles, limit = 6 }: { articles:
   return (
     <section aria-labelledby="editorial-visual-context-title" data-testid="editorial-visual-context" className="mt-6 min-w-0 border-t border-line pt-4">
       <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
-        <p id="editorial-visual-context-title" className="text-xs font-semibold text-muted">기사 비주얼 맥락</p>
+        <p id="editorial-visual-context-title" className="text-xs font-semibold text-muted">기사 비주얼 맥락 · CONTEXT</p>
         <p className="max-w-sm text-[11px] leading-relaxed text-muted">
           기사 대표 이미지 · 아이템/속성/무드를 직접 증명하지 않음
         </p>
@@ -94,10 +108,10 @@ export function EditorialVisualContextStrip({ articles, limit = 6 }: { articles:
               href={article.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group w-20 shrink-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal sm:w-24"
+              className={`group shrink-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal ${tileClass}`}
               aria-label={`${publisher} 기사 열기: ${article.title || "제목 없음"}`}
             >
-              <div className="aspect-square overflow-hidden rounded bg-slate-200">
+              <div className={`${imageClass} overflow-hidden rounded bg-slate-200`}>
                 {/* Article-level visual context only; never a bundle hero or direct-relation image. Small, muted, secondary treatment - see the doc comment above. */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -183,7 +197,12 @@ export function AttributeChip({ attribute }: { attribute: BundleAttribute }) {
  */
 export function WatchlistRow({ bundle, position }: { bundle: AttributeBundle; position: number }) {
   const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread, independentEvidenceClusterCount: bundle.independentEvidenceClusterCount });
-  const [thumbnail] = selectEditorialVisualContext(bundle.evidenceArticles, 1);
+  // Phase 8A visual identity: up to 3 thumbnails per row (was 1) so a
+  // planner can visually tell 체크 셔츠 apart from 스트라이프 셔츠 in the row
+  // list itself, not only after opening the detail pane. Same selection
+  // helper/ordering/dedup as EditorialVisualContextStrip - still article
+  // context only, never a bundle hero or direct-relation image.
+  const thumbnails = selectEditorialVisualContext(bundle.evidenceArticles, 3);
   const latest = bundle.latestObservedAt?.toISOString().slice(0, 10) ?? "확인 불가";
   // Reuses the SAME Korean-first name SelectedSignalDetail already shows
   // (buildSignalInterpretation's composeLeadSignalName fallback) instead of
@@ -201,17 +220,22 @@ export function WatchlistRow({ bundle, position }: { bundle: AttributeBundle; po
         {String(position).padStart(2, "0")}
       </span>
 
-      {thumbnail ? (
+      {thumbnails.length > 0 ? (
         <div className="flex shrink-0 flex-col items-center gap-1">
           {/* Article-level visual context only, never a bundle hero or direct-relation image - same rule as EditorialVisualContextStrip. Persistent visible label, not a hover-only tooltip. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={thumbnail.imageUrl ?? undefined}
-            alt="기사 대표 이미지"
-            className="h-11 w-11 rounded object-cover"
-            loading="lazy"
-            title="기사 대표 이미지 · 아이템/속성/무드를 직접 증명하지 않음"
-          />
+          <div className="flex gap-1">
+            {thumbnails.map((thumbnail) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={`${thumbnail.imageUrl}:${thumbnail.url}`}
+                src={thumbnail.imageUrl ?? undefined}
+                alt="기사 대표 이미지"
+                className="h-11 w-11 rounded object-cover"
+                loading="lazy"
+                title="기사 대표 이미지 · 아이템/속성/무드를 직접 증명하지 않음"
+              />
+            ))}
+          </div>
           <span className="text-[9px] font-semibold leading-none text-muted">기사 이미지</span>
         </div>
       ) : null}
@@ -240,18 +264,22 @@ export function WatchlistRow({ bundle, position }: { bundle: AttributeBundle; po
  * right-hand pane beside the row list; mobile: an inline accordion panel
  * directly beneath the selected row).
  *
- * Content order now deliberately reads WHAT IS THE SIGNAL -> WHAT DO WE
- * KNOW -> WHAT DON'T WE KNOW -> WHAT SHOULD A PLANNER INVESTIGATE -> WHAT
- * VISUAL CONTEXT EXISTS, so interpretation is always encountered before
- * generic article imagery: heading -> (dormant direct/adjacent-relation
- * hero image, a strictly stronger evidence tier than article context, kept
- * near the heading rather than folded into the de-prioritized strip below)
- * -> 관측강도/최근방향/최신관측 -> FACT/UNKNOWN/PLANNING QUESTION ->
- * EditorialVisualContextStrip (now visually restrained - see that
- * component) -> VisualDiffusionReferenceStrip -> 근거 보기. Every field's
- * own content/semantics are unchanged from before this reorder - this is
- * intentionally still the ONLY interpretation system on the page (see
- * AGENT_OPERATING_RULES.md "Do not create a second interpretation system").
+ * Content order (revised 2026-09-21, Phase 8A "visual-first" pass, explicit
+ * user reopening of the 2026-09-14 P1-2 order below): heading -> compact
+ * evidence summary line (관측강도/최근방향/최신관측, unchanged fields) ->
+ * VISUAL EVIDENCE (the dormant direct/adjacent-relation hero image when one
+ * exists, a strictly stronger evidence tier than article context, followed
+ * by EditorialVisualContextStrip in its larger "grid" variant) ->
+ * FACT/UNKNOWN/PLANNING QUESTION -> VisualDiffusionReferenceStrip -> 근거
+ * 보기. This makes visual evidence the main content a planner reaches
+ * first, per the user's explicit Phase 8A direction, superseding (not
+ * silently reverting) the prior "interpretation before imagery" order - see
+ * docs/CURRENT_STATE.md "P1-2 Product UX" for that prior decision's own
+ * reasoning, still valid context for why images stayed clearly labelled
+ * CONTEXT rather than becoming evidence-grade. Every field's own
+ * content/semantics are unchanged - this is intentionally still the ONLY
+ * interpretation system on the page (see AGENT_OPERATING_RULES.md "Do not
+ * create a second interpretation system").
  */
 export function SelectedSignalDetail({ bundle }: { bundle: AttributeBundle }) {
   const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread, independentEvidenceClusterCount: bundle.independentEvidenceClusterCount });
@@ -268,17 +296,18 @@ export function SelectedSignalDetail({ bundle }: { bundle: AttributeBundle }) {
       <p className="text-xs font-semibold tracking-[0.12em] text-signal">선택한 신호</p>
       <h2 className="mt-2 text-3xl font-bold leading-[1.08] text-ink md:text-4xl">{interpretation.signalName}</h2>
 
-      {heroArticle?.evidenceImageUrl ? (
-        <div className="mt-4 flex justify-center sm:justify-start">
-          <BundleHeroImage heroArticle={heroArticle} alt={bundle.displayName} size="lg" />
-        </div>
-      ) : null}
-
       <LeadSignalDimensions bundle={bundle} strength={strength} />
 
-      <SignalInterpretationBlock interpretation={interpretation} />
+      <section aria-label="비주얼 증거" className="mt-4">
+        {heroArticle?.evidenceImageUrl ? (
+          <div className="flex justify-center sm:justify-start">
+            <BundleHeroImage heroArticle={heroArticle} alt={bundle.displayName} size="lg" />
+          </div>
+        ) : null}
+        <EditorialVisualContextStrip articles={bundle.evidenceArticles} limit={6} variant="grid" />
+      </section>
 
-      <EditorialVisualContextStrip articles={bundle.evidenceArticles} limit={3} />
+      <SignalInterpretationBlock interpretation={interpretation} />
 
       <VisualDiffusionReferenceStrip items={visualDiffusionItems} />
 
