@@ -78,6 +78,14 @@ jobs:
       - name: Run editorial refresh
         run: pnpm --filter @open-design/trend-dashboard run refresh:editorial --json
 
+      - name: Capture watchlist snapshot (scheduled)
+        if: github.event_name == 'schedule'
+        run: pnpm --filter @open-design/trend-dashboard run snapshot:watchlist --scheduled
+
+      - name: Capture watchlist snapshot (manual)
+        if: github.event_name == 'workflow_dispatch'
+        run: pnpm --filter @open-design/trend-dashboard run snapshot:watchlist --manual
+
       - name: Upload refresh report
         if: always()
         uses: actions/upload-artifact@v7
