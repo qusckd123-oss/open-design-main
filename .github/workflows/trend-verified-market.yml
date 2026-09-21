@@ -40,6 +40,20 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v6.0.2
+        with:
+          ref: feature/trend-dashboard
+
+      - name: Verify workspace
+        run: |
+          if [ ! -f "apps/trend-dashboard/package.json" ]; then
+            echo "::error::apps/trend-dashboard/package.json not found" >&2
+            exit 1
+          fi
+          PACKAGE_NAME=$(grep '"name"' apps/trend-dashboard/package.json | head -1 | grep -o '"@open-design/trend-dashboard"')
+          if [ "$PACKAGE_NAME" != '"@open-design/trend-dashboard"' ]; then
+            echo "::error::apps/trend-dashboard/package.json name mismatch: expected @open-design/trend-dashboard" >&2
+            exit 1
+          fi
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v5
