@@ -10,7 +10,8 @@ import { inferEditorialGender } from "../src/collectors/editorial/gender";
 import { editorialRules, extractEditorialMentions } from "../src/collectors/editorial/mentions";
 import { extractDirectAttributeRelations } from "../src/collectors/editorial/attribute-relations";
 import { bundleEvidenceStrength, countIndependentEvidenceClusters, getAttributeBundles, getPrimaryBundleForItem, getSpecificItemDirectAttributes, selectBundleHeroImage, selectPrimaryPlanningBundle } from "../src/services/attribute-bundle-service";
-import { contentBlocksFromStoredText, resolveEvidenceImage, type ContentBlock } from "../src/collectors/editorial/image-relation";
+import { contentBlocksFromStoredText, resolveEvidenceImage, resolveOrderedEvidenceImage, type ContentBlock } from "../src/collectors/editorial/image-relation";
+import { parseEyesmagOrderedContent } from "../src/collectors/editorial/ordered-content";
 import { attributeBarWidthPercent } from "../src/lib/attribute-visual";
 import { selectEditorialVisualContext } from "../src/lib/editorial-visual-context";
 import { editorialCoverageLabel, editorialRecentDirection } from "../src/lib/editorial-momentum";
@@ -1249,6 +1250,23 @@ function verifyEditorialBodyParsers() {
     null,
     "A non-JSON content field must return null rather than crash the collector."
   );
+  const eyesmagBlocks = parseEyesmagOrderedContent(eyesmagHtml);
+  assert.deepEqual(
+    eyesmagBlocks?.map((block) => ({ blockIndex: block.blockIndex, blockType: block.blockType, text: block.text, imageUrl: block.imageUrl, caption: block.caption })),
+    [
+      { blockIndex: 0, blockType: "IMAGE", text: null, imageUrl: "https://cdn.eyesmag.com/a.jpg", caption: null },
+      { blockIndex: 1, blockType: "TEXT", text: "완벽한 핏 하나로 완성되는 자신감", imageUrl: null, caption: null },
+      { blockIndex: 2, blockType: "TEXT", text: "캘빈클라인이 세이디 싱크와 함께한 26 가을 데님 캠페인을 공개했다.", imageUrl: null, caption: null }
+    ],
+    "EYESMAG ordered extraction must preserve image/text order and exclude embeds."
+  );
+
+  const captionedEyesmagDoc = {
+    type: "doc",
+    content: [{ type: "slider", attrs: { images: [{ url: "https://cdn.eyesmag.com/captioned.jpg", caption: "화이트 스커트" }] } }]
+  };
+  const captionedEyesmagHtml = `<script id="__NEXT_DATA__">${JSON.stringify({ props: { pageProps: { initialPost: { content: JSON.stringify(captionedEyesmagDoc) } } } })}</script>`;
+  assert.equal(parseEyesmagOrderedContent(captionedEyesmagHtml)?.[0]?.caption, "화이트 스커트", "Explicit source captions must be preserved without guessing from alt text.");
 
   // VISLA: full body is plain public HTML inside <div class="entry-content">.
   // The region must be cut at the first tag-list/byline/share marker so
@@ -2652,6 +2670,18 @@ function verifyEvidenceImageResolution() {
   assert.deepEqual(contentBlocksFromStoredText("아무 본문 텍스트"), [{ text: "아무 본문 텍스트", imageUrl: null }], "Stored text with no structure must become exactly one block with no image.");
   assert.deepEqual(contentBlocksFromStoredText(null), [], "Null/empty stored text must yield zero blocks, never a fabricated one.");
   assert.deepEqual(contentBlocksFromStoredText("  "), [], "Whitespace-only stored text must yield zero blocks.");
+
+  const ordered = [
+    { blockIndex: 0, blockType: "IMAGE" as const, text: null, imageUrl: "https://example.com/ordered.jpg", caption: null },
+    { blockIndex: 1, blockType: "TEXT" as const, text: `재활용 패브릭 ${evidence}`, imageUrl: null, caption: null }
+  ];
+  assert.deepEqual(resolveOrderedEvidenceImage(ordered, evidence), { kind: "ADJACENT_BLOCK", imageUrl: "https://example.com/ordered.jpg" }, "Normalized ordered blocks must resolve only an immediately adjacent image.");
+  assert.deepEqual(
+    resolveOrderedEvidenceImage([{ blockIndex: 0, blockType: "IMAGE", text: null, imageUrl: "https://example.com/caption.jpg", caption: evidence }], evidence),
+    { kind: "DIRECT_BLOCK", imageUrl: "https://example.com/caption.jpg" },
+    "An explicit image caption containing the matched evidence must resolve as DIRECT_BLOCK."
+  );
+  assert.deepEqual(resolveOrderedEvidenceImage(ordered, "없는 근거"), { kind: "NONE", imageUrl: null }, "Normalized ordered blocks must not fabricate a relation when text is absent.");
 }
 
 function verifyAttributeBarWidth() {

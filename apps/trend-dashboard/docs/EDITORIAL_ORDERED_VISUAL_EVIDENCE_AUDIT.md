@@ -4,6 +4,14 @@ Checked date: 2026-09-11. READ-ONLY architecture audit - no code, schema, collec
 
 Scope: this document answers whether `DIRECT_BLOCK`/`ADJACENT_BLOCK` image-relation evidence (the second rung of `ITEM + DIRECT ATTRIBUTE(S) + MOOD/STYLE CONTEXT + VISUAL EVIDENCE`) can become real, and how - not whether to build it now. It does not reopen taxonomy, ranking, Product Reference, Market semantics, or the scheduler.
 
+## Phase 8C foundation status (2026-09-21)
+
+The ordered-content foundation is now implemented without a production migration or backfill. PostgreSQL has a new normalized `EditorialContentBlock` child model with stable `(postId, blockIndex)` uniqueness, source block type, text, image URL, optional caption, and cascade ownership from `EditorialPost`. The historical SQLite export schema intentionally remains unchanged.
+
+The EYESMAG adapter now preserves ordered TipTap `heading`/`paragraph`/`listItem`/`blockquote` text blocks and `slider` image blocks, including only explicit source captions. Unsupported sources return no ordered-content contract and therefore cannot erase future blocks. Refresh writes the post, mentions, and a supported adapter's complete block replacement inside one Prisma transaction; a failed replacement rolls back the whole article write.
+
+The raw blocks are not yet used to alter Watchlist ranking or visual selection. `resolveOrderedEvidenceImage` proves the later derivation contract: an explicit image caption can be `DIRECT_BLOCK`; only a directly adjacent image block can be `ADJACENT_BLOCK`; otherwise the result is `NONE`. Existing article-hero/context behavior remains unchanged. Existing rows require a future, explicitly approved re-fetch/backfill before they can receive ordered blocks.
+
 ## 0. Live state verified before the audit
 
 - Repo/branch: `C:/Users/bcave/dev/open-design-trend-dashboard`, `feature/trend-dashboard`

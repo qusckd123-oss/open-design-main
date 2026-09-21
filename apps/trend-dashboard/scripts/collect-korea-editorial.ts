@@ -1,6 +1,7 @@
 import { editorialSources, type EditorialSource } from "../src/config/editorial-sources";
 import { collectEditorialFeed, EditorialRateLimitedError } from "../src/collectors/editorial/rss";
 import { extractEditorialMentions } from "../src/collectors/editorial/mentions";
+import type { OrderedEditorialContentBlock } from "../src/collectors/editorial/ordered-content";
 import { prisma } from "../src/db/client";
 import type { SourceCollectionOutcome } from "../src/services/editorial-refresh-policy";
 import { realpathSync } from "node:fs";
@@ -19,6 +20,17 @@ export type SourceCollectionOptions = {
   /** When true, performs real discovery/fetch/parse but writes nothing. */
   dryRun?: boolean;
 };
+
+export function buildEditorialContentBlockRows(postId: string, blocks: readonly OrderedEditorialContentBlock[]) {
+  return blocks.map((block) => ({
+    postId,
+    blockIndex: block.blockIndex,
+    blockType: block.blockType,
+    text: block.text,
+    imageUrl: block.imageUrl,
+    caption: block.caption
+  }));
+}
 
 /**
  * Collects and upserts one source's real articles. Exported so
@@ -79,51 +91,69 @@ export async function collectAndUpsertSource(source: EditorialSource, options: S
         ? extractEditorialMentions({ title: post.title, text: finalText ?? "", postGender: post.audienceGender })
         : post.mentions;
 
-      const saved = await prisma.editorialPost.upsert({
-        where: { source_externalPostId: { source: post.source, externalPostId: post.externalPostId } },
-        update: {
-          url: post.url,
-          canonicalUrl: post.canonicalUrl,
-          title: post.title,
-          publishedAt: post.publishedAt,
-          imageUrl: post.imageUrl ?? existing?.imageUrl ?? null,
-          excerpt: finalExcerpt,
-          text: finalText,
-          audienceGender: post.audienceGender,
-          fashionRelevance: post.fashionRelevance,
-          dataMode: "real",
-          collectedAt
-        },
-        create: {
-          source: post.source,
-          externalPostId: post.externalPostId,
-          url: post.url,
-          canonicalUrl: post.canonicalUrl,
-          title: post.title,
-          publishedAt: post.publishedAt,
-          imageUrl: post.imageUrl,
-          excerpt: post.excerpt,
-          text: post.text,
-          audienceGender: post.audienceGender,
-          fashionRelevance: post.fashionRelevance,
-          dataMode: "real",
-          collectedAt
-        }
-      });
-      await prisma.editorialMention.deleteMany({ where: { postId: saved.id } });
-      if (finalMentions.length > 0) {
-        await prisma.editorialMention.createMany({
-          data: finalMentions.map((mention) => ({
-            postId: saved.id,
-            type: mention.type,
-            value: mention.value,
-            audienceGender: mention.audienceGender,
-            confidence: mention.confidence,
-            evidence: mention.evidence
-          }))
+      const saved = await prisma.$transaction(async (tx) => {
+        const editorialPost = await tx.editorialPost.upsert({
+          where: { source_externalPostId: { source: post.source, externalPostId: post.externalPostId } },
+          update: {
+            url: post.url,
+            canonicalUrl: post.canonicalUrl,
+            title: post.title,
+            publishedAt: post.publishedAt,
+            imageUrl: post.imageUrl ?? existing?.imageUrl ?? null,
+            excerpt: finalExcerpt,
+            text: finalText,
+            audienceGender: post.audienceGender,
+            fashionRelevance: post.fashionRelevance,
+            dataMode: "real",
+            collectedAt
+          },
+          create: {
+            source: post.source,
+            externalPostId: post.externalPostId,
+            url: post.url,
+            canonicalUrl: post.canonicalUrl,
+            title: post.title,
+            publishedAt: post.publishedAt,
+            imageUrl: post.imageUrl,
+            excerpt: post.excerpt,
+            text: post.text,
+            audienceGender: post.audienceGender,
+            fashionRelevance: post.fashionRelevance,
+            dataMode: "real",
+            collectedAt
+          }
         });
-        mentions += finalMentions.length;
-      }
+
+        await tx.editorialMention.deleteMany({ where: { postId: editorialPost.id } });
+        if (finalMentions.length > 0) {
+          await tx.editorialMention.createMany({
+            data: finalMentions.map((mention) => ({
+              postId: editorialPost.id,
+              type: mention.type,
+              value: mention.value,
+              audienceGender: mention.audienceGender,
+              confidence: mention.confidence,
+              evidence: mention.evidence
+            }))
+          });
+        }
+
+        // `undefined` means this source adapter has no ordered-content
+        // contract yet, so an unsupported refresh must preserve any future
+        // blocks. A parsed array is a complete replacement for this article.
+        const contentBlocks = post.contentBlocks;
+        if (contentBlocks !== undefined) {
+          await tx.editorialContentBlock.deleteMany({ where: { postId: editorialPost.id } });
+          if (contentBlocks && contentBlocks.length > 0) {
+            await tx.editorialContentBlock.createMany({
+              data: buildEditorialContentBlockRows(editorialPost.id, contentBlocks)
+            });
+          }
+        }
+
+        return editorialPost;
+      });
+      if (finalMentions.length > 0) mentions += finalMentions.length;
     }
     return { source, status: "SUCCESS", posts: posts.length, newPosts, updatedPosts, mentions };
   } catch (error) {

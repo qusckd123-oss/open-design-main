@@ -1,6 +1,7 @@
 import { editorialSourceConfigs, type EditorialSource } from "@/config/editorial-sources";
 import { inferEditorialGender } from "@/collectors/editorial/gender";
 import { extractEditorialMentions } from "@/collectors/editorial/mentions";
+import { parseEyesmagOrderedContent, type OrderedEditorialContentBlock } from "@/collectors/editorial/ordered-content";
 
 export type EditorialCollectedPost = {
   source: EditorialSource;
@@ -12,6 +13,8 @@ export type EditorialCollectedPost = {
   imageUrl: string | null;
   excerpt: string | null;
   text: string | null;
+  /** Undefined means this source adapter did not attempt ordered extraction. */
+  contentBlocks?: OrderedEditorialContentBlock[] | null;
   audienceGender: string;
   fashionRelevance: "FASHION_RELEVANT" | "NON_FASHION" | "UNKNOWN";
   mentions: ReturnType<typeof extractEditorialMentions>;
@@ -116,6 +119,7 @@ async function collectEyesmag(limit: number, options: EditorialCollectOptions): 
       // browser loading the page already receives. Prefer it when present.
       const richBody = parseEyesmagRichBody(html);
       const text = (richBody && richBody.length > article.text.length ? richBody : article.text) || "";
+      const contentBlocks = parseEyesmagOrderedContent(html);
       const audienceGender = inferEditorialGender({ title, text });
       const mentions = extractEditorialMentions({ title, text, postGender: audienceGender });
       const fashionRelevance = classifyFashionRelevance({ title, text, mentionCount: mentions.length });
@@ -130,6 +134,7 @@ async function collectEyesmag(limit: number, options: EditorialCollectOptions): 
         imageUrl: article.imageUrl,
         excerpt: text.slice(0, 280) || null,
         text: text || null,
+        contentBlocks,
         audienceGender,
         fashionRelevance,
         mentions

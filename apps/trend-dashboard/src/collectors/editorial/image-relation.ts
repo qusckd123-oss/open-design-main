@@ -44,6 +44,14 @@
 
 export type ImageRelationKind = "DIRECT_BLOCK" | "ADJACENT_BLOCK" | "ARTICLE_HERO" | "NONE";
 
+export type OrderedEvidenceBlock = {
+  blockIndex: number;
+  blockType: "TEXT" | "IMAGE";
+  text: string | null;
+  imageUrl: string | null;
+  caption: string | null;
+};
+
 export type ContentBlock = {
   text: string;
   imageUrl: string | null;
@@ -87,4 +95,34 @@ export function resolveEvidenceImage(
   if (afterImage) return { kind: "ADJACENT_BLOCK", imageUrl: afterImage };
 
   return { kind: "NONE", imageUrl: null };
+}
+
+/**
+ * Pure derivation helper for the normalized ordered-content representation.
+ * A caption carrying the matched evidence is DIRECT_BLOCK because it is
+ * structurally co-located with that image. Otherwise only the immediately
+ * preceding/following source block can be ADJACENT_BLOCK evidence.
+ */
+export function resolveOrderedEvidenceImage(
+  blocks: readonly OrderedEvidenceBlock[],
+  evidenceText: string
+): { kind: "DIRECT_BLOCK" | "ADJACENT_BLOCK" | "NONE"; imageUrl: string | null } {
+  const trimmedEvidence = evidenceText.trim();
+  if (!trimmedEvidence) return { kind: "NONE", imageUrl: null };
+
+  const direct = blocks.find(
+    (block) => block.blockType === "IMAGE" && Boolean(block.imageUrl) && Boolean(block.caption?.includes(trimmedEvidence))
+  );
+  if (direct?.imageUrl) return { kind: "DIRECT_BLOCK", imageUrl: direct.imageUrl };
+
+  const textBlock = blocks.find((block) => block.blockType === "TEXT" && Boolean(block.text?.includes(trimmedEvidence)));
+  if (!textBlock) return { kind: "NONE", imageUrl: null };
+
+  const adjacent = blocks.find(
+    (block) =>
+      block.blockType === "IMAGE" &&
+      Boolean(block.imageUrl) &&
+      Math.abs(block.blockIndex - textBlock.blockIndex) === 1
+  );
+  return adjacent?.imageUrl ? { kind: "ADJACENT_BLOCK", imageUrl: adjacent.imageUrl } : { kind: "NONE", imageUrl: null };
 }

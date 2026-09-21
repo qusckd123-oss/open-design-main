@@ -354,6 +354,7 @@ model EditorialPost {
   createdAt       DateTime            @default(now()) @db.Timestamptz(3)
   updatedAt       DateTime            @updatedAt @db.Timestamptz(3)
   mentions        EditorialMention[]
+  contentBlocks   EditorialContentBlock[]
 
   @@unique([source, externalPostId])
   @@index([source])
@@ -379,6 +380,22 @@ model EditorialMention {
   @@index([value])
   @@index([audienceGender])
   @@index([confidence])
+}
+
+model EditorialContentBlock {
+  id            String        @id @default(cuid())
+  postId        String
+  blockIndex    Int
+  blockType     String
+  text          String?
+  imageUrl      String?
+  caption       String?
+  createdAt     DateTime      @default(now()) @db.Timestamptz(3)
+  post          EditorialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, blockIndex])
+  @@index([postId])
+  @@index([blockType])
 }
 
 model ImportRun {
