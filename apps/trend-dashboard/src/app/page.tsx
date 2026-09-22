@@ -28,6 +28,7 @@ import { getWatchlistVisualEvidence } from "@/services/watchlist-visual-evidence
 import type { WatchlistVisualEvidence } from "@/lib/watchlist-visual-evidence";
 import type { EditorialTrendRow } from "@/services/editorial-analytics-service";
 import type { MarketRow } from "@/types/business";
+import { withTransientDbReadRetry } from "@/db/transient-read-retry";
 
 type PageProps = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
@@ -48,7 +49,12 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   const gender = parseGenderParam(params.gender);
   const scope = parseScopeParam(params.scope);
   const editorialType = valueOf(params.editorialType) ?? "SUB_ITEM";
-  const [data, bundles] = await Promise.all([getPlanningDashboardData(gender, scope), getAttributeBundles("real", gender)]);
+  const { data, bundles, watchlistBundles, visualEvidenceByBundle } = await withTransientDbReadRetry(async () => {
+    const [data, bundles] = await Promise.all([getPlanningDashboardData(gender, scope), getAttributeBundles("real", gender)]);
+    const watchlistBundles = selectWatchlistBundles(bundles);
+    const visualEvidenceByBundle = await getWatchlistVisualEvidence(watchlistBundles);
+    return { data, bundles, watchlistBundles, visualEvidenceByBundle };
+  });
   const editorialRows = data.editorialByType[editorialType] ?? data.editorialByType.SUB_ITEM ?? [];
   const isOverseas = scope === "overseas";
   const hasComparableEditorialMomentum = gender === "all";
@@ -59,8 +65,6 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   // explanation, unchanged from before this extraction). No ranking/service
   // call changed - still `bundles.slice(0, 5)` reordered only enough to put
   // the repeated-bundle pick first, never a new selection rule.
-  const watchlistBundles = selectWatchlistBundles(bundles);
-  const visualEvidenceByBundle = await getWatchlistVisualEvidence(watchlistBundles);
   // Each row/detail pair is rendered server-side once (WatchlistRow /
   // SelectedSignalDetail) and handed to the client-only Watchlist shell as
   // plain ReactNode content - see src/components/Watchlist.tsx for why that

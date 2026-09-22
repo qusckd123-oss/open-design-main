@@ -3,6 +3,7 @@ import { ArchiveSignalDetail, ArchiveWatchlistRow } from "@/components/ArchiveWa
 import { Watchlist, type WatchlistItem } from "@/components/Watchlist";
 import { BUSINESS_TIME_ZONE } from "@/lib/business-time";
 import { getArchiveSnapshotDetail, listArchiveDates, listCapturesForDate, selectCaptureFromHeaders } from "@/services/watchlist-archive-service";
+import { withTransientDbReadRetry } from "@/db/transient-read-retry";
 
 /**
  * WATCHLIST ARCHIVE (Phase 7A) - "what did the Watchlist actually show on a
@@ -47,20 +48,25 @@ const triggeredByLabel: Record<string, string> = {
 
 export default async function ArchivePage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const dateSummaries = await listArchiveDates();
+  const { dateSummaries, selectedDateSummary, captures, selectedHeader, detail } = await withTransientDbReadRetry(async () => {
+    const dateSummaries = await listArchiveDates();
+    if (dateSummaries.length === 0) {
+      return { dateSummaries, selectedDateSummary: null, captures: [], selectedHeader: null, detail: null };
+    }
 
-  let body: React.ReactNode = <EmptyArchiveState />;
-  if (dateSummaries.length > 0) {
     const requestedDate = valueOf(params.date);
-    // Invalid/nonexistent ?date= falls back to the newest available date -
-    // never a server error, never a fabricated placeholder date.
+    // Invalid/nonexistent ?date= falls back to the newest available date.
     const selectedDateSummary = dateSummaries.find((summary) => summary.businessDate === requestedDate) ?? dateSummaries[0]!;
-
     const captures = await listCapturesForDate(selectedDateSummary.businessDate);
     const requestedCaptureId = valueOf(params.capture) ?? null;
     const selectedHeader = selectCaptureFromHeaders(captures, requestedCaptureId) ?? selectedDateSummary.latest;
     const detail = await getArchiveSnapshotDetail(selectedHeader.id);
 
+    return { dateSummaries, selectedDateSummary, captures, selectedHeader, detail };
+  });
+
+  let body: React.ReactNode = <EmptyArchiveState />;
+  if (selectedDateSummary && selectedHeader) {
     const watchlistItems: WatchlistItem[] = (detail?.items ?? []).map((item, index) => ({
       key: item.bundleKey,
       ariaLabel: `${index + 1}번째 캡처된 신호: ${item.signalName}`,
