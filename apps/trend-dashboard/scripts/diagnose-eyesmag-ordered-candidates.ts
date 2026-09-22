@@ -1,7 +1,9 @@
 import { extractDirectAttributeRelations } from "../src/collectors/editorial/attribute-relations";
 import { editorialRules } from "../src/collectors/editorial/mentions";
 import { getAttributeBundles } from "../src/services/attribute-bundle-service";
+import { resolveOrderedEvidenceImage, type OrderedEvidenceBlock } from "../src/collectors/editorial/image-relation";
 import { prisma } from "../src/db/client";
+import { parseEyesmagOrderedContent } from "../src/collectors/editorial/ordered-content";
 
 function normalize(value: string): string {
   return value.normalize("NFKC").toLocaleLowerCase().replace(/[\s\p{P}\p{S}]+/gu, "");
@@ -23,6 +25,7 @@ async function main() {
     select: {
       id: true,
       url: true,
+      canonicalUrl: true,
       title: true,
       publishedAt: true,
       excerpt: true,
@@ -31,12 +34,13 @@ async function main() {
       contentBlocks: { orderBy: { blockIndex: "asc" } }
     },
     orderBy: [{ publishedAt: "desc" }, { id: "desc" }],
-    take: 25
+    take: 200
   });
   const topBundles = (await getAttributeBundles("real", "all")).slice(0, 5);
   const topKeys = new Set(topBundles.map((bundle) => bundle.key));
   const rows = [];
   const allRelations: Array<Record<string, unknown>> = [];
+  const allCandidates: Array<Record<string, unknown>> = [];
   const postsWithTopRelation = new Set<string>();
   const reasonCounts: Record<string, number> = {
     NO_RELEVANT_MENTION: 0,
@@ -59,6 +63,13 @@ async function main() {
 
   for (const post of posts) {
     const blocks = post.contentBlocks;
+    const orderedBlocks: OrderedEvidenceBlock[] = blocks.map((block) => ({
+      blockIndex: block.blockIndex,
+      blockType: block.blockType as "TEXT" | "IMAGE",
+      text: block.text,
+      imageUrl: block.imageUrl,
+      caption: block.caption
+    }));
     const textBlocks = blocks.filter((block) => block.blockType === "TEXT");
     const imageBlocks = blocks.filter((block) => block.blockType === "IMAGE");
     const relations = extractDirectAttributeRelations({ title: post.title, excerpt: post.excerpt, text: post.text ?? "" });
@@ -111,6 +122,11 @@ async function main() {
       );
       const relevantTopFive = Boolean(topSignal);
       if (relevantTopFive) postsWithTopRelation.add(post.id);
+      const resolved = resolveOrderedEvidenceImage(orderedBlocks, relation.evidenceText);
+      const resolvedImageBlock = resolved.imageUrl
+        ? blocks.find((block) => block.blockType === "IMAGE" && block.imageUrl === resolved.imageUrl &&
+          (block.caption?.includes(relation.evidenceText) || Math.abs(block.blockIndex - (mappedBlock?.blockIndex ?? -999)) === 1))
+        : undefined;
       let failureReason = "TEXT_MATCH_NO_NEAR_IMAGE";
       if (relevantTopFive) {
         if (!isNormalizedMapped) failureReason = "MENTION_NOT_MAPPABLE_TO_BLOCK";
@@ -136,6 +152,9 @@ async function main() {
         nearestImageBlockIndex: nearestImage?.block.blockIndex ?? null,
         nearestImageDistance: nearestImage?.distance ?? null,
         nearestImageIdentity: imageIdentity(nearestImage?.block.imageUrl ?? null),
+        resolvedTier: resolved.kind,
+        resolvedImageBlockIndex: resolvedImageBlock?.blockIndex ?? null,
+        resolvedImageIdentity: imageIdentity(resolved.imageUrl),
         nearImageAtDistance1: Boolean(nearestImage && nearestImage.distance <= 1),
         nearImageAtDistance2: Boolean(nearestImage && nearestImage.distance <= 2),
         nearImageAtDistance3: Boolean(nearestImage && nearestImage.distance <= 3),
@@ -144,6 +163,29 @@ async function main() {
       };
       rowRelations.push(entry);
       allRelations.push({ postId: post.id, title: post.title, url: post.url, ...entry });
+      if (resolved.kind !== "NONE" && resolvedImageBlock) {
+        allCandidates.push({
+          source: "EYESMAG",
+          postId: post.id,
+          title: post.title,
+          url: post.url,
+          publishedAt: post.publishedAt?.toISOString() ?? null,
+          relation: `${relation.specificItem}+${relation.attributeType}:${relation.attributeValue}`,
+          relationText: relation.evidenceText,
+          textBlockIndex: mappedBlock?.blockIndex ?? null,
+          imageBlockIndex: resolvedImageBlock.blockIndex,
+          imageUrlIdentity: imageIdentity(resolvedImageBlock.imageUrl),
+          tier: resolved.kind,
+          topFiveSignal: topSignal?.displayName ?? null,
+          nearbyBlocks: blocks.filter((block) => Math.abs(block.blockIndex - (mappedBlock?.blockIndex ?? -999)) <= 1).map((block) => ({
+            index: block.blockIndex,
+            type: block.blockType,
+            text: block.text?.slice(0, 200) ?? null,
+            image: imageIdentity(block.imageUrl),
+            caption: block.caption
+          }))
+        });
+      }
     }
 
     rows.push({
@@ -196,8 +238,67 @@ async function main() {
     total: mentionEvidenceTotal
   };
 
+  const topFiveCoverage = topBundles.map((bundle, rank) => {
+    const related = topRelations.filter((relation) => relation.topFiveSignal === bundle.displayName);
+    const candidates = allCandidates.filter((candidate) => candidate.topFiveSignal === bundle.displayName);
+    const nearest = related.filter((relation) => typeof relation.nearestImageDistance === "number" && relation.nearestImageDistance <= 3);
+    return {
+      rank: rank + 1,
+      signal: bundle.displayName,
+      specificItem: bundle.specificItem,
+      directAttributes: bundle.directAttributes.map((attribute) => `${attribute.type}:${attribute.value}`),
+      relatedArticleCount: new Set(related.map((relation) => relation.postId)).size,
+      mappedRelationCount: related.filter((relation) => relation.normalizedMatch).length,
+      relationCount: related.length,
+      directCount: candidates.filter((candidate) => candidate.tier === "DIRECT_BLOCK").length,
+      adjacentCount: candidates.filter((candidate) => candidate.tier === "ADJACENT_BLOCK").length,
+      nearestImageWithin3DiagnosticCount: nearest.length,
+      samples: candidates
+    };
+  });
+
+  const genuineSignalKeys = new Set(allCandidates.map((candidate) => candidate.relation));
+  const spotcheckCandidates = [...new Map(allCandidates.map((candidate) => [candidate.url, candidate])).values()].slice(0, 8);
+  const sourceHtmlSpotChecks = [];
+  for (const candidate of spotcheckCandidates) {
+    const post = posts.find((row) => row.url === candidate.url);
+    if (!post) continue;
+    try {
+      const response = await fetch(post.canonicalUrl || post.url, {
+        headers: { "User-Agent": "TrendSignalDashboard/0.1 (+bounded EYESMAG ordered-content audit)", Accept: "text/html,application/xhtml+xml,*/*" }
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const parsed = parseEyesmagOrderedContent(await response.text()) ?? [];
+      const persisted = post.contentBlocks;
+      sourceHtmlSpotChecks.push({
+        title: post.title,
+        url: post.canonicalUrl || post.url,
+        relation: candidate.relation,
+        relationText: candidate.relationText,
+        tier: candidate.tier,
+        imageUrlIdentity: candidate.imageUrlIdentity,
+        sourceBlockCount: parsed.length,
+        persistedBlockCount: persisted.length,
+        fullSequenceMatches: parsed.length === persisted.length && parsed.every((block, index) =>
+          block.blockIndex === persisted[index]?.blockIndex && block.blockType === persisted[index]?.blockType &&
+          block.text === persisted[index]?.text && block.imageUrl === persisted[index]?.imageUrl && block.caption === persisted[index]?.caption
+        ),
+        candidateSequence: candidate.nearbyBlocks
+      });
+    } catch (error) {
+      sourceHtmlSpotChecks.push({
+        title: candidate.title,
+        url: candidate.url,
+        relation: candidate.relation,
+        status: "FETCH_FAILED",
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  }
+
   console.log(JSON.stringify({
-    posts: rows,
+    posts: rows.map(({ storedMentions: _mentions, relations, ...row }) => ({ ...row, relationCount: relations.length })),
+    relations: allRelations,
     summary: {
       backfilledPosts: rows.length,
       totalEditorialMentions: rows.reduce((sum, row) => sum + row.editorialMentionCount, 0),
@@ -214,7 +315,13 @@ async function main() {
       nonTopFiveExamples: nonTopCandidates.slice(0, 10),
       representativeNearImageExamples: examples,
       contextualSequences,
-      topFiveBundleKeysExist: [...topKeys]
+      topFiveBundleKeysExist: [...topKeys],
+      genuineDirectCount: allCandidates.filter((candidate) => candidate.tier === "DIRECT_BLOCK").length,
+      genuineAdjacentCount: allCandidates.filter((candidate) => candidate.tier === "ADJACENT_BLOCK").length,
+      distinctSignalsWithGenuineEvidence: genuineSignalKeys.size,
+      genuineCandidates: allCandidates,
+      sourceHtmlSpotChecks,
+      topFiveCoverage
     }
   }, null, 2));
 }

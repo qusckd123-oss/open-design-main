@@ -4,6 +4,7 @@ import { realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 
 const DEFAULT_LIMIT = 25;
+const MAX_LIMIT = 150;
 
 type BackfillPost = {
   id: string;
@@ -44,8 +45,8 @@ async function fetchArticleHtml(url: string): Promise<string> {
   return response.text();
 }
 
-export async function previewEyesmagContentBlocks(limit = DEFAULT_LIMIT) {
-  const posts = await selectPosts(limit);
+export async function previewEyesmagContentBlocks(limit = DEFAULT_LIMIT, remainingOnly = false) {
+  const posts = await selectPosts(limit, remainingOnly);
   const rows = [];
   for (const post of posts) {
     try {
@@ -60,7 +61,8 @@ export async function previewEyesmagContentBlocks(limit = DEFAULT_LIMIT) {
         blockCount: blocks?.length ?? 0,
         textCount: blocks?.filter((block) => block.blockType === "TEXT").length ?? 0,
         imageCount: blocks?.filter((block) => block.blockType === "IMAGE").length ?? 0,
-        captionCount: blocks?.filter((block) => Boolean(block.caption)).length ?? 0
+        captionCount: blocks?.filter((block) => Boolean(block.caption)).length ?? 0,
+        parsedBlocks: blocks
       });
     } catch (error) {
       rows.push({
@@ -73,6 +75,7 @@ export async function previewEyesmagContentBlocks(limit = DEFAULT_LIMIT) {
         textCount: 0,
         imageCount: 0,
         captionCount: 0,
+        parsedBlocks: null,
         error: error instanceof Error ? error.message : String(error)
       });
     }
@@ -80,9 +83,13 @@ export async function previewEyesmagContentBlocks(limit = DEFAULT_LIMIT) {
   return rows;
 }
 
-async function selectPosts(limit: number): Promise<BackfillPost[]> {
+async function selectPosts(limit: number, remainingOnly: boolean): Promise<BackfillPost[]> {
   return prisma.editorialPost.findMany({
-    where: { source: "EYESMAG", dataMode: "real" },
+    where: {
+      source: "EYESMAG",
+      dataMode: "real",
+      ...(remainingOnly ? { contentBlocks: { none: {} } } : {})
+    },
     select: { id: true, url: true, canonicalUrl: true, title: true, publishedAt: true },
     orderBy: [{ publishedAt: "desc" }, { id: "desc" }],
     take: limit
@@ -98,26 +105,31 @@ async function applyRows(post: BackfillPost, blocks: readonly OrderedEditorialCo
 }
 
 async function main() {
-  const limit = Math.max(1, Math.min(30, Math.trunc(Number(argValue("limit") ?? DEFAULT_LIMIT))));
+  const limit = Math.max(1, Math.min(MAX_LIMIT, Math.trunc(Number(argValue("limit") ?? DEFAULT_LIMIT))));
   const dryRun = hasFlag("dry-run");
-  const preview = await previewEyesmagContentBlocks(limit);
+  const remainingOnly = hasFlag("remaining-only");
+  if (!dryRun && !remainingOnly) throw new Error("Live backfill requires --remaining-only to protect already-populated articles.");
+  const preview = await previewEyesmagContentBlocks(limit, remainingOnly);
 
-  console.log(JSON.stringify({ source: "EYESMAG", limit, dryRun, posts: preview }, null, 2));
+  const publicPreview = preview.map(({ parsedBlocks: _parsedBlocks, ...row }) => row);
+  console.log(JSON.stringify({ source: "EYESMAG", limit, remainingOnly, dryRun, posts: publicPreview }, null, 2));
   if (dryRun) return;
 
-  const postsById = new Map((await selectPosts(limit)).map((post) => [post.id, post]));
+  const postsById = new Map((await selectPosts(limit, true)).map((post) => [post.id, post]));
   const applied: string[] = [];
+  const empty: string[] = [];
+  const failed: string[] = preview.filter((row) => row.status === "FAILED").map((row) => row.id);
   for (const row of preview) {
-    if (row.status !== "PARSED") continue;
+    if (row.status !== "PARSED" || !row.parsedBlocks?.length) {
+      if (row.status === "EMPTY") empty.push(row.id);
+      continue;
+    }
     const post = postsById.get(row.id);
     if (!post) continue;
-    const html = await fetchArticleHtml(post.canonicalUrl || post.url);
-    const blocks = parseEyesmagOrderedContent(html);
-    if (!blocks) continue;
-    await applyRows(post, blocks);
+    await applyRows(post, row.parsedBlocks);
     applied.push(post.id);
   }
-  console.log(JSON.stringify({ appliedCount: applied.length, appliedPostIds: applied }));
+  console.log(JSON.stringify({ appliedCount: applied.length, emptyCount: empty.length, failedCount: failed.length, appliedPostIds: applied, emptyPostIds: empty, failedPostIds: failed }));
 }
 
 const isDirectRun = process.argv[1] ? import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href : false;
