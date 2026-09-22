@@ -24,6 +24,8 @@ import { buildFilterHref, parseGenderParam, parseScopeParam } from "@/lib/planni
 import { bundleEvidenceStrength, getAttributeBundles, type AttributeBundle } from "@/services/attribute-bundle-service";
 import { getPlanningDashboardData } from "@/services/planning-dashboard-service";
 import { selectWatchlistBundles } from "@/services/watchlist-selection";
+import { getWatchlistVisualEvidence } from "@/services/watchlist-visual-evidence-service";
+import type { WatchlistVisualEvidence } from "@/lib/watchlist-visual-evidence";
 import type { EditorialTrendRow } from "@/services/editorial-analytics-service";
 import type { MarketRow } from "@/types/business";
 
@@ -58,6 +60,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   // call changed - still `bundles.slice(0, 5)` reordered only enough to put
   // the repeated-bundle pick first, never a new selection rule.
   const watchlistBundles = selectWatchlistBundles(bundles);
+  const visualEvidenceByBundle = await getWatchlistVisualEvidence(watchlistBundles);
   // Each row/detail pair is rendered server-side once (WatchlistRow /
   // SelectedSignalDetail) and handed to the client-only Watchlist shell as
   // plain ReactNode content - see src/components/Watchlist.tsx for why that
@@ -69,8 +72,8 @@ export default async function DashboardPage({ searchParams }: PageProps) {
     // AttributeBundle.tsx), not raw bundle.displayName, so a screen reader
     // announces the identical name a sighted planner sees on the row.
     ariaLabel: `${index + 1}번째 신호: ${buildSignalInterpretation(bundle).signalName}`,
-    row: <WatchlistRow bundle={bundle} position={index + 1} />,
-    detail: <SelectedSignalDetail bundle={bundle} />
+    row: <WatchlistRow bundle={bundle} position={index + 1} visuals={visualEvidenceByBundle.get(bundle.key) ?? []} />,
+    detail: <SelectedSignalDetail bundle={bundle} visuals={visualEvidenceByBundle.get(bundle.key) ?? []} />
   }));
   // Only ever read when watchlistItems.length > 0 (see the ternary below);
   // the "" fallback exists purely so TypeScript's indexed-access narrowing
@@ -111,7 +114,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           <h2 className="mt-1 text-2xl font-semibold text-ink md:text-3xl">이번 주 핵심 신호</h2>
           <div className="mt-5 grid gap-5 sm:grid-cols-3">
             {watchlistBundles.slice(0, 3).map((bundle, index) => (
-              <ThisWeekCard key={bundle.key} bundle={bundle} position={index + 1} />
+              <ThisWeekCard key={bundle.key} bundle={bundle} position={index + 1} visuals={visualEvidenceByBundle.get(bundle.key) ?? []} />
             ))}
           </div>
         </section>
@@ -143,7 +146,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
         </section>
       ) : null}
 
-      <section className="mt-14 border-t border-line pt-14">
+      <section className="mt-10 border-t border-line pt-8">
         <SectionHeader
           kicker="Item Signals"
           title="관련 아이템·속성 흐름"
@@ -163,7 +166,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
             </Link>
           ))}
         </div>
-        <div className="mt-6 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-4 grid gap-x-6 gap-y-2 md:grid-cols-2 xl:grid-cols-3">
           {editorialRows.slice(0, 6).map((row) => (
             <EditorialTrendCard
               key={`${row.type}:${row.value}`}
@@ -298,19 +301,38 @@ function DomesticStoreEmptyState({ currentParams }: { currentParams: Record<stri
  * `SignalInterpretationBlock` shows, not a shortened rewrite, so this strip
  * never introduces a second interpretation of the same bundle.
  */
-function ThisWeekCard({ bundle, position }: { bundle: AttributeBundle; position: number }) {
-  const { signalName, observedFact } = buildSignalInterpretation(bundle);
+function ThisWeekCard({ bundle, position, visuals }: { bundle: AttributeBundle; position: number; visuals: WatchlistVisualEvidence[] }) {
+  const { signalName } = buildSignalInterpretation(bundle);
+  const visual = visuals[0];
   const strength = bundleEvidenceStrength({
     articlePresence: bundle.bundleArticlePresence,
     sourceSpread: bundle.bundleSourceSpread,
     independentEvidenceClusterCount: bundle.independentEvidenceClusterCount
   });
+  const imageAlt = visual?.tier === "ADJACENT_BLOCK"
+    ? `본문 관계 텍스트와 인접한 이미지: ${visual.title}. 이미지 속 품목 자체를 시각 판독한 것은 아닙니다.`
+    : visual ? `기사 대표 이미지 맥락: ${visual.title}. 신호 자체를 증명하지 않습니다.` : "연결된 기사 이미지 없음";
   return (
-    <article className="border-t-2 border-ink pt-3">
-      <span className="text-xs font-semibold tabular-nums text-muted">{String(position).padStart(2, "0")}</span>
-      <h3 className="mt-1 text-xl font-semibold leading-snug text-ink">{signalName}</h3>
-      <p className="mt-2 text-xs font-semibold text-signal">{strength}</p>
-      <p className="mt-1 text-xs leading-relaxed text-muted">{observedFact}</p>
+    <article className="grid grid-cols-[96px_minmax(0,1fr)] gap-3 border-t-2 border-ink pt-3 sm:block">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-slate-200 sm:mt-3 sm:aspect-[16/10]">
+        {visual ? (
+          <a href={visual.articleUrl} target="_blank" rel="noopener noreferrer" aria-label={`${visual.title} 원문 기사 열기`}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={visual.imageUrl} alt={imageAlt} className="h-full w-full object-cover" loading={position === 1 ? "eager" : "lazy"} />
+            <span className={`absolute bottom-2 left-2 rounded-sm px-2 py-1 text-[9px] font-semibold ${visual.tier === "ADJACENT_BLOCK" ? "bg-ink/90 text-white" : "bg-white/90 text-muted"}`}>
+              {visual.tier === "ADJACENT_BLOCK" ? "본문 인접 이미지" : "기사 대표 이미지 · 맥락"}
+            </span>
+          </a>
+        ) : <div className="flex h-full items-center justify-center px-2 text-center text-[10px] text-muted">기사 이미지 없음</div>}
+        <span className="absolute right-2 top-2 rounded-sm bg-white/90 px-2 py-1 text-[10px] font-semibold tabular-nums text-ink">{String(position).padStart(2, "0")}</span>
+      </div>
+      <div className="min-w-0 sm:pt-3">
+        <h3 className="text-base font-semibold leading-snug text-ink sm:text-xl">{signalName}</h3>
+        <p className="mt-1 text-[11px] font-semibold text-signal">{strength}</p>
+        {visual ? <p className="mt-1 line-clamp-1 text-[10px] text-muted">{sourceLabel(visual.source)} · {formatDateKo(visual.publishedAt)}</p> : null}
+        <p className="mt-1 text-[10px] leading-snug text-muted">기사 {bundle.bundleArticlePresence} · 매체 {bundle.bundleSourceSpread} · 최신 {bundle.latestObservedAt?.toISOString().slice(0, 10) ?? "확인 불가"}</p>
+        <p className="mt-1 hidden text-xs leading-relaxed text-muted sm:block">{buildSignalInterpretation(bundle).observedFact}</p>
+      </div>
     </article>
   );
 }
@@ -325,26 +347,30 @@ function EditorialTrendCard({ row, sourceTotal, hasComparableMomentum }: { row: 
   const direction = editorialRecentDirection(hasComparableMomentum ? row : {});
   const comparisonLabel = hasComparableMomentum ? direction.comparisonLabel : "성별 필터 단위 비교값 없음";
   return (
-    <article data-testid="editorial-flow-card" data-direction={direction.state} className="border-t-2 border-ink pt-3">
-      <div className="text-xs font-semibold uppercase tracking-[0.1em] text-muted">{trendTypeLabel(row.type)}</div>
-      <div className="mt-1 text-xl font-semibold text-ink">{label}</div>
-      <div className="mt-3 grid grid-cols-2 gap-4 border-t border-line pt-3">
+    <details data-testid="editorial-flow-card" data-direction={direction.state} className="border-t border-line py-2">
+      <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-2 gap-y-1 py-1 marker:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-signal">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted">{trendTypeLabel(row.type)}</span>
+        <span className="min-w-0 flex-1 text-sm font-semibold text-ink">{label}</span>
+        <span className="text-[11px] tabular-nums text-muted">{formatNumber(row.articlePresence)}기사 · {row.sourceSpread}/{sourceTotal}매체</span>
+        <span className="text-[11px] font-semibold text-signal">{direction.symbol} {direction.label}</span>
+      </summary>
+      <div className="grid grid-cols-2 gap-3 border-t border-line pb-1 pt-3 text-xs sm:gap-5">
         <div className="min-w-0">
-          <div className="text-[11px] font-semibold tracking-[0.08em] text-muted">관측 강도</div>
-          <div className="mt-1 text-sm font-semibold text-ink">{coverage}</div>
-          <div className="mt-0.5 text-xs text-muted">{hasComparableMomentum ? "" : "전체 기준 · "}{formatNumber(row.articlePresence)}개 기사 · {row.sourceSpread}/{sourceTotal}개 매체</div>
+          <div className="text-[10px] font-semibold tracking-[0.06em] text-muted">관측 강도</div>
+          <div className="mt-1 font-semibold text-ink">{coverage}</div>
+          <div className="mt-0.5 text-muted">{hasComparableMomentum ? "" : "전체 기준 · "}{formatNumber(row.articlePresence)}개 기사 · {row.sourceSpread}/{sourceTotal}개 매체</div>
         </div>
         <div className="min-w-0">
-          <div className="text-[11px] font-semibold tracking-[0.08em] text-muted">최근 방향</div>
-          <div className="mt-1 text-sm font-semibold text-ink">
-            <span aria-hidden>{direction.symbol}</span> {direction.label}{direction.deltaLabel ? ` ${direction.deltaLabel}` : ""}
-          </div>
-          <div className="mt-0.5 text-xs leading-snug text-muted">{comparisonLabel}</div>
+          <div className="text-[10px] font-semibold tracking-[0.06em] text-muted">최근 방향</div>
+          <div className="mt-1 font-semibold text-ink"><span aria-hidden>{direction.symbol}</span> {direction.label}{direction.deltaLabel ? ` ${direction.deltaLabel}` : ""}</div>
+          <div className="mt-0.5 leading-snug text-muted">{comparisonLabel}</div>
+        </div>
+        <div className="col-span-2 flex flex-wrap gap-x-4 gap-y-1 text-muted">
+          <span>UNI {row.genderSplit.UNISEX ?? 0} · WOMEN {row.genderSplit.WOMEN ?? 0}</span>
         </div>
       </div>
-      <div className="mt-2 text-xs text-muted">UNI {row.genderSplit.UNISEX ?? 0} · WOMEN {row.genderSplit.WOMEN ?? 0}</div>
-      <details className="mt-3 text-xs">
-        <summary className="cursor-pointer font-semibold text-ink">근거 기사</summary>
+      <details className="mt-2 text-xs">
+        <summary className="cursor-pointer font-semibold text-muted">근거 기사 보기</summary>
         <div className="mt-2 space-y-2">
           {row.evidenceArticles.slice(0, 4).map((article) => (
             <a key={`${article.source}:${article.url}`} className="block border-t border-line pt-2 text-muted hover:text-ink" href={article.url} target="_blank" rel="noreferrer">
@@ -353,7 +379,7 @@ function EditorialTrendCard({ row, sourceTotal, hasComparableMomentum }: { row: 
           ))}
         </div>
       </details>
-    </article>
+    </details>
   );
 }
 

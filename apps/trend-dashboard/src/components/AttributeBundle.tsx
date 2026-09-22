@@ -5,6 +5,7 @@ import { visualDiffusionReferencesForItem } from "@/config/visual-diffusion-refe
 import { attributeBarWidthPercent } from "@/lib/attribute-visual";
 import { editorialRecentDirection } from "@/lib/editorial-momentum";
 import { selectEditorialVisualContext } from "@/lib/editorial-visual-context";
+import { selectWatchlistVisualEvidence, type WatchlistVisualEvidence } from "@/lib/watchlist-visual-evidence";
 import { attributeKoreanLabel, attributeTypeKoreanLabel } from "@/lib/korean-labels";
 import { buildSignalInterpretation, type SignalInterpretation } from "@/lib/signal-interpretation";
 import { sourceLabel } from "@/lib/market-ui";
@@ -195,14 +196,9 @@ export function AttributeChip({ attribute }: { attribute: BundleAttribute }) {
  * taxonomy subtitle, and any invented "why it matters" copy - all of that
  * stays exclusive to SelectedSignalDetail below.
  */
-export function WatchlistRow({ bundle, position }: { bundle: AttributeBundle; position: number }) {
+export function WatchlistRow({ bundle, position, visuals }: { bundle: AttributeBundle; position: number; visuals: WatchlistVisualEvidence[] }) {
   const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread, independentEvidenceClusterCount: bundle.independentEvidenceClusterCount });
-  // Phase 8A visual identity: up to 3 thumbnails per row (was 1) so a
-  // planner can visually tell 체크 셔츠 apart from 스트라이프 셔츠 in the row
-  // list itself, not only after opening the detail pane. Same selection
-  // helper/ordering/dedup as EditorialVisualContextStrip - still article
-  // context only, never a bundle hero or direct-relation image.
-  const thumbnails = selectEditorialVisualContext(bundle.evidenceArticles, 3);
+  const thumbnails = selectWatchlistVisualEvidence(visuals, 3);
   const latest = bundle.latestObservedAt?.toISOString().slice(0, 10) ?? "확인 불가";
   // Reuses the SAME Korean-first name SelectedSignalDetail already shows
   // (buildSignalInterpretation's composeLeadSignalName fallback) instead of
@@ -222,21 +218,18 @@ export function WatchlistRow({ bundle, position }: { bundle: AttributeBundle; po
 
       {thumbnails.length > 0 ? (
         <div className="flex shrink-0 flex-col items-center gap-1">
-          {/* Article-level visual context only, never a bundle hero or direct-relation image - same rule as EditorialVisualContextStrip. Persistent visible label, not a hover-only tooltip. */}
           <div className="flex gap-1">
             {thumbnails.map((thumbnail) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={`${thumbnail.imageUrl}:${thumbnail.url}`}
-                src={thumbnail.imageUrl ?? undefined}
-                alt="기사 대표 이미지"
-                className="h-11 w-11 rounded object-cover"
-                loading="lazy"
-                title="기사 대표 이미지 · 아이템/속성/무드를 직접 증명하지 않음"
-              />
+              <a key={`${thumbnail.imageUrl}:${thumbnail.articleUrl}`} href={thumbnail.articleUrl} target="_blank" rel="noopener noreferrer" aria-label={`${thumbnail.title} 원문 기사 열기`} title={`${thumbnail.tier === "ADJACENT_BLOCK" ? "본문 인접 이미지 · 이미지 속 품목 자체를 판독한 것은 아님" : "기사 대표 이미지 · 맥락 참고용"} · ${sourceLabel(thumbnail.source)} · ${thumbnail.publishedAt?.toISOString().slice(0, 10) ?? "날짜 미상"}`} className="relative block h-12 w-12 overflow-hidden rounded-sm bg-slate-200">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={thumbnail.imageUrl} alt={`${thumbnail.tier === "ADJACENT_BLOCK" ? "본문 인접 이미지" : "기사 대표 이미지 맥락"}: ${thumbnail.title}`} className="h-full w-full object-cover" loading="lazy" />
+                <span className={`absolute inset-x-0 bottom-0 px-0.5 py-0.5 text-center text-[8px] font-semibold leading-none ${thumbnail.tier === "ADJACENT_BLOCK" ? "bg-ink/90 text-white" : "bg-white/90 text-muted"}`}>
+                  {thumbnail.tier === "ADJACENT_BLOCK" ? "인접" : "맥락"}
+                </span>
+              </a>
             ))}
           </div>
-          <span className="text-[9px] font-semibold leading-none text-muted">기사 이미지</span>
+          <span className="text-[9px] font-semibold leading-none text-muted">본문 인접 우선 · 맥락 후순위</span>
         </div>
       ) : null}
 
@@ -281,9 +274,8 @@ export function WatchlistRow({ bundle, position }: { bundle: AttributeBundle; po
  * interpretation system on the page (see AGENT_OPERATING_RULES.md "Do not
  * create a second interpretation system").
  */
-export function SelectedSignalDetail({ bundle }: { bundle: AttributeBundle }) {
+export function SelectedSignalDetail({ bundle, visuals }: { bundle: AttributeBundle; visuals: WatchlistVisualEvidence[] }) {
   const strength = bundleEvidenceStrength({ articlePresence: bundle.bundleArticlePresence, sourceSpread: bundle.bundleSourceSpread, independentEvidenceClusterCount: bundle.independentEvidenceClusterCount });
-  const heroArticle = findHeroArticle(bundle);
   const interpretation = buildSignalInterpretation(bundle);
   // Pure, synchronous, in-memory config lookup (no DB/network) - see
   // src/config/visual-diffusion-references.ts. Renders nothing (see
@@ -298,14 +290,7 @@ export function SelectedSignalDetail({ bundle }: { bundle: AttributeBundle }) {
 
       <LeadSignalDimensions bundle={bundle} strength={strength} />
 
-      <section aria-label="비주얼 증거" className="mt-4">
-        {heroArticle?.evidenceImageUrl ? (
-          <div className="flex justify-center sm:justify-start">
-            <BundleHeroImage heroArticle={heroArticle} alt={bundle.displayName} size="lg" />
-          </div>
-        ) : null}
-        <EditorialVisualContextStrip articles={bundle.evidenceArticles} limit={6} variant="grid" />
-      </section>
+      <VisualEvidenceGrid visuals={visuals} />
 
       <SignalInterpretationBlock interpretation={interpretation} />
 
@@ -315,6 +300,48 @@ export function SelectedSignalDetail({ bundle }: { bundle: AttributeBundle }) {
         근거 보기 →
       </Link>
     </div>
+  );
+}
+
+function VisualEvidenceGrid({ visuals }: { visuals: WatchlistVisualEvidence[] }) {
+  const selected = selectWatchlistVisualEvidence(visuals, 6);
+  return (
+    <section aria-label="신호와 연결된 이미지" data-testid="selected-visual-evidence" className="mt-4 border-t border-line pt-3">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        <h3 className="text-sm font-semibold text-ink">신호와 연결된 이미지</h3>
+        <p className="text-[10px] leading-snug text-muted">본문 인접은 문서 구조 기준이며, 이미지 속 품목을 시각 판독한 것은 아닙니다.</p>
+      </div>
+      {selected.length > 0 ? (
+        <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {selected.map((visual) => {
+            const adjacent = visual.tier === "ADJACENT_BLOCK";
+            const alt = adjacent
+              ? `본문 관계 텍스트와 인접한 이미지. ${visual.title}. 품목 자체를 시각 확인한 것은 아님.`
+              : `기사 대표 이미지 맥락. ${visual.title}. 신호 자체를 증명하지 않음.`;
+            return (
+              <article key={`${visual.tier}:${visual.imageUrl}:${visual.articleUrl}`} className="min-w-0">
+                <a href={visual.articleUrl} target="_blank" rel="noopener noreferrer" className="group block focus-visible:outline focus-visible:outline-2 focus-visible:outline-signal" aria-label={`${sourceLabel(visual.source)} 원문 기사 열기: ${visual.title}`}>
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-slate-200 sm:aspect-[5/4]">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={visual.imageUrl} alt={alt} className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]" loading="lazy" />
+                    <span className={`absolute left-2 top-2 rounded-sm px-2 py-1 text-[10px] font-semibold ${adjacent ? "bg-ink/90 text-white" : "bg-white/90 text-muted"}`}>
+                      {adjacent ? "본문 인접 이미지" : "기사 대표 이미지 · 맥락"}
+                    </span>
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-center gap-x-2 text-[11px] text-muted">
+                    <span className="font-semibold text-ink">{sourceLabel(visual.source)}</span>
+                    <span>{visual.publishedAt?.toISOString().slice(0, 10) ?? "날짜 미상"}</span>
+                  </div>
+                  {adjacent && visual.relationText ? <p className="mt-1 line-clamp-2 text-xs leading-snug text-ink">“{visual.relationText}”</p> : null}
+                  <p className="mt-1 line-clamp-2 text-xs leading-snug text-muted">{visual.title || "제목 없음"}</p>
+                  <p className="mt-1 text-[10px] leading-snug text-muted">{adjacent ? "본문의 관계 문구와 인접 · 이미지 자체의 품목 판독 아님" : "기사 대표 이미지 · 품목/속성/무드를 직접 증명하지 않음"}</p>
+                </a>
+              </article>
+            );
+          })}
+        </div>
+      ) : <p className="mt-3 text-sm text-muted">현재 연결된 기사 이미지가 없습니다.</p>}
+    </section>
   );
 }
 
