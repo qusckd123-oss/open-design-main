@@ -30,6 +30,17 @@ function getTransientConnectionErrorType(error: unknown): string | null {
       return current.code;
     }
 
+    // PrismaPg's transient socket code can also surface directly on Prisma's
+    // known-request wrapper (observed in Railway as ETIMEDOUT on P2010-style
+    // DB reads), without the original Node syscall/errno fields.
+    if (
+      current.name === "PrismaClientKnownRequestError" &&
+      typeof current.code === "string" &&
+      SOCKET_ERROR_CODES.has(current.code)
+    ) {
+      return current.code;
+    }
+
     // Prisma 6.19.3 surfaces PrismaPg's structured connection errors as
     // P2010 with meta.code="N/A" and these adapter-generated messages. P2010
     // alone (or an arbitrary SQL error message) is deliberately insufficient.

@@ -72,6 +72,19 @@ for (const message of [
   assert.equal(calls, 2, `${message} from PrismaPg's structured P2010 wrapper retries only once`);
 }
 
+for (const code of ["ENOTFOUND", "ECONNREFUSED", "ECONNRESET", "ETIMEDOUT"]) {
+  const prismaSocketError = Object.assign(new Error("PrismaPg socket failure"), {
+    name: "PrismaClientKnownRequestError",
+    code
+  });
+  calls = 0;
+  await assert.rejects(withTransientDbReadRetry(async () => {
+    calls += 1;
+    throw prismaSocketError;
+  }, { delay: immediateDelay, onRetry: () => undefined }), (error) => error === prismaSocketError);
+  assert.equal(calls, 2, `Prisma's ${code} wrapper retries once without requiring Node socket fields`);
+}
+
 for (const nonTransient of [
   Object.assign(new Error("missing table"), { code: "P2021" }),
   Object.assign(new Error("validation"), { name: "PrismaClientValidationError" }),
