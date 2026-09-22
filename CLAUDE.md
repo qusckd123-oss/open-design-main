@@ -17,7 +17,7 @@ This document is the operating guide for AI assistance on Wacky Willy apparel pl
 
 **Current business state:**
 - Source of truth: `work/90_archive/workspace/memory/current-teams-update-summary-*.md` (dated entries)
-- Latest verified summary: See the most recent dated memory file for decisions/actions
+- Latest saved summary: `work/90_archive/workspace/memory/current-teams-update-summary-2026-09-22.md` (based on Teams backups dated 2026-09-21; live Teams desktop was unavailable)
 - Operating memory system: Markdown files in `work/90_archive/workspace/memory/`
 
 ---
@@ -154,6 +154,8 @@ Wacky Willy business context is stored in `work/90_archive/workspace/memory/` us
 For the absolute latest Wacky Willy business state, always check:
 
 **`work/90_archive/workspace/memory/`** → Find the most recent `current-teams-update-summary-YYYY-MM-DD.md`
+
+Latest saved entry: `current-teams-update-summary-2026-09-22.md` (Teams backup through 2026-09-21).
 
 That entry contains:
 - Latest verified Teams decisions (결정된 것)
