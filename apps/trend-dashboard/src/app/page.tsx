@@ -112,7 +112,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
         <section className="mt-10 border-t border-line pt-10">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">This Week</p>
           <h2 className="mt-1 text-2xl font-semibold text-ink md:text-3xl">이번 주 핵심 신호</h2>
-          <div className="mt-5 grid gap-5 sm:grid-cols-3">
+          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5">
             {watchlistBundles.slice(0, 3).map((bundle, index) => (
               <ThisWeekCard key={bundle.key} bundle={bundle} position={index + 1} visuals={visualEvidenceByBundle.get(bundle.key) ?? []} />
             ))}
@@ -313,8 +313,8 @@ function ThisWeekCard({ bundle, position, visuals }: { bundle: AttributeBundle; 
     ? `본문 관계 텍스트와 인접한 이미지: ${visual.title}. 이미지 속 품목 자체를 시각 판독한 것은 아닙니다.`
     : visual ? `기사 대표 이미지 맥락: ${visual.title}. 신호 자체를 증명하지 않습니다.` : "연결된 기사 이미지 없음";
   return (
-    <article className="grid grid-cols-[96px_minmax(0,1fr)] gap-3 border-t-2 border-ink pt-3 sm:block">
-      <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-slate-200 sm:mt-3 sm:aspect-[16/10]">
+    <article className="min-w-0 border-t-2 border-ink pt-3">
+      <div className="relative mt-3 aspect-[4/3] overflow-hidden rounded-sm bg-slate-200 sm:aspect-[16/10]">
         {visual ? (
           <a href={visual.articleUrl} target="_blank" rel="noopener noreferrer" aria-label={`${visual.title} 원문 기사 열기`}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -326,10 +326,11 @@ function ThisWeekCard({ bundle, position, visuals }: { bundle: AttributeBundle; 
         ) : <div className="flex h-full items-center justify-center px-2 text-center text-[10px] text-muted">기사 이미지 없음</div>}
         <span className="absolute right-2 top-2 rounded-sm bg-white/90 px-2 py-1 text-[10px] font-semibold tabular-nums text-ink">{String(position).padStart(2, "0")}</span>
       </div>
-      <div className="min-w-0 sm:pt-3">
-        <h3 className="text-base font-semibold leading-snug text-ink sm:text-xl">{signalName}</h3>
+      <div className="min-w-0 pt-2 sm:pt-3">
+        <h3 className="text-sm font-semibold leading-snug text-ink sm:text-xl">{signalName}</h3>
         <p className="mt-1 text-[11px] font-semibold text-signal">{strength}</p>
         {visual ? <p className="mt-1 line-clamp-1 text-[10px] text-muted">{sourceLabel(visual.source)} · {formatDateKo(visual.publishedAt)}</p> : null}
+        {visual ? <p className="mt-1 text-[10px] leading-snug text-muted">{visual.tier === "ADJACENT_BLOCK" ? "본문 문구와 인접 · 이미지 속 품목 판독 아님" : "기사 대표 이미지 · 맥락 참고"}</p> : null}
         <p className="mt-1 text-[10px] leading-snug text-muted">기사 {bundle.bundleArticlePresence} · 매체 {bundle.bundleSourceSpread} · 최신 {bundle.latestObservedAt?.toISOString().slice(0, 10) ?? "확인 불가"}</p>
         <p className="mt-1 hidden text-xs leading-relaxed text-muted sm:block">{buildSignalInterpretation(bundle).observedFact}</p>
       </div>
