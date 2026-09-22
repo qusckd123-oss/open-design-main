@@ -7,10 +7,10 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "상품기획 트렌드 대시보드",
-  description: "매거진 노출 트렌드와 실제 스토어 반응을 함께 확인하는 상품기획 대시보드"
+  description: "실제 착장 관측, 이번 주 매거진, 검증된 스토어 랭킹을 확인하는 상품기획 대시보드"
 };
 
-// Primary navigation is intentionally simplified to the domestic-first flow.
+// Product navigation: outfit observations, magazine coverage, store rankings, and history.
 // "브랜드 어소트" (SLAM_JAM/STUSSY assortment) is hidden here but the route
 // and existing data are preserved at /market?view=assortment - reactivate as
 // "브랜드 출시 동향" once a domestic assortment source exists.
@@ -19,12 +19,19 @@ export const metadata: Metadata = {
 // service/schema/collector/tests are intentionally preserved unchanged for
 // future reactivation; only this nav link is removed.
 const primaryNav = [
-  { href: "/", label: "대시보드" },
-  { href: "/archive", label: "아카이브" },
+  { href: "/", label: "착장" },
+  { href: "/magazine", label: "매거진" },
+  { href: "/store", label: "스토어" },
+  { href: "/archive", label: "아카이브" }
+];
+
+const researchNav = [
   { href: "/editorial", label: "트렌드 검증" },
-  { href: "/market", label: "스토어 반응" },
+  { href: "/market", label: "스토어 상세 데이터" },
   { href: "/items", label: "세부 아이템" },
-  { href: "/import", label: "데이터 관리" }
+  { href: "/import", label: "데이터 관리" },
+  ...(featureFlags.enableInternalSales ? [{ href: "/sales", label: "내부 판매" }] : []),
+  ...(featureFlags.enableNaverTrends ? [{ href: "/trends", label: "검색 트렌드" }, { href: "/settings/keywords", label: "키워드" }] : [])
 ];
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -39,30 +46,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <div className="mx-auto flex min-h-[4.5rem] max-w-[1440px] flex-col gap-3 px-6 py-4 lg:flex-row lg:items-center lg:justify-between">
               <Link href="/" className="flex items-center gap-2">
                 <span className="text-sm font-semibold uppercase tracking-[0.18em] text-ink">상품기획 트렌드</span>
-                <span className="text-xs text-muted">Trend · Store · Assortment</span>
+                <span className="text-xs text-muted">Outfit · Magazine · Store</span>
               </Link>
               {isAuthenticated ? (
-                <nav className="flex flex-wrap items-center gap-6 text-sm font-medium text-muted">
+                <nav className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium text-muted">
                   {primaryNav.map((item) => (
                     <Link key={item.href} className="hover:text-ink" href={item.href}>
                       {item.label}
                     </Link>
                   ))}
-                  {featureFlags.enableInternalSales ? (
-                    <Link className="hover:text-ink" href="/sales">
-                      내부 판매
-                    </Link>
-                  ) : null}
-                  {featureFlags.enableNaverTrends ? (
-                    <>
-                      <Link className="hover:text-ink" href="/trends">
-                        검색 트렌드
-                      </Link>
-                      <Link className="hover:text-ink" href="/settings/keywords">
-                        키워드
-                      </Link>
-                    </>
-                  ) : null}
+                  <details className="relative">
+                    <summary className="cursor-pointer list-none hover:text-ink">RESEARCH +</summary>
+                    <div className="absolute right-0 top-full z-30 mt-2 min-w-40 border border-line bg-white p-2 shadow-subtle">
+                      {researchNav.map((item) => <Link key={item.href} className="block px-3 py-2 text-xs hover:bg-slate-50 hover:text-ink" href={item.href}>{item.label}</Link>)}
+                    </div>
+                  </details>
                   <form method="POST" action="/api/auth/logout">
                     <button type="submit" className="hover:text-ink">
                       로그아웃

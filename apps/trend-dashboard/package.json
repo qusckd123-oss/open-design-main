@@ -41,6 +41,7 @@
     "test:refresh-editorial": "tsx scripts/test-refresh-editorial.ts",
     "test:watchlist-snapshot": "tsx scripts/test-watchlist-snapshot.ts",
     "test:watchlist-archive": "tsx scripts/test-watchlist-archive.ts",
+    "test:magazine-week": "tsx scripts/test-magazine-week.ts",
     "snapshot:watchlist": "tsx scripts/snapshot-watchlist.ts"
   },
   "dependencies": {

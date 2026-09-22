@@ -16,6 +16,8 @@ Short by design. For rules, see `AGENT_OPERATING_RULES.md`. For live numbers, se
 
 ## P2 - Product-Planning Usability
 
+- **Primary product IA clarified (2026-09-22):** the three equal primary tabs are `/` 착장, `/magazine` 매거진, and `/store` 스토어; `/archive` is secondary history/reference. Local implementation is complete and validated for type/build plus rendered LOOK empty-state breakpoints. No approved LOOK observations exist yet. Magazine and Store live-data rendering remains to be verified after the known Railway-to-Neon/local DB connectivity issue is resolved. Do not push/deploy this IA while that connectivity issue is unresolved.
+
 - User explicitly authorized safe UI-only pre-gate work on 2026-09-10 while P0 remains pending. First fix completed: `/editorial` no longer shows the no-op domestic/overseas scope toggle; gender filtering remains.
 - Second fix completed (2026-09-10): unified specific-item Korean label rendering (`specificItemKoreanLabel`) across `/items`, `/editorial`, and `/`'s trend×store matrix table - these previously showed the raw English SUB_ITEM enum (e.g. `TRACK JACKET`) where `/` (EditorialTrendCard) and the item detail page already showed the Korean label (`트랙 재킷`) for the exact same data. No taxonomy/dictionary expansion; reused the existing helper and the existing SUB_ITEM-only conditional pattern already established in `EditorialTrendCard`.
 - New user-directed P2 focus (2026-09-11): shift toward a **visual-first trend board** that answers “요즘 뭐가 뜨는가?” using planning-ready `ITEM + DIRECT ATTRIBUTE(S) + MOOD/STYLE CONTEXT + VISUAL EVIDENCE`, not broad category counts. See `WORK_START_HERE.md`.

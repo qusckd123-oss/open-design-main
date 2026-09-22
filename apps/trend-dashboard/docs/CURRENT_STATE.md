@@ -1,5 +1,11 @@
 # Current State - Trend Dashboard
 
+## Product IA Clarification (2026-09-22)
+
+The primary product has three equal pillars: `/` (착장), `/magazine` (매거진), and `/store` (스토어); `/archive` remains secondary history/reference. The `/` route is now the LOOK onboarding/empty state because no approved real outfit observations exist. It does not reuse EditorialPost images. `/magazine` queries only real fashion-relevant articles published within the current Asia/Seoul Monday-Sunday week and does not backfill the view with older articles. `/store` uses only REAL, ranking-verified Market rows with a rank; rank is not described as sales. Legacy analysis routes remain under RESEARCH or their existing URLs.
+
+Local implementation validated 2026-09-22: app typecheck, the focused magazine-week boundary test, and production build passed. Rendered `/` was checked at desktop and 390px mobile with no horizontal overflow or page errors. The configured local DB host was unreachable during build, so live Magazine/Store article/product rendering could not be verified. No schema, data, Railway, GitHub Action, or production change was made; do not push this IA revision while Railway-to-Neon connectivity is unresolved.
+
 **This is a mutable snapshot, not policy.** For stable rules, see `AGENT_OPERATING_RULES.md`. For what to do next, see `NEXT_PRIORITIES.md`. A session reading this file should still verify live state itself before acting - see that file's "Future Short-Prompt Contract."
 
 Last verified: 2026-09-14, read-only, directly against the committed `refresh-20260914-083001.json`/`.log` machine-readable reports for the scheduled refresh (not re-derived from the DB this pass, since the refresh runner's own before/after snapshot - the same `getEditorialRefreshSnapshot()` function - already produced it fresh at refresh time).
