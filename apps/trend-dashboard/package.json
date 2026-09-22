@@ -44,6 +44,8 @@
     "snapshot:watchlist": "tsx scripts/snapshot-watchlist.ts"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
+    "@prisma/adapter-neon": "6.19.3",
     "@prisma/client": "^6.15.0",
     "next": "^16.2.4",
     "react": "^18.3.1",
