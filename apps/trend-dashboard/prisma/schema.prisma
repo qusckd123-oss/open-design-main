@@ -48,6 +48,136 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum LookPlatform {
+  INSTAGRAM
+  WEB
+}
+
+enum LookGenderScope {
+  MEN
+  WOMEN
+  MIXED
+  UNKNOWN
+}
+
+enum LookGender {
+  MEN
+  WOMEN
+  UNKNOWN
+}
+
+enum LookReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum LookClusterStatus {
+  DRAFT
+  APPROVED
+  ARCHIVED
+}
+
+enum LookTagDimension {
+  OUTERWEAR
+  TOP
+  BOTTOM
+  FOOTWEAR
+  FIT
+  LAYERING
+  DETAIL
+}
+
+model LookSourceAccount {
+  id             String            @id @default(cuid())
+  platform       LookPlatform
+  handle         String
+  displayName    String?
+  profileUrl     String
+  genderScope    LookGenderScope   @default(UNKNOWN)
+  active         Boolean           @default(true)
+  collectionMode String            @default("MANUAL")
+  notes          String?
+  createdAt      DateTime          @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime          @updatedAt @db.Timestamptz(3)
+  observations   LookObservation[]
+
+  @@unique([platform, handle])
+  @@index([active, platform])
+}
+
+model LookObservation {
+  id               String                   @id @default(cuid())
+  sourceAccountId  String
+  platform         LookPlatform
+  postUrl          String
+  postIdentity     String
+  postExternalId   String?
+  publishedAt      DateTime?                @db.Timestamptz(3)
+  observedAt       DateTime                 @db.Timestamptz(3)
+  imageUrl         String
+  imageIndex       Int                      @default(0)
+  captionText      String?
+  genderCandidate  LookGender               @default(UNKNOWN)
+  collectionMethod String                   @default("MANUAL")
+  reviewStatus     LookReviewStatus         @default(PENDING)
+  reviewedBy       String?
+  reviewedAt       DateTime?                @db.Timestamptz(3)
+  createdAt        DateTime                 @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime                 @updatedAt @db.Timestamptz(3)
+  sourceAccount    LookSourceAccount        @relation(fields: [sourceAccountId], references: [id], onDelete: Restrict)
+  clusters         LookClusterObservation[]
+  tags             ReviewedLookTag[]
+
+  @@unique([platform, postIdentity, imageIndex])
+  @@index([reviewStatus, observedAt])
+  @@index([sourceAccountId, observedAt])
+}
+
+model LookCluster {
+  id           String                   @id @default(cuid())
+  gender       LookGender
+  title        String
+  status       LookClusterStatus        @default(DRAFT)
+  summary      String
+  approvedBy   String?
+  approvedAt   DateTime?                @db.Timestamptz(3)
+  createdAt    DateTime                 @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime                 @updatedAt @db.Timestamptz(3)
+  observations LookClusterObservation[]
+  tags         ReviewedLookTag[]
+
+  @@index([status, gender])
+}
+
+model LookClusterObservation {
+  clusterId     String
+  observationId String
+  createdAt     DateTime        @default(now()) @db.Timestamptz(3)
+  cluster       LookCluster     @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+  observation   LookObservation @relation(fields: [observationId], references: [id], onDelete: Restrict)
+
+  @@id([clusterId, observationId])
+  @@index([observationId])
+}
+
+model ReviewedLookTag {
+  id            String           @id @default(cuid())
+  observationId String?
+  clusterId     String?
+  dimension     LookTagDimension
+  value         String
+  reviewerName  String
+  reviewedAt    DateTime         @default(now()) @db.Timestamptz(3)
+  observation   LookObservation? @relation(fields: [observationId], references: [id], onDelete: Cascade)
+  cluster       LookCluster?     @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+
+  @@unique([observationId, dimension, value])
+  @@unique([clusterId, dimension, value])
+  @@index([observationId])
+  @@index([clusterId])
+}
+
 model Product {
   id               String            @id @default(cuid())
   externalId       String            @unique
@@ -89,17 +219,17 @@ model RankingSnapshot {
 }
 
 model CollectionRun {
-  id           String    @id @default(cuid())
+  id           String            @id @default(cuid())
   source       String
   mode         String
-  startedAt    DateTime  @db.Timestamptz(3)
-  completedAt  DateTime? @db.Timestamptz(3)
+  startedAt    DateTime          @db.Timestamptz(3)
+  completedAt  DateTime?         @db.Timestamptz(3)
   status       String
-  productCount Int       @default(0)
-  fetchedCount Int       @default(0)
-  errorCount   Int       @default(0)
+  productCount Int               @default(0)
+  fetchedCount Int               @default(0)
+  errorCount   Int               @default(0)
   errorMessage String?
-  createdAt    DateTime  @default(now()) @db.Timestamptz(3)
+  createdAt    DateTime          @default(now()) @db.Timestamptz(3)
   errors       CollectionError[]
 
   @@index([source])
@@ -122,24 +252,24 @@ model CollectionError {
 }
 
 model TrendKeyword {
-  id        String                 @id @default(cuid())
-  name      String                 @unique
-  category  String
-  aliases   String
-  shoppingKeyword String?
+  id                    String                       @id @default(cuid())
+  name                  String                       @unique
+  category              String
+  aliases               String
+  shoppingKeyword       String?
   naverShoppingCategory String?
   // Specific-item taxonomy linkage for DEMAND SIGNAL (see src/config/taxonomy.ts).
   // Nullable: not every legacy keyword maps cleanly to one SPECIFIC_ITEM yet.
-  specificItem   String?
+  specificItem          String?
   // PLANNING gender ("UNISEX" | "WOMEN") - which product-planning area this
   // keyword/item belongs to. This is NOT the NAVER shopper gender (see the
   // snapshot models' `gender` field) and must never be conflated with it.
-  planningGender String?
-  active    Boolean                @default(true)
-  createdAt DateTime               @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime               @updatedAt @db.Timestamptz(3)
-  snapshots KeywordTrendSnapshot[]
-  shoppingAgeSnapshots KeywordShoppingAgeSnapshot[]
+  planningGender        String?
+  active                Boolean                      @default(true)
+  createdAt             DateTime                     @default(now()) @db.Timestamptz(3)
+  updatedAt             DateTime                     @updatedAt @db.Timestamptz(3)
+  snapshots             KeywordTrendSnapshot[]
+  shoppingAgeSnapshots  KeywordShoppingAgeSnapshot[]
 
   @@index([category])
   @@index([active])
@@ -244,22 +374,22 @@ model InternalProduct {
 }
 
 model SalesSnapshot {
-  id               String          @id @default(cuid())
-  productId        String
-  periodDate       DateTime        @db.Timestamptz(3)
-  salesQty         Int?
-  salesAmount      Int?
-  stockQty         Int?
-  orderQty         Int?
-  sellThroughRate  Float?
-  discountRate     Float?
-  normalSalesRate  Float?
-  storeSalesQty    Int?
-  onlineSalesQty   Int?
-  dataMode         String          @default("sample")
-  importRunId      String?
-  createdAt        DateTime        @default(now()) @db.Timestamptz(3)
-  product          InternalProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id              String          @id @default(cuid())
+  productId       String
+  periodDate      DateTime        @db.Timestamptz(3)
+  salesQty        Int?
+  salesAmount     Int?
+  stockQty        Int?
+  orderQty        Int?
+  sellThroughRate Float?
+  discountRate    Float?
+  normalSalesRate Float?
+  storeSalesQty   Int?
+  onlineSalesQty  Int?
+  dataMode        String          @default("sample")
+  importRunId     String?
+  createdAt       DateTime        @default(now()) @db.Timestamptz(3)
+  product         InternalProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([productId, periodDate])
   @@index([periodDate])
@@ -267,28 +397,28 @@ model SalesSnapshot {
 }
 
 model MarketProduct {
-  id               String                  @id @default(cuid())
-  source           String
+  id                String                  @id @default(cuid())
+  source            String
   externalProductId String
-  brand            String
-  name             String
-  category         String?
-  url              String?
-  imageUrl         String?
-  itemType         String?
-  subItemType      String?
-  fit              String?
-  mainColor        String?
-  subColor         String?
-  material         String?
-  graphicType      String?
-  detail           String?
-  style            String?
-  gender           String?
-  dataMode         String                  @default("sample")
-  createdAt        DateTime                @default(now()) @db.Timestamptz(3)
-  updatedAt        DateTime                @updatedAt @db.Timestamptz(3)
-  rankingSnapshots MarketRankingSnapshot[]
+  brand             String
+  name              String
+  category          String?
+  url               String?
+  imageUrl          String?
+  itemType          String?
+  subItemType       String?
+  fit               String?
+  mainColor         String?
+  subColor          String?
+  material          String?
+  graphicType       String?
+  detail            String?
+  style             String?
+  gender            String?
+  dataMode          String                  @default("sample")
+  createdAt         DateTime                @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime                @updatedAt @db.Timestamptz(3)
+  rankingSnapshots  MarketRankingSnapshot[]
 
   @@unique([source, externalProductId])
   @@index([source])
@@ -299,28 +429,28 @@ model MarketProduct {
 }
 
 model MarketRankingSnapshot {
-  id              String        @id @default(cuid())
-  marketProductId String
-  source          String
-  periodDate      DateTime      @db.Timestamptz(3)
-  rankingCategory String        @default("ALL")
+  id               String        @id @default(cuid())
+  marketProductId  String
+  source           String
+  periodDate       DateTime      @db.Timestamptz(3)
+  rankingCategory  String        @default("ALL")
   observedCategory String        @default("ALL")
-  audienceSegment String        @default("ALL")
-  metricType      String        @default("UNKNOWN")
-  rankingVerified Boolean       @default(false)
-  rankingScope    String        @default("UNKNOWN")
-  sourcePosition  Int?
-  rank            Int?
-  price           Int?
-  salePrice       Int?
-  discountRate    Int?
-  reviewCount     Int?
-  likeCount       Int?
-  dataMode        String        @default("sample")
-  importRunId     String?
-  rawData         String?
-  createdAt       DateTime      @default(now()) @db.Timestamptz(3)
-  marketProduct   MarketProduct @relation(fields: [marketProductId], references: [id], onDelete: Cascade)
+  audienceSegment  String        @default("ALL")
+  metricType       String        @default("UNKNOWN")
+  rankingVerified  Boolean       @default(false)
+  rankingScope     String        @default("UNKNOWN")
+  sourcePosition   Int?
+  rank             Int?
+  price            Int?
+  salePrice        Int?
+  discountRate     Int?
+  reviewCount      Int?
+  likeCount        Int?
+  dataMode         String        @default("sample")
+  importRunId      String?
+  rawData          String?
+  createdAt        DateTime      @default(now()) @db.Timestamptz(3)
+  marketProduct    MarketProduct @relation(fields: [marketProductId], references: [id], onDelete: Cascade)
 
   @@unique([marketProductId, source, periodDate, rankingScope, rankingCategory, observedCategory, audienceSegment])
   @@index([source])
@@ -337,24 +467,24 @@ model MarketRankingSnapshot {
 }
 
 model EditorialPost {
-  id              String              @id @default(cuid())
-  source          String
-  externalPostId  String
-  url             String
-  canonicalUrl    String?
-  title           String
-  publishedAt     DateTime?           @db.Timestamptz(3)
-  imageUrl        String?
-  excerpt         String?
-  text            String?
-  audienceGender  String              @default("UNKNOWN")
-  fashionRelevance String             @default("UNKNOWN")
-  dataMode        String              @default("sample")
-  collectedAt     DateTime            @default(now()) @db.Timestamptz(3)
-  createdAt       DateTime            @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime            @updatedAt @db.Timestamptz(3)
-  mentions        EditorialMention[]
-  contentBlocks   EditorialContentBlock[]
+  id               String                  @id @default(cuid())
+  source           String
+  externalPostId   String
+  url              String
+  canonicalUrl     String?
+  title            String
+  publishedAt      DateTime?               @db.Timestamptz(3)
+  imageUrl         String?
+  excerpt          String?
+  text             String?
+  audienceGender   String                  @default("UNKNOWN")
+  fashionRelevance String                  @default("UNKNOWN")
+  dataMode         String                  @default("sample")
+  collectedAt      DateTime                @default(now()) @db.Timestamptz(3)
+  createdAt        DateTime                @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime                @updatedAt @db.Timestamptz(3)
+  mentions         EditorialMention[]
+  contentBlocks    EditorialContentBlock[]
 
   @@unique([source, externalPostId])
   @@index([source])
@@ -365,15 +495,15 @@ model EditorialPost {
 }
 
 model EditorialMention {
-  id         String        @id @default(cuid())
-  postId     String
-  type       String
-  value      String
-  audienceGender String      @default("UNKNOWN")
-  confidence Float         @default(1)
-  evidence   String?
-  createdAt  DateTime      @default(now()) @db.Timestamptz(3)
-  post       EditorialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  id             String        @id @default(cuid())
+  postId         String
+  type           String
+  value          String
+  audienceGender String        @default("UNKNOWN")
+  confidence     Float         @default(1)
+  evidence       String?
+  createdAt      DateTime      @default(now()) @db.Timestamptz(3)
+  post           EditorialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@unique([postId, type, value])
   @@index([type])
@@ -383,15 +513,15 @@ model EditorialMention {
 }
 
 model EditorialContentBlock {
-  id            String        @id @default(cuid())
-  postId        String
-  blockIndex    Int
-  blockType     String
-  text          String?
-  imageUrl      String?
-  caption       String?
-  createdAt     DateTime      @default(now()) @db.Timestamptz(3)
-  post          EditorialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  id         String        @id @default(cuid())
+  postId     String
+  blockIndex Int
+  blockType  String
+  text       String?
+  imageUrl   String?
+  caption    String?
+  createdAt  DateTime      @default(now()) @db.Timestamptz(3)
+  post       EditorialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@unique([postId, blockIndex])
   @@index([postId])
@@ -399,24 +529,24 @@ model EditorialContentBlock {
 }
 
 model ImportRun {
-  id           String        @id @default(cuid())
-  type         String
-  source       String
-  fileName     String?
+  id              String        @id @default(cuid())
+  type            String
+  source          String
+  fileName        String?
   rankingCategory String?
   audienceSegment String?
-  dataMode     String        @default("sample")
-  startedAt    DateTime      @db.Timestamptz(3)
-  completedAt  DateTime?     @db.Timestamptz(3)
-  status       String
-  totalRows    Int           @default(0)
-  fetchedRows  Int           @default(0)
-  successRows  Int           @default(0)
-  failedRows   Int           @default(0)
-  skippedRows  Int           @default(0)
-  errorMessage String?
-  createdAt    DateTime      @default(now()) @db.Timestamptz(3)
-  errors       ImportError[]
+  dataMode        String        @default("sample")
+  startedAt       DateTime      @db.Timestamptz(3)
+  completedAt     DateTime?     @db.Timestamptz(3)
+  status          String
+  totalRows       Int           @default(0)
+  fetchedRows     Int           @default(0)
+  successRows     Int           @default(0)
+  failedRows      Int           @default(0)
+  skippedRows     Int           @default(0)
+  errorMessage    String?
+  createdAt       DateTime      @default(now()) @db.Timestamptz(3)
+  errors          ImportError[]
 
   @@index([type])
   @@index([source])
@@ -451,39 +581,39 @@ model ImportRun {
 // and no backfilled/invented historical data yet. See the task history for
 // "Phase 6A".
 model WatchlistSnapshot {
-  id          String   @id @default(cuid())
+  id                       String                  @id @default(cuid())
   // Absolute instant the resolver ran (server `now()`), distinct from
   // `createdAt` (Prisma row-insert bookkeeping) the same way EditorialPost
   // already separates `collectedAt` from `createdAt`.
-  capturedAt  DateTime @db.Timestamptz(3)
+  capturedAt               DateTime                @db.Timestamptz(3)
   // "YYYY-MM-DD" as observed in Asia/Seoul (businessDayKey() in
   // src/lib/business-time.ts) - the canonical grouping/lookup key for a
   // future Archive-by-date view. Never derived from a UTC calendar day.
-  businessDate String
+  businessDate             String
   // Explicit, deliberately-bumped provenance string (see
   // WATCHLIST_ALGORITHM_VERSION in src/services/watchlist-selection.ts) -
   // never derived from an unstable runtime value (git SHA, package version).
-  algorithmVersion String
+  algorithmVersion         String
   // Input scope/filter identity - the exact getAttributeBundles(dataMode,
   // gender) call this snapshot resolved against. Scope is never wider than
   // this: the home page's `scope` (domestic/overseas) query param does not
   // affect the Watchlist section at all (see src/app/page.tsx).
-  dataMode    String
-  gender      String
+  dataMode                 String
+  gender                   String
   // Source/evidence freshness context needed to understand the snapshot
   // without re-querying mutable EditorialPost rows: how many
   // FASHION_RELEVANT posts (matching dataMode/gender) fed this resolution,
   // and the most recent publishedAt among them.
   sourceEditorialPostCount Int
-  sourceLatestPublishedAt DateTime? @db.Timestamptz(3)
+  sourceLatestPublishedAt  DateTime?               @db.Timestamptz(3)
   // "scheduled" (future cron) or "manual" (operator-triggered CLI run) -
   // provenance only, never used to filter/exclude a snapshot from Archive.
-  triggeredBy String  @default("manual")
+  triggeredBy              String                  @default("manual")
   // Denormalized count of `items` - cheap for a future Archive list view
   // without a join/count query.
-  itemCount   Int      @default(0)
-  createdAt   DateTime @default(now()) @db.Timestamptz(3)
-  items       WatchlistSnapshotItem[]
+  itemCount                Int                     @default(0)
+  createdAt                DateTime                @default(now()) @db.Timestamptz(3)
+  items                    WatchlistSnapshotItem[]
 
   @@index([businessDate])
   @@index([dataMode])
@@ -492,51 +622,51 @@ model WatchlistSnapshot {
 }
 
 model WatchlistSnapshotItem {
-  id         String            @id @default(cuid())
-  snapshotId String
+  id                              String            @id @default(cuid())
+  snapshotId                      String
   // 1-based Watchlist position at capture time (1..N, matches the row order
   // src/components/AttributeBundle.tsx's WatchlistRow rendered).
-  rank       Int
+  rank                            Int
   // AttributeBundle.key (specificItem#TYPE:VALUE+...) - a provenance pointer
   // for cross-reference only. Never relied on for reconstruction: the bundle
   // this key currently resolves to may look different later (or vanish) as
   // source evidence changes - every field a future Archive view needs is
   // persisted directly on this row instead.
-  bundleKey  String
-  specificItem String
+  bundleKey                       String
+  specificItem                    String
   // The exact Korean-first name the UI showed for this row (WatchlistRow /
   // SelectedSignalDetail both use buildSignalInterpretation(bundle).signalName,
   // not the raw bundle.displayName - see src/lib/signal-interpretation.ts).
-  signalName String
-  displayName String
+  signalName                      String
+  displayName                     String
   // JSON-encoded BundleAttribute[] ({type, value, articlePresence,
   // sourceSpread}) - resolved attribute chips, stored as a string per this
   // schema's existing convention (see MarketRankingSnapshot.rawData) rather
   // than Prisma's Json type, which this schema never otherwise uses.
-  directAttributes String
+  directAttributes                String
   // bundleEvidenceStrength(...) output, e.g. "반복 관측 · 서로 다른 사례".
-  evidenceStrength String
-  bundleArticlePresence Int
-  bundleSourceSpread    Int
+  evidenceStrength                String
+  bundleArticlePresence           Int
+  bundleSourceSpread              Int
   independentEvidenceClusterCount Int
-  publisherFamilySpread Int
-  latestObservedAt DateTime? @db.Timestamptz(3)
+  publisherFamilySpread           Int
+  latestObservedAt                DateTime?         @db.Timestamptz(3)
   // buildSignalInterpretation(bundle) output, persisted verbatim.
-  observedFact     String
+  observedFact                    String
   // JSON-encoded string[].
-  unknowns         String
-  planningQuestion String
+  unknowns                        String
+  planningQuestion                String
   // Whether this row was the featured/default-selected signal (the
   // independentEvidenceClusterCount >= 2 pick) at capture time.
-  isPrimarySignal  Boolean @default(false)
+  isPrimarySignal                 Boolean           @default(false)
   // Always "NOT_COMPARABLE" today - bundles have no comparable "최근 방향" at
   // this exact-bundle grain (see LeadSignalDimensions in
   // AttributeBundle.tsx: "조합 단위 비교값 없음"). An explicit, honest
   // constant rather than an invented direction value; a future
   // algorithmVersion may introduce a real comparable status.
-  directionStatus String @default("NOT_COMPARABLE")
-  createdAt  DateTime @default(now()) @db.Timestamptz(3)
-  snapshot   WatchlistSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  directionStatus                 String            @default("NOT_COMPARABLE")
+  createdAt                       DateTime          @default(now()) @db.Timestamptz(3)
+  snapshot                        WatchlistSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
 
   @@unique([snapshotId, rank])
   @@index([snapshotId])

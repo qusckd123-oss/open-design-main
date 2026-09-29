@@ -26,6 +26,7 @@ const primaryNav = [
 ];
 
 const researchNav = [
+  { href: "/research/looks", label: "착장 관측 관리" },
   { href: "/editorial", label: "트렌드 검증" },
   { href: "/market", label: "스토어 상세 데이터" },
   { href: "/items", label: "세부 아이템" },
