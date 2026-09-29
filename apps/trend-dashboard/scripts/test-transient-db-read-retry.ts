@@ -112,9 +112,8 @@ for (const code of ["ENOTFOUND", "ECONNREFUSED", "ECONNRESET", "ETIMEDOUT"]) {
 }
 
 const appRoot = resolve(import.meta.dirname, "../src/app");
-for (const path of [resolve(appRoot, "page.tsx"), resolve(appRoot, "archive/page.tsx")]) {
-  assert.match(readFileSync(path, "utf8"), /withTransientDbReadRetry/);
-}
+assert.doesNotMatch(readFileSync(resolve(appRoot, "page.tsx"), "utf8"), /withTransientDbReadRetry/);
+assert.match(readFileSync(resolve(appRoot, "archive/page.tsx"), "utf8"), /withTransientDbReadRetry/);
 assert.doesNotMatch(readFileSync(resolve(import.meta.dirname, "../src/db/transient-read-retry.ts"), "utf8"), /from ["']@prisma\/client["']/);
 
 console.log("Transient read retry tests passed.");
