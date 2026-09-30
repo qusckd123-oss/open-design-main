@@ -1,5 +1,9 @@
 # Current State - Trend Dashboard
 
+## LOOK manual ingestion V2 (2026-09-30)
+
+The `/` LOOK lane now separates human-classified `REAL_WEAR`, `CURATED_LOOK`, and `STYLE_MEDIA` evidence. `/research/looks` accepts 1–10 ordered image URLs for one post in a single transaction and derives Instagram profile URLs from normalized handles. The production migration `20260930120000_add_look_observation_types` was applied via the explicit direct target before app deployment; it only adds two `LookPlatform` values, one enum, and a nullable observation type column. Post-migration production audit: all five LOOK tables remain at 0 rows, while EditorialPost 1078, EditorialMention 5565, MarketProduct 1320, MarketRankingSnapshot(real) 2642, and WatchlistSnapshot 3 were unchanged across this migration. No real observations or fake seed rows were written. `docs/LOOK_INGESTION_V2.md` holds source, image-storage, counting, and MUSINSA robots decisions. Older sections below are historical snapshots, not current deployment status.
+
 ## Product IA Clarification (2026-09-22)
 
 The primary product has three equal pillars: `/` (착장), `/magazine` (매거진), and `/store` (스토어); `/archive` remains secondary history/reference. The `/` route is now the LOOK onboarding/empty state because no approved real outfit observations exist. It does not reuse EditorialPost images. `/magazine` queries only real fashion-relevant articles published within the current Asia/Seoul Monday-Sunday week and does not backfill the view with older articles. `/store` uses only REAL, ranking-verified Market rows with a rank; rank is not described as sales. Legacy analysis routes remain under RESEARCH or their existing URLs.

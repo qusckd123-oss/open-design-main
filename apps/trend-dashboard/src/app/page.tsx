@@ -44,13 +44,19 @@ export default async function LooksPage() {
                     <p className="mt-1 text-sm text-muted">{cluster.summary}</p>
                     <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
                       {cluster.images.map((image) => (
-                        <a key={image.id} href={image.postUrl} target="_blank" rel="noreferrer" aria-label={`${cluster.title} 원본 게시물`} className="block aspect-[4/5] overflow-hidden bg-[#f1f0ec]">
+                        <a key={image.id} href={image.postUrl} target="_blank" rel="noreferrer" aria-label={`${cluster.title} 원본 게시물`} className="relative block aspect-[4/5] overflow-hidden bg-[#f1f0ec]">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={image.imageUrl} alt={`${cluster.title} 실제 관측 이미지`} loading="lazy" className="h-full w-full object-cover" />
+                          <span className="absolute bottom-1 left-1 bg-white/90 px-1.5 py-0.5 text-[10px] font-medium text-ink">{image.observationType === "REAL_WEAR" ? "실착" : image.observationType === "CURATED_LOOK" ? "큐레이션" : image.observationType === "STYLE_MEDIA" ? "스타일 미디어" : "유형 미분류"}</span>
                         </a>
                       ))}
                     </div>
-                    <p className="mt-3 text-xs text-muted">{cluster.accountCount}개 계정 · {cluster.observationCount}회 관측 · 최근 {new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", dateStyle: "medium" }).format(cluster.latestObservedAt)}</p>
+                    <div className="mt-4 grid grid-cols-3 border-y border-line py-3 text-xs">
+                      <div><p className="font-semibold text-ink">실착</p><p className="mt-1 text-muted">{cluster.realWear.observations}건 · Instagram {cluster.realWear.instagramAccounts}계정</p><p className="text-muted">{cluster.realWear.posts}개 게시물</p></div>
+                      <div className="border-l border-line pl-3"><p className="font-semibold text-ink">큐레이션</p><p className="mt-1 text-muted">{cluster.curatedLook.observations}건 · {cluster.curatedLook.posts}개 게시물</p></div>
+                      <div className="border-l border-line pl-3"><p className="font-semibold text-ink">스타일 미디어</p><p className="mt-1 text-muted">{cluster.styleMedia.observations}건 · {cluster.styleMedia.posts}개 게시물</p></div>
+                    </div>
+                    <p className="mt-3 text-xs text-muted">승인 관측 총 {cluster.observationCount}건 · 최근 {new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", dateStyle: "medium" }).format(cluster.latestObservedAt)}{cluster.unclassified ? ` · 유형 미분류 ${cluster.unclassified}건` : ""} · 판매·인기도 순위 아님</p>
                     {cluster.tags.length > 0 ? <div className="mt-2 flex flex-wrap gap-2">{cluster.tags.map((tag) => <span key={`${tag.dimension}:${tag.value}`} className="border border-line px-2 py-1 text-[11px] text-muted">{tag.dimension} · {tag.value}</span>)}</div> : null}
                   </section>
                 ))}

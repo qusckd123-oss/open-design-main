@@ -1,7 +1,7 @@
 import { Prisma, type LookTagDimension } from "@prisma/client";
 import { prisma } from "@/db/client";
 import { withTransientDbReadRetry } from "@/db/transient-read-retry";
-import { imageIndexOf, optionalPublishedDate, postIdentity, publicLookClusters, requireHttpUrl } from "@/lib/look-observation";
+import { instagramProfileUrl, manualLookImageRows, normalizeInstagramHandle, optionalPublishedDate, postIdentity, publicLookClusters, requireHttpUrl, validateInstagramProfile } from "@/lib/look-observation";
 
 function required(value: string | undefined, label: string, max = 200): string {
   const trimmed = (value ?? "").trim();
@@ -42,11 +42,12 @@ export async function getLookResearchData() {
 }
 
 export async function createLookAccount(input: Record<string, string>) {
-  const platform = choice(input.platform, ["INSTAGRAM", "WEB"] as const, "플랫폼");
-  const handle = required(input.handle?.replace(/^@/, "").toLowerCase(), "계정", 100);
-  const profileUrl = required(input.profileUrl, "프로필 URL", 2048);
+  const platform = choice(input.platform, ["INSTAGRAM", "MUSINSA_STYLE", "OTHER_WEB"] as const, "플랫폼");
+  const handle = platform === "INSTAGRAM" ? normalizeInstagramHandle(input.handle ?? "") : required(input.handle, "소스 이름", 100).toLowerCase();
+  const profileUrl = platform === "INSTAGRAM" ? (optional(input.profileUrl, 2048) ?? instagramProfileUrl(handle)) : required(input.profileUrl, "프로필 URL", 2048);
   const profile = requireHttpUrl(profileUrl, "프로필");
-  if (platform === "INSTAGRAM" && profile.hostname.toLowerCase().replace(/^www\./, "") !== "instagram.com") throw new Error("Instagram 프로필 URL이 필요합니다.");
+  if (platform === "INSTAGRAM") validateInstagramProfile(profileUrl, handle);
+  if (platform === "MUSINSA_STYLE" && profile.hostname.toLowerCase().replace(/^www\./, "") !== "musinsa.com") throw new Error("무신사 소스 URL이 필요합니다.");
   return prisma.lookSourceAccount.create({ data: {
     platform, handle, profileUrl,
     displayName: optional(input.displayName, 150),
@@ -57,9 +58,10 @@ export async function createLookAccount(input: Record<string, string>) {
 
 export async function updateLookAccount(input: Record<string, string>) {
   const existing = await prisma.lookSourceAccount.findUniqueOrThrow({ where: { id: required(input.accountId, "계정 ID") } });
-  const profileUrl = required(input.profileUrl, "프로필 URL", 2048);
+  const profileUrl = existing.platform === "INSTAGRAM" ? (optional(input.profileUrl, 2048) ?? instagramProfileUrl(existing.handle)) : required(input.profileUrl, "프로필 URL", 2048);
   const profile = requireHttpUrl(profileUrl, "프로필");
-  if (existing.platform === "INSTAGRAM" && profile.hostname.toLowerCase().replace(/^www\./, "") !== "instagram.com") throw new Error("Instagram 프로필 URL이 필요합니다.");
+  if (existing.platform === "INSTAGRAM") validateInstagramProfile(profileUrl, existing.handle);
+  if (existing.platform === "MUSINSA_STYLE" && profile.hostname.toLowerCase().replace(/^www\./, "") !== "musinsa.com") throw new Error("무신사 소스 URL이 필요합니다.");
   return prisma.lookSourceAccount.update({ where: { id: existing.id }, data: {
     profileUrl, displayName: optional(input.displayName, 150), notes: optional(input.notes),
     genderScope: choice(input.genderScope, ["MEN", "WOMEN", "MIXED", "UNKNOWN"] as const, "계정 성별 범위"),
@@ -67,20 +69,22 @@ export async function updateLookAccount(input: Record<string, string>) {
   } });
 }
 
-export async function createLookObservation(input: Record<string, string>) {
+export async function createLookObservationBatch(input: Record<string, string>, imageUrls: string[]) {
   const account = await prisma.lookSourceAccount.findUniqueOrThrow({ where: { id: required(input.accountId, "계정 ID") } });
   if (!account.active) throw new Error("비활성 계정에는 관측을 추가할 수 없습니다.");
   const postUrl = required(input.postUrl, "게시물 URL", 2048);
-  const imageUrl = required(input.imageUrl, "이미지 URL", 2048);
-  requireHttpUrl(imageUrl, "이미지");
   const identity = postIdentity(postUrl, account.platform);
-  const imageIndex = imageIndexOf(required(input.imageIndex, "이미지 순서", 3));
+  const observationType = choice(input.observationType, ["REAL_WEAR", "CURATED_LOOK", "STYLE_MEDIA"] as const, "관측 유형");
+  if (account.platform === "INSTAGRAM" && observationType === "STYLE_MEDIA") throw new Error("Instagram 관측은 실착 또는 큐레이션으로 구분하세요.");
+  if (account.platform !== "INSTAGRAM" && observationType !== "STYLE_MEDIA") throw new Error("웹 소스 관측은 스타일 미디어로 구분하세요.");
+  const images = manualLookImageRows(imageUrls);
   const publishedAt = optionalPublishedDate(input.publishedAt ?? "");
-  return prisma.lookObservation.create({ data: {
+  const captionText = optional(input.captionText, 5000);
+  const observedAt = new Date();
+  return prisma.$transaction((tx) => tx.lookObservation.createMany({ data: images.map(({ imageUrl, imageIndex }) => ({
     sourceAccountId: account.id, platform: account.platform, postUrl, postIdentity: identity,
-    imageUrl, imageIndex, publishedAt, observedAt: new Date(),
-    captionText: optional(input.captionText, 5000), collectionMethod: "MANUAL"
-  } });
+    imageUrl, imageIndex, publishedAt, observedAt, captionText, observationType, collectionMethod: "MANUAL"
+  })) }));
 }
 
 export async function reviewLookObservation(input: Record<string, string>) {

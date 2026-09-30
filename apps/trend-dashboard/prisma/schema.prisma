@@ -51,6 +51,14 @@ datasource db {
 enum LookPlatform {
   INSTAGRAM
   WEB
+  MUSINSA_STYLE
+  OTHER_WEB
+}
+
+enum LookObservationType {
+  REAL_WEAR
+  CURATED_LOOK
+  STYLE_MEDIA
 }
 
 enum LookGenderScope {
@@ -118,6 +126,7 @@ model LookObservation {
   imageUrl         String
   imageIndex       Int                      @default(0)
   captionText      String?
+  observationType  LookObservationType?
   genderCandidate  LookGender               @default(UNKNOWN)
   collectionMethod String                   @default("MANUAL")
   reviewStatus     LookReviewStatus         @default(PENDING)

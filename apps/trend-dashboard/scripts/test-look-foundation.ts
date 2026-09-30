@@ -15,7 +15,7 @@ assert.equal(optionalPublishedDate("2026-09-29")?.toISOString(), "2026-09-28T15:
 assert.throws(() => optionalPublishedDate("2026-02-31"));
 
 function observation(id: string, account: string, status: LookObservationCandidate["reviewStatus"], gender: LookObservationCandidate["genderCandidate"], day: number): LookObservationCandidate {
-  return { id, sourceAccountId: account, imageUrl: `https://example.com/${id}.jpg`, postUrl: `https://example.com/${id}`, observedAt: new Date(`2026-09-${String(day).padStart(2, "0")}T00:00:00Z`), reviewStatus: status, genderCandidate: gender };
+  return { id, sourceAccountId: account, platform: "INSTAGRAM", postIdentity: id, observationType: "REAL_WEAR", imageUrl: `https://example.com/${id}.jpg`, postUrl: `https://example.com/${id}`, observedAt: new Date(`2026-09-${String(day).padStart(2, "0")}T00:00:00Z`), reviewStatus: status, genderCandidate: gender };
 }
 function cluster(id: string, status: LookClusterCandidate["status"], gender: LookClusterCandidate["gender"], rows: LookObservationCandidate[]): LookClusterCandidate {
   return { id, status, gender, title: id, summary: "사람 검토", tags: [], observations: rows.map((row) => ({ observation: row })) };

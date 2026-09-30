@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { SESSION_COOKIE_NAME, verifySessionToken } from "@/lib/auth";
 import {
   addLookToCluster, addReviewedLookTag, approveLookCluster, createLookAccount,
-  createLookCluster, createLookObservation, lookMutationError, reviewLookObservation,
+  createLookCluster, createLookObservationBatch, lookMutationError, reviewLookObservation,
   updateLookAccount
 } from "@/services/look-service";
 
@@ -20,7 +20,7 @@ export async function mutateLook(formData: FormData) {
     switch (input.operation) {
       case "account-create": await createLookAccount(input); break;
       case "account-update": await updateLookAccount(input); break;
-      case "observation-create": await createLookObservation(input); break;
+      case "observation-create": await createLookObservationBatch(input, formData.getAll("imageUrl").filter((value): value is string => typeof value === "string")); break;
       case "observation-review": await reviewLookObservation(input); break;
       case "cluster-create": await createLookCluster(input); break;
       case "cluster-link": await addLookToCluster(input); break;

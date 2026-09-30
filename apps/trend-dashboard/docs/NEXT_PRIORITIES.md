@@ -1,5 +1,9 @@
 # Next Priorities - Trend Dashboard
 
+## Current LOOK next step (2026-09-30)
+
+After V2 deployment verification, manually register approved Instagram accounts and enter 20–30 real post-level LOOK observations through `/research/looks`. Check each original permalink and image, classify `REAL_WEAR` versus `CURATED_LOOK`, then approve and group only human-verified observations. MUSINSA STYLE is manual `STYLE_MEDIA` only because the current wildcard robots policy blocks this project's automated collector identity. Do not create sample records or an Instagram/Musinsa scraper. The older priority bullets below are historical and may be stale.
+
 Short by design. For rules, see `AGENT_OPERATING_RULES.md`. For live numbers, see `CURRENT_STATE.md`. Pick the highest tier with a real, live task in it - don't manufacture work in a tier just because it's next.
 
 ## P0 - Operations
