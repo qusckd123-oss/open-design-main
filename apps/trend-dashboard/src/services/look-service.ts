@@ -1,6 +1,7 @@
 import { Prisma, type LookTagDimension } from "@prisma/client";
 import { prisma } from "@/db/client";
 import { withTransientDbReadRetry } from "@/db/transient-read-retry";
+import { applyBulkLookReview, parseBulkReviewRequest } from "@/lib/look-bulk-review";
 import { instagramProfileUrl, manualLookImageRows, normalizeInstagramHandle, optionalPublishedDate, postIdentity, publicLookClusters, requireHttpUrl, validateInstagramProfile } from "@/lib/look-observation";
 
 function required(value: string | undefined, label: string, max = 200): string {
@@ -92,9 +93,19 @@ export async function reviewLookObservation(input: Record<string, string>) {
   const gender = choice(input.gender, ["MEN", "WOMEN", "UNKNOWN"] as const, "착장 성별");
   if (status === "APPROVED" && gender === "UNKNOWN") throw new Error("승인하려면 MEN 또는 WOMEN을 검토해 지정하세요.");
   const id = required(input.observationId, "관측 ID");
-  return prisma.lookObservation.update({ where: { id }, data: {
+  const result = await prisma.lookObservation.updateMany({ where: { id, reviewStatus: "PENDING" }, data: {
     reviewStatus: status, genderCandidate: gender, reviewedBy: reviewer(input.reviewerName), reviewedAt: new Date()
   } });
+  if (result.count !== 1) throw new Error("이미 검토된 관측입니다. 새로고침 후 다시 확인하세요.");
+  return result;
+}
+
+export async function reviewLookObservationsBulk(input: Record<string, string>): Promise<number> {
+  const request = parseBulkReviewRequest(input);
+  return prisma.$transaction(
+    (tx) => applyBulkLookReview(tx, request),
+    { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }
+  );
 }
 
 export async function createLookCluster(input: Record<string, string>) {

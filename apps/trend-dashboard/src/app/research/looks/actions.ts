@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { SESSION_COOKIE_NAME, verifySessionToken } from "@/lib/auth";
 import {
   addLookToCluster, addReviewedLookTag, approveLookCluster, createLookAccount,
-  createLookCluster, createLookObservationBatch, lookMutationError, reviewLookObservation,
+  createLookCluster, createLookObservationBatch, lookMutationError, reviewLookObservation, reviewLookObservationsBulk,
   updateLookAccount
 } from "@/services/look-service";
 
@@ -22,6 +22,11 @@ export async function mutateLook(formData: FormData) {
       case "account-update": await updateLookAccount(input); break;
       case "observation-create": await createLookObservationBatch(input, formData.getAll("imageUrl").filter((value): value is string => typeof value === "string")); break;
       case "observation-review": await reviewLookObservation(input); break;
+      case "observation-review-bulk": {
+        const count = await reviewLookObservationsBulk(input);
+        result = `${count}건을 ${input.status === "APPROVED" ? "승인" : "반려"}했습니다.`;
+        break;
+      }
       case "cluster-create": await createLookCluster(input); break;
       case "cluster-link": await addLookToCluster(input); break;
       case "cluster-approve": await approveLookCluster(input); break;
