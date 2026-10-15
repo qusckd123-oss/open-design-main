@@ -80,6 +80,11 @@ export function optionalPublishedDate(value: string): Date | null {
   return date;
 }
 
+/** Durable stored copy first; the (possibly expired) source CDN URL only for legacy rows without one. */
+export function lookDisplayImageUrl(row: { imageUrl: string; storedImageUrl?: string | null }): string {
+  return row.storedImageUrl || row.imageUrl;
+}
+
 export type LookObservationCandidate = {
   id: string;
   sourceAccountId: string;
@@ -87,6 +92,7 @@ export type LookObservationCandidate = {
   postIdentity: string;
   observationType: LookObservationTypeCode | null;
   imageUrl: string;
+  storedImageUrl?: string | null;
   postUrl: string;
   observedAt: Date;
   reviewStatus: "PENDING" | "APPROVED" | "REJECTED";
@@ -122,7 +128,7 @@ export function publicLookClusters(candidates: LookClusterCandidate[]) {
       curatedLook: { observations: curatedLook.length, posts: postCount(curatedLook) },
       styleMedia: { observations: styleMedia.length, posts: postCount(styleMedia) },
       unclassified: observations.filter((row) => row.observationType === null).length,
-      images: observations.slice(0, 4).map((row) => ({ id: row.id, imageUrl: row.imageUrl, postUrl: row.postUrl, observationType: row.observationType })),
+      images: observations.slice(0, 4).map((row) => ({ id: row.id, imageUrl: lookDisplayImageUrl(row), postUrl: row.postUrl, observationType: row.observationType })),
       tags: cluster.tags.map((tag) => ({ dimension: tag.dimension, value: tag.value })) }];
   }).sort((a, b) => b.latestObservedAt.getTime() - a.latestObservedAt.getTime() || b.realWear.instagramAccounts - a.realWear.instagramAccounts || b.accountCount - a.accountCount || a.id.localeCompare(b.id));
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { lookDisplayImageUrl } from "@/lib/look-observation";
 import { getLookResearchData } from "@/services/look-service";
 import { mutateLook } from "./actions";
 import { LookPostForm } from "./LookPostForm";
@@ -15,8 +16,9 @@ export default async function LookResearchPage({ searchParams }: Props) {
   const { accounts, observations, clusters } = await getLookResearchData();
   const notice = (await searchParams).notice;
   const approvedObservations = observations.filter((row) => row.reviewStatus === "APPROVED");
+  const legacyRows = observations.filter((row) => !row.storedImageUrl);
   const reviewRows = observations.map((row) => ({
-    id: row.id, imageUrl: row.imageUrl, imageIndex: row.imageIndex, postUrl: row.postUrl,
+    id: row.id, imageUrl: lookDisplayImageUrl(row), imageIndex: row.imageIndex, postUrl: row.postUrl,
     sourceHandle: row.sourceAccount.handle, platform: row.platform,
     observationType: row.observationType, reviewStatus: row.reviewStatus,
     genderCandidate: row.genderCandidate,
@@ -31,6 +33,13 @@ export default async function LookResearchPage({ searchParams }: Props) {
     <header><p className="text-xs font-semibold uppercase tracking-widest text-signal">RESEARCH / MANUAL REVIEW</p><h1 className="mt-2 text-3xl font-semibold">착장 관측 관리</h1><p className="mt-2 text-sm text-muted">공유 access code로 접근합니다. 검토자 이름은 직접 입력한 기록이며 개인 계정 인증을 뜻하지 않습니다.</p>{notice ? <p role="status" className="mt-3 border border-line bg-white p-3 text-sm">{notice}</p> : null}</header>
 
     <LookReviewGallery observations={reviewRows} />
+
+    {legacyRows.length ? <details className="border border-line bg-white p-5"><summary className="cursor-pointer text-sm font-semibold">영구 이미지가 없는 기존 관측 {legacyRows.length}건 · 이미지 복구</summary>
+      <p className="mt-3 text-sm text-muted">Instagram 게시물을 브라우저에서 직접 열어 현재 보이는 이미지의 주소를 붙여 넣으면 영구 저장소에 복사합니다. 검토 상태·메타데이터는 바뀌지 않습니다.</p>
+      <div className="mt-4 space-y-3">{legacyRows.map((row) => <form key={row.id} action={mutateLook} className="grid gap-2 border border-line p-3 md:grid-cols-[1fr_2fr_auto]"><input type="hidden" name="operation" value="observation-image-recover" /><input type="hidden" name="observationId" value={row.id} />
+        <p className="min-w-0 break-all text-xs font-semibold">{row.sourceAccount.handle} · #{row.imageIndex}<br /><a href={row.postUrl} target="_blank" rel="noreferrer" className="font-normal underline">{row.postUrl}</a></p>
+        <input required name="sourceImageUrl" type="url" placeholder="현재 보이는 이미지 URL (https://…cdninstagram.com/…)" className={field} />
+        <button className={button}>복구</button></form>)}</div></details> : null}
 
     {approvedObservations.length ? <details className="border border-line bg-white p-5"><summary className="cursor-pointer text-sm font-semibold">승인된 관측의 검토 태그 기록</summary><div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{approvedObservations.map((row) => <div key={row.id} className="min-w-0 border border-line p-3"><p className="break-all text-xs font-semibold">{row.sourceAccount.handle} · #{row.imageIndex} · {row.postUrl}</p><TagForm parent="OBSERVATION" parentId={row.id} /></div>)}</div></details> : null}
 

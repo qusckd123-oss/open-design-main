@@ -2,6 +2,9 @@ import { Prisma, type LookTagDimension } from "@prisma/client";
 import { prisma } from "@/db/client";
 import { withTransientDbReadRetry } from "@/db/transient-read-retry";
 import { applyBulkLookReview, parseBulkReviewRequest } from "@/lib/look-bulk-review";
+import { buildLookObservationRows, cleanupUnreferencedObjects, recoverLookObservationImage, storeLookImageBatch, type IsKeyReferenced } from "@/lib/look-image-ingest";
+import { validateSourceImageUrl } from "@/lib/look-image-fetch";
+import { getR2LookImageStore } from "@/lib/look-image-storage";
 import { instagramProfileUrl, manualLookImageRows, normalizeInstagramHandle, optionalPublishedDate, postIdentity, publicLookClusters, requireHttpUrl, validateInstagramProfile } from "@/lib/look-observation";
 
 function required(value: string | undefined, label: string, max = 200): string {
@@ -79,13 +82,46 @@ export async function createLookObservationBatch(input: Record<string, string>, 
   if (account.platform === "INSTAGRAM" && observationType === "STYLE_MEDIA") throw new Error("Instagram 관측은 실착 또는 큐레이션으로 구분하세요.");
   if (account.platform !== "INSTAGRAM" && observationType !== "STYLE_MEDIA") throw new Error("웹 소스 관측은 스타일 미디어로 구분하세요.");
   const images = manualLookImageRows(imageUrls);
+  images.forEach((image) => validateSourceImageUrl(image.imageUrl, account.platform));
   const publishedAt = optionalPublishedDate(input.publishedAt ?? "");
   const captionText = optional(input.captionText, 5000);
   const observedAt = new Date();
-  return prisma.$transaction((tx) => tx.lookObservation.createMany({ data: images.map(({ imageUrl, imageIndex }) => ({
-    sourceAccountId: account.id, platform: account.platform, postUrl, postIdentity: identity,
-    imageUrl, imageIndex, publishedAt, observedAt, captionText, observationType, collectionMethod: "MANUAL"
-  })) }));
+  const existing = await prisma.lookObservation.count({ where: { platform: account.platform, postIdentity: identity, imageIndex: { in: images.map((image) => image.imageIndex) } } });
+  if (existing) throw new Error("이미 등록된 게시물 이미지입니다.");
+  const store = getR2LookImageStore();
+  const stored = await storeLookImageBatch(images, { platform: account.platform, sourceAccountId: account.id, postIdentity: identity }, store, keysReferencedByRows);
+  try {
+    const rows = buildLookObservationRows({
+      sourceAccountId: account.id, platform: account.platform, postUrl, postIdentity: identity,
+      publishedAt, observedAt, captionText, observationType, collectionMethod: "MANUAL"
+    }, stored);
+    return await prisma.$transaction((tx) => tx.lookObservation.createMany({ data: rows }));
+  } catch (error) {
+    await cleanupUnreferencedObjects(stored.map((row) => row.key), store, keysReferencedByRows);
+    throw error;
+  }
+}
+
+const keysReferencedByRows: IsKeyReferenced = async (keys) => new Set(
+  (await prisma.lookObservation.findMany({ where: { storedImageKey: { in: keys } }, select: { storedImageKey: true } }))
+    .flatMap((row) => row.storedImageKey ? [row.storedImageKey] : [])
+);
+
+/** Legacy recovery: copies one currently-visible image into durable storage; updates ONLY stored* columns. */
+export async function recoverLookObservationStoredImage(input: Record<string, string>) {
+  const observationId = required(input.observationId, "관측 ID");
+  const sourceUrl = required(input.sourceImageUrl, "이미지 URL", 2048);
+  return recoverLookObservationImage({
+    async find(id) {
+      const row = await prisma.lookObservation.findUnique({ where: { id }, select: { id: true, platform: true, postIdentity: true, imageIndex: true, sourceAccountId: true, storedImageKey: true } });
+      return row;
+    },
+    async setStoredImage(id, data) {
+      const result = await prisma.lookObservation.updateMany({ where: { id, storedImageKey: null }, data });
+      return result.count;
+    },
+    isReferenced: keysReferencedByRows
+  }, getR2LookImageStore(), observationId, sourceUrl);
 }
 
 export async function reviewLookObservation(input: Record<string, string>) {
