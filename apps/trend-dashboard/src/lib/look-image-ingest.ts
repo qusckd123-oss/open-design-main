@@ -1,5 +1,6 @@
 import type { FetchSourceImageOptions } from "./look-image-fetch";
-import { storeLookImage, type LookImageStore, type StoredLookImage } from "./look-image-storage";
+import { lookImageKey, storeLookImage, type LookImageStore, type StoredLookImage } from "./look-image-storage";
+import { validateUploadedImage } from "./look-image-upload";
 import type { LookPlatformCode } from "./look-observation";
 
 export type IsKeyReferenced = (keys: string[]) => Promise<Set<string>>;
@@ -52,6 +53,31 @@ export async function recoverLookObservationImage(
   if (!row) throw new Error("관측을 찾을 수 없습니다.");
   if (row.storedImageKey) throw new Error("이미 영구 저장된 이미지가 있는 관측입니다.");
   const stored = await storeLookImage({ sourceUrl, platform: row.platform, sourceAccountId: row.sourceAccountId, postIdentity: row.postIdentity, imageIndex: row.imageIndex }, store, fetchOptions);
+  let count = 0;
+  try { count = await db.setStoredImage(row.id, { storedImageKey: stored.key, storedImageUrl: stored.url, storedImageAt: new Date() }); }
+  catch (error) { await cleanupUnreferencedObjects([stored.key], store, db.isReferenced); throw error; }
+  if (count !== 1) {
+    await cleanupUnreferencedObjects([stored.key], store, db.isReferenced);
+    throw new Error("이미지 복구 대상이 이미 변경되었습니다. 새로고침 후 다시 확인하세요.");
+  }
+  return stored;
+}
+
+/**
+ * Recovery from an uploaded image file (no server-side fetch of the source CDN).
+ * Order: validate -> find row -> upload R2 -> update only stored* columns; failures clean up the new object.
+ */
+export async function recoverLookObservationImageFromFile(
+  db: LookImageRecoveryDb, store: LookImageStore, observationId: string, file: { bytes: Buffer; mime: string }
+): Promise<StoredLookImage> {
+  const image = validateUploadedImage(file.bytes, file.mime);
+  const row = await db.find(observationId);
+  if (!row) throw new Error("관측을 찾을 수 없습니다.");
+  if (row.storedImageKey) throw new Error("이미 영구 저장된 이미지가 있는 관측입니다.");
+  const key = lookImageKey({ sourceAccountId: row.sourceAccountId, postIdentity: row.postIdentity, imageIndex: row.imageIndex, bytes: image.bytes, extension: image.extension });
+  try { await store.put(key, image.bytes, image.contentType); }
+  catch { throw new Error("이미지 저장소에 업로드하지 못했습니다."); }
+  const stored: StoredLookImage = { key, url: store.publicUrl(key), contentType: image.contentType, bytes: image.bytes.length };
   let count = 0;
   try { count = await db.setStoredImage(row.id, { storedImageKey: stored.key, storedImageUrl: stored.url, storedImageAt: new Date() }); }
   catch (error) { await cleanupUnreferencedObjects([stored.key], store, db.isReferenced); throw error; }

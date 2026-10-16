@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fetchSourceImage, validateSourceImageUrl, type ImageTransport } from "../src/lib/look-image-fetch";
-import { buildLookObservationRows, recoverLookObservationImage, storeLookImageBatch, type LookImageRecoveryDb } from "../src/lib/look-image-ingest";
+import { buildLookObservationRows, recoverLookObservationImage, recoverLookObservationImageFromFile, storeLookImageBatch, type LookImageRecoveryDb } from "../src/lib/look-image-ingest";
+import { validateUploadedImage } from "../src/lib/look-image-upload";
 import { getR2LookImageStore, lookImageKey, storeLookImage, type LookImageStore } from "../src/lib/look-image-storage";
 import { lookDisplayImageUrl, publicLookClusters, type LookClusterCandidate, type LookObservationCandidate } from "../src/lib/look-observation";
 
@@ -155,6 +156,72 @@ assert.match(read("src/app/research/looks/page.tsx"), /imageUrl: lookDisplayImag
 const service = read("src/services/look-service.ts");
 const recoverBlock = service.slice(service.indexOf("export async function recoverLookObservationStoredImage"));
 assert.doesNotMatch(recoverBlock.slice(0, recoverBlock.indexOf("\n}\n")), /reviewStatus|reviewedBy|reviewedAt|genderCandidate|\.create\(|createMany|\.delete|upsert/);
+
+// 15. FILE-UPLOAD recovery (primary path for Instagram): validation, R2 upload, stored*-only update, cleanup
+{
+  const PNG = Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.alloc(32, 2)]);
+  const WEBP = Buffer.concat([Buffer.from("RIFF"), Buffer.from([1, 0, 0, 0]), Buffer.from("WEBP"), Buffer.alloc(16, 3)]);
+  const SVG = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
+  assert.equal(validateUploadedImage(JPEG, "image/jpeg").extension, "jpg");
+  assert.equal(validateUploadedImage(PNG, "image/png").extension, "png");
+  assert.equal(validateUploadedImage(WEBP, "image/webp").contentType, "image/webp");
+  assert.throws(() => validateUploadedImage(SVG, "image/svg+xml"), /JPEG, PNG, WebP/);
+  assert.throws(() => validateUploadedImage(SVG, "image/jpeg"), /이미지가 아닙니다/);
+  assert.throws(() => validateUploadedImage(Buffer.from("<html><script>alert(1)</script></html>"), "image/jpeg"), /이미지가 아닙니다/);
+  assert.throws(() => validateUploadedImage(PNG, "image/jpeg"), /일치하지 않습니다/);
+  assert.throws(() => validateUploadedImage(Buffer.from([0x4d, 0x5a, 0x90, 0x00, 0x03]), "image/png"), /이미지가 아닙니다/);
+  assert.throws(() => validateUploadedImage(Buffer.alloc(0), "image/jpeg"), /빈 파일/);
+  assert.throws(() => validateUploadedImage(Buffer.concat([JPEG, Buffer.alloc(15 * 1024 * 1024)]), "image/jpeg"), /15MB/);
+  assert.throws(() => validateUploadedImage(Buffer.concat([Buffer.from("GIF89a"), Buffer.alloc(20)]), "image/gif"), /JPEG, PNG, WebP/);
+  assert.equal(validateUploadedImage(JPEG, "image/jpeg; charset=binary").extension, "jpg");
+
+  const mk = () => new Map([["obs1", { id: "obs1", platform: "INSTAGRAM" as const, postIdentity: "instagram.com/p/Ddiy2r3AdN-", imageIndex: 0, sourceAccountId: "acc1", storedImageKey: null as string | null, imageUrl: "https://expired/original.jpg", reviewStatus: "APPROVED", genderCandidate: "MEN", reviewedBy: "1", postUrl: "https://www.instagram.com/p/Ddiy2r3AdN-/" }]]);
+  const rows = mk();
+  const { store, objects } = memoryStore();
+  const writes: string[][] = [];
+  const db: LookImageRecoveryDb = {
+    async find(id) { return rows.get(id) ?? null; },
+    async setStoredImage(id, data) { writes.push(Object.keys(data)); const row = rows.get(id); if (!row || row.storedImageKey) return 0; row.storedImageKey = data.storedImageKey; return 1; },
+    isReferenced: none
+  };
+  const snap = () => JSON.stringify([...rows.values()].map(({ storedImageKey: _k, ...rest }) => rest));
+  const before = snap();
+  // unknown observation / invalid file never reach R2
+  await rejects(recoverLookObservationImageFromFile(db, store, "missing", { bytes: JPEG, mime: "image/jpeg" }), /찾을 수 없습니다/);
+  await rejects(recoverLookObservationImageFromFile(db, store, "obs1", { bytes: PNG, mime: "image/jpeg" }), /일치하지 않습니다/);
+  assert.equal(objects.size, 0);
+  const result = await recoverLookObservationImageFromFile(db, store, "obs1", { bytes: JPEG, mime: "image/jpeg" });
+  assert.deepEqual(writes, [["storedImageKey", "storedImageUrl", "storedImageAt"]]);
+  assert.equal(snap(), before); // imageUrl, review state, reviewer, gender untouched
+  assert.equal(rows.size, 1);
+  assert.match(result.key, /\.jpg$/);
+  assert.ok(result.url.startsWith("https://img.example.com/look-observations/"));
+  assert.equal(objects.get(result.key)!.equals(JPEG), true);
+  await rejects(recoverLookObservationImageFromFile(db, store, "obs1", { bytes: JPEG, mime: "image/jpeg" }), /이미 영구 저장/);
+  assert.equal(objects.size, 1);
+
+  // R2 failure leaves the DB unchanged
+  const r2 = mk(); const failing = memoryStore(1); let dbCalls = 0;
+  await rejects(recoverLookObservationImageFromFile({ ...db, find: async (id) => r2.get(id) ?? null, setStoredImage: async () => { dbCalls++; return 1; } }, failing.store, "obs1", { bytes: JPEG, mime: "image/jpeg" }), /업로드하지 못했습니다/);
+  assert.equal(dbCalls, 0);
+  // DB failure removes the orphan; an already-referenced object is kept
+  const r3 = mk(); const orphan = memoryStore();
+  await assert.rejects(recoverLookObservationImageFromFile({ ...db, find: async (id) => r3.get(id) ?? null, setStoredImage: async () => { throw new Error("db down"); } }, orphan.store, "obs1", { bytes: JPEG, mime: "image/jpeg" }));
+  assert.equal(orphan.objects.size, 0);
+  const keep = memoryStore();
+  const key = lookImageKey({ sourceAccountId: "acc1", postIdentity: "instagram.com/p/Ddiy2r3AdN-", imageIndex: 0, bytes: JPEG, extension: "jpg" });
+  await assert.rejects(recoverLookObservationImageFromFile({ ...db, find: async (id) => r3.get(id) ?? null, setStoredImage: async () => { throw new Error("db down"); }, isReferenced: async () => new Set([key]) }, keep.store, "obs1", { bytes: JPEG, mime: "image/jpeg" }));
+  assert.equal(keep.objects.size, 1);
+}
+const route = read("src/app/api/look-images/recover/route.ts");
+assert.match(route, /verifySessionToken/);
+assert.match(route, /MAX_LOOK_IMAGE_BYTES/);
+assert.doesNotMatch(route, /base64|searchParams/);
+const fileRecover = service.slice(service.indexOf("export async function recoverLookObservationStoredImageFromFile"));
+assert.doesNotMatch(fileRecover.slice(0, fileRecover.indexOf("\n}\n")), /reviewStatus|reviewedBy|reviewedAt|genderCandidate|\.create\(|createMany|\.delete|upsert/);
+assert.match(read("src/app/research/looks/page.tsx"), /LookImageRecoverForm/);
+assert.match(read("src/app/research/looks/LookImageRecoverForm.tsx"), /type="file"[^>]*accept="image\/jpeg,image\/png,image\/webp"/);
+assert.doesNotMatch(read("src/app/research/looks/LookImageRecoverForm.tsx"), /R2_|SECRET/);
 
 // 14. the @oiehofo provenance audit path is read-only
 const audit = read("scripts/audit-look-review-provenance.ts");

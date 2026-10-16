@@ -2,7 +2,7 @@ import { Prisma, type LookTagDimension } from "@prisma/client";
 import { prisma } from "@/db/client";
 import { withTransientDbReadRetry } from "@/db/transient-read-retry";
 import { applyBulkLookReview, parseBulkReviewRequest } from "@/lib/look-bulk-review";
-import { buildLookObservationRows, cleanupUnreferencedObjects, recoverLookObservationImage, storeLookImageBatch, type IsKeyReferenced } from "@/lib/look-image-ingest";
+import { buildLookObservationRows, cleanupUnreferencedObjects, recoverLookObservationImage, recoverLookObservationImageFromFile, storeLookImageBatch, type IsKeyReferenced } from "@/lib/look-image-ingest";
 import { validateSourceImageUrl } from "@/lib/look-image-fetch";
 import { getR2LookImageStore } from "@/lib/look-image-storage";
 import { instagramProfileUrl, manualLookImageRows, normalizeInstagramHandle, optionalPublishedDate, postIdentity, publicLookClusters, requireHttpUrl, validateInstagramProfile } from "@/lib/look-observation";
@@ -122,6 +122,20 @@ export async function recoverLookObservationStoredImage(input: Record<string, st
     },
     isReferenced: keysReferencedByRows
   }, getR2LookImageStore(), observationId, sourceUrl);
+}
+
+/** Preferred recovery path: the human supplies the image FILE; no server-side fetch of the Instagram CDN. Updates ONLY stored* columns. */
+export async function recoverLookObservationStoredImageFromFile(observationId: string, file: { bytes: Buffer; mime: string }) {
+  return recoverLookObservationImageFromFile({
+    async find(id) {
+      return prisma.lookObservation.findUnique({ where: { id }, select: { id: true, platform: true, postIdentity: true, imageIndex: true, sourceAccountId: true, storedImageKey: true } });
+    },
+    async setStoredImage(id, data) {
+      const result = await prisma.lookObservation.updateMany({ where: { id, storedImageKey: null }, data });
+      return result.count;
+    },
+    isReferenced: keysReferencedByRows
+  }, getR2LookImageStore(), required(observationId, "관측 ID"), file);
 }
 
 export async function reviewLookObservation(input: Record<string, string>) {
