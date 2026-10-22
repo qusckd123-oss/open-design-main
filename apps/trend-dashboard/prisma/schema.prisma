@@ -43,6 +43,15 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Cloudflare Workers only: Rust-free query compiler (WASM) + @prisma/adapter-pg.
+// Node/tsx scripts, collectors and tests keep using the `client` generator above.
+generator workerClient {
+  provider   = "prisma-client"
+  output     = "../src/generated/prisma-worker"
+  engineType = "client"
+  runtime    = "workerd"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")

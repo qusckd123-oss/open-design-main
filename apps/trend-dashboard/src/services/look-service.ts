@@ -1,5 +1,5 @@
-import { Prisma, type LookTagDimension } from "@prisma/client";
-import { prisma } from "@/db/client";
+import type { LookTagDimension } from "@prisma/client";
+import { prisma, Prisma } from "@/db/client";
 import { withTransientDbReadRetry } from "@/db/transient-read-retry";
 import { applyBulkLookReview, parseBulkReviewRequest } from "@/lib/look-bulk-review";
 import { buildLookObservationRows, cleanupUnreferencedObjects, recoverLookObservationImage, recoverLookObservationImageFromFile, storeLookImageBatch, type IsKeyReferenced } from "@/lib/look-image-ingest";

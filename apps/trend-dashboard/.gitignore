@@ -17,3 +17,12 @@ backups/
 # Generated/local build artifacts
 tsconfig.tsbuildinfo
 *.tmp
+
+# Cloudflare Workers (OpenNext) build output and local secrets
+.open-next/
+.wrangler/
+.dev.vars
+.dev.vars.*
+
+# Generated Prisma client for the Cloudflare Workers build (prisma generate)
+src/generated/

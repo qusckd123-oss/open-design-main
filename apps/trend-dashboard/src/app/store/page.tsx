@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { compactCategory, confidenceLabel, formatDateKo, formatRank, formatRankChange, scopeLabel, sourceLabel } from "@/lib/market-ui";
-import { getMarketRows } from "@/services/business-analytics-service";
-import type { MarketRow } from "@/types/business";
+import { getStoreRankingData, type StoreRankingRow } from "@/services/store-service";
 
 export const metadata: Metadata = {
   title: "스토어 | 상품기획 트렌드",
@@ -19,14 +18,11 @@ export default async function StorePage({ searchParams }: PageProps) {
   const params = await searchParams;
   const selectedCategory = valueOf(params.category) ?? "";
   const selectedSource = valueOf(params.source) ?? "";
-  const market = await getMarketRows({ dataMode: "real", sort: "rank" });
-  const allRanked = market.rows.filter((row) => row.dataMode === "real" && row.rankingVerified && row.rank != null);
-  const categories = [...new Set(allRanked.map((row) => row.observedCategory ?? row.category).filter((value): value is string => Boolean(value)))].sort();
-  const sources = [...new Set(allRanked.map((row) => row.source))].sort();
-  const rows = allRanked
-    .filter((row) => !selectedCategory || (row.observedCategory ?? row.category) === selectedCategory)
-    .filter((row) => !selectedSource || row.source === selectedSource)
-    .sort((a, b) => (a.rank ?? Number.MAX_SAFE_INTEGER) - (b.rank ?? Number.MAX_SAFE_INTEGER) || a.source.localeCompare(b.source) || a.name.localeCompare(b.name));
+  const store = await getStoreRankingData({
+    category: selectedCategory || undefined,
+    source: selectedSource || undefined
+  });
+  const { rows, categories, sources, totalCount } = store;
 
   return (
     <div>
@@ -51,12 +47,12 @@ export default async function StorePage({ searchParams }: PageProps) {
           <CategoryLink label="전체 스토어" href={storeHref(params, { source: "" })} active={!selectedSource} />
           {sources.map((source) => <CategoryLink key={source} label={sourceLabel(source)} href={storeHref(params, { source })} active={selectedSource === source} />)}
         </div>
-        <p className="text-xs text-muted">{rows.length > 100 ? `상위 100 / ${rows.length}개 상품` : `${rows.length}개 상품`} · {new Set(rows.map((row) => row.source)).size}개 스토어 · 순위순</p>
+        <p className="text-xs text-muted">{totalCount > 100 ? `상위 100 / ${totalCount}개 상품` : `${totalCount}개 상품`} · {new Set(rows.map((row) => row.source)).size}개 스토어 · 순위순</p>
       </section>
 
       {rows.length > 0 ? (
         <section className="mt-6 grid grid-cols-2 gap-x-3 gap-y-7 sm:grid-cols-3 sm:gap-x-4 lg:grid-cols-4 xl:grid-cols-5" aria-label="검증된 스토어 순위 상품">
-          {rows.slice(0, 100).map((row) => <RankedProductCard key={row.id} row={row} />)}
+          {rows.map((row) => <RankedProductCard key={row.id} row={row} />)}
         </section>
       ) : (
         <div className="mt-6 border border-dashed border-line bg-white px-6 py-16 text-center">
@@ -82,7 +78,7 @@ function CategoryLink({ label, href, active }: { label: string; href: string; ac
   return <Link href={href} className={`px-3 py-2 text-[11px] font-semibold ${active ? "bg-ink text-white" : "border border-line bg-white text-muted hover:text-ink"}`}>{label}</Link>;
 }
 
-function RankedProductCard({ row }: { row: MarketRow }) {
+function RankedProductCard({ row }: { row: StoreRankingRow }) {
   return (
     <article className="min-w-0">
       <a href={row.url ?? "/store"} target={row.url ? "_blank" : undefined} rel={row.url ? "noreferrer" : undefined} className="group block">

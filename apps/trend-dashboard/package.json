@@ -44,19 +44,23 @@
     "test:magazine-week": "tsx scripts/test-magazine-week.ts",
     "test:look-durable-images": "tsx scripts/test-look-durable-images.ts",
     "audit:look-review-provenance": "tsx scripts/audit-look-review-provenance.ts",
-    "snapshot:watchlist": "tsx scripts/snapshot-watchlist.ts"
+    "snapshot:watchlist": "tsx scripts/snapshot-watchlist.ts",
+    "cf:build": "node scripts/cf-build.mjs",
+    "cf:preview": "pnpm cf:build && opennextjs-cloudflare preview",
+    "cf:deploy": "pnpm cf:build && opennextjs-cloudflare deploy"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.700.0",
     "@prisma/adapter-pg": "6.19.3",
     "@prisma/client": "^6.15.0",
-    "next": "^16.2.4",
+    "next": "^16.3.3",
     "pg": "^8.16.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "1.20.5",
     "@types/node": "^20.17.10",
     "@types/pg": "8.11.11",
     "@types/react": "^18.3.12",
@@ -66,7 +70,8 @@
     "prisma": "^6.15.0",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.19.2",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "wrangler": "^4.151.2"
   },
   "engines": {
     "node": "~24"

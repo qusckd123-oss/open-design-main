@@ -1,5 +1,5 @@
 import type { FetchSourceImageOptions } from "./look-image-fetch";
-import { lookImageKey, storeLookImage, type LookImageStore, type StoredLookImage } from "./look-image-storage";
+import { lookImageKey, storeLookImage, type LookImageStore, type StoredLookImage } from "@/lib/look-image-storage";
 import { validateUploadedImage } from "./look-image-upload";
 import type { LookPlatformCode } from "./look-observation";
 
