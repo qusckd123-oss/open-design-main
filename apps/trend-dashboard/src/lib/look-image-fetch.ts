@@ -21,6 +21,7 @@ export type FetchSourceImageOptions = {
 };
 
 const INSTAGRAM_CDN_SUFFIXES = ["cdninstagram.com", "fbcdn.net"];
+const MUSINSA_CDN_SUFFIXES = ["msscdn.net"];
 
 export function isPrivateAddress(address: string): boolean {
   const mapped = /^::ffff:(\d+\.\d+\.\d+\.\d+)$/i.exec(address);
@@ -54,6 +55,9 @@ export function validateSourceImageUrl(value: string, platform?: LookPlatformCod
   if (isIP(host) && isPrivateAddress(host)) throw new Error("사설·루프백 주소의 이미지 URL은 허용되지 않습니다.");
   if (platform === "INSTAGRAM" && !INSTAGRAM_CDN_SUFFIXES.some((suffix) => host === suffix || host.endsWith(`.${suffix}`))) {
     throw new Error("Instagram 이미지는 Instagram CDN(cdninstagram.com / fbcdn.net) URL만 허용됩니다.");
+  }
+  if (platform === "MUSINSA_STYLE" && !MUSINSA_CDN_SUFFIXES.some((suffix) => host === suffix || host.endsWith(`.${suffix}`))) {
+    throw new Error("무신사 이미지는 msscdn.net CDN URL만 허용됩니다.");
   }
   return url;
 }

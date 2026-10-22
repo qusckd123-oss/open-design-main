@@ -41,8 +41,8 @@ export function postIdentity(postUrl: string, platform: LookPlatformCode): strin
     }
     return `instagram.com${url.pathname.replace(/\/$/, "")}`;
   }
-  if (platform === "MUSINSA_STYLE" && (host !== "musinsa.com" || !/^\/content\/\d+\/?$/.test(url.pathname))) {
-    throw new Error("무신사 STYLE의 정확한 /content/<번호> URL이 필요합니다.");
+  if (platform === "MUSINSA_STYLE" && (host !== "musinsa.com" || !/^\/(content|snap)\/\d+\/?$/.test(url.pathname))) {
+    throw new Error("무신사 STYLE의 정확한 /content/<번호> 또는 /snap/<번호> URL이 필요합니다.");
   }
   if (platform === "MUSINSA_STYLE") return `${host}${url.pathname.replace(/\/$/, "")}`;
   if (platform === "OTHER_WEB" && (host === "musinsa.com" || host === "instagram.com")) {

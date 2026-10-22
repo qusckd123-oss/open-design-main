@@ -79,8 +79,11 @@ export async function createLookObservationBatch(input: Record<string, string>, 
   const postUrl = required(input.postUrl, "게시물 URL", 2048);
   const identity = postIdentity(postUrl, account.platform);
   const observationType = choice(input.observationType, ["REAL_WEAR", "CURATED_LOOK", "STYLE_MEDIA"] as const, "관측 유형");
+  const isMusinsaSnap = account.platform === "MUSINSA_STYLE" && /^\/snap\/\d+\/?$/.test(new URL(postUrl).pathname);
   if (account.platform === "INSTAGRAM" && observationType === "STYLE_MEDIA") throw new Error("Instagram 관측은 실착 또는 큐레이션으로 구분하세요.");
-  if (account.platform !== "INSTAGRAM" && observationType !== "STYLE_MEDIA") throw new Error("웹 소스 관측은 스타일 미디어로 구분하세요.");
+  if (account.platform === "MUSINSA_STYLE" && isMusinsaSnap && observationType !== "REAL_WEAR") throw new Error("무신사 스냅 관측은 실착으로 구분하세요.");
+  if (account.platform === "MUSINSA_STYLE" && !isMusinsaSnap && observationType !== "STYLE_MEDIA") throw new Error("무신사 콘텐츠 관측은 스타일 미디어로 구분하세요.");
+  if (account.platform === "OTHER_WEB" && observationType !== "STYLE_MEDIA") throw new Error("웹 소스 관측은 스타일 미디어로 구분하세요.");
   const images = manualLookImageRows(imageUrls);
   images.forEach((image) => validateSourceImageUrl(image.imageUrl, account.platform));
   const publishedAt = optionalPublishedDate(input.publishedAt ?? "");

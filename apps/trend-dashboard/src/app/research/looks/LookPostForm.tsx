@@ -22,9 +22,10 @@ export function LookPostForm({ accounts }: { accounts: Account[] }) {
       <label>2 · 관측 유형<select required name="observationType" className={field} key={platform ?? "none"} defaultValue="">
         <option value="">선택</option>
         {platform === "INSTAGRAM" ? <><option value="REAL_WEAR">실착 · 실제 사람이 입은 착장</option><option value="CURATED_LOOK">큐레이션 · 코디 모음/추천</option></> : null}
-        {platform && platform !== "INSTAGRAM" ? <option value="STYLE_MEDIA">스타일 미디어 · 웹 코디 콘텐츠</option> : null}
+        {platform === "MUSINSA_STYLE" ? <><option value="REAL_WEAR">실착 · 무신사 USER_SNAP</option><option value="STYLE_MEDIA">스타일 미디어 · 무신사 콘텐츠</option></> : null}
+        {platform === "OTHER_WEB" ? <option value="STYLE_MEDIA">스타일 미디어 · 웹 코디 콘텐츠</option> : null}
       </select></label>
-      <label className="md:col-span-2">3 · 정확한 게시물 URL<input required name="postUrl" type="url" placeholder={platform === "INSTAGRAM" ? "https://www.instagram.com/p/.../" : "https://www.musinsa.com/content/..."} className={field} /></label>
+      <label className="md:col-span-2">3 · 정확한 게시물 URL<input required name="postUrl" type="url" placeholder={platform === "INSTAGRAM" ? "https://www.instagram.com/p/.../" : platform === "MUSINSA_STYLE" ? "https://www.musinsa.com/snap/... 또는 /content/..." : "https://..."} className={field} /></label>
       <label>4 · 발행일 (알 때만)<input name="publishedAt" type="date" className={field} /></label>
       <label>5 · 직접 확인한 캡션 (선택)<input name="captionText" className={field} /></label>
     </div>

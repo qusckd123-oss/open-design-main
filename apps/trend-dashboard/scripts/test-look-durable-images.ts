@@ -5,7 +5,7 @@ import { fetchSourceImage, validateSourceImageUrl, type ImageTransport } from ".
 import { buildLookObservationRows, recoverLookObservationImage, recoverLookObservationImageFromFile, storeLookImageBatch, type LookImageRecoveryDb } from "../src/lib/look-image-ingest";
 import { validateUploadedImage } from "../src/lib/look-image-upload";
 import { getR2LookImageStore, lookImageKey, storeLookImage, type LookImageStore } from "../src/lib/look-image-storage";
-import { lookDisplayImageUrl, publicLookClusters, type LookClusterCandidate, type LookObservationCandidate } from "../src/lib/look-observation";
+import { lookDisplayImageUrl, postIdentity, publicLookClusters, type LookClusterCandidate, type LookObservationCandidate } from "../src/lib/look-observation";
 
 const JPEG = Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.alloc(64, 1)]);
 const publicResolver = async () => ["93.184.216.34"];
@@ -50,7 +50,11 @@ for (const bad of ["http://scontent.cdninstagram.com/a.jpg", "file:///etc/passwd
 }
 assert.throws(() => validateSourceImageUrl("https://evil.example.com/a.jpg", "INSTAGRAM"));
 assert.throws(() => validateSourceImageUrl("https://evilcdninstagram.com/a.jpg", "INSTAGRAM"));
-validateSourceImageUrl("https://images.example.com/a.jpg", "MUSINSA_STYLE");
+validateSourceImageUrl("https://image.msscdn.net/thumbnails/snap/images/2026/10/22/a.jpg", "MUSINSA_STYLE");
+assert.throws(() => validateSourceImageUrl("https://images.example.com/a.jpg", "MUSINSA_STYLE"));
+assert.equal(postIdentity("https://www.musinsa.com/content/1465543723705276831", "MUSINSA_STYLE"), "musinsa.com/content/1465543723705276831");
+assert.equal(postIdentity("https://www.musinsa.com/snap/1562601944454454787", "MUSINSA_STYLE"), "musinsa.com/snap/1562601944454454787");
+assert.throws(() => postIdentity("https://www.musinsa.com/goods/123", "MUSINSA_STYLE"));
 await rejects(fetchSourceImage(IG, { ...ok, resolver: async () => ["10.0.0.1"] }), /내부 주소/);
 await rejects(fetchSourceImage(IG, { ...ok, resolver: async () => ["93.184.216.34", "127.0.0.1"] }), /내부 주소/);
 
