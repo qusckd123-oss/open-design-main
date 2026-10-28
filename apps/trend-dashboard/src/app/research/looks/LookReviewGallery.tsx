@@ -32,6 +32,27 @@ function dateLabel(value: string | null): string {
   return new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeZone: "Asia/Seoul" }).format(new Date(value));
 }
 
+/** Never substitute an unrelated image when a legacy source CDN image expires. */
+function LookCardImage({ row, onPreview }: { row: ReviewGalleryRow; onPreview: () => void }) {
+  const [failedUrl, setFailedUrl] = useState<string | null>(null);
+  const failed = failedUrl === row.imageUrl;
+  return <button type="button" disabled={failed}
+    aria-label={failed ? `${row.sourceHandle} 이미지 미리보기 불가` : `${row.sourceHandle} 이미지 크게 보기`}
+    onClick={onPreview}
+    className="block aspect-[4/5] w-full bg-[#e7e6e1] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-signal">
+    {failed
+      ? <span className="flex h-full w-full flex-col items-center justify-center gap-2 px-6 text-center text-sm text-muted">
+          <span className="font-semibold text-ink">원본 이미지 미리보기 불가</span>
+          <span>아래 원본 게시물 링크에서 확인하세요.</span>
+        </span>
+      : <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={row.imageUrl} alt={`${row.sourceHandle} 착장 관측 이미지 #${row.imageIndex}`} loading="lazy"
+            onError={() => setFailedUrl(row.imageUrl)} className="h-full w-full object-contain" />
+        </>}
+  </button>;
+}
+
 export function LookReviewGallery({ observations }: { observations: ReviewGalleryRow[] }) {
   const [status, setStatus] = useState<(typeof statuses)[number]>("PENDING");
   const [type, setType] = useState<(typeof types)[number]>("전체");
@@ -104,9 +125,7 @@ export function LookReviewGallery({ observations }: { observations: ReviewGaller
       const currentGender = assignments[row.id] ?? row.genderCandidate;
       return <article key={row.id} className={`min-w-0 overflow-hidden border bg-white ${selected.includes(row.id) && pending ? "border-ink ring-2 ring-ink" : "border-line"}`}>
         <div className="relative">
-          <button type="button" aria-label={`${row.sourceHandle} 이미지 크게 보기`} onClick={() => setPreview(row)} className="block aspect-[4/5] w-full bg-[#e7e6e1] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-signal">
-            {/* eslint-disable-next-line @next/next/no-img-element */}<img src={row.imageUrl} alt={`${row.sourceHandle} 착장 관측 이미지 #${row.imageIndex}`} loading="lazy" className="h-full w-full object-contain" />
-          </button>
+          <LookCardImage row={row} onPreview={() => setPreview(row)} />
           {pending ? <label className="absolute left-3 top-3 flex min-h-11 cursor-pointer items-center gap-2 bg-white/95 px-3 text-sm font-semibold shadow-subtle"><input type="checkbox" checked={selected.includes(row.id)} onChange={() => toggle(row.id)} className="h-5 w-5 accent-ink" />선택</label> : null}
           <span className="absolute bottom-3 right-3 bg-ink/90 px-2 py-1 text-xs font-semibold text-white">#{row.imageIndex}</span>
         </div>
